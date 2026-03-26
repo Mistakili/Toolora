@@ -14,6 +14,18 @@ import UuidGenerator from "@/components/tools/UuidGenerator";
 import HashGenerator from "@/components/tools/HashGenerator";
 import JsonFormatter from "@/components/tools/JsonFormatter";
 import MarkdownPreview from "@/components/tools/MarkdownPreview";
+import Base64 from "@/components/tools/Base64";
+import UrlEncoder from "@/components/tools/UrlEncoder";
+import LoremIpsum from "@/components/tools/LoremIpsum";
+import TextDiff from "@/components/tools/TextDiff";
+import UnitConverter from "@/components/tools/UnitConverter";
+import ColorPicker from "@/components/tools/ColorPicker";
+import TimestampConverter from "@/components/tools/TimestampConverter";
+import ImageResize from "@/components/tools/ImageResize";
+import ImageCompress from "@/components/tools/ImageCompress";
+import ImageConvert from "@/components/tools/ImageConvert";
+import PdfMerge from "@/components/tools/PdfMerge";
+import PdfSplit from "@/components/tools/PdfSplit";
 
 const TOOL_COMPONENTS: Record<string, React.ComponentType<any>> = {
   "word-counter": WordCounter,
@@ -24,7 +36,18 @@ const TOOL_COMPONENTS: Record<string, React.ComponentType<any>> = {
   "hash-generator": HashGenerator,
   "json-formatter": JsonFormatter,
   "markdown-preview": MarkdownPreview,
-  // Add other mappings here as built
+  "base64": Base64,
+  "url-encoder": UrlEncoder,
+  "lorem-ipsum": LoremIpsum,
+  "text-diff": TextDiff,
+  "unit-converter": UnitConverter,
+  "color-picker": ColorPicker,
+  "timestamp-converter": TimestampConverter,
+  "image-resize": ImageResize,
+  "image-compress": ImageCompress,
+  "image-convert": ImageConvert,
+  "pdf-merge": PdfMerge,
+  "pdf-split": PdfSplit,
 };
 
 export default function ToolView() {

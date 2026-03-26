@@ -48,6 +48,29 @@ Every package extends `tsconfig.base.json` which sets `composite: true`. The roo
 - `pnpm run build` — runs `typecheck` first, then recursively runs `build` in all packages that define it
 - `pnpm run typecheck` — runs `tsc --build --emitDeclarationOnly` using project references
 
+## Artifacts
+
+### `artifacts/toolbox` (`@workspace/toolbox`)
+
+React + Vite frontend for ToolBox — a free online tools platform with 20 fully functional tools.
+
+- **URL**: served at `/` (root preview path)
+- **Dark mode first**, responsive design
+- **All processing is 100% client-side (privacy-first)**
+- **Tool categories**: Text, Developer, Productivity, Image, PDF
+- **Fully built tools (20)**:
+  - Text: Word Counter, Case Converter, Markdown Preview, Lorem Ipsum, Text Diff
+  - Developer: JSON Formatter, Base64 Encoder/Decoder, URL Encoder/Decoder, Hash Generator, UUID Generator
+  - Productivity: QR Code Generator, Password Generator, Unit Converter, Color Converter, Timestamp Converter
+  - Image: Image Resizer, Image Compressor, Image Converter (JPG/PNG/WebP)
+  - PDF: PDF Merge, PDF Split
+- **Usage tracking**: fires POST `/api/tools/{slug}/use` on every tool visit
+- **Key files**:
+  - `src/lib/tools-config.ts` — TOOLS array (must match ToolView dispatcher)
+  - `src/pages/ToolView.tsx` — TOOL_COMPONENTS map + renders tool pages
+  - `src/components/tools/` — individual tool components
+- **Key packages**: qrcode, crypto-js, marked, react-dropzone, uuid, date-fns, pdf-lib, framer-motion
+
 ## Packages
 
 ### `artifacts/api-server` (`@workspace/api-server`)
