@@ -6,7 +6,7 @@ import { Download, Share2 } from "lucide-react";
 import { downloadFile } from "@/lib/utils";
 
 export default function QrGenerator() {
-  const [text, setText] = useState("https://toolbox.com");
+  const [text, setText] = useState("https://toolora.com");
   const [qrDataUrl, setQrDataUrl] = useState("");
   const canvasRef = useRef<HTMLCanvasElement>(null);
 

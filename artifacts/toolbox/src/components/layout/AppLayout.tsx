@@ -26,7 +26,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
               <div className="bg-primary/10 p-2 rounded-xl text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
                 <Settings2 className="w-5 h-5" />
               </div>
-              <span className="font-display font-bold text-xl tracking-tight hidden sm:inline-block">ToolBox<span className="text-primary">.</span></span>
+              <span className="font-display font-bold text-xl tracking-tight hidden sm:inline-block">Toolora<span className="text-primary">.</span></span>
             </Link>
           </div>
 
@@ -135,7 +135,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
           <div className="md:col-span-2">
             <Link href="/" className="flex items-center gap-2 mb-4">
               <Settings2 className="w-6 h-6 text-primary" />
-              <span className="font-display font-bold text-xl">ToolBox.</span>
+              <span className="font-display font-bold text-xl">Toolora.</span>
             </Link>
             <p className="text-muted-foreground text-sm max-w-sm mb-4">
               A comprehensive suite of free, client-side tools for developers and creators. Privacy-first, lighting fast, and built for modern workflows.

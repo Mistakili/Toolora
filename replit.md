@@ -52,7 +52,7 @@ Every package extends `tsconfig.base.json` which sets `composite: true`. The roo
 
 ### `artifacts/toolbox` (`@workspace/toolbox`)
 
-React + Vite frontend for ToolBox — a free online tools platform with 20 fully functional tools.
+React + Vite frontend for **Toolora** — a free online tools platform with 20 fully functional tools.
 
 - **URL**: served at `/` (root preview path)
 - **Dark mode first**, responsive design
