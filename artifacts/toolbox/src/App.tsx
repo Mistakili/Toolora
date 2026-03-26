@@ -9,6 +9,8 @@ import { AppLayout } from "@/components/layout/AppLayout";
 import Home from "@/pages/Home";
 import CategoryView from "@/pages/CategoryView";
 import ToolView from "@/pages/ToolView";
+import Privacy from "@/pages/Privacy";
+import Terms from "@/pages/Terms";
 import NotFound from "@/pages/not-found";
 
 const queryClient = new QueryClient({
@@ -25,6 +27,8 @@ function Router() {
     <AppLayout>
       <Switch>
         <Route path="/" component={Home} />
+        <Route path="/privacy" component={Privacy} />
+        <Route path="/terms" component={Terms} />
         <Route path="/tools/:category" component={CategoryView} />
         <Route path="/tools/:category/:slug" component={ToolView} />
         <Route component={NotFound} />

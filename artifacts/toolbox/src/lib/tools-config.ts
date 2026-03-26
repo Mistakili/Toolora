@@ -12,6 +12,8 @@ export interface ToolDef {
   name: string;
   slug: string;
   description: string;
+  seoTitle: string;
+  seoDescription: string;
   icon: any;
   category: ToolCategory;
   isPopular?: boolean;
@@ -27,34 +29,134 @@ export const CATEGORIES: { id: ToolCategory; name: string; description: string; 
 
 export const TOOLS: ToolDef[] = [
   // Text Tools
-  { id: "word-counter", name: "Word Counter", slug: "word-counter", description: "Count words, characters, sentences, and paragraphs in real-time.", icon: Type, category: "text", isPopular: true },
-  { id: "case-converter", name: "Case Converter", slug: "case-converter", description: "Convert text between UPPERCASE, lowercase, camelCase, and more.", icon: ArrowLeftRight, category: "text" },
-  { id: "lorem-ipsum", name: "Lorem Ipsum Generator", slug: "lorem-ipsum", description: "Generate placeholder text for your designs.", icon: FileText, category: "text" },
-  { id: "markdown-preview", name: "Markdown Preview", slug: "markdown-preview", description: "Write markdown and see a live rendered preview side-by-side.", icon: BookOpen, category: "text" },
-  { id: "text-diff", name: "Text Diff", slug: "text-diff", description: "Compare two texts and highlight all the differences.", icon: SplitSquareHorizontal, category: "text" },
-  
+  {
+    id: "word-counter", name: "Word Counter", slug: "word-counter", category: "text", isPopular: true, icon: Type,
+    description: "Count words, characters, sentences, and paragraphs in real-time.",
+    seoTitle: "Free Word Counter — Count Words, Characters & Sentences Online | Toolora",
+    seoDescription: "Instantly count words, characters, sentences, paragraphs and reading time. Free, private, 100% browser-based. No signup needed.",
+  },
+  {
+    id: "case-converter", name: "Case Converter", slug: "case-converter", category: "text", icon: ArrowLeftRight,
+    description: "Convert text between UPPERCASE, lowercase, camelCase, and more.",
+    seoTitle: "Free Case Converter — UPPERCASE, lowercase, camelCase & more | Toolora",
+    seoDescription: "Convert text between UPPERCASE, lowercase, Title Case, camelCase, snake_case and PascalCase instantly. Free online text case converter.",
+  },
+  {
+    id: "lorem-ipsum", name: "Lorem Ipsum Generator", slug: "lorem-ipsum", category: "text", icon: FileText,
+    description: "Generate placeholder text for your designs.",
+    seoTitle: "Free Lorem Ipsum Generator — Placeholder Text for Designers | Toolora",
+    seoDescription: "Generate Lorem Ipsum placeholder text by paragraphs, sentences, or words. Choose count, customize start, copy instantly. Free online tool.",
+  },
+  {
+    id: "markdown-preview", name: "Markdown Preview", slug: "markdown-preview", category: "text", icon: BookOpen,
+    description: "Write markdown and see a live rendered preview side-by-side.",
+    seoTitle: "Free Markdown Preview — Live Markdown Editor & Renderer Online | Toolora",
+    seoDescription: "Write markdown and see a live side-by-side HTML preview. Free online markdown editor with instant rendering. No signup required.",
+  },
+  {
+    id: "text-diff", name: "Text Diff", slug: "text-diff", category: "text", icon: SplitSquareHorizontal,
+    description: "Compare two texts and highlight all the differences.",
+    seoTitle: "Free Text Diff Tool — Compare Two Texts Online & Find Differences | Toolora",
+    seoDescription: "Compare two blocks of text and highlight additions, removals and unchanged lines. Free online text diff and comparison tool.",
+  },
+
   // Developer Tools
-  { id: "json-formatter", name: "JSON Formatter", slug: "json-formatter", description: "Format, validate, and minify JSON data.", icon: FileJson, category: "developer", isPopular: true },
-  { id: "base64", name: "Base64 Encoder/Decoder", slug: "base64", description: "Encode text to Base64 or decode it back.", icon: Hash, category: "developer" },
-  { id: "url-encoder", name: "URL Encoder/Decoder", slug: "url-encoder", description: "Safely encode or decode URL parameters.", icon: LinkIcon, category: "developer" },
-  { id: "hash-generator", name: "Hash Generator", slug: "hash-generator", description: "Generate MD5, SHA-1, SHA-256 hashes.", icon: Fingerprint, category: "developer" },
-  { id: "uuid-generator", name: "UUID Generator", slug: "uuid-generator", description: "Generate random UUIDs (v4) in bulk.", icon: KeyRound, category: "developer" },
-  
+  {
+    id: "json-formatter", name: "JSON Formatter", slug: "json-formatter", category: "developer", isPopular: true, icon: FileJson,
+    description: "Format, validate, and minify JSON data.",
+    seoTitle: "Free JSON Formatter & Validator — Pretty Print & Minify JSON Online | Toolora",
+    seoDescription: "Format and validate JSON instantly. Pretty-print messy JSON or minify it for production. Free online JSON formatter with error detection.",
+  },
+  {
+    id: "base64", name: "Base64 Encoder/Decoder", slug: "base64", category: "developer", icon: Hash,
+    description: "Encode text to Base64 or decode it back.",
+    seoTitle: "Free Base64 Encoder & Decoder — Encode or Decode Base64 Online | Toolora",
+    seoDescription: "Encode text to Base64 or decode Base64 strings back to plain text. Free online Base64 encoder/decoder tool. No data sent to servers.",
+  },
+  {
+    id: "url-encoder", name: "URL Encoder/Decoder", slug: "url-encoder", category: "developer", icon: LinkIcon,
+    description: "Safely encode or decode URL parameters.",
+    seoTitle: "Free URL Encoder & Decoder — Encode or Decode URLs Online | Toolora",
+    seoDescription: "Encode special characters in URLs or decode percent-encoded strings. Free online URL encoder and decoder tool for developers.",
+  },
+  {
+    id: "hash-generator", name: "Hash Generator", slug: "hash-generator", category: "developer", icon: Fingerprint,
+    description: "Generate MD5, SHA-1, SHA-256 hashes.",
+    seoTitle: "Free Hash Generator — MD5, SHA-1, SHA-256 Hash Online | Toolora",
+    seoDescription: "Generate MD5, SHA-1, and SHA-256 cryptographic hashes from any text. Free online hash generator. All processing done in your browser.",
+  },
+  {
+    id: "uuid-generator", name: "UUID Generator", slug: "uuid-generator", category: "developer", icon: KeyRound,
+    description: "Generate random UUIDs (v4) in bulk.",
+    seoTitle: "Free UUID Generator — Generate Random UUIDs v4 Online in Bulk | Toolora",
+    seoDescription: "Generate one or multiple UUID v4 strings instantly. Free online UUID generator for developers. Copy all with one click.",
+  },
+
   // Productivity Tools
-  { id: "qr-generator", name: "QR Code Generator", slug: "qr-generator", description: "Create customized QR codes from URLs or text.", icon: QrCode, category: "productivity", isPopular: true },
-  { id: "password-generator", name: "Password Generator", slug: "password-generator", description: "Create highly secure, random passwords.", icon: Shield, category: "productivity", isPopular: true },
-  { id: "unit-converter", name: "Unit Converter", slug: "unit-converter", description: "Convert between various units of measurement.", icon: RefreshCcw, category: "productivity" },
-  { id: "color-picker", name: "Color Converter", slug: "color-picker", description: "Convert between HEX, RGB, and HSL color formats.", icon: Palette, category: "productivity" },
-  { id: "timestamp-converter", name: "Timestamp Converter", slug: "timestamp-converter", description: "Convert Unix timestamps to human-readable dates.", icon: Clock, category: "productivity" },
+  {
+    id: "qr-generator", name: "QR Code Generator", slug: "qr-generator", category: "productivity", isPopular: true, icon: QrCode,
+    description: "Create customized QR codes from URLs or text.",
+    seoTitle: "Free QR Code Generator — Create Custom QR Codes Online | Toolora",
+    seoDescription: "Generate QR codes from any URL or text. Free online QR code generator with custom colors. Download as PNG instantly.",
+  },
+  {
+    id: "password-generator", name: "Password Generator", slug: "password-generator", category: "productivity", isPopular: true, icon: Shield,
+    description: "Create highly secure, random passwords.",
+    seoTitle: "Free Password Generator — Create Strong, Secure Passwords Online | Toolora",
+    seoDescription: "Generate strong random passwords with custom length, uppercase, numbers and symbols. Free secure password generator — nothing is stored or transmitted.",
+  },
+  {
+    id: "unit-converter", name: "Unit Converter", slug: "unit-converter", category: "productivity", icon: RefreshCcw,
+    description: "Convert between various units of measurement.",
+    seoTitle: "Free Unit Converter — Length, Weight, Temperature & More Online | Toolora",
+    seoDescription: "Convert between units of length, weight, temperature, area, speed, and volume. Free online unit converter for everyday and scientific use.",
+  },
+  {
+    id: "color-picker", name: "Color Converter", slug: "color-picker", category: "productivity", icon: Palette,
+    description: "Convert between HEX, RGB, and HSL color formats.",
+    seoTitle: "Free Color Converter — HEX to RGB to HSL Color Picker Online | Toolora",
+    seoDescription: "Convert colors between HEX, RGB, and HSL formats. Use the color picker, RGB sliders, or type a hex code. Free online color converter tool.",
+  },
+  {
+    id: "timestamp-converter", name: "Timestamp Converter", slug: "timestamp-converter", category: "productivity", icon: Clock,
+    description: "Convert Unix timestamps to human-readable dates.",
+    seoTitle: "Free Unix Timestamp Converter — Convert Epoch Time Online | Toolora",
+    seoDescription: "Convert Unix timestamps to human-readable dates and times. See ISO 8601, UTC, relative time and more. Free online epoch timestamp converter.",
+  },
 
-  // Image Tools (Canvas based)
-  { id: "image-resize", name: "Image Resizer", slug: "image-resize", description: "Change the dimensions of any image instantly.", icon: ImageIcon, category: "image", isPopular: true },
-  { id: "image-compress", name: "Image Compressor", slug: "image-compress", description: "Reduce image file size while maintaining quality.", icon: Minimize, category: "image" },
-  { id: "image-convert", name: "Image Converter", slug: "image-convert", description: "Convert images between PNG, JPG, WebP, etc.", icon: RefreshCcw, category: "image" },
+  // Image Tools
+  {
+    id: "image-resize", name: "Image Resizer", slug: "image-resize", category: "image", isPopular: true, icon: ImageIcon,
+    description: "Change the dimensions of any image instantly.",
+    seoTitle: "Free Image Resizer — Resize Images Online Without Uploading | Toolora",
+    seoDescription: "Resize any image by pixels or percentage. Lock aspect ratio, set custom dimensions, adjust quality. Free online image resizer — files never leave your device.",
+  },
+  {
+    id: "image-compress", name: "Image Compressor", slug: "image-compress", category: "image", icon: Minimize,
+    description: "Reduce image file size while maintaining quality.",
+    seoTitle: "Free Image Compressor — Compress Images Online Without Losing Quality | Toolora",
+    seoDescription: "Compress JPG, PNG and WebP images and reduce file size without visible quality loss. Free online image compressor — 100% private, browser-based.",
+  },
+  {
+    id: "image-convert", name: "Image Converter", slug: "image-convert", category: "image", icon: RefreshCcw,
+    description: "Convert images between PNG, JPG, WebP, etc.",
+    seoTitle: "Free Image Converter — Convert JPG, PNG, WebP Online | Toolora",
+    seoDescription: "Convert images between JPEG, PNG, and WebP formats instantly. Free online image format converter. No uploads, no registration, fully private.",
+  },
 
-  // PDF Tools (pdf-lib based)
-  { id: "pdf-merge", name: "Merge PDF", slug: "pdf-merge", description: "Combine multiple PDF files into a single document.", icon: Layers, category: "pdf", isPopular: true },
-  { id: "pdf-split", name: "Split PDF", slug: "pdf-split", description: "Extract pages from a PDF or split it into multiple files.", icon: SplitSquareHorizontal, category: "pdf" },
+  // PDF Tools
+  {
+    id: "pdf-merge", name: "Merge PDF", slug: "pdf-merge", category: "pdf", isPopular: true, icon: Layers,
+    description: "Combine multiple PDF files into a single document.",
+    seoTitle: "Free PDF Merger — Combine & Merge PDF Files Online | Toolora",
+    seoDescription: "Merge multiple PDF files into one document. Drag, reorder and combine PDFs in seconds. Free online PDF merger — files never leave your browser.",
+  },
+  {
+    id: "pdf-split", name: "Split PDF", slug: "pdf-split", category: "pdf", icon: SplitSquareHorizontal,
+    description: "Extract pages from a PDF or split it into multiple files.",
+    seoTitle: "Free PDF Splitter — Split or Extract Pages from PDF Online | Toolora",
+    seoDescription: "Split a PDF into individual pages, extract page ranges, or divide every N pages. Free online PDF splitter — fully client-side, nothing uploaded.",
+  },
 ];
 
 export const getToolBySlug = (slug: string) => TOOLS.find(t => t.slug === slug);

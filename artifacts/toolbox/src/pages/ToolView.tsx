@@ -61,6 +61,21 @@ export default function ToolView() {
   
   if (!tool || !category) return <NotFound />;
 
+  // Set unique page title + meta description per tool for SEO
+  useEffect(() => {
+    document.title = tool.seoTitle;
+    let metaDesc = document.querySelector('meta[name="description"]');
+    if (!metaDesc) {
+      metaDesc = document.createElement("meta");
+      metaDesc.setAttribute("name", "description");
+      document.head.appendChild(metaDesc);
+    }
+    metaDesc.setAttribute("content", tool.seoDescription);
+    return () => {
+      document.title = "Toolora - Free Online Tools";
+    };
+  }, [tool.slug]);
+
   // Fire usage tracking once per visit
   useEffect(() => {
     trackMutation.mutate({ slug: tool.slug });

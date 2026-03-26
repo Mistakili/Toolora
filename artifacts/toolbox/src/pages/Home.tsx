@@ -52,13 +52,40 @@ export default function Home() {
                 Format JSON, convert PDFs, resize images, and generate passwords. All processing happens locally in your browser for maximum privacy and speed.
               </p>
               
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                    <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <Link href="#categories" className="px-8 py-4 bg-primary text-primary-foreground font-semibold rounded-full shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/40 hover:-translate-y-0.5 transition-all duration-300">
                   Explore Tools
                 </Link>
                 <div className="flex items-center gap-2 text-sm text-muted-foreground px-6 py-4">
                   <Shield className="w-5 h-5 text-green-500" />
                   100% Client-Side Processing
+                </div>
+              </div>
+
+              {/* Stats bar */}
+              <div className="flex flex-wrap items-center justify-center gap-8 mt-12 pt-8 border-t border-border/40">
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-foreground">{TOOLS.length}+</div>
+                  <div className="text-xs text-muted-foreground uppercase tracking-wider mt-0.5">Free Tools</div>
+                </div>
+                <div className="w-px h-8 bg-border hidden sm:block" />
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-foreground">
+                    {popularData?.tools
+                      ? (popularData.tools.reduce((sum: number, t: any) => sum + (t.usageCount ?? 0), 0)).toLocaleString()
+                      : "—"}
+                  </div>
+                  <div className="text-xs text-muted-foreground uppercase tracking-wider mt-0.5">Tools Used</div>
+                </div>
+                <div className="w-px h-8 bg-border hidden sm:block" />
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-foreground">0kb</div>
+                  <div className="text-xs text-muted-foreground uppercase tracking-wider mt-0.5">Data Uploaded</div>
+                </div>
+                <div className="w-px h-8 bg-border hidden sm:block" />
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-foreground">Free</div>
+                  <div className="text-xs text-muted-foreground uppercase tracking-wider mt-0.5">Forever</div>
                 </div>
               </div>
             </motion.div>
