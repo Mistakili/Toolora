@@ -1,0 +1,26 @@
+packages:
+  "framer-motion": "Smooth entry animations and page transitions"
+  "qrcode": "Client-side QR code generation"
+  "crypto-js": "Client-side hashing for Developer tools"
+  "@types/crypto-js": "Types for crypto-js"
+  "pdf-lib": "Client-side PDF manipulation (merge, split)"
+  "marked": "Client-side markdown parsing"
+  "@types/marked": "Types for marked"
+  "react-dropzone": "Beautiful drag and drop file uploads"
+  "uuid": "UUID generation"
+  "@types/uuid": "Types for uuid"
+  "clsx": "Utility for constructing className strings conditionally"
+  "tailwind-merge": "Utility function to efficiently merge Tailwind CSS classes"
+  "date-fns": "Date formatting for timestamp converter"
+
+images:
+  - path: "artifacts/toolbox/public/images/hero-bg.png"
+    description: "Dark, abstract geometric mesh gradient background in deep indigo, violet, and charcoal colors. Very professional, sleek, and modern tooling aesthetic."
+    aspect_ratio: "16:9"
+  - path: "artifacts/toolbox/public/images/privacy-shield.png"
+    description: "A 3D glassmorphic glowing shield icon symbolizing privacy and local browser processing, sitting on a dark background with subtle neon lighting."
+    aspect_ratio: "1:1"
+
+notes:
+  - All heavy processing (PDFs, Images) is done client-side using Web APIs or specific libraries to ensure privacy.
+  - API calls are minimal: fetching popular tools list and fire-and-forget usage tracking.

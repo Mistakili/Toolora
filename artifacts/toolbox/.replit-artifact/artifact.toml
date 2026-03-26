@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "ToolBox - Free Online Tools"
+version = "1.0.0"
+id = "artifacts/toolbox"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 23584
+
+[services.development]
+run = "pnpm --filter @workspace/toolbox run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/toolbox", "run", "build" ]
+publicDir = "artifacts/toolbox/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "23584"
+BASE_PATH = "/"

@@ -1,15 +1,16 @@
 openapi: 3.1.0
 info:
-  # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: ToolBox API - Free Online Tools Platform
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: tools
+    description: Tool analytics and metadata
 paths:
   /healthz:
     get:
@@ -24,6 +25,38 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /tools/popular:
+    get:
+      operationId: getPopularTools
+      tags: [tools]
+      summary: Get popular tools
+      description: Returns list of most-used tools with usage counts
+      responses:
+        "200":
+          description: Popular tools list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PopularToolsResponse"
+  /tools/{slug}/use:
+    post:
+      operationId: trackToolUsage
+      tags: [tools]
+      summary: Track tool usage
+      description: Increment usage counter for a tool
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Usage tracked
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TrackUsageResponse"
 components:
   schemas:
     HealthStatus:
@@ -33,4 +66,32 @@ components:
           type: string
       required:
         - status
-
+    PopularTool:
+      type: object
+      properties:
+        slug:
+          type: string
+        usageCount:
+          type: integer
+      required:
+        - slug
+        - usageCount
+    PopularToolsResponse:
+      type: object
+      properties:
+        tools:
+          type: array
+          items:
+            $ref: "#/components/schemas/PopularTool"
+      required:
+        - tools
+    TrackUsageResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        usageCount:
+          type: integer
+      required:
+        - success
+        - usageCount
