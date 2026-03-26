@@ -1,6 +1,6 @@
 import { Router, type IRouter } from "express";
 import { db } from "@workspace/db";
-import { toolUsageTable } from "@workspace/db/schema";
+import { toolUsageTable, toolHistoryTable } from "@workspace/db/schema";
 import { TrackToolUsageParams, TrackToolUsageResponse, GetPopularToolsResponse } from "@workspace/api-zod";
 import { eq, desc } from "drizzle-orm";
 
@@ -52,6 +52,14 @@ router.post("/:slug/use", async (req, res) => {
         .where(eq(toolUsageTable.slug, slug))
         .returning();
       usageCount = updated[0].usageCount;
+    }
+
+    // Record per-user history if authenticated
+    if (req.isAuthenticated()) {
+      await db.insert(toolHistoryTable).values({
+        userId: req.user.id,
+        toolSlug: slug,
+      });
     }
 
     const data = TrackToolUsageResponse.parse({ success: true, usageCount });

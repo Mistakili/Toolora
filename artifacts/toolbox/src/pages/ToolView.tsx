@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useRoute, Link } from "wouter";
 import { ChevronRight, Home, ShieldCheck } from "lucide-react";
+import { ShareModal } from "@/components/shared/ShareModal";
 import { getToolBySlug, getCategoryById, getToolsByCategory } from "@/lib/tools-config";
 import NotFound from "./not-found";
 import { useTrackToolUsage } from "@workspace/api-client-react";
@@ -100,14 +101,17 @@ export default function ToolView() {
         {/* Main Tool Area */}
         <div className="lg:col-span-3 space-y-8">
           
-          <div className="flex items-start justify-between">
+          <div className="flex items-start justify-between gap-4">
             <div>
               <h1 className="text-3xl md:text-4xl font-display font-bold mb-3">{tool.name}</h1>
               <p className="text-lg text-muted-foreground">{tool.description}</p>
             </div>
-            <div className="hidden sm:flex items-center gap-2 bg-muted/50 px-4 py-2 rounded-xl text-sm border border-border">
-              <ShieldCheck className="w-4 h-4 text-green-500" />
-              <span>Processed Locally</span>
+            <div className="shrink-0 flex flex-col sm:flex-row items-end sm:items-center gap-2">
+              <div className="hidden sm:flex items-center gap-2 bg-muted/50 px-4 py-2 rounded-xl text-sm border border-border">
+                <ShieldCheck className="w-4 h-4 text-green-500" />
+                <span>Processed Locally</span>
+              </div>
+              <ShareModal toolName={tool.name} toolUrl={window.location.href} />
             </div>
           </div>
 

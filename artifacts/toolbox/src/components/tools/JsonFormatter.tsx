@@ -3,9 +3,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Copy, Check, FileJson, AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { useChainedInput } from "@/hooks/useChainedInput";
 
 export default function JsonFormatter() {
-  const [input, setInput] = useState("");
+  const chained = useChainedInput();
+  const [input, setInput] = useState(chained);
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
 

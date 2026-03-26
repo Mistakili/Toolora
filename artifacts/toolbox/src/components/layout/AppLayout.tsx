@@ -1,16 +1,30 @@
-import { ReactNode, useState } from "react";
+import { ReactNode, useState, useRef, useEffect } from "react";
 import { Link, useLocation } from "wouter";
-import { Settings2, Sparkles, Moon, Sun, Search, Menu, X, ShieldCheck } from "lucide-react";
+import { Settings2, Sparkles, Moon, Sun, Search, Menu, X, ShieldCheck, History, LogOut, LogIn } from "lucide-react";
 import { useTheme } from "../ThemeProvider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { TOOLS } from "@/lib/tools-config";
+import { useAuth } from "@workspace/replit-auth-web";
 
 export function AppLayout({ children }: { children: ReactNode }) {
   const { theme, setTheme } = useTheme();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [, setLocation] = useLocation();
+  const { user, isAuthenticated, login, logout } = useAuth();
+  const userMenuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) {
+        setUserMenuOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
 
   const searchResults = searchQuery 
     ? TOOLS.filter(t => t.name.toLowerCase().includes(searchQuery.toLowerCase()) || t.description.toLowerCase().includes(searchQuery.toLowerCase()))
@@ -82,6 +96,47 @@ export function AppLayout({ children }: { children: ReactNode }) {
             >
               {theme === "dark" ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
             </Button>
+
+            {/* Auth button */}
+            {isAuthenticated && user ? (
+              <div className="relative" ref={userMenuRef}>
+                <button
+                  onClick={() => setUserMenuOpen(v => !v)}
+                  className="flex items-center gap-2 rounded-full hover:bg-muted transition-colors px-2 py-1"
+                >
+                  {user.profileImageUrl ? (
+                    <img src={user.profileImageUrl} alt={user.firstName ?? "User"} className="w-7 h-7 rounded-full object-cover" />
+                  ) : (
+                    <div className="w-7 h-7 rounded-full bg-primary/20 flex items-center justify-center text-primary text-xs font-semibold">
+                      {(user.firstName?.[0] ?? user.email?.[0] ?? "U").toUpperCase()}
+                    </div>
+                  )}
+                </button>
+                {userMenuOpen && (
+                  <div className="absolute right-0 top-full mt-2 w-52 bg-popover border border-border rounded-xl shadow-2xl py-1 z-50">
+                    <div className="px-3 py-2 border-b border-border">
+                      <div className="text-sm font-medium truncate">{user.firstName || "User"}</div>
+                      <div className="text-xs text-muted-foreground truncate">{user.email}</div>
+                    </div>
+                    <Link href="/history" onClick={() => setUserMenuOpen(false)}>
+                      <div className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-muted transition-colors cursor-pointer">
+                        <History className="w-4 h-4" /> Tool History
+                      </div>
+                    </Link>
+                    <button onClick={logout} className="w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-muted transition-colors text-left text-destructive">
+                      <LogOut className="w-4 h-4" /> Sign Out
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <button
+                onClick={login}
+                className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-full border border-border hover:bg-muted transition-colors"
+              >
+                <LogIn className="w-3.5 h-3.5" /> Sign In
+              </button>
+            )}
             
             <Button 
               variant="ghost" 
@@ -155,11 +210,14 @@ export function AppLayout({ children }: { children: ReactNode }) {
             </ul>
           </div>
           <div>
-            <h4 className="font-semibold mb-4">Legal</h4>
+            <h4 className="font-semibold mb-4">Resources</h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
+              <li><Link href="/api-docs" className="hover:text-foreground transition-colors">API Docs</Link></li>
+              <li><Link href="/extension" className="hover:text-foreground transition-colors">Browser Extension</Link></li>
+              <li><Link href="/history" className="hover:text-foreground transition-colors">My Tool History</Link></li>
               <li><Link href="/privacy" className="hover:text-foreground transition-colors">Privacy Policy</Link></li>
               <li><Link href="/terms" className="hover:text-foreground transition-colors">Terms of Service</Link></li>
-              <li><div className="mt-4 p-3 bg-primary/10 text-primary text-xs rounded-lg border border-primary/20 flex items-start gap-2">
+              <li><div className="mt-3 p-3 bg-primary/10 text-primary text-xs rounded-lg border border-primary/20 flex items-start gap-2">
                 <ShieldCheck className="w-4 h-4 shrink-0 mt-0.5" />
                 All processing happens in your browser. No files are uploaded to our servers.
               </div></li>

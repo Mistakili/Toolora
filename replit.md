@@ -65,10 +65,20 @@ React + Vite frontend for **Toolora** — a free online tools platform with 20 f
   - Image: Image Resizer, Image Compressor, Image Converter (JPG/PNG/WebP)
   - PDF: PDF Merge, PDF Split
 - **Usage tracking**: fires POST `/api/tools/{slug}/use` on every tool visit
+- **"100x" features**:
+  - **Embed/Share**: `ShareModal.tsx` — direct URL tab + iframe embed code tab; Share button on all tool pages
+  - **Auth**: Replit Auth (OIDC) via `@workspace/replit-auth-web`; Sign In button / user avatar + dropdown in navbar
+  - **History**: `/history` page shows recent tool usage per user (stored in `toolHistoryTable`)
+  - **Tool Chaining**: `ChainToolButton` + `useChainedInput` hook; Word Counter + JSON Formatter have chain button; target tool receives output via `?input=` URL param
+  - **Browser Extension**: Manifest V3 Chrome extension lives in `artifacts/extension/`; install page at `/extension`
+  - **API Docs**: `/api-docs` page documents all public endpoints; no key required
 - **Key files**:
   - `src/lib/tools-config.ts` — TOOLS array (must match ToolView dispatcher)
   - `src/pages/ToolView.tsx` — TOOL_COMPONENTS map + renders tool pages
   - `src/components/tools/` — individual tool components
+  - `src/components/shared/ChainToolButton.tsx` — chain tool button
+  - `src/components/shared/ShareModal.tsx` — share/embed modal
+  - `src/hooks/useChainedInput.ts` — reads `?input=` URL param on mount
 - **Key packages**: qrcode, crypto-js, marked, react-dropzone, uuid, date-fns, pdf-lib, framer-motion
 
 ## Packages

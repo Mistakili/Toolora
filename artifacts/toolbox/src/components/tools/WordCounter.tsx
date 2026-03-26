@@ -1,8 +1,11 @@
 import { useState, useMemo } from "react";
 import { Textarea } from "@/components/ui/textarea";
+import { useChainedInput } from "@/hooks/useChainedInput";
+import { ChainToolButton } from "@/components/shared/ChainToolButton";
 
 export default function WordCounter() {
-  const [text, setText] = useState("");
+  const chained = useChainedInput();
+  const [text, setText] = useState(chained);
 
   const stats = useMemo(() => {
     const trimmed = text.trim();
@@ -54,6 +57,11 @@ export default function WordCounter() {
           </button>
         )}
       </div>
+      {text && (
+        <div className="flex justify-end">
+          <ChainToolButton currentSlug="word-counter" outputText={text} />
+        </div>
+      )}
     </div>
   );
 }
