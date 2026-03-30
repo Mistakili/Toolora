@@ -4,7 +4,7 @@ import { db, apiKeysTable, apiUsageTable, tooloraUsersTable } from "@workspace/d
 import { eq, and, sql } from "drizzle-orm";
 
 export const TIER_LIMITS: Record<string, number> = {
-  free: 50,
+  free: 200,
   pro: 5000,
   team: 50000,
 };
@@ -97,6 +97,14 @@ export async function requireApiKey(req: Request, res: Response, next: NextFunct
   }
 
   req.apiKey = { id: keyRow.id, userId: keyRow.userId!, tier };
+
+  // Warn at 80%+ so developers can act before hitting the wall
+  const usagePct = used / limit;
+  if (usagePct >= 0.8) {
+    res.setHeader("X-Toolora-Usage-Warning", `${used}/${limit} calls used this month (${Math.round(usagePct * 100)}%). Upgrade at https://toolora.replit.app/pricing`);
+    res.setHeader("X-Toolora-Usage-Pct", String(Math.round(usagePct * 100)));
+  }
+
   next();
 }
 

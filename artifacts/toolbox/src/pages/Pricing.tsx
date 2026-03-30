@@ -7,11 +7,11 @@ const TIERS = [
     id: "free",
     name: "Free",
     price: 0,
-    calls: 50,
+    calls: 200,
     color: "border-zinc-700",
     badge: "",
     features: [
-      "50 API calls / month",
+      "200 API calls / month",
       "10 MCP tools (Claude, Cursor)",
       "All standard tools",
       "PDF text extraction",
@@ -69,7 +69,7 @@ export default function Pricing() {
 
   useSEO({
     title: "Pricing — Toolora API",
-    description: "Free tier with 50 calls/month. Pro at $19/month for 5,000 calls. OCR, DOCX, Excel, and more.",
+    description: "Free tier with 200 calls/month. Pro at $19/month for 5,000 calls. OCR, DOCX, Excel, audio transcription, and more.",
   });
 
   const BASE = import.meta.env.BASE_URL.replace(/\/$/, "");

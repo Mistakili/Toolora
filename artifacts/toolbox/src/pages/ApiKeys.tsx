@@ -132,14 +132,35 @@ export default function ApiKeys() {
             </div>
             <div className="w-full bg-zinc-800 rounded-full h-2">
               <div
-                className={`h-2 rounded-full transition-all ${pct > 90 ? "bg-red-500" : pct > 70 ? "bg-amber-500" : "bg-violet-500"}`}
+                className={`h-2 rounded-full transition-all ${pct >= 100 ? "bg-red-500" : pct >= 80 ? "bg-amber-500" : "bg-violet-500"}`}
                 style={{ width: `${Math.min(pct, 100)}%` }}
               />
             </div>
-            {data.tier === "free" && (
+            {pct >= 80 && pct < 100 && (
+              <div className="mt-3 flex items-start gap-2 bg-amber-950/40 border border-amber-700/50 rounded-lg px-3 py-2">
+                <span className="text-amber-400 text-sm mt-0.5">⚠</span>
+                <p className="text-xs text-amber-300">
+                  You've used <strong>{pct}%</strong> of your monthly calls.{" "}
+                  {data.tier === "free"
+                    ? <><a href={`${BASE}/pricing`} className="underline hover:text-amber-200">Upgrade to Pro</a> to get 5,000 calls/month before you hit the limit.</>
+                    : <>Contact us if you need a higher limit.</>
+                  }
+                </p>
+              </div>
+            )}
+            {pct >= 100 && (
+              <div className="mt-3 flex items-start gap-2 bg-red-950/40 border border-red-700/50 rounded-lg px-3 py-2">
+                <span className="text-red-400 text-sm mt-0.5">✕</span>
+                <p className="text-xs text-red-300">
+                  Monthly limit reached. API calls are blocked until next month.{" "}
+                  <a href={`${BASE}/pricing`} className="underline hover:text-red-200">Upgrade now</a> to restore access immediately.
+                </p>
+              </div>
+            )}
+            {pct < 80 && data.tier === "free" && (
               <p className="text-xs text-zinc-500 mt-2">
-                On the free tier.{" "}
-                <a href={`${BASE}/pricing`} className="text-violet-400 hover:underline">Upgrade to Pro</a> for 5,000 calls/month + OCR, DOCX, and Excel tools.
+                Free tier · 200 calls/month.{" "}
+                <a href={`${BASE}/pricing`} className="text-violet-400 hover:underline">Upgrade to Pro</a> for 5,000 calls/month + OCR, audio transcription, DOCX and Excel tools.
               </p>
             )}
           </div>

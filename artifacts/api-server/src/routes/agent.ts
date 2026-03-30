@@ -304,7 +304,7 @@ function buildManifest(req: Request) {
       },
       apiKey: {
         description: "Subscribe for monthly call quota. Add Authorization: Bearer sk_toolora_... header.",
-        tiers: { free: "50 calls/mo", pro: "5,000 calls/mo ($19)", team: "50,000 calls/mo ($79)" },
+        tiers: { free: "200 calls/mo", pro: "5,000 calls/mo ($19)", team: "50,000 calls/mo ($79)" },
         signup: `${base}/pricing`,
       },
     },
