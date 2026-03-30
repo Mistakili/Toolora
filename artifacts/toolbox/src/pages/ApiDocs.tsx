@@ -64,7 +64,7 @@ export default function ApiDocs() {
     : "https://toolora-api.replit.app";
 
   const PRICE = "0.5";
-  const NETWORK = "stellar:testnet";
+  const NETWORK = "stellar:mainnet";
 
   const paymentPayloadExample = `{
   "txHash": "<your_stellar_tx_hash>",
