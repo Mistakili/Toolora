@@ -1,15 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useLocation } from "wouter";
 
-function getApiBase() {
-  if (typeof window === "undefined") return "https://toolora-api.replit.app";
-  const { hostname } = window.location;
-  if (hostname === "toolora.dev" || hostname.endsWith(".replit.app")) {
-    return "https://toolora-api.replit.app";
-  }
-  return "";
-}
-const API_BASE = getApiBase();
+const API_BASE = "";
 
 function getSessionId(): string {
   const key = "toolora_session_id";

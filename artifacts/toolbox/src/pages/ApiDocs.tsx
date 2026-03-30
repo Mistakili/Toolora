@@ -59,14 +59,7 @@ export default function ApiDocs() {
     document.title = "API Docs | Toolora";
   }, []);
 
-  const apiBase = (() => {
-    if (typeof window === "undefined") return "https://toolora-api.replit.app";
-    const { hostname } = window.location;
-    if (hostname === "toolora.dev" || hostname.endsWith(".replit.app")) {
-      return "https://toolora-api.replit.app";
-    }
-    return window.location.origin.replace(/:\d+$/, "");
-  })();
+  const apiBase = "";
 
   const PRICE_XLM  = "0.5";
   const PRICE_USDC = "0.01";
