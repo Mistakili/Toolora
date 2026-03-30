@@ -18,9 +18,15 @@ export interface SessionData {
 }
 
 export function isAdminSession(session: SessionData): boolean {
+  const adminEmail = process.env.ADMIN_EMAIL;
+  if (adminEmail && session.user?.email) {
+    return session.user.email.toLowerCase() === adminEmail.toLowerCase();
+  }
   const adminUsername = process.env.REPL_OWNER;
-  if (!adminUsername || !session.username) return false;
-  return session.username.toLowerCase() === adminUsername.toLowerCase();
+  if (adminUsername && session.username) {
+    return session.username.toLowerCase() === adminUsername.toLowerCase();
+  }
+  return false;
 }
 
 let oidcConfig: client.Configuration | null = null;
