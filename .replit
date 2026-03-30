@@ -24,3 +24,10 @@ expertMode = true
 [postMerge]
 path = "scripts/post-merge.sh"
 timeoutMs = 20000
+
+[userenv]
+
+[userenv.shared]
+STELLAR_RECEIVER_ADDRESS = "GBKLZIM2Z4MT6K5TWQIQSCNSZD5TPZQNBKNORQ6LGTE37AMFLGC46OIO"
+STELLAR_NETWORK = "testnet"
+AGENT_API_PRICE_XLM = "0.5"

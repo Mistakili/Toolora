@@ -60,7 +60,7 @@ export default function ApiDocs() {
   }, []);
 
   const apiBase = typeof window !== "undefined"
-    ? window.location.origin.replace(/:\d+$/, ":8080")
+    ? window.location.origin.replace(/toolora\.replit\.app/, "toolora-api.replit.app").replace(/:\d+$/, ":8080")
     : "https://toolora-api.replit.app";
 
   const PRICE = "0.5";
