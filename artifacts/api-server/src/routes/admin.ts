@@ -1,19 +1,24 @@
 import { Router, type IRouter, type Request, type Response } from "express";
 import { db } from "@workspace/db";
-import { agentPaymentsTable } from "@workspace/db/schema";
-import { desc, sum, count, sql } from "drizzle-orm";
+import { agentPaymentsTable, pageViewsTable } from "@workspace/db/schema";
+import { desc, sum, count, sql, ne } from "drizzle-orm";
 
 const router: IRouter = Router();
 
-// GET /api/admin/stats — requires authentication
-router.get("/stats", async (req: Request, res: Response) => {
+function requireAuth(req: Request, res: Response): boolean {
   if (!req.isAuthenticated()) {
-    res.status(401).json({ error: "Unauthorized. Sign in to view admin stats." });
-    return;
+    res.status(401).json({ error: "Unauthorized. Sign in to view admin data." });
+    return false;
   }
+  return true;
+}
+
+// ─── GET /api/admin/stats — agent API revenue ────────────────────────────────
+
+router.get("/stats", async (req: Request, res: Response) => {
+  if (!requireAuth(req, res)) return;
 
   try {
-    // Per-endpoint aggregates
     const byEndpoint = await db
       .select({
         endpoint: agentPaymentsTable.endpoint,
@@ -24,7 +29,6 @@ router.get("/stats", async (req: Request, res: Response) => {
       .groupBy(agentPaymentsTable.endpoint)
       .orderBy(desc(count()));
 
-    // Daily revenue for the last 30 days
     const daily = await db
       .select({
         day: sql<string>`DATE(${agentPaymentsTable.createdAt})`.as("day"),
@@ -36,7 +40,6 @@ router.get("/stats", async (req: Request, res: Response) => {
       .groupBy(sql`DATE(${agentPaymentsTable.createdAt})`)
       .orderBy(sql`DATE(${agentPaymentsTable.createdAt})`);
 
-    // Full recent payments list
     const payments = await db
       .select()
       .from(agentPaymentsTable)
@@ -47,10 +50,7 @@ router.get("/stats", async (req: Request, res: Response) => {
     const totalXlm = byEndpoint.reduce((a, r) => a + parseFloat(r.totalXlm ?? "0"), 0);
 
     res.json({
-      summary: {
-        totalCalls,
-        totalXlmEarned: totalXlm.toFixed(7),
-      },
+      summary: { totalCalls, totalXlmEarned: totalXlm.toFixed(7) },
       byEndpoint: byEndpoint.map((r) => ({
         endpoint: r.endpoint,
         calls: Number(r.calls),
@@ -74,6 +74,152 @@ router.get("/stats", async (req: Request, res: Response) => {
   } catch (err: unknown) {
     req.log.error({ err }, "Admin stats query failed");
     res.status(500).json({ error: "Could not fetch admin stats" });
+  }
+});
+
+// ─── GET /api/admin/analytics — site traffic ─────────────────────────────────
+
+router.get("/analytics", async (req: Request, res: Response) => {
+  if (!requireAuth(req, res)) return;
+
+  try {
+    // Exclude bots from all human-facing metrics
+    const humanFilter = sql`${pageViewsTable.deviceType} != 'bot'`;
+    const thirtyDays = sql`${pageViewsTable.createdAt} >= NOW() - INTERVAL '30 days'`;
+    const sevenDays = sql`${pageViewsTable.createdAt} >= NOW() - INTERVAL '7 days'`;
+
+    // ── Summary ──────────────────────────────────────────────────────────────
+    const [totalRows] = await db
+      .select({ total: count() })
+      .from(pageViewsTable)
+      .where(sql`${humanFilter} AND ${thirtyDays}`);
+
+    const [uniqueSessionRows] = await db
+      .select({ unique: sql<number>`COUNT(DISTINCT ${pageViewsTable.sessionId})` })
+      .from(pageViewsTable)
+      .where(sql`${humanFilter} AND ${thirtyDays} AND ${pageViewsTable.sessionId} IS NOT NULL`);
+
+    const [todayRows] = await db
+      .select({ total: count() })
+      .from(pageViewsTable)
+      .where(sql`${humanFilter} AND DATE(${pageViewsTable.createdAt}) = CURRENT_DATE`);
+
+    const [weekRows] = await db
+      .select({ total: count() })
+      .from(pageViewsTable)
+      .where(sql`${humanFilter} AND ${sevenDays}`);
+
+    const [botRows] = await db
+      .select({ total: count() })
+      .from(pageViewsTable)
+      .where(sql`${pageViewsTable.deviceType} = 'bot' AND ${thirtyDays}`);
+
+    // ── Top pages ─────────────────────────────────────────────────────────────
+    const topPages = await db
+      .select({ path: pageViewsTable.path, views: count() })
+      .from(pageViewsTable)
+      .where(sql`${humanFilter} AND ${thirtyDays}`)
+      .groupBy(pageViewsTable.path)
+      .orderBy(desc(count()))
+      .limit(20);
+
+    // ── Devices ───────────────────────────────────────────────────────────────
+    const byDevice = await db
+      .select({ deviceType: pageViewsTable.deviceType, views: count() })
+      .from(pageViewsTable)
+      .where(sql`${humanFilter} AND ${thirtyDays}`)
+      .groupBy(pageViewsTable.deviceType)
+      .orderBy(desc(count()));
+
+    // ── Browsers ──────────────────────────────────────────────────────────────
+    const byBrowser = await db
+      .select({ browser: pageViewsTable.browser, views: count() })
+      .from(pageViewsTable)
+      .where(sql`${humanFilter} AND ${thirtyDays}`)
+      .groupBy(pageViewsTable.browser)
+      .orderBy(desc(count()))
+      .limit(8);
+
+    // ── OS ────────────────────────────────────────────────────────────────────
+    const byOS = await db
+      .select({ os: pageViewsTable.os, views: count() })
+      .from(pageViewsTable)
+      .where(sql`${humanFilter} AND ${thirtyDays}`)
+      .groupBy(pageViewsTable.os)
+      .orderBy(desc(count()))
+      .limit(8);
+
+    // ── Countries ─────────────────────────────────────────────────────────────
+    const byCountry = await db
+      .select({ country: pageViewsTable.country, views: count() })
+      .from(pageViewsTable)
+      .where(sql`${humanFilter} AND ${thirtyDays} AND ${pageViewsTable.country} IS NOT NULL AND ${pageViewsTable.country} != 'Unknown'`)
+      .groupBy(pageViewsTable.country)
+      .orderBy(desc(count()))
+      .limit(15);
+
+    // ── Cities ────────────────────────────────────────────────────────────────
+    const byCities = await db
+      .select({ city: pageViewsTable.city, country: pageViewsTable.country, views: count() })
+      .from(pageViewsTable)
+      .where(sql`${humanFilter} AND ${thirtyDays} AND ${pageViewsTable.city} IS NOT NULL AND ${pageViewsTable.city} != 'Unknown'`)
+      .groupBy(pageViewsTable.city, pageViewsTable.country)
+      .orderBy(desc(count()))
+      .limit(10);
+
+    // ── Daily trend (last 30 days) ────────────────────────────────────────────
+    const dailyTrend = await db
+      .select({
+        day: sql<string>`DATE(${pageViewsTable.createdAt})`.as("day"),
+        views: count(),
+        sessions: sql<number>`COUNT(DISTINCT ${pageViewsTable.sessionId})`,
+      })
+      .from(pageViewsTable)
+      .where(sql`${humanFilter} AND ${thirtyDays}`)
+      .groupBy(sql`DATE(${pageViewsTable.createdAt})`)
+      .orderBy(sql`DATE(${pageViewsTable.createdAt})`);
+
+    // ── Hourly distribution (all time) ────────────────────────────────────────
+    const hourlyDist = await db
+      .select({
+        hour: sql<number>`EXTRACT(HOUR FROM ${pageViewsTable.createdAt})::int`.as("hour"),
+        views: count(),
+      })
+      .from(pageViewsTable)
+      .where(humanFilter)
+      .groupBy(sql`EXTRACT(HOUR FROM ${pageViewsTable.createdAt})::int`)
+      .orderBy(sql`EXTRACT(HOUR FROM ${pageViewsTable.createdAt})::int`);
+
+    // ── Referrers ─────────────────────────────────────────────────────────────
+    const byReferrer = await db
+      .select({ referrer: pageViewsTable.referrer, views: count() })
+      .from(pageViewsTable)
+      .where(sql`${humanFilter} AND ${thirtyDays} AND ${pageViewsTable.referrer} IS NOT NULL AND ${pageViewsTable.referrer} != ''`)
+      .groupBy(pageViewsTable.referrer)
+      .orderBy(desc(count()))
+      .limit(10);
+
+    res.json({
+      summary: {
+        totalViews30d: Number(totalRows?.total ?? 0),
+        uniqueSessions30d: Number(uniqueSessionRows?.unique ?? 0),
+        todayViews: Number(todayRows?.total ?? 0),
+        weekViews: Number(weekRows?.total ?? 0),
+        botViews30d: Number(botRows?.total ?? 0),
+      },
+      topPages: topPages.map((r) => ({ path: r.path, views: Number(r.views) })),
+      byDevice: byDevice.map((r) => ({ deviceType: r.deviceType ?? "Unknown", views: Number(r.views) })),
+      byBrowser: byBrowser.map((r) => ({ browser: r.browser ?? "Unknown", views: Number(r.views) })),
+      byOS: byOS.map((r) => ({ os: r.os ?? "Unknown", views: Number(r.views) })),
+      byCountry: byCountry.map((r) => ({ country: r.country ?? "Unknown", views: Number(r.views) })),
+      byCities: byCities.map((r) => ({ city: r.city ?? "Unknown", country: r.country ?? "", views: Number(r.views) })),
+      dailyTrend: dailyTrend.map((d) => ({ day: d.day, views: Number(d.views), sessions: Number(d.sessions) })),
+      hourlyDist: hourlyDist.map((h) => ({ hour: Number(h.hour), views: Number(h.views) })),
+      byReferrer: byReferrer.map((r) => ({ referrer: r.referrer ?? "", views: Number(r.views) })),
+    });
+  } catch (err: unknown) {
+    req.log.error({ err }, "Admin analytics query failed");
+    res.status(500).json({ error: "Could not fetch analytics" });
   }
 });
 

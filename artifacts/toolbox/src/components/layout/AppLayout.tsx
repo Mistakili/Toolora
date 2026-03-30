@@ -6,8 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { TOOLS } from "@/lib/tools-config";
 import { useAuth } from "@workspace/replit-auth-web";
+import { useTracking } from "@/hooks/useTracking";
 
 export function AppLayout({ children }: { children: ReactNode }) {
+  useTracking();
   const { theme, setTheme } = useTheme();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");

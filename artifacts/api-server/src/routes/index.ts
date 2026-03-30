@@ -5,6 +5,7 @@ import authRouter from "./auth";
 import userRouter from "./user";
 import agentRouter from "./agent";
 import adminRouter from "./admin";
+import analyticsRouter from "./analytics";
 
 const router: IRouter = Router();
 
@@ -14,5 +15,6 @@ router.use(authRouter);
 router.use("/user", userRouter);
 router.use("/agent", agentRouter);
 router.use("/admin", adminRouter);
+router.use("/analytics", analyticsRouter);
 
 export default router;
