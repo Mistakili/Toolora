@@ -8,7 +8,7 @@ const router: IRouter = Router();
 
 function detectDevice(ua: string): "mobile" | "tablet" | "desktop" | "bot" {
   const u = ua.toLowerCase();
-  if (/bot|crawler|spider|facebookexternalhit|slurp|bingbot|googlebot|yahoo|semrush|ahref/i.test(u)) return "bot";
+  if (/bot|crawler|spider|facebookexternalhit|slurp|bingbot|googlebot|yahoo|semrush|ahref|headlesschrome|headless|phantom|prerender|wget|curl|python-requests|go-http-client|java\/|okhttp/i.test(u)) return "bot";
   if (/tablet|ipad|kindle|silk|playbook/i.test(u)) return "tablet";
   if (/mobile|android|iphone|ipod|blackberry|windows phone|opera mini|iemobile/i.test(u)) return "mobile";
   return "desktop";
@@ -40,8 +40,15 @@ function detectOS(ua: string): string {
 const geoCache = new Map<string, { country: string; city: string; ts: number }>();
 const GEO_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
 
-async function geolocate(ip: string): Promise<{ country: string; city: string }> {
-  if (!ip || ip === "::1" || ip.startsWith("127.") || ip.startsWith("10.") || ip.startsWith("192.168.")) {
+function isPrivateIp(ip: string): boolean {
+  return !ip || ip === "::1" || ip.startsWith("127.") || ip.startsWith("10.") ||
+    ip.startsWith("192.168.") || ip.startsWith("172.16.") || ip.startsWith("172.17.") ||
+    ip.startsWith("172.18.") || ip.startsWith("172.19.") || ip.startsWith("172.2") ||
+    ip.startsWith("172.30.") || ip.startsWith("172.31.") || ip === "::ffff:127.0.0.1";
+}
+
+async function geolocate(ip: string, cfCountry?: string): Promise<{ country: string; city: string }> {
+  if (isPrivateIp(ip)) {
     return { country: "Local", city: "Dev" };
   }
 
@@ -50,24 +57,55 @@ async function geolocate(ip: string): Promise<{ country: string; city: string }>
     return { country: cached.country, city: cached.city };
   }
 
+  // 1. Try ip-api.com (most reliable free API, 45 req/min)
   try {
-    const res = await fetch(`https://ipwho.is/${ip}`, { signal: AbortSignal.timeout(3000) });
-    if (!res.ok) throw new Error(`ipwho.is ${res.status}`);
-    const data = await res.json() as Record<string, unknown>;
-    const country = (data.country as string) || "Unknown";
-    const city = (data.city as string) || "Unknown";
-    geoCache.set(ip, { country, city, ts: Date.now() });
-    return { country, city };
-  } catch {
-    return { country: "Unknown", city: "Unknown" };
+    const res = await fetch(`http://ip-api.com/json/${ip}?fields=status,country,city`, {
+      signal: AbortSignal.timeout(4000),
+    });
+    if (res.ok) {
+      const data = await res.json() as Record<string, unknown>;
+      if (data.status === "success") {
+        const country = (data.country as string) || cfCountry || "Unknown";
+        const city = (data.city as string) || "Unknown";
+        geoCache.set(ip, { country, city, ts: Date.now() });
+        return { country, city };
+      }
+    }
+  } catch { /* fall through */ }
+
+  // 2. Try ipwho.is as fallback
+  try {
+    const res = await fetch(`https://ipwho.is/${ip}`, { signal: AbortSignal.timeout(4000) });
+    if (res.ok) {
+      const data = await res.json() as Record<string, unknown>;
+      if (data.success === true || data.ip) {
+        const country = (data.country as string) || cfCountry || "Unknown";
+        const city = (data.city as string) || "Unknown";
+        geoCache.set(ip, { country, city, ts: Date.now() });
+        return { country, city };
+      }
+    }
+  } catch { /* fall through */ }
+
+  // 3. If Cloudflare gave us a country code, use that with Unknown city
+  if (cfCountry && cfCountry !== "XX") {
+    const result = { country: cfCountry, city: "Unknown" };
+    geoCache.set(ip, { ...result, ts: Date.now() });
+    return result;
   }
+
+  return { country: "Unknown", city: "Unknown" };
 }
 
 function getRealIp(req: Request): string {
+  // Replit/Cloudflare puts the real client IP in x-forwarded-for
   const forwarded = req.headers["x-forwarded-for"];
   if (forwarded) {
-    const first = Array.isArray(forwarded) ? forwarded[0] : forwarded.split(",")[0];
-    return first.trim();
+    const ips = (Array.isArray(forwarded) ? forwarded[0] : forwarded)
+      .split(",")
+      .map(s => s.trim())
+      .filter(s => s && !isPrivateIp(s));
+    if (ips.length > 0) return ips[0];
   }
   return req.socket?.remoteAddress ?? req.ip ?? "";
 }
@@ -88,6 +126,8 @@ router.post("/track", async (req: Request, res: Response) => {
 
   const ua = req.headers["user-agent"] ?? "";
   const ip = getRealIp(req);
+  // Cloudflare injects this header with the 2-letter country code (e.g. "US", "NG")
+  const cfCountry = (req.headers["cf-ipcountry"] as string | undefined) ?? undefined;
 
   // Fire-and-forget — don't block the response
   res.status(204).end();
@@ -97,7 +137,7 @@ router.post("/track", async (req: Request, res: Response) => {
       Promise.resolve(detectDevice(ua)),
       Promise.resolve(detectBrowser(ua)),
       Promise.resolve(detectOS(ua)),
-      geolocate(ip),
+      geolocate(ip, cfCountry),
     ]);
 
     await db.insert(pageViewsTable).values({

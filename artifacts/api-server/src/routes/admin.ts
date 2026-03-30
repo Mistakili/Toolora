@@ -163,7 +163,7 @@ router.get("/analytics", async (req: Request, res: Response) => {
     const byCountry = await db
       .select({ country: pageViewsTable.country, views: count() })
       .from(pageViewsTable)
-      .where(sql`${humanFilter} AND ${thirtyDays} AND ${pageViewsTable.country} IS NOT NULL AND ${pageViewsTable.country} != 'Unknown'`)
+      .where(sql`${humanFilter} AND ${thirtyDays} AND ${pageViewsTable.country} IS NOT NULL AND ${pageViewsTable.country} NOT IN ('Unknown', 'Local')`)
       .groupBy(pageViewsTable.country)
       .orderBy(desc(count()))
       .limit(15);
@@ -172,7 +172,7 @@ router.get("/analytics", async (req: Request, res: Response) => {
     const byCities = await db
       .select({ city: pageViewsTable.city, country: pageViewsTable.country, views: count() })
       .from(pageViewsTable)
-      .where(sql`${humanFilter} AND ${thirtyDays} AND ${pageViewsTable.city} IS NOT NULL AND ${pageViewsTable.city} != 'Unknown'`)
+      .where(sql`${humanFilter} AND ${thirtyDays} AND ${pageViewsTable.city} IS NOT NULL AND ${pageViewsTable.city} NOT IN ('Unknown', 'Dev')`)
       .groupBy(pageViewsTable.city, pageViewsTable.country)
       .orderBy(desc(count()))
       .limit(10);
