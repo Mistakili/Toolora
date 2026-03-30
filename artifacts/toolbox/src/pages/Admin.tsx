@@ -538,6 +538,7 @@ export default function Admin() {
                       <thead>
                         <tr className="border-b border-border text-left text-muted-foreground uppercase tracking-wider">
                           <th className="pb-2 pr-3">Endpoint</th>
+                          <th className="pb-2 pr-3">Network</th>
                           <th className="pb-2 pr-3">Tx Hash</th>
                           <th className="pb-2 pr-3">From</th>
                           <th className="pb-2 pr-3 text-right">Amount</th>
@@ -545,28 +546,44 @@ export default function Admin() {
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-border">
-                        {agentStats.payments.map((p) => (
+                        {agentStats.payments.map((p) => {
+                          const isSolana = p.network?.startsWith("solana:");
+                          const explorerUrl = isSolana
+                            ? `https://explorer.solana.com/tx/${p.txHash}${p.network === "solana:devnet" ? "?cluster=devnet" : ""}`
+                            : `https://stellar.expert/explorer/${p.network === "stellar:mainnet" ? "public" : "testnet"}/tx/${p.txHash}`;
+                          const amountLabel = isSolana
+                            ? (p.amountXlm ? `${parseFloat(p.amountXlm).toFixed(4)} USDC` : "—")
+                            : (p.amountXlm ? `${parseFloat(p.amountXlm).toFixed(4)} XLM` : "—");
+                          const amountColor = isSolana ? "text-purple-400" : "text-yellow-400";
+                          const networkLabel = p.network ?? "—";
+                          return (
                           <tr key={p.id} className="hover:bg-muted/30">
                             <td className="py-2 pr-3 font-mono">{p.endpoint.replace("/api/agent/", "")}</td>
+                            <td className="py-2 pr-3">
+                              <span className={`text-xs font-medium px-1.5 py-0.5 rounded ${isSolana ? "bg-purple-900/40 text-purple-300" : "bg-blue-900/40 text-blue-300"}`}>
+                                {networkLabel}
+                              </span>
+                            </td>
                             <td className="py-2 pr-3">
                               {p.txHash ? (
                                 <div className="flex items-center gap-1">
                                   <CopyCell text={p.txHash} />
-                                  <a href={`https://stellar.expert/explorer/public/tx/${p.txHash}`} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary">
+                                  <a href={explorerUrl} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary">
                                     <ExternalLink className="w-3 h-3" />
                                   </a>
                                 </div>
                               ) : "—"}
                             </td>
                             <td className="py-2 pr-3">{p.fromAddress ? <CopyCell text={p.fromAddress} /> : "—"}</td>
-                            <td className="py-2 pr-3 text-right text-yellow-400 font-semibold">
-                              {p.amountXlm ? `${parseFloat(p.amountXlm).toFixed(4)} XLM` : "—"}
+                            <td className={`py-2 pr-3 text-right font-semibold ${amountColor}`}>
+                              {amountLabel}
                             </td>
                             <td className="py-2 text-right text-muted-foreground">
                               {new Date(p.createdAt).toLocaleString()}
                             </td>
                           </tr>
-                        ))}
+                          );
+                        })}
                       </tbody>
                     </table>
                   </div>

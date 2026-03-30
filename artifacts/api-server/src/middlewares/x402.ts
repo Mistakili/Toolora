@@ -285,9 +285,13 @@ export function requirePayment(req: Request, res: Response, next: NextFunction) 
     res.status(402).json({ ...buildPaymentRequired(req), error: "Stellar payments not configured on this server" });
     return;
   } else {
+    const supported: string[] = [];
+    if (stellarEnabled) supported.push(`stellar:${NETWORK}`);
+    if (solanaEnabled)  supported.push(`solana:${SOLANA_NETWORK}`);
+    const hint = supported.length > 0 ? `Supported: ${supported.join(", ")}.` : "No payment networks are configured on this server.";
     res.status(402).json({
       ...buildPaymentRequired(req),
-      error: `Unknown payment network: ${payload.network ?? "(not set)"}. Use stellar:mainnet or solana:mainnet.`,
+      error: `Unknown payment network: ${payload.network ?? "(not set)"}. ${hint}`,
     });
     return;
   }
