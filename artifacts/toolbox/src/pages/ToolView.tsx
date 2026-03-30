@@ -5,6 +5,7 @@ import { ShareModal } from "@/components/shared/ShareModal";
 import { getToolBySlug, getCategoryById, getToolsByCategory } from "@/lib/tools-config";
 import NotFound from "./not-found";
 import { useTrackToolUsage } from "@workspace/api-client-react";
+import { useSEO } from "@/hooks/useSEO";
 
 // Tool Implementations
 import WordCounter from "@/components/tools/WordCounter";
@@ -62,20 +63,26 @@ export default function ToolView() {
   
   if (!tool || !category) return <NotFound />;
 
-  // Set unique page title + meta description per tool for SEO
-  useEffect(() => {
-    document.title = tool.seoTitle;
-    let metaDesc = document.querySelector('meta[name="description"]');
-    if (!metaDesc) {
-      metaDesc = document.createElement("meta");
-      metaDesc.setAttribute("name", "description");
-      document.head.appendChild(metaDesc);
-    }
-    metaDesc.setAttribute("content", tool.seoDescription);
-    return () => {
-      document.title = "Toolora - Free Online Tools";
-    };
-  }, [tool.slug]);
+  useSEO({
+    title: tool.seoTitle.replace(" | Toolora", ""),
+    description: tool.seoDescription,
+    canonical: `https://toolora.replit.app/tools/${tool.category}/${tool.slug}`,
+    jsonLd: {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      name: tool.name,
+      description: tool.seoDescription,
+      url: `https://toolora.replit.app/tools/${tool.category}/${tool.slug}`,
+      applicationCategory: "UtilitiesApplication",
+      operatingSystem: "Web",
+      offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+      provider: {
+        "@type": "Organization",
+        name: "Toolora",
+        url: "https://toolora.replit.app",
+      },
+    },
+  });
 
   // Fire usage tracking once per visit
   useEffect(() => {

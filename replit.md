@@ -50,6 +50,18 @@ Every package extends `tsconfig.base.json` which sets `composite: true`. The roo
 
 ## Artifacts
 
+### MCP Server
+
+Exposed at `GET|POST /api/mcp` on the API server. Implements MCP Streamable HTTP transport (2025-03-26). Three free tools: `extract_pdf_text`, `count_words`, `read_url`. No auth required. Add to Claude Desktop via `mcpServers.toolora.url = https://toolora-api.replit.app/api/mcp`.
+
+### SEO
+
+- `artifacts/toolbox/public/sitemap.xml` — full sitemap for all 20 tools + category/static pages
+- `artifacts/toolbox/public/robots.txt` — allows all bots, points to sitemap
+- `artifacts/toolbox/index.html` — includes default OG + Twitter Card + canonical meta tags
+- `artifacts/toolbox/src/hooks/useSEO.ts` — React hook that sets per-page title, description, OG tags, Twitter cards, canonical URL, and JSON-LD structured data
+- `ToolView.tsx` uses `useSEO` with tool-specific `seoTitle`/`seoDescription` from tools-config and injects `WebApplication` JSON-LD schema
+
 ### `artifacts/toolbox` (`@workspace/toolbox`)
 
 React + Vite frontend for **Toolora** — a free online tools platform with 20 fully functional tools.

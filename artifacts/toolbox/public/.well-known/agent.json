@@ -1,11 +1,13 @@
 {
   "name": "Toolora Agent API",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "manifestUrl": "https://toolora.replit.app/api/agent",
   "docsUrl": "https://toolora.replit.app/api-docs",
   "statsUrl": "https://toolora.replit.app/api/agent/stats",
   "llmsUrl": "https://toolora.replit.app/llms.txt",
   "llmsFullUrl": "https://toolora.replit.app/llms-full.txt",
+  "mcpUrl": "https://toolora-api.replit.app/api/mcp",
+  "mcpTransport": "Streamable HTTP (MCP 2025-03-26)",
   "acceptedPayments": [
     {
       "protocol": "x402",

@@ -64,6 +64,101 @@ All tools run entirely in the browser. URLs: https://toolora.replit.app/tools/<s
 
 ---
 
+## MCP Server (Free)
+
+Toolora provides a Model Context Protocol (MCP) server for direct integration with AI coding tools and assistants that support MCP.
+
+**Endpoint:** `https://toolora-api.replit.app/api/mcp`
+**Transport:** Streamable HTTP (MCP protocol version 2025-03-26)
+**Authentication:** None — all MCP tools are free
+**Method:** POST with JSON-RPC 2.0 body
+
+### Supported MCP Methods
+
+- `initialize` — handshake; returns server name, version, capabilities, and usage instructions
+- `tools/list` — returns all available tools with names, descriptions, and JSON Schema input specs
+- `tools/call` — execute a tool by name with arguments
+- `ping` — health check
+
+### MCP Tools
+
+#### `extract_pdf_text`
+Extract plain text from a PDF. Accepts the file as a base64-encoded string.
+
+Input schema:
+```json
+{
+  "fileBase64": "string (required) — base64-encoded PDF content",
+  "filename": "string (optional) — original filename for validation"
+}
+```
+
+Output (JSON string in content[0].text):
+```json
+{ "text": "...", "pages": 5, "words": 1200, "chars": 7400, "info": {} }
+```
+
+#### `count_words`
+Count words, characters, sentences, paragraphs, and estimated reading time for any text.
+
+Input schema:
+```json
+{ "text": "string (required)" }
+```
+
+Output:
+```json
+{ "words": 42, "chars": 250, "charsNoSpaces": 210, "sentences": 5, "paragraphs": 2, "readingTimeMin": 1 }
+```
+
+#### `read_url`
+Fetch a public URL and extract clean readable text using Mozilla Readability.
+
+Input schema:
+```json
+{ "url": "string (required) — full http:// or https:// URL" }
+```
+
+Output:
+```json
+{ "title": "...", "byline": "...", "excerpt": "...", "content": "...", "wordCount": 800, "url": "...", "fetchedAt": "2026-03-30T00:00:00.000Z" }
+```
+
+### Adding Toolora to Claude Desktop
+
+Add the following to your Claude Desktop `claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "toolora": {
+      "url": "https://toolora-api.replit.app/api/mcp",
+      "transport": "http"
+    }
+  }
+}
+```
+
+Once added, Claude will automatically discover the `extract_pdf_text`, `count_words`, and `read_url` tools.
+
+### Example JSON-RPC Call
+
+```bash
+curl -X POST https://toolora-api.replit.app/api/mcp \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "jsonrpc": "2.0",
+    "method": "tools/call",
+    "id": 1,
+    "params": {
+      "name": "count_words",
+      "arguments": { "text": "Your text goes here." }
+    }
+  }'
+```
+
+---
+
 ## Agent API — Paid, Server-Side (x402)
 
 These endpoints run server-side and handle work that browser tools cannot: parsing uploaded PDFs and fetching remote URLs. Payment is required per request via the x402 micropayment protocol.

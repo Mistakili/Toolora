@@ -43,6 +43,33 @@ All tools are available at https://toolora.replit.app/tools/<slug>
 - Color Converter — /tools/color-picker — Convert between HEX, RGB, and HSL color formats
 - Timestamp Converter — /tools/timestamp-converter — Convert Unix timestamps to readable dates
 
+## MCP Server (Free)
+
+Toolora exposes an MCP (Model Context Protocol) server for direct integration with Claude Desktop, Cursor, Windsurf, and other MCP-compatible clients.
+
+**Endpoint:** https://toolora-api.replit.app/api/mcp
+**Transport:** Streamable HTTP (MCP 2025-03-26)
+**Authentication:** None — free to use
+
+### MCP Tools Available
+
+- `extract_pdf_text` — Extract plain text from a PDF (pass base64-encoded file content). Returns text, pages, word count, character count.
+- `count_words` — Count words, characters, sentences, paragraphs, and reading time for any text.
+- `read_url` — Fetch a public URL and return clean readable text (Mozilla Readability). Returns title, byline, excerpt, and content.
+
+### Adding to Claude Desktop
+
+```json
+{
+  "mcpServers": {
+    "toolora": {
+      "url": "https://toolora-api.replit.app/api/mcp",
+      "transport": "http"
+    }
+  }
+}
+```
+
 ## Agent API (Paid, x402)
 
 Server-side APIs for AI agents. Pay per request — no API key, no subscription, no rate limits on payment.
