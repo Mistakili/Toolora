@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "manifestUrl": "https://toolora.replit.app/api/agent",
   "docsUrl": "https://toolora.replit.app/api-docs",
+  "statsUrl": "https://toolora.replit.app/api/agent/stats",
   "payment": {
     "protocol": "x402",
     "network": "stellar:mainnet",
@@ -11,7 +12,8 @@
     "payTo": "GBKLZIM2Z4MT6K5TWQIQSCNSZD5TPZQNBKNORQ6LGTE37AMFLGC46OIO"
   },
   "endpoints": [
-    { "id": "pdf.text", "method": "POST", "path": "/api/agent/pdf/text", "paid": true },
-    { "id": "url.read", "method": "POST", "path": "/api/agent/url/read", "paid": true }
+    { "id": "pdf.text",    "method": "POST", "path": "/api/agent/pdf/text",    "paid": true },
+    { "id": "pdf.extract", "method": "POST", "path": "/api/agent/pdf/extract", "paid": true },
+    { "id": "url.read",    "method": "POST", "path": "/api/agent/url/read",    "paid": true }
   ]
 }

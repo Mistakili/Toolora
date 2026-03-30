@@ -1,13 +1,31 @@
 import { Router, type IRouter, type Request, type Response } from "express";
 import multer from "multer";
+import { db } from "@workspace/db";
+import { agentPaymentsTable } from "@workspace/db/schema";
+import { desc, sum, count } from "drizzle-orm";
 import { requirePayment, RECEIVER_ADDRESS, NETWORK, PRICE_XLM } from "../middlewares/x402";
 
 const router: IRouter = Router();
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 20 * 1024 * 1024 } });
 
-// ─── Discovery manifest ──────────────────────────────────────────────────────
-// This is the first thing any agent should hit. Free, no payment required.
-// Designed to be returned by GET /api/agent and also linked from well-known routes.
+// ─── Log a verified payment to the DB ────────────────────────────────────────
+
+async function logPayment(endpoint: string, req: Request) {
+  if (!req.verifiedPayment) return;
+  try {
+    await db.insert(agentPaymentsTable).values({
+      endpoint,
+      txHash: req.verifiedPayment.txHash,
+      fromAddress: req.verifiedPayment.from,
+      amountXlm: req.verifiedPayment.amount,
+      network: req.verifiedPayment.network,
+    }).onConflictDoNothing();
+  } catch (err) {
+    req.log.error({ err }, "Failed to log agent payment");
+  }
+}
+
+// ─── Discovery manifest ───────────────────────────────────────────────────────
 
 function buildManifest(req: Request) {
   const base = `${req.protocol}://${req.get("host")}`;
@@ -25,7 +43,7 @@ function buildManifest(req: Request) {
       howToPay: [
         "1. Call any paid endpoint. You will receive a 402 with payment instructions.",
         "2. Send the required XLM to the 'payTo' address on Stellar.",
-        `3. Retry the same request with header: X-PAYMENT: <base64(JSON.stringify({txHash, from, amount, network}))>`,
+        "3. Retry the same request with header: X-PAYMENT: <base64(JSON.stringify({txHash, from, amount, network}))>",
       ],
     },
     endpoints: [
@@ -37,29 +55,44 @@ function buildManifest(req: Request) {
         paid: true,
         priceXLM: PRICE_XLM,
         description:
-          "Extract all text content from a PDF file. Returns clean text, page count, word count, and character count. Ideal for research agents, document processing pipelines, and RAG ingestion.",
-        request: {
-          contentType: "multipart/form-data",
-          fields: { file: "PDF file (required, max 20MB)" },
-        },
+          "Extract all text content from a PDF file. Returns clean text, page count, word count, and character count.",
+        request: { contentType: "multipart/form-data", fields: { file: "PDF file (required, max 20MB)" } },
         response: {
-          contentType: "application/json",
           schema: {
             text: "string — full extracted text",
             pages: "number — page count",
-            words: "number — approximate word count",
+            words: "number — word count",
             chars: "number — character count",
-            info: "object — PDF metadata (author, title, creator, etc.)",
+            info: "object — PDF metadata",
           },
         },
         example: {
-          curl: `curl -X POST ${base}/api/agent/pdf/text \\
-  -H "X-PAYMENT: <base64_payment_payload>" \\
-  -F "file=@document.pdf"`,
-          python: `import requests, base64, json
-payload = base64.b64encode(json.dumps({"txHash":"<hash>","from":"<address>","amount":"${PRICE_XLM}","network":"stellar:${NETWORK}"}).encode()).decode()
-r = requests.post("${base}/api/agent/pdf/text", headers={"X-PAYMENT": payload}, files={"file": open("doc.pdf","rb")})
-print(r.json())`,
+          curl: `curl -X POST ${base}/api/agent/pdf/text \\\n  -H "X-PAYMENT: <base64_payload>" \\\n  -F "file=@document.pdf"`,
+          python: `import requests, base64, json\npayload = base64.b64encode(json.dumps({"txHash":"<hash>","from":"<addr>","amount":"${PRICE_XLM}","network":"stellar:${NETWORK}"}).encode()).decode()\nr = requests.post("${base}/api/agent/pdf/text", headers={"X-PAYMENT": payload}, files={"file": open("doc.pdf","rb")})\nprint(r.json())`,
+        },
+      },
+      {
+        id: "pdf.extract",
+        method: "POST",
+        path: "/api/agent/pdf/extract",
+        url: `${base}/api/agent/pdf/extract`,
+        paid: true,
+        priceXLM: PRICE_XLM,
+        description:
+          "Extract structured content from a PDF — sections with headings, paragraphs grouped by hierarchy. Better than raw text for RAG ingestion, knowledge graphs, and document analysis pipelines.",
+        request: { contentType: "multipart/form-data", fields: { file: "PDF file (required, max 20MB)" } },
+        response: {
+          schema: {
+            title: "string | null — detected document title",
+            sections: "array — [{heading, level, content, wordCount}]",
+            pages: "number",
+            totalWords: "number",
+            info: "object — PDF metadata",
+          },
+        },
+        example: {
+          curl: `curl -X POST ${base}/api/agent/pdf/extract \\\n  -H "X-PAYMENT: <base64_payload>" \\\n  -F "file=@document.pdf"`,
+          python: `import requests, base64, json\npayload = base64.b64encode(json.dumps({"txHash":"<hash>","from":"<addr>","amount":"${PRICE_XLM}","network":"stellar:${NETWORK}"}).encode()).decode()\nr = requests.post("${base}/api/agent/pdf/extract", headers={"X-PAYMENT": payload}, files={"file": open("doc.pdf","rb")})\nprint(r.json())`,
         },
       },
       {
@@ -70,50 +103,82 @@ print(r.json())`,
         paid: true,
         priceXLM: PRICE_XLM,
         description:
-          "Fetch a URL and return clean, readable text with boilerplate (nav, ads, footers) stripped. Uses Mozilla Readability — the same algorithm as Firefox Reader View. Ideal for web research agents, content summarization pipelines, and knowledge extraction.",
-        request: {
-          contentType: "application/json",
-          body: { url: "string — the full URL to fetch and parse (required)" },
-        },
+          "Fetch a URL and return clean readable text with boilerplate stripped. Uses Mozilla Readability — same algorithm as Firefox Reader View.",
+        request: { contentType: "application/json", body: { url: "string (required)" } },
         response: {
-          contentType: "application/json",
           schema: {
             title: "string — page title",
-            byline: "string | null — author or byline",
+            byline: "string | null — author",
             excerpt: "string — short summary",
-            content: "string — full readable text content",
+            content: "string — full plain text",
             wordCount: "number",
-            url: "string — the URL that was fetched",
+            url: "string",
             fetchedAt: "string — ISO timestamp",
           },
         },
         example: {
-          curl: `curl -X POST ${base}/api/agent/url/read \\
-  -H "Content-Type: application/json" \\
-  -H "X-PAYMENT: <base64_payment_payload>" \\
-  -d '{"url":"https://example.com/article"}'`,
-          python: `import requests, base64, json
-payload = base64.b64encode(json.dumps({"txHash":"<hash>","from":"<address>","amount":"${PRICE_XLM}","network":"stellar:${NETWORK}"}).encode()).decode()
-r = requests.post("${base}/api/agent/url/read", headers={"Content-Type":"application/json","X-PAYMENT": payload}, json={"url":"https://example.com/article"})
-print(r.json())`,
+          curl: `curl -X POST ${base}/api/agent/url/read \\\n  -H "Content-Type: application/json" \\\n  -H "X-PAYMENT: <base64_payload>" \\\n  -d '{"url":"https://example.com/article"}'`,
+          python: `import requests, base64, json\npayload = base64.b64encode(json.dumps({"txHash":"<hash>","from":"<addr>","amount":"${PRICE_XLM}","network":"stellar:${NETWORK}"}).encode()).decode()\nr = requests.post("${base}/api/agent/url/read", headers={"Content-Type":"application/json","X-PAYMENT": payload}, json={"url":"https://example.com"})\nprint(r.json())`,
         },
       },
     ],
     links: {
       docs: `${base}/api-docs`,
       manifest: `${base}/api/agent`,
+      stats: `${base}/api/agent/stats`,
       wellKnown: `${base}/.well-known/agent.json`,
     },
   };
 }
 
-// GET /api/agent — the discovery manifest. Always free. Agents hit this first.
+// GET /api/agent — discovery manifest. Always free.
 router.get("/", (req: Request, res: Response) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.json(buildManifest(req));
 });
 
-// ─── POST /api/agent/pdf/text ────────────────────────────────────────────────
+// GET /api/agent/stats — public revenue/usage stats
+router.get("/stats", async (_req: Request, res: Response) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  try {
+    const rows = await db
+      .select({ endpoint: agentPaymentsTable.endpoint, calls: count(), totalXlm: sum(agentPaymentsTable.amountXlm) })
+      .from(agentPaymentsTable)
+      .groupBy(agentPaymentsTable.endpoint)
+      .orderBy(desc(count()));
+
+    const recent = await db
+      .select()
+      .from(agentPaymentsTable)
+      .orderBy(desc(agentPaymentsTable.createdAt))
+      .limit(5);
+
+    const totalCalls = rows.reduce((acc, r) => acc + Number(r.calls), 0);
+    const totalXlm = rows.reduce((acc, r) => acc + parseFloat(r.totalXlm ?? "0"), 0);
+
+    res.json({
+      totalCalls,
+      totalXlmEarned: totalXlm.toFixed(7),
+      byEndpoint: rows.map((r) => ({
+        endpoint: r.endpoint,
+        calls: Number(r.calls),
+        xlmEarned: parseFloat(r.totalXlm ?? "0").toFixed(7),
+      })),
+      recentPayments: recent.map((p) => ({
+        endpoint: p.endpoint,
+        from: p.fromAddress ? `${p.fromAddress.slice(0, 6)}...${p.fromAddress.slice(-4)}` : null,
+        amountXlm: p.amountXlm,
+        network: p.network,
+        at: p.createdAt,
+      })),
+    });
+  } catch (err: unknown) {
+    _req.log.error({ err }, "Stats query failed");
+    res.status(500).json({ error: "Could not fetch stats" });
+  }
+});
+
+// ─── POST /api/agent/pdf/text ─────────────────────────────────────────────────
 
 router.post(
   "/pdf/text",
@@ -130,7 +195,6 @@ router.post(
     }
 
     try {
-      // pdf-parse is CJS; the build banner provides globalThis.require
       // eslint-disable-next-line @typescript-eslint/no-require-imports
       const pdfParse = require("pdf-parse");
       const data = await pdfParse(req.file.buffer);
@@ -138,13 +202,9 @@ router.post(
       const text: string = data.text ?? "";
       const words = text.trim() ? text.trim().split(/\s+/).length : 0;
 
-      res.json({
-        text,
-        pages: data.numpages,
-        words,
-        chars: text.length,
-        info: data.info ?? {},
-      });
+      await logPayment("/api/agent/pdf/text", req);
+
+      res.json({ text, pages: data.numpages, words, chars: text.length, info: data.info ?? {} });
     } catch (err: unknown) {
       req.log.error({ err }, "PDF parse error");
       res.status(422).json({ error: "Could not parse PDF. File may be corrupted or encrypted." });
@@ -152,7 +212,102 @@ router.post(
   },
 );
 
-// ─── POST /api/agent/url/read ────────────────────────────────────────────────
+// ─── POST /api/agent/pdf/extract ─────────────────────────────────────────────
+
+function extractStructure(text: string): { title: string | null; sections: { heading: string | null; level: number; content: string; wordCount: number }[] } {
+  const lines = text.split("\n").map((l) => l.trimEnd());
+  const sections: { heading: string | null; level: number; content: string; wordCount: number }[] = [];
+  let title: string | null = null;
+  let currentHeading: string | null = null;
+  let currentLevel = 0;
+  let currentContent: string[] = [];
+
+  const isHeading = (line: string): { heading: string; level: number } | null => {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.length > 120) return null;
+
+    // Numbered headings: "1.", "1.1", "Chapter 1", "Section 2"
+    if (/^(chapter|section|part)\s+\d+/i.test(trimmed)) return { heading: trimmed, level: 1 };
+    if (/^\d+\.\s+\S/.test(trimmed) && trimmed.length < 80) return { heading: trimmed, level: 1 };
+    if (/^\d+\.\d+\s+\S/.test(trimmed) && trimmed.length < 80) return { heading: trimmed, level: 2 };
+    if (/^\d+\.\d+\.\d+\s+\S/.test(trimmed) && trimmed.length < 80) return { heading: trimmed, level: 3 };
+
+    // ALL CAPS short line (likely a heading in PDFs)
+    if (trimmed === trimmed.toUpperCase() && trimmed.length >= 3 && trimmed.length <= 60 && /[A-Z]/.test(trimmed)) {
+      return { heading: trimmed, level: 1 };
+    }
+
+    return null;
+  };
+
+  const flush = () => {
+    const content = currentContent.join(" ").replace(/\s+/g, " ").trim();
+    if (content || currentHeading) {
+      const wc = content ? content.split(/\s+/).length : 0;
+      sections.push({ heading: currentHeading, level: currentLevel, content, wordCount: wc });
+    }
+    currentContent = [];
+  };
+
+  let firstContentFound = false;
+
+  for (const line of lines) {
+    const trimmed = line.trim();
+    if (!trimmed) continue;
+
+    const h = isHeading(line);
+    if (h) {
+      flush();
+      if (!firstContentFound && !title) {
+        title = h.heading;
+        firstContentFound = true;
+      }
+      currentHeading = h.heading;
+      currentLevel = h.level;
+    } else {
+      currentContent.push(trimmed);
+      firstContentFound = true;
+    }
+  }
+  flush();
+
+  return { title, sections };
+}
+
+router.post(
+  "/pdf/extract",
+  requirePayment,
+  upload.single("file"),
+  async (req: Request, res: Response) => {
+    if (!req.file) {
+      res.status(400).json({ error: "No file uploaded. Send a PDF in the 'file' multipart field." });
+      return;
+    }
+    if (req.file.mimetype !== "application/pdf" && !req.file.originalname?.endsWith(".pdf")) {
+      res.status(400).json({ error: "File must be a PDF." });
+      return;
+    }
+
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const pdfParse = require("pdf-parse");
+      const data = await pdfParse(req.file.buffer);
+
+      const text: string = data.text ?? "";
+      const { title, sections } = extractStructure(text);
+      const totalWords = sections.reduce((acc, s) => acc + s.wordCount, 0);
+
+      await logPayment("/api/agent/pdf/extract", req);
+
+      res.json({ title, sections, pages: data.numpages, totalWords, info: data.info ?? {} });
+    } catch (err: unknown) {
+      req.log.error({ err }, "PDF extract error");
+      res.status(422).json({ error: "Could not parse PDF. File may be corrupted or encrypted." });
+    }
+  },
+);
+
+// ─── POST /api/agent/url/read ─────────────────────────────────────────────────
 
 router.post("/url/read", requirePayment, async (req: Request, res: Response) => {
   const { url } = req.body as { url?: string };
@@ -174,8 +329,7 @@ router.post("/url/read", requirePayment, async (req: Request, res: Response) => 
   try {
     const html = await fetch(url, {
       headers: {
-        "User-Agent":
-          "Mozilla/5.0 (compatible; Toolora-Agent/1.0; +https://toolora.replit.app/api/agent)",
+        "User-Agent": "Mozilla/5.0 (compatible; Toolora-Agent/1.0; +https://toolora.replit.app/api/agent)",
         Accept: "text/html,application/xhtml+xml",
       },
       signal: AbortSignal.timeout(15_000),
@@ -184,7 +338,6 @@ router.post("/url/read", requirePayment, async (req: Request, res: Response) => 
       return r.text();
     });
 
-    // Use JSDOM + Readability (loaded via require to avoid ESM bundling path issues)
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const { JSDOM } = require("jsdom");
     // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -195,15 +348,14 @@ router.post("/url/read", requirePayment, async (req: Request, res: Response) => 
     const article = reader.parse();
 
     if (!article) {
-      res.status(422).json({
-        error: "Could not extract readable content from this URL. The page may require JS rendering or login.",
-      });
+      res.status(422).json({ error: "Could not extract readable content from this URL. The page may require JS rendering or login." });
       return;
     }
 
-    // Strip HTML tags from content to return plain text
     const plainText = article.textContent?.replace(/\s+/g, " ").trim() ?? "";
     const words = plainText ? plainText.split(/\s+/).length : 0;
+
+    await logPayment("/api/agent/url/read", req);
 
     res.json({
       title: article.title ?? null,

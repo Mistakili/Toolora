@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "wouter";
-import { Code2, ChevronRight, Home, Copy, Check, Zap, Bot, Globe, FileText, Lock } from "lucide-react";
+import { Code2, ChevronRight, Home, Copy, Check, Zap, Bot, Globe, FileText, Lock, BarChart2 } from "lucide-react";
 
 function CodeBlock({ code }: { code: string }) {
   const [copied, setCopied] = useState(false);
@@ -147,7 +147,7 @@ print(r.json())
           </div>
           <h2 className="text-2xl font-bold mb-2">Agent API — pay per request, no key needed</h2>
           <p className="text-muted-foreground text-sm mb-4">
-            Two powerful server-side endpoints built specifically for AI agents. Pay <strong className="text-foreground">{PRICE} XLM per request</strong> using the x402 protocol on Stellar. No signup, no subscription — just send the payment and get the data.
+            Three powerful server-side endpoints built specifically for AI agents. Pay <strong className="text-foreground">{PRICE} XLM per request</strong> using the x402 protocol on Stellar. No signup, no subscription — just send the payment and get the data.
           </p>
           <div className="flex flex-wrap gap-3 text-xs">
             {[
@@ -167,10 +167,11 @@ print(r.json())
         {/* ── Discovery ── */}
         <section>
           <h2 className="text-lg font-bold mb-1">Discovery</h2>
-          <p className="text-sm text-muted-foreground mb-4">Agents can auto-discover all endpoints from two well-known locations:</p>
+          <p className="text-sm text-muted-foreground mb-4">Agents can auto-discover all endpoints from these well-known locations:</p>
           <div className="space-y-2">
             <Endpoint method="GET" path={`${apiBase}/.well-known/agent.json`} desc="Machine-readable capability manifest — start here" />
             <Endpoint method="GET" path={`${apiBase}/api/agent`} desc="Full manifest with endpoint schemas, pricing, and curl/Python examples" />
+            <Endpoint method="GET" path={`${apiBase}/api/agent/stats`} desc="Live revenue + usage stats — total calls, XLM earned, recent payments" />
           </div>
         </section>
 
@@ -213,6 +214,20 @@ print(r.json())
               <CodeBlock code={`Content-Type: multipart/form-data\nField: file (PDF, max 20MB)\nHeader: X-PAYMENT: <base64_payload>`} />
               <div className="text-xs text-muted-foreground mt-4 mb-2 font-medium uppercase tracking-wider">Python Example</div>
               <CodeBlock code={pythonExample} />
+            </div>
+
+            <div className="border border-yellow-500/20 rounded-2xl p-5 bg-yellow-500/5">
+              <div className="flex items-start justify-between gap-4 mb-3">
+                <div>
+                  <MethodBadge method="POST" paid />
+                  <h3 className="font-bold mt-2">/api/agent/pdf/extract</h3>
+                  <p className="text-sm text-muted-foreground mt-1">Extract structured content from a PDF — sections with headings, paragraphs grouped by hierarchy. Better than raw text for RAG ingestion, knowledge graphs, and document analysis. Returns each section with its heading level and word count.</p>
+                </div>
+              </div>
+              <div className="text-xs text-muted-foreground mb-2 font-medium uppercase tracking-wider">Request</div>
+              <CodeBlock code={`Content-Type: multipart/form-data\nField: file (PDF, max 20MB)\nHeader: X-PAYMENT: <base64_payload>`} />
+              <div className="text-xs text-muted-foreground mt-4 mb-2 font-medium uppercase tracking-wider">Response Shape</div>
+              <CodeBlock code={`{\n  "title": "Annual Report 2024",\n  "pages": 42,\n  "totalWords": 18200,\n  "sections": [\n    { "heading": "EXECUTIVE SUMMARY", "level": 1, "content": "...", "wordCount": 320 },\n    { "heading": "1. FINANCIAL OVERVIEW", "level": 1, "content": "...", "wordCount": 840 },\n    { "heading": "1.1 Revenue", "level": 2, "content": "...", "wordCount": 210 }\n  ],\n  "info": { "Author": "...", "CreationDate": "..." }\n}`} />
             </div>
 
             <div className="border border-yellow-500/20 rounded-2xl p-5 bg-yellow-500/5">

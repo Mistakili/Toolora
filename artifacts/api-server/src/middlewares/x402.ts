@@ -19,11 +19,20 @@ function pruneExpiredHashes() {
 }
 
 // Payment details the agent sends in X-PAYMENT header (base64 JSON)
-interface PaymentPayload {
+export interface PaymentPayload {
   txHash: string;
   from: string;
   amount: string;
   network: string;
+}
+
+// Attach verified payment to the request so route handlers can log it
+declare global {
+  namespace Express {
+    interface Request {
+      verifiedPayment?: PaymentPayload;
+    }
+  }
 }
 
 function buildPaymentRequired(req: Request) {
@@ -55,7 +64,6 @@ async function verifyStellarPayment(payload: PaymentPayload): Promise<{ ok: bool
     return { ok: false, reason: "Transaction already used (replay protection)" };
   }
 
-  // Fetch the transaction from Horizon
   const txRes = await fetch(`${horizonBase}/transactions/${payload.txHash}`);
   if (!txRes.ok) {
     return { ok: false, reason: `Horizon returned ${txRes.status} for transaction` };
@@ -66,7 +74,6 @@ async function verifyStellarPayment(payload: PaymentPayload): Promise<{ ok: bool
     return { ok: false, reason: "Transaction not successful on chain" };
   }
 
-  // Fetch operations to find the payment
   const opsRes = await fetch(`${horizonBase}/transactions/${payload.txHash}/operations`);
   if (!opsRes.ok) {
     return { ok: false, reason: "Could not fetch operations" };
@@ -78,7 +85,7 @@ async function verifyStellarPayment(payload: PaymentPayload): Promise<{ ok: bool
   const paymentOp = ops.find((op: Record<string, unknown>) => {
     if (op.type !== "payment") return false;
     if (op.to !== RECEIVER_ADDRESS) return false;
-    if (op.asset_type !== "native") return false; // XLM only
+    if (op.asset_type !== "native") return false;
     const paid = parseFloat(op.amount as string);
     const required = parseFloat(PRICE_XLM);
     return paid >= required;
@@ -91,14 +98,13 @@ async function verifyStellarPayment(payload: PaymentPayload): Promise<{ ok: bool
     };
   }
 
-  // Mark as used
   usedTxHashes.set(payload.txHash, Date.now());
   return { ok: true };
 }
 
 // Express middleware — gates a route behind x402 Stellar payment
+// On success, attaches `req.verifiedPayment` so route handlers can log the payment
 export function requirePayment(req: Request, res: Response, next: NextFunction) {
-  // Check if receiver address is configured
   if (!RECEIVER_ADDRESS) {
     req.log?.warn("STELLAR_RECEIVER_ADDRESS not set — x402 gating disabled");
     return next();
@@ -119,12 +125,12 @@ export function requirePayment(req: Request, res: Response, next: NextFunction) 
     return;
   }
 
-  // Verify async
   verifyStellarPayment(payload).then((result) => {
     if (!result.ok) {
       res.status(402).json({ ...buildPaymentRequired(req), error: result.reason });
       return;
     }
+    req.verifiedPayment = payload;
     next();
   }).catch((err: unknown) => {
     req.log?.error({ err }, "Stellar payment verification failed");
