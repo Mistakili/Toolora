@@ -1,6 +1,9 @@
 import { Router, type IRouter, type Request, type Response } from "express";
 import { PDFDocument } from "pdf-lib";
 import QRCode from "qrcode";
+import { createWorker } from "tesseract.js";
+import mammoth from "mammoth";
+import XLSX from "xlsx";
 
 const router: IRouter = Router();
 
@@ -98,6 +101,45 @@ const TOOLS = [
     },
   },
   {
+    name: "ocr_image",
+    description:
+      "Extract text from an image using OCR (Optical Character Recognition). Accepts the image as a base64-encoded string. Returns extracted text, confidence score, and word count. Useful for reading scanned documents, screenshots, handwritten notes, or any image where text needs to be extracted without a vision model.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        imageBase64: { type: "string", description: "Image file contents as a base64 string. Supported: PNG, JPEG, WEBP, BMP, TIFF." },
+        filename: { type: "string", description: "Optional filename with extension (e.g., 'scan.png') to help with format detection." },
+      },
+      required: ["imageBase64"],
+    },
+  },
+  {
+    name: "extract_docx_text",
+    description:
+      "Extract all plain text from a Microsoft Word (.docx) file. Accepts the file as a base64-encoded string. Returns the full text, paragraph count, word count, and character count. Works with files from Microsoft Word, Google Docs, and LibreOffice.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        fileBase64: { type: "string", description: "The .docx file contents encoded as a base64 string." },
+        filename: { type: "string", description: "Optional filename for format validation." },
+      },
+      required: ["fileBase64"],
+    },
+  },
+  {
+    name: "excel_to_json",
+    description:
+      "Parse an Excel file (.xlsx, .xls, .csv, .ods) and return all sheets as JSON arrays of objects. Column headers from the first row become object keys. Returns a map of sheet name to row array, plus total row count.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        fileBase64: { type: "string", description: "The Excel or CSV file contents encoded as a base64 string." },
+        filename: { type: "string", description: "Filename with extension (e.g., 'data.xlsx') — required for format detection." },
+      },
+      required: ["fileBase64", "filename"],
+    },
+  },
+  {
     name: "count_words",
     description:
       "Count words, characters, sentences, and paragraphs in a block of text. Also returns estimated reading time. Useful for checking document stats, validating content length, or summarising text metrics.",
@@ -122,6 +164,15 @@ const TOOLS = [
     },
   },
 ];
+
+// ─── Error class ──────────────────────────────────────────────────────────────
+
+class McpToolError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "McpToolError";
+  }
+}
 
 // ─── Tool handlers ────────────────────────────────────────────────────────────
 
@@ -360,13 +411,54 @@ function handleJsonToCsv(args: Record<string, unknown>): string {
   return JSON.stringify({ csv, columnNames: allKeys, columns: allKeys.length, rowCount: data.length });
 }
 
-// ─── Error class ──────────────────────────────────────────────────────────────
-
-class McpToolError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = "McpToolError";
+async function handleOcrImage(args: Record<string, unknown>): Promise<string> {
+  const { imageBase64 } = args as { imageBase64?: string };
+  if (!imageBase64 || typeof imageBase64 !== "string") {
+    throw new McpToolError("Missing 'imageBase64' field.");
   }
+  const buffer = Buffer.from(imageBase64, "base64");
+  if (buffer.length < 4) throw new McpToolError("Image data is too small or invalid.");
+
+  const worker = await createWorker("eng");
+  try {
+    const { data } = await worker.recognize(buffer);
+    const text = data.text;
+    const words = text.trim().split(/\s+/).filter(Boolean).length;
+    return JSON.stringify({ text, confidence: Math.round(data.confidence), words, chars: text.length, language: "eng" });
+  } finally {
+    await worker.terminate();
+  }
+}
+
+async function handleExtractDocx(args: Record<string, unknown>): Promise<string> {
+  const { fileBase64 } = args as { fileBase64?: string };
+  if (!fileBase64 || typeof fileBase64 !== "string") {
+    throw new McpToolError("Missing 'fileBase64' field.");
+  }
+  const buffer = Buffer.from(fileBase64, "base64");
+  const result = await mammoth.extractRawText({ buffer });
+  const text = result.value;
+  const paragraphs = text.split(/\n+/).filter((p) => p.trim().length > 0).length;
+  const words = text.trim().split(/\s+/).filter(Boolean).length;
+  return JSON.stringify({ text, paragraphs, words, chars: text.length });
+}
+
+function handleExcelToJson(args: Record<string, unknown>): string {
+  const { fileBase64, filename } = args as { fileBase64?: string; filename?: string };
+  if (!fileBase64 || typeof fileBase64 !== "string") throw new McpToolError("Missing 'fileBase64' field.");
+  if (!filename || typeof filename !== "string") throw new McpToolError("Missing 'filename' field — needed for format detection.");
+
+  const buffer = Buffer.from(fileBase64, "base64");
+  const workbook = XLSX.read(buffer, { type: "buffer" });
+  const sheets: Record<string, unknown[]> = {};
+  let totalRows = 0;
+
+  for (const sheetName of workbook.SheetNames) {
+    const rows = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
+    sheets[sheetName] = rows;
+    totalRows += rows.length;
+  }
+  return JSON.stringify({ sheets, sheetNames: workbook.SheetNames, totalRows });
 }
 
 // ─── JSON-RPC helpers ─────────────────────────────────────────────────────────
@@ -441,6 +533,15 @@ router.post("/", async (req: Request, res: Response) => {
               break;
             case "json_to_csv":
               text = handleJsonToCsv(args);
+              break;
+            case "ocr_image":
+              text = await handleOcrImage(args);
+              break;
+            case "extract_docx_text":
+              text = await handleExtractDocx(args);
+              break;
+            case "excel_to_json":
+              text = handleExcelToJson(args);
               break;
             case "count_words":
               text = handleCountWords(args);

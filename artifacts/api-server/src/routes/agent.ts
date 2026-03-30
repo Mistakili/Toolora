@@ -2,6 +2,9 @@ import { Router, type IRouter, type Request, type Response } from "express";
 import multer from "multer";
 import { PDFDocument } from "pdf-lib";
 import QRCode from "qrcode";
+import { createWorker } from "tesseract.js";
+import mammoth from "mammoth";
+import XLSX from "xlsx";
 import { db } from "@workspace/db";
 import { agentPaymentsTable } from "@workspace/db/schema";
 import { desc, sum, count } from "drizzle-orm";
@@ -701,6 +704,96 @@ router.post("/json/to-csv", requirePayment, async (req: Request, res: Response) 
   } catch (err: unknown) {
     req.log.error({ err }, "JSON to CSV error");
     res.status(422).json({ error: "Failed to convert JSON to CSV." });
+  }
+});
+
+// ─── POST /api/agent/ocr ──────────────────────────────────────────────────────
+
+router.post("/ocr", requirePayment, upload.single("file"), async (req: Request, res: Response) => {
+  if (!req.file) { res.status(400).json({ error: "No file uploaded." }); return; }
+
+  const allowedTypes = ["image/png", "image/jpeg", "image/jpg", "image/webp", "image/bmp", "image/tiff"];
+  if (!allowedTypes.includes(req.file.mimetype)) {
+    res.status(400).json({ error: "Unsupported file type. Use PNG, JPEG, WEBP, BMP, or TIFF." });
+    return;
+  }
+
+  try {
+    const worker = await createWorker("eng");
+    const { data } = await worker.recognize(req.file.buffer);
+    await worker.terminate();
+
+    const text = data.text;
+    const words = text.trim().split(/\s+/).filter(Boolean).length;
+    const chars = text.length;
+
+    await logPayment("/api/agent/ocr", req);
+    res.json({ text, confidence: Math.round(data.confidence), words, chars, language: "eng" });
+  } catch (err: unknown) {
+    req.log.error({ err }, "OCR error");
+    res.status(500).json({ error: "OCR processing failed." });
+  }
+});
+
+// ─── POST /api/agent/docx/text ────────────────────────────────────────────────
+
+router.post("/docx/text", requirePayment, upload.single("file"), async (req: Request, res: Response) => {
+  if (!req.file) { res.status(400).json({ error: "No file uploaded." }); return; }
+
+  const allowed = [
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "application/msword",
+    "application/octet-stream",
+  ];
+  if (!allowed.includes(req.file.mimetype) && !req.file.originalname?.endsWith(".docx")) {
+    res.status(400).json({ error: "Upload a .docx Word document." });
+    return;
+  }
+
+  try {
+    const result = await mammoth.extractRawText({ buffer: req.file.buffer });
+    const text = result.value;
+    const paragraphs = text.split(/\n+/).filter((p) => p.trim().length > 0).length;
+    const words = text.trim().split(/\s+/).filter(Boolean).length;
+    const chars = text.length;
+
+    await logPayment("/api/agent/docx/text", req);
+    res.json({ text, paragraphs, words, chars });
+  } catch (err: unknown) {
+    req.log.error({ err }, "DOCX parsing error");
+    res.status(422).json({ error: "Failed to parse .docx file. Ensure the file is a valid Word document." });
+  }
+});
+
+// ─── POST /api/agent/excel/to-json ───────────────────────────────────────────
+
+router.post("/excel/to-json", requirePayment, upload.single("file"), async (req: Request, res: Response) => {
+  if (!req.file) { res.status(400).json({ error: "No file uploaded." }); return; }
+
+  const allowedExts = [".xlsx", ".xls", ".ods", ".csv"];
+  const filename = req.file.originalname?.toLowerCase() ?? "";
+  const hasValidExt = allowedExts.some((ext) => filename.endsWith(ext));
+  if (!hasValidExt) {
+    res.status(400).json({ error: "Upload an Excel file (.xlsx, .xls, .ods) or CSV." });
+    return;
+  }
+
+  try {
+    const workbook = XLSX.read(req.file.buffer, { type: "buffer" });
+    const sheets: Record<string, unknown[]> = {};
+    let totalRows = 0;
+
+    for (const sheetName of workbook.SheetNames) {
+      const rows = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
+      sheets[sheetName] = rows;
+      totalRows += rows.length;
+    }
+
+    await logPayment("/api/agent/excel/to-json", req);
+    res.json({ sheets, sheetNames: workbook.SheetNames, totalRows });
+  } catch (err: unknown) {
+    req.log.error({ err }, "Excel parsing error");
+    res.status(422).json({ error: "Failed to parse Excel file." });
   }
 });
 

@@ -7,6 +7,8 @@ import agentRouter from "./agent";
 import adminRouter from "./admin";
 import analyticsRouter from "./analytics";
 import mcpRouter from "./mcp";
+import keysRouter from "./keys";
+import stripeRouter from "./stripeRoutes";
 
 const router: IRouter = Router();
 
@@ -18,5 +20,7 @@ router.use("/agent", agentRouter);
 router.use("/admin", adminRouter);
 router.use("/analytics", analyticsRouter);
 router.use("/mcp", mcpRouter);
+router.use("/keys", keysRouter);
+router.use("/stripe", stripeRouter);
 
 export default router;

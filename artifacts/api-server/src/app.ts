@@ -6,8 +6,28 @@ import { authMiddleware } from "./middlewares/authMiddleware";
 import router from "./routes";
 import { logger } from "./lib/logger";
 import { RECEIVER_ADDRESS, NETWORK, PRICE_XLM } from "./middlewares/x402";
+import { WebhookHandlers } from "./webhookHandlers";
 
 const app: Express = express();
+
+// ── Stripe webhook: must be registered BEFORE express.json() ─────────────────
+app.post(
+  "/api/stripe/webhook",
+  express.raw({ type: "application/json" }),
+  async (req: Request, res: Response) => {
+    const sig = req.headers["stripe-signature"];
+    if (!sig) { res.status(400).json({ error: "Missing stripe-signature" }); return; }
+    try {
+      const signature = Array.isArray(sig) ? sig[0] : sig;
+      await WebhookHandlers.processWebhook(req.body as Buffer, signature);
+      res.status(200).json({ received: true });
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Webhook error";
+      logger.error({ err }, "Stripe webhook error");
+      res.status(400).json({ error: msg });
+    }
+  },
+);
 
 app.use(
   pinoHttp({

@@ -1,6 +1,6 @@
 import { ReactNode, useState, useRef, useEffect } from "react";
 import { Link, useLocation } from "wouter";
-import { Settings2, Sparkles, Moon, Sun, Search, Menu, X, ShieldCheck, History, LogOut, LogIn } from "lucide-react";
+import { Settings2, Sparkles, Moon, Sun, Search, Menu, X, ShieldCheck, History, LogOut, LogIn, Key, CreditCard } from "lucide-react";
 import { useTheme } from "../ThemeProvider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -125,6 +125,16 @@ export function AppLayout({ children }: { children: ReactNode }) {
                         <History className="w-4 h-4" /> Tool History
                       </div>
                     </Link>
+                    <Link href="/api-keys" onClick={() => setUserMenuOpen(false)}>
+                      <div className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-muted transition-colors cursor-pointer">
+                        <Key className="w-4 h-4" /> API Keys
+                      </div>
+                    </Link>
+                    <Link href="/pricing" onClick={() => setUserMenuOpen(false)}>
+                      <div className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-muted transition-colors cursor-pointer">
+                        <CreditCard className="w-4 h-4" /> Pricing
+                      </div>
+                    </Link>
                     <button onClick={logout} className="w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-muted transition-colors text-left text-destructive">
                       <LogOut className="w-4 h-4" /> Sign Out
                     </button>
@@ -214,6 +224,8 @@ export function AppLayout({ children }: { children: ReactNode }) {
           <div>
             <h4 className="font-semibold mb-4">Resources</h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
+              <li><Link href="/pricing" className="hover:text-foreground transition-colors">Pricing</Link></li>
+              <li><Link href="/api-keys" className="hover:text-foreground transition-colors">API Keys</Link></li>
               <li><Link href="/api-docs" className="hover:text-foreground transition-colors">API Docs</Link></li>
               <li><Link href="/extension" className="hover:text-foreground transition-colors">Browser Extension</Link></li>
               <li><Link href="/history" className="hover:text-foreground transition-colors">My Tool History</Link></li>

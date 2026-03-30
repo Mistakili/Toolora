@@ -15,6 +15,8 @@ import History from "@/pages/History";
 import ApiDocs from "@/pages/ApiDocs";
 import ExtensionPage from "@/pages/ExtensionPage";
 import Admin from "@/pages/Admin";
+import Pricing from "@/pages/Pricing";
+import ApiKeys from "@/pages/ApiKeys";
 import NotFound from "@/pages/not-found";
 
 const queryClient = new QueryClient({
@@ -37,6 +39,8 @@ function Router() {
         <Route path="/api-docs" component={ApiDocs} />
         <Route path="/extension" component={ExtensionPage} />
         <Route path="/admin" component={Admin} />
+        <Route path="/pricing" component={Pricing} />
+        <Route path="/api-keys" component={ApiKeys} />
         <Route path="/tools/:category" component={CategoryView} />
         <Route path="/tools/:category/:slug" component={ToolView} />
         <Route component={NotFound} />
