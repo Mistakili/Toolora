@@ -4,6 +4,7 @@ import QRCode from "qrcode";
 import { createWorker } from "tesseract.js";
 import mammoth from "mammoth";
 import XLSX from "xlsx";
+import OpenAI from "openai";
 
 const router: IRouter = Router();
 
@@ -137,6 +138,32 @@ const TOOLS = [
         filename: { type: "string", description: "Filename with extension (e.g., 'data.xlsx') — required for format detection." },
       },
       required: ["fileBase64", "filename"],
+    },
+  },
+  {
+    name: "transcribe_audio",
+    description:
+      "Transcribe speech from an audio file to text using OpenAI Whisper (gpt-4o-mini-transcribe). Accepts the audio as a base64-encoded string. Returns the full transcript, word count, and character count. Supported formats: flac, m4a, mp3, mp4, mpeg, mpga, oga, ogg, wav, webm. Maximum file size: 25MB. Great for transcribing meeting recordings, podcasts, voice notes, interviews, or any spoken audio.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        audioBase64: { type: "string", description: "The audio file contents encoded as a base64 string." },
+        filename: { type: "string", description: "Filename with extension (e.g., 'recording.mp3') — used for format detection." },
+      },
+      required: ["audioBase64", "filename"],
+    },
+  },
+  {
+    name: "scrape_url_js",
+    description:
+      "Fetch and extract content from a web page that requires JavaScript rendering (SPAs, dynamically loaded content). Unlike read_url which uses simple HTTP fetch, this tool uses a headless browser to render the page first. Returns clean text or markdown. Use for React/Next.js/Angular/Vue apps, product pages, news sites behind JS paywalls, or any page where read_url returns empty content.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        url: { type: "string", description: "The full URL to scrape (must be http:// or https://)." },
+        format: { type: "string", enum: ["text", "markdown"], description: "Output format: 'text' for plain text (default), 'markdown' to preserve headings and links." },
+      },
+      required: ["url"],
     },
   },
   {
@@ -461,6 +488,89 @@ function handleExcelToJson(args: Record<string, unknown>): string {
   return JSON.stringify({ sheets, sheetNames: workbook.SheetNames, totalRows });
 }
 
+async function handleTranscribeAudio(args: Record<string, unknown>): Promise<string> {
+  const { audioBase64, filename } = args as { audioBase64?: string; filename?: string };
+  if (!audioBase64 || typeof audioBase64 !== "string") throw new McpToolError("Missing 'audioBase64' field.");
+  if (!filename || typeof filename !== "string") throw new McpToolError("Missing 'filename' field — needed for format detection.");
+
+  const supportedExts = [".flac", ".m4a", ".mp3", ".mp4", ".mpeg", ".mpga", ".oga", ".ogg", ".wav", ".webm"];
+  const lower = filename.toLowerCase();
+  if (!supportedExts.some((ext) => lower.endsWith(ext))) {
+    throw new McpToolError(`Unsupported audio format. Use: ${supportedExts.join(", ")}`);
+  }
+
+  const baseURL = process.env.AI_INTEGRATIONS_OPENAI_BASE_URL;
+  const apiKey = process.env.AI_INTEGRATIONS_OPENAI_API_KEY ?? "dummy";
+  if (!baseURL) throw new McpToolError("Audio transcription is not available — OpenAI integration not configured.");
+
+  const buffer = Buffer.from(audioBase64, "base64");
+  if (buffer.length > 25 * 1024 * 1024) throw new McpToolError("Audio file exceeds 25MB limit.");
+
+  const ai = new OpenAI({ baseURL, apiKey });
+  const audioFile = new File([buffer], filename, { type: "audio/mpeg" });
+
+  const transcript = await ai.audio.transcriptions.create({
+    file: audioFile,
+    model: "gpt-4o-mini-transcribe",
+    response_format: "json",
+  });
+
+  const text = transcript.text;
+  const words = text.trim().split(/\s+/).filter(Boolean).length;
+  return JSON.stringify({ text, words, chars: text.length, model: "gpt-4o-mini-transcribe", fileSizeBytes: buffer.length });
+}
+
+async function handleScrapeUrlJs(args: Record<string, unknown>): Promise<string> {
+  const { url, format = "text" } = args as { url?: string; format?: "text" | "markdown" };
+  if (!url || typeof url !== "string") throw new McpToolError("Missing 'url' field.");
+
+  let parsedUrl: URL;
+  try {
+    parsedUrl = new URL(url);
+    if (!["http:", "https:"].includes(parsedUrl.protocol)) throw new Error();
+  } catch {
+    throw new McpToolError("Invalid URL. Must be a full http:// or https:// URL.");
+  }
+
+  if (!["text", "markdown"].includes(format as string)) throw new McpToolError("Invalid 'format'. Use 'text' or 'markdown'.");
+
+  const jinaUrl = `https://r.jina.ai/${parsedUrl.href}`;
+  const response = await fetch(jinaUrl, {
+    headers: {
+      Accept: "application/json",
+      "X-Return-Format": format === "markdown" ? "markdown" : "text",
+      "X-Timeout": "30",
+      "User-Agent": "Toolora-MCP/1.0",
+    },
+    signal: AbortSignal.timeout(35_000),
+  });
+
+  if (!response.ok) {
+    throw new McpToolError(`Scraping failed: HTTP ${response.status}. The page may be unavailable or require authentication.`);
+  }
+
+  const contentType = response.headers.get("content-type") ?? "";
+  let content: string;
+  let title: string | null = null;
+
+  if (contentType.includes("application/json")) {
+    const json = await response.json() as { data?: { text?: string; content?: string; title?: string } };
+    content = json.data?.text ?? json.data?.content ?? "";
+    title = json.data?.title ?? null;
+  } else {
+    content = await response.text();
+    const firstLine = content.split("\n")[0] ?? "";
+    if (firstLine.startsWith("Title:")) title = firstLine.replace("Title:", "").trim();
+  }
+
+  if (!content || content.trim().length < 20) {
+    throw new McpToolError("Could not extract content from this URL. The page may require authentication.");
+  }
+
+  const words = content.trim().split(/\s+/).filter(Boolean).length;
+  return JSON.stringify({ title, content, words, chars: content.length, format, url, engine: "jina-reader" });
+}
+
 // ─── JSON-RPC helpers ─────────────────────────────────────────────────────────
 
 function rpcOk(id: string | number | null, result: unknown) {
@@ -542,6 +652,12 @@ router.post("/", async (req: Request, res: Response) => {
               break;
             case "excel_to_json":
               text = handleExcelToJson(args);
+              break;
+            case "transcribe_audio":
+              text = await handleTranscribeAudio(args);
+              break;
+            case "scrape_url_js":
+              text = await handleScrapeUrlJs(args);
               break;
             case "count_words":
               text = handleCountWords(args);

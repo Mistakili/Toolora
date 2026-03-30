@@ -13,9 +13,33 @@ import {
   RECEIVER_ADDRESS, NETWORK, PRICE_XLM,
   SOLANA_RECEIVER_ADDRESS, SOLANA_NETWORK, PRICE_USDC,
 } from "../middlewares/x402";
+import { requireApiKey, logApiKeyUsage } from "../middlewares/apiKey";
+import { type NextFunction } from "express";
+import OpenAI from "openai";
+
+// ─── Combined auth: API key OR x402 payment ───────────────────────────────────
+
+function requirePaymentOrApiKey(req: Request, res: Response, next: NextFunction): void {
+  const authHeader = req.headers["authorization"] as string | undefined;
+  if (authHeader?.startsWith("Bearer sk_toolora_")) {
+    requireApiKey(req, res, next);
+  } else {
+    requirePayment(req, res, next as never);
+  }
+}
+
+// ─── OpenAI client for transcription ─────────────────────────────────────────
+
+function getOpenAIClient(): OpenAI {
+  const baseURL = process.env.AI_INTEGRATIONS_OPENAI_BASE_URL;
+  const apiKey = process.env.AI_INTEGRATIONS_OPENAI_API_KEY ?? "dummy";
+  if (!baseURL) throw new Error("AI_INTEGRATIONS_OPENAI_BASE_URL not set. OpenAI integration not configured.");
+  return new OpenAI({ baseURL, apiKey });
+}
 
 const router: IRouter = Router();
-const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 20 * 1024 * 1024 } });
+// audio files can be up to 25MB; other uploads 20MB
+const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 25 * 1024 * 1024 } });
 
 // ─── Log a verified payment to the DB ────────────────────────────────────────
 
@@ -269,6 +293,20 @@ function buildManifest(req: Request) {
       manifest: `${base}/api/agent`,
       stats: `${base}/api/agent/stats`,
       wellKnown: `${base}/.well-known/agent.json`,
+      pricing: `${base}/pricing`,
+      apiKeys: `${base}/api-keys`,
+    },
+    auth: {
+      methods: ["x402-payment", "api-key"],
+      x402: {
+        description: "Pay per request. Send required amount to payTo address, retry with X-PAYMENT header.",
+        chains: acceptedPayments.map((p) => (p as Record<string, string>).network),
+      },
+      apiKey: {
+        description: "Subscribe for monthly call quota. Add Authorization: Bearer sk_toolora_... header.",
+        tiers: { free: "50 calls/mo", pro: "5,000 calls/mo ($19)", team: "50,000 calls/mo ($79)" },
+        signup: `${base}/pricing`,
+      },
     },
   };
 }
@@ -311,7 +349,7 @@ router.get("/stats", async (req: Request, res: Response) => {
 
 router.post(
   "/pdf/text",
-  requirePayment,
+  requirePaymentOrApiKey,
   upload.single("file"),
   async (req: Request, res: Response) => {
     if (!req.file) {
@@ -405,7 +443,7 @@ function extractStructure(text: string): { title: string | null; sections: { hea
 
 router.post(
   "/pdf/extract",
-  requirePayment,
+  requirePaymentOrApiKey,
   upload.single("file"),
   async (req: Request, res: Response) => {
     if (!req.file) {
@@ -438,7 +476,7 @@ router.post(
 
 // ─── POST /api/agent/url/read ─────────────────────────────────────────────────
 
-router.post("/url/read", requirePayment, async (req: Request, res: Response) => {
+router.post("/url/read", requirePaymentOrApiKey, async (req: Request, res: Response) => {
   const { url } = req.body as { url?: string };
 
   if (!url || typeof url !== "string") {
@@ -508,7 +546,7 @@ router.post("/url/read", requirePayment, async (req: Request, res: Response) => 
 
 // ─── POST /api/agent/pdf/merge ────────────────────────────────────────────────
 
-router.post("/pdf/merge", requirePayment, async (req: Request, res: Response) => {
+router.post("/pdf/merge", requirePaymentOrApiKey, async (req: Request, res: Response) => {
   const body = req.body as { files?: unknown[] };
 
   if (!Array.isArray(body.files) || body.files.length < 2) {
@@ -567,7 +605,7 @@ router.post("/pdf/merge", requirePayment, async (req: Request, res: Response) =>
 
 // ─── POST /api/agent/qr ───────────────────────────────────────────────────────
 
-router.post("/qr", requirePayment, async (req: Request, res: Response) => {
+router.post("/qr", requirePaymentOrApiKey, async (req: Request, res: Response) => {
   const { text, size = 400, errorCorrectionLevel = "M" } = req.body as {
     text?: string;
     size?: number;
@@ -607,7 +645,7 @@ router.post("/qr", requirePayment, async (req: Request, res: Response) => {
 
 // ─── POST /api/agent/csv/to-json ──────────────────────────────────────────────
 
-router.post("/csv/to-json", requirePayment, async (req: Request, res: Response) => {
+router.post("/csv/to-json", requirePaymentOrApiKey, async (req: Request, res: Response) => {
   const { csv, headers = true } = req.body as { csv?: string; headers?: boolean };
 
   if (!csv || typeof csv !== "string") {
@@ -667,7 +705,7 @@ router.post("/csv/to-json", requirePayment, async (req: Request, res: Response) 
 
 // ─── POST /api/agent/json/to-csv ──────────────────────────────────────────────
 
-router.post("/json/to-csv", requirePayment, async (req: Request, res: Response) => {
+router.post("/json/to-csv", requirePaymentOrApiKey, async (req: Request, res: Response) => {
   const { data, delimiter = "," } = req.body as { data?: unknown[]; delimiter?: string };
 
   if (!Array.isArray(data) || data.length === 0) {
@@ -709,7 +747,7 @@ router.post("/json/to-csv", requirePayment, async (req: Request, res: Response) 
 
 // ─── POST /api/agent/ocr ──────────────────────────────────────────────────────
 
-router.post("/ocr", requirePayment, upload.single("file"), async (req: Request, res: Response) => {
+router.post("/ocr", requirePaymentOrApiKey, upload.single("file"), async (req: Request, res: Response) => {
   if (!req.file) { res.status(400).json({ error: "No file uploaded." }); return; }
 
   const allowedTypes = ["image/png", "image/jpeg", "image/jpg", "image/webp", "image/bmp", "image/tiff"];
@@ -728,6 +766,7 @@ router.post("/ocr", requirePayment, upload.single("file"), async (req: Request, 
     const chars = text.length;
 
     await logPayment("/api/agent/ocr", req);
+    await logApiKeyUsage(req, "/api/agent/ocr");
     res.json({ text, confidence: Math.round(data.confidence), words, chars, language: "eng" });
   } catch (err: unknown) {
     req.log.error({ err }, "OCR error");
@@ -737,7 +776,7 @@ router.post("/ocr", requirePayment, upload.single("file"), async (req: Request, 
 
 // ─── POST /api/agent/docx/text ────────────────────────────────────────────────
 
-router.post("/docx/text", requirePayment, upload.single("file"), async (req: Request, res: Response) => {
+router.post("/docx/text", requirePaymentOrApiKey, upload.single("file"), async (req: Request, res: Response) => {
   if (!req.file) { res.status(400).json({ error: "No file uploaded." }); return; }
 
   const allowed = [
@@ -758,6 +797,7 @@ router.post("/docx/text", requirePayment, upload.single("file"), async (req: Req
     const chars = text.length;
 
     await logPayment("/api/agent/docx/text", req);
+    await logApiKeyUsage(req, "/api/agent/docx/text");
     res.json({ text, paragraphs, words, chars });
   } catch (err: unknown) {
     req.log.error({ err }, "DOCX parsing error");
@@ -767,7 +807,7 @@ router.post("/docx/text", requirePayment, upload.single("file"), async (req: Req
 
 // ─── POST /api/agent/excel/to-json ───────────────────────────────────────────
 
-router.post("/excel/to-json", requirePayment, upload.single("file"), async (req: Request, res: Response) => {
+router.post("/excel/to-json", requirePaymentOrApiKey, upload.single("file"), async (req: Request, res: Response) => {
   if (!req.file) { res.status(400).json({ error: "No file uploaded." }); return; }
 
   const allowedExts = [".xlsx", ".xls", ".ods", ".csv"];
@@ -790,10 +830,175 @@ router.post("/excel/to-json", requirePayment, upload.single("file"), async (req:
     }
 
     await logPayment("/api/agent/excel/to-json", req);
+    await logApiKeyUsage(req, "/api/agent/excel/to-json");
     res.json({ sheets, sheetNames: workbook.SheetNames, totalRows });
   } catch (err: unknown) {
     req.log.error({ err }, "Excel parsing error");
     res.status(422).json({ error: "Failed to parse Excel file." });
+  }
+});
+
+// ─── POST /api/agent/audio/transcribe ────────────────────────────────────────
+
+router.post(
+  "/audio/transcribe",
+  requirePaymentOrApiKey,
+  upload.single("file"),
+  async (req: Request, res: Response) => {
+    if (!req.file) {
+      res.status(400).json({ error: "No file uploaded. Send an audio file in the 'file' multipart field." });
+      return;
+    }
+
+    const supportedFormats = ["audio/flac", "audio/m4a", "audio/mp4", "audio/mpeg", "audio/mpga", "audio/ogg", "audio/wav", "audio/webm", "audio/x-m4a"];
+    const supportedExts = [".flac", ".m4a", ".mp3", ".mp4", ".mpeg", ".mpga", ".oga", ".ogg", ".wav", ".webm"];
+    const filename = req.file.originalname?.toLowerCase() ?? "";
+    const hasValidExt = supportedExts.some((ext) => filename.endsWith(ext));
+    const hasValidMime = supportedFormats.includes(req.file.mimetype);
+
+    if (!hasValidExt && !hasValidMime) {
+      res.status(400).json({
+        error: "Unsupported audio format. Supported: flac, m4a, mp3, mp4, mpeg, mpga, oga, ogg, wav, webm.",
+        received: { mimetype: req.file.mimetype, filename: req.file.originalname },
+      });
+      return;
+    }
+
+    try {
+      const ai = getOpenAIClient();
+
+      // OpenAI SDK needs a File-like object with name and type
+      const audioFile = new File(
+        [req.file.buffer],
+        req.file.originalname || "audio.mp3",
+        { type: req.file.mimetype || "audio/mpeg" },
+      );
+
+      const transcript = await ai.audio.transcriptions.create({
+        file: audioFile,
+        model: "gpt-4o-mini-transcribe",
+        response_format: "json",
+      });
+
+      const text = transcript.text;
+      const words = text.trim().split(/\s+/).filter(Boolean).length;
+      const duration = (req.file.buffer.length / 1024 / 128).toFixed(1); // rough estimate
+
+      await logPayment("/api/agent/audio/transcribe", req);
+      await logApiKeyUsage(req, "/api/agent/audio/transcribe");
+
+      res.json({
+        text,
+        words,
+        chars: text.length,
+        model: "gpt-4o-mini-transcribe",
+        fileSizeBytes: req.file.buffer.length,
+        estimatedDurationSeconds: parseFloat(duration),
+      });
+    } catch (err: unknown) {
+      req.log.error({ err }, "Audio transcription error");
+      const msg = err instanceof Error ? err.message : "Unknown error";
+      if (msg.includes("not configured")) {
+        res.status(503).json({ error: "Audio transcription is not available. OpenAI integration not set up." });
+      } else {
+        res.status(500).json({ error: "Transcription failed. Ensure the file is a valid audio file." });
+      }
+    }
+  },
+);
+
+// ─── POST /api/agent/url/scrape ───────────────────────────────────────────────
+// JS-rendered scraping via Jina Reader (handles SPAs, dynamically rendered pages)
+
+router.post("/url/scrape", requirePaymentOrApiKey, async (req: Request, res: Response) => {
+  const { url, format = "text" } = req.body as { url?: string; format?: "text" | "markdown" };
+
+  if (!url || typeof url !== "string") {
+    res.status(400).json({ error: "Missing 'url' field in JSON body." });
+    return;
+  }
+
+  let parsedUrl: URL;
+  try {
+    parsedUrl = new URL(url);
+    if (!["http:", "https:"].includes(parsedUrl.protocol)) throw new Error("Bad protocol");
+  } catch {
+    res.status(400).json({ error: "Invalid URL. Must be a full http:// or https:// URL." });
+    return;
+  }
+
+  if (!["text", "markdown"].includes(format)) {
+    res.status(400).json({ error: "Invalid 'format'. Use 'text' or 'markdown'." });
+    return;
+  }
+
+  try {
+    const jinaUrl = `https://r.jina.ai/${parsedUrl.href}`;
+    const response = await fetch(jinaUrl, {
+      headers: {
+        "Accept": "application/json",
+        "X-Return-Format": format === "markdown" ? "markdown" : "text",
+        "X-Timeout": "30",
+        "User-Agent": "Toolora-Agent/1.0",
+      },
+      signal: AbortSignal.timeout(35_000),
+    });
+
+    if (!response.ok) {
+      const errText = await response.text().catch(() => "");
+      req.log.warn({ status: response.status, url }, "Jina Reader failed");
+      if (response.status === 429) {
+        res.status(429).json({ error: "Scraping rate limit exceeded. Try again shortly." });
+      } else if (response.status >= 400 && response.status < 500) {
+        res.status(422).json({ error: `Could not scrape URL: ${response.status}. ${errText.slice(0, 200)}` });
+      } else {
+        res.status(502).json({ error: "Scraping service unavailable. Try again later." });
+      }
+      return;
+    }
+
+    const contentType = response.headers.get("content-type") ?? "";
+    let content: string;
+    let title: string | null = null;
+
+    if (contentType.includes("application/json")) {
+      const json = await response.json() as { data?: { text?: string; content?: string; title?: string }; code?: number };
+      content = json.data?.text ?? json.data?.content ?? "";
+      title = json.data?.title ?? null;
+    } else {
+      content = await response.text();
+      const firstLine = content.split("\n")[0] ?? "";
+      if (firstLine.startsWith("Title:")) title = firstLine.replace("Title:", "").trim();
+    }
+
+    if (!content || content.trim().length < 20) {
+      res.status(422).json({ error: "Could not extract content from this URL. The page may require authentication." });
+      return;
+    }
+
+    const words = content.trim().split(/\s+/).filter(Boolean).length;
+
+    await logPayment("/api/agent/url/scrape", req);
+    await logApiKeyUsage(req, "/api/agent/url/scrape");
+
+    res.json({
+      title,
+      content,
+      words,
+      chars: content.length,
+      format,
+      url,
+      scrapedAt: new Date().toISOString(),
+      engine: "jina-reader",
+    });
+  } catch (err: unknown) {
+    req.log.error({ err }, "JS scraping error");
+    const msg = err instanceof Error ? err.message : "Unknown error";
+    if (msg.includes("timed out") || msg.includes("timeout")) {
+      res.status(504).json({ error: "Scraping timed out. The page took too long to load." });
+    } else {
+      res.status(500).json({ error: "Failed to scrape URL." });
+    }
   }
 });
 
