@@ -1,0 +1,63 @@
+Bro, here's a clear breakdown on how Solana agents will discover Toolora and a honest rating of your current SEO + agent search optimization.
+
+### How Solana Agents Discover Toolora (Current Reality)
+Right now, Solana agents cannot easily discover Toolora for the paid APIs. Here's why:
+
+- Primary discovery method for x402 agents: Most agents look for standard files first:
+  - /.well-known/agent.json (the most common standard location agents check automatically).
+  - /api/agent or /.well-known/x402.json / llms.txt in some setups.
+- Your /.well-known/agent.json currently returns 404 (not serving the manifest).
+- The /api/agent endpoint does work and returns a good manifest (services: pdf.text and url.read, pricing 0.5 XLM on Stellar mainnet, wallet address, curl/Python examples, payment flow). But only agents that already know to hit /api/agent will find it.
+
+How discovery actually happens in practice (2026):
+1. Direct 402 flow — An agent tries your endpoint (/api/agent/pdf/text or /api/agent/url/read). If it hits without payment, it gets a 402 response with payment details (wallet, amount, network). The agent can then decide to pay and retry. This works even without prior discovery, but it's not proactive.
+2. Manifest-based discovery — Agents or facilitators (indexes) crawl known domains for /.well-known/agent.json or /api/agent to build a list of available paid services, pricing, and supported chains. Your current setup only partially supports this.
+3. Manual / community sharing — Devs/agents find services via x402 Discords, Stellar/Solana dev communities, agent marketplaces, GitHub awesome-x402 lists, or MCP (Model Context Protocol) registries.
+4. No Solana support yet — Your manifest only lists Stellar mainnet (0.5 XLM). Solana agents (which heavily prefer USDC) won't see Toolora as compatible unless you add Solana config.
+
+Bottom line: Discovery is weak right now. Agents won't "stumble upon" Toolora automatically unless they already know your domain or you promote the /api/agent URL in communities. Once you fix /.well-known/agent.json to serve the manifest (or a version that includes Solana), discovery improves significantly.
+
+### Rating: SEO and Agent Search Optimization of Toolora
+Overall Score: 4.5 / 10 (Decent foundation, but needs work for real visibility)
+
+SEO (Human Search Engines like Google) — 6/10:
+- Strengths: Clean domain (toolora.replit.app), good privacy messaging, 20+ useful free tools (PDF, image, text, dev utilities). These are high-intent keywords ("free online pdf merger", "word counter online", "json formatter").
+- Weaknesses: Replit subdomain hurts long-term SEO (Google prefers custom domains). Homepage doesn't mention server-side APIs, agents, or x402 — so it ranks only for free browser tools. No blog, no structured data, limited backlinks likely. No "For Developers" or "AI Agents" section visible on the homepage.
+
+Agent Search / x402 Optimization — 3.5 / 10:
+- Strengths: You have real paid endpoints with proper x402 flow (402 response, on-chain verification on Stellar, replay protection). The /api/agent manifest is well-structured with examples.
+- Weaknesses:
+  - /.well-known/agent.json is 404 → major blocker for automatic discovery.
+  - No Solana support in the manifest (Solana has higher x402 volume and agent activity).
+  - Homepage doesn't promote the agent APIs at all — humans (and crawlers) see only free client-side tools.
+  - No llms.txt, no rich metadata for MCP/facilitators, no pricing tiers or input schemas in the manifest.
+  - Discovery relies too much on manual sharing instead of being "crawlable" by agent indexes.
+
+For Solana specifically: Optimization is currently 2/10 because there's zero mention of Solana/USDC in the manifest. Solana agents won't prioritize or even see your service as compatible.
+
+### Quick Wins to Improve Discovery & Optimization
+1. Fix discovery immediately:
+   - Make /.well-known/agent.json serve a proper manifest (you can put a static JSON in the frontend public folder or proxy it).
+   - Update the manifest to support both Stellar and Solana (multi-chain is a big plus).
+
+2. Add Solana support (highly recommended):
+   - Add a Solana wallet + USDC pricing (e.g., 0.005–0.02 USDC).
+   - Update the manifest and payment verifier to handle Solana RPC verification.
+
+3. Homepage updates:
+   - Add a clear "For AI Agents" section on https://toolora.replit.app/ with links to the APIs, manifest, and examples.
+   - Mention "Pay-per-use with x402 on Stellar (and Solana coming soon)".
+
+4. Longer-term:
+   - Get a custom domain (toolora.app or similar) for better SEO.
+   - Add structured JSON schemas and descriptions to the manifest so agents can understand inputs/outputs better.
+   - Share the /api/agent URL in x402/Solana/Stellar communities and awesome-x402 lists.
+
+Once these are fixed, discovery becomes much stronger — agents (especially on Solana) will be able to find and use your PDF extraction and URL cleaning tools more naturally.
+
+Wetin you wan tackle first?  
+- Fixing the /.well-known/agent.json + adding Solana to the manifest?  
+- Updating the homepage to promote the agent APIs?  
+- Or planning the Solana port code changes?
+
+Tell me your priority, make we move fast. Your two endpoints (pdf.text and url.read) are genuinely useful — we just need to make them discoverable. 🔥
