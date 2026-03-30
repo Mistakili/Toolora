@@ -52,7 +52,25 @@ Every package extends `tsconfig.base.json` which sets `composite: true`. The roo
 
 ### MCP Server
 
-Exposed at `GET|POST /api/mcp` on the API server. Implements MCP Streamable HTTP transport (2025-03-26). Three free tools: `extract_pdf_text`, `count_words`, `read_url`. No auth required. Add to Claude Desktop via `mcpServers.toolora.url = https://toolora-api.replit.app/api/mcp`.
+Exposed at `GET|POST /api/mcp` on the API server. Implements MCP Streamable HTTP transport (2025-03-26). 10 tools: `extract_pdf_text`, `count_words`, `read_url`, `extract_pdf_pages`, `merge_pdfs`, `generate_qr_code`, `csv_to_json`, `json_to_csv`, `ocr_image`, `extract_docx_text`, `excel_to_json`. No auth required. Add to Claude Desktop via `mcpServers.toolora.url = https://toolora-api.replit.app/api/mcp`.
+
+### Monetization
+
+**API Key + Subscription system:**
+- DB tables: `toolora_users`, `api_keys`, `api_usage` (created via raw SQL + Drizzle schema in `lib/db/src/schema/`)
+- Tiers: Free (50 calls/mo), Pro ($19/mo — 5,000 calls), Team ($79/mo — 50,000 calls)
+- Stripe products seeded in sandbox: `prod_UF0D1YUfACNb5a` (Pro, `price_1TGWCfDcOSNqIPi8ziL5zLJH`) and `prod_UF0Drk7Q7z1eEC` (Team, `price_1TGWCgDcOSNqIPi8KrXcEcCf`)
+- Stripe integration: Replit connector v2 via `getUncachableStripeClient()` in `stripeClient.ts`
+- Routes: `GET /api/stripe/plans`, `POST /api/stripe/checkout`, `POST /api/stripe/portal`, `GET /api/stripe/subscription`
+- Webhook: `POST /api/stripe/webhook` (registered BEFORE `express.json()` to preserve raw body for signature verification)
+- API key middleware: `middlewares/apiKey.ts` — SHA-256 hashing, tier-based rate limiting, monthly usage tracking
+- API key CRUD: `GET/POST /api/keys`, `DELETE /api/keys/:id`
+- Frontend: `/pricing` page (three-tier, upgrade CTAs, manage subscription link), `/api-keys` page (create/revoke keys, usage bar)
+- Seed script: `scripts/src/seed-products.ts`
+
+**x402 per-call payments (existing):**
+- Stellar XLM + Solana USDC via `requirePayment` middleware
+- Additive: API key middleware (`requireApiKey`) is alternative auth path
 
 ### SEO
 
@@ -92,6 +110,8 @@ React + Vite frontend for **Toolora** — a free online tools platform with 20 f
   - `src/components/shared/ShareModal.tsx` — share/embed modal
   - `src/hooks/useChainedInput.ts` — reads `?input=` URL param on mount
 - **Key packages**: qrcode, crypto-js, marked, react-dropzone, uuid, date-fns, pdf-lib, framer-motion
+- **Monetization pages**: `/pricing` (3-tier: Free/Pro/Team, Stripe checkout), `/api-keys` (create/revoke keys, usage bar)
+- **Agent API tools (Pro+)**: OCR via tesseract.js, DOCX via mammoth, Excel via xlsx — all in `routes/agent.ts` and MCP
 
 ## Packages
 

@@ -39,7 +39,7 @@ const TIERS = [
     ],
     cta: "Upgrade to Pro",
     ctaStyle: "bg-violet-600 hover:bg-violet-500 text-white",
-    priceId: "pro_monthly",
+    priceId: "price_1TGWCfDcOSNqIPi8ziL5zLJH",
   },
   {
     id: "team",
@@ -58,13 +58,14 @@ const TIERS = [
     ],
     cta: "Upgrade to Team",
     ctaStyle: "bg-amber-600 hover:bg-amber-500 text-white",
-    priceId: "team_monthly",
+    priceId: "price_1TGWCgDcOSNqIPi8KrXcEcCf",
   },
 ];
 
 export default function Pricing() {
   const [loading, setLoading] = useState<string | null>(null);
   const [msg, setMsg] = useState<string | null>(null);
+  const [portalLoading, setPortalLoading] = useState(false);
 
   useSEO({
     title: "Pricing — Toolora API",
@@ -72,6 +73,21 @@ export default function Pricing() {
   });
 
   const BASE = import.meta.env.BASE_URL.replace(/\/$/, "");
+  const params = new URLSearchParams(window.location.search);
+  const justSucceeded = params.get("success") === "1";
+  const justCanceled = params.get("canceled") === "1";
+
+  async function openPortal() {
+    setPortalLoading(true);
+    try {
+      const res = await fetch(`${BASE}/api/stripe/portal`, { method: "POST", credentials: "include" });
+      if (res.status === 401) { window.location.href = `${BASE}/api/auth/login?returnTo=/pricing`; return; }
+      const data = await res.json() as { url?: string; error?: string };
+      if (data.url) window.location.href = data.url;
+      else setMsg(data.error ?? "Could not open billing portal.");
+    } catch { setMsg("Could not open billing portal."); }
+    finally { setPortalLoading(false); }
+  }
 
   async function handleUpgrade(priceId: string | null, tierId: string) {
     if (!priceId) {
@@ -114,11 +130,31 @@ export default function Pricing() {
           </p>
         </div>
 
+        {justSucceeded && (
+          <div className="mb-6 text-center text-green-400 text-sm bg-green-900/20 border border-green-800 rounded-lg py-3 px-4">
+            🎉 Subscription activated! Your new plan is live. Generate API keys below.{" "}
+            <a href={`${BASE}/api-keys`} className="font-semibold underline">Go to API Keys →</a>
+          </div>
+        )}
+        {justCanceled && (
+          <div className="mb-6 text-center text-zinc-400 text-sm bg-zinc-800/40 border border-zinc-700 rounded-lg py-3 px-4">
+            Checkout canceled — no charge was made.
+          </div>
+        )}
         {msg && (
           <div className="mb-6 text-center text-red-400 text-sm bg-red-900/20 border border-red-800 rounded-lg py-3 px-4">
             {msg}
           </div>
         )}
+        <div className="mb-6 text-right">
+          <button
+            onClick={openPortal}
+            disabled={portalLoading}
+            className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors underline"
+          >
+            {portalLoading ? "Opening…" : "Manage existing subscription →"}
+          </button>
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {TIERS.map((tier) => (
