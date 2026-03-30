@@ -17,6 +17,8 @@ import ExtensionPage from "@/pages/ExtensionPage";
 import Admin from "@/pages/Admin";
 import Pricing from "@/pages/Pricing";
 import ApiKeys from "@/pages/ApiKeys";
+import Blog from "@/pages/Blog";
+import BlogPost from "@/pages/BlogPost";
 import NotFound from "@/pages/not-found";
 
 const queryClient = new QueryClient({
@@ -41,6 +43,8 @@ function Router() {
         <Route path="/admin" component={Admin} />
         <Route path="/pricing" component={Pricing} />
         <Route path="/api-keys" component={ApiKeys} />
+        <Route path="/blog" component={Blog} />
+        <Route path="/blog/:slug" component={BlogPost} />
         <Route path="/tools/:category" component={CategoryView} />
         <Route path="/tools/:category/:slug" component={ToolView} />
         <Route component={NotFound} />

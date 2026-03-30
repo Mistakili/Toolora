@@ -199,6 +199,71 @@ const categoryUrls = CATEGORIES.map(c => `
     <priority>0.7</priority>
   </url>`).join("");
 
+const BLOG_POSTS = [
+  { slug: "merge-pdfs-without-uploading",       title: "How to Merge PDFs Without Uploading Files",           description: "Most PDF tools send your files to remote servers. Here's how to merge PDFs entirely in your browser — no uploads, no accounts, no risk." },
+  { slug: "best-free-image-compressor-privacy",  title: "The Best Free Image Compressor That Doesn't See Your Files", description: "TinyPNG, Squoosh, Canva — they all upload your images. Here's a faster alternative that compresses images entirely in your browser." },
+  { slug: "why-i-built-client-side-toolbox",     title: "Why I Built a 100% Client-Side Toolbox",              description: "The story behind Toolora — why I decided every tool should run in the browser, what that means technically, and what the tradeoffs are." },
+];
+
+const blogListUrl = `  <url>
+    <loc>${BASE_URL}/blog</loc>
+    <lastmod>${TODAY}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>`;
+
+const blogPostUrls = BLOG_POSTS.map(p => `  <url>
+    <loc>${BASE_URL}/blog/${p.slug}</loc>
+    <lastmod>${TODAY}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>`).join("\n");
+
+// Pre-render blog list page
+const blogListDir = path.join(DIST, "blog");
+fs.mkdirSync(blogListDir, { recursive: true });
+const blogListHtml = template
+  .replace(/<title>[^<]*<\/title>/, `<title>Blog | Toolora</title>`)
+  .replace(/<meta name="description"[^>]*>/, `<meta name="description" content="Privacy, tools, and the indie web. Articles from the Toolora team.">`)
+  .replace(/<link rel="canonical"[^>]*>/, `<link rel="canonical" href="${BASE_URL}/blog">`)
+  .replace(/<meta property="og:title"[^>]*>/, `<meta property="og:title" content="Blog | Toolora">`)
+  .replace(/<meta property="og:description"[^>]*>/, `<meta property="og:description" content="Privacy, tools, and the indie web.">`)
+  .replace(/<meta property="og:url"[^>]*>/, `<meta property="og:url" content="${BASE_URL}/blog">`)
+  .replace(/<meta name="twitter:title"[^>]*>/, `<meta name="twitter:title" content="Blog | Toolora">`)
+  .replace(/<meta name="twitter:description"[^>]*>/, `<meta name="twitter:description" content="Privacy, tools, and the indie web.">`);
+fs.writeFileSync(path.join(blogListDir, "index.html"), blogListHtml);
+
+// Pre-render individual blog post pages
+for (const post of BLOG_POSTS) {
+  const postDir = path.join(DIST, "blog", post.slug);
+  fs.mkdirSync(postDir, { recursive: true });
+  const articleJsonLd = JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: post.title,
+    description: post.description,
+    url: `${BASE_URL}/blog/${post.slug}`,
+    datePublished: TODAY,
+    dateModified: TODAY,
+    publisher: { "@type": "Organization", name: "Toolora", url: BASE_URL },
+    author: { "@type": "Organization", name: "Toolora" },
+  });
+  const postHtml = template
+    .replace(/<title>[^<]*<\/title>/, `<title>${esc(post.title)} | Toolora Blog</title>`)
+    .replace(/<meta name="description"[^>]*>/, `<meta name="description" content="${esc(post.description)}">`)
+    .replace(/<link rel="canonical"[^>]*>/, `<link rel="canonical" href="${BASE_URL}/blog/${post.slug}">`)
+    .replace(/<meta property="og:title"[^>]*>/, `<meta property="og:title" content="${esc(post.title)}">`)
+    .replace(/<meta property="og:description"[^>]*>/, `<meta property="og:description" content="${esc(post.description)}">`)
+    .replace(/<meta property="og:url"[^>]*>/, `<meta property="og:url" content="${BASE_URL}/blog/${post.slug}">`)
+    .replace(/<meta name="twitter:title"[^>]*>/, `<meta name="twitter:title" content="${esc(post.title)}">`)
+    .replace(/<meta name="twitter:description"[^>]*>/, `<meta name="twitter:description" content="${esc(post.description)}">`)
+    .replace("</head>", `<script type="application/ld+json">${articleJsonLd}</script>\n</head>`);
+  fs.writeFileSync(path.join(postDir, "index.html"), postHtml);
+}
+
+const totalBlogPages = BLOG_POSTS.length + 1;
+console.log(`✅ Pre-rendered ${totalBlogPages} blog pages (list + ${BLOG_POSTS.length} posts).`);
+
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
@@ -232,10 +297,12 @@ const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
     <changefreq>monthly</changefreq>
     <priority>0.3</priority>
   </url>
+${blogListUrl}
+${blogPostUrls}
 ${categoryUrls}
 ${toolUrls}
 </urlset>
 `;
 
 fs.writeFileSync(sitemapPath, sitemap);
-console.log(`✅ Sitemap regenerated with ${TOOLS.length + CATEGORIES.length + 5} URLs and today's lastmod (${TODAY}).`);
+console.log(`✅ Sitemap regenerated with ${TOOLS.length + CATEGORIES.length + 5 + totalBlogPages} URLs and today's lastmod (${TODAY}).`);
