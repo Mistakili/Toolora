@@ -19,7 +19,7 @@ function getApiBase() {
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 interface AgentStats {
-  summary: { totalCalls: number; totalXlmEarned: string };
+  summary: { totalCalls: number; totalXlmEarned: string; totalSubscribers?: number };
   byEndpoint: { endpoint: string; calls: number; xlmEarned: string }[];
   daily: { day: string; calls: number; xlmEarned: number }[];
   payments: {
@@ -459,7 +459,7 @@ export default function Admin() {
           {/* ── Section 7: Agent API Revenue ──────────────────────────────── */}
           <Section icon={Zap} title="Agent API Revenue" badge={`${agentStats.summary.totalCalls} calls`}>
             <div className="pt-4 space-y-5">
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 <StatCard label="Total calls" value={agentStats.summary.totalCalls} accent="yellow" />
                 <StatCard
                   label="XLM earned"
@@ -468,6 +468,7 @@ export default function Admin() {
                   accent="yellow"
                 />
                 <StatCard label="Active endpoints" value={agentStats.byEndpoint.length} />
+                <StatCard label="Email subscribers" value={agentStats.summary.totalSubscribers ?? 0} accent="green" />
               </div>
 
               {/* Per-endpoint */}

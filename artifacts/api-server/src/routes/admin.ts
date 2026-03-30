@@ -1,6 +1,6 @@
 import { Router, type IRouter, type Request, type Response } from "express";
 import { db } from "@workspace/db";
-import { agentPaymentsTable, pageViewsTable } from "@workspace/db/schema";
+import { agentPaymentsTable, pageViewsTable, emailSubscribersTable } from "@workspace/db/schema";
 import { desc, sum, count, sql, ne } from "drizzle-orm";
 import { isAdminSession } from "../lib/auth";
 
@@ -51,11 +51,16 @@ router.get("/stats", async (req: Request, res: Response) => {
       .orderBy(desc(agentPaymentsTable.createdAt))
       .limit(100);
 
+    const [subscriberRow] = await db
+      .select({ total: count() })
+      .from(emailSubscribersTable);
+    const totalSubscribers = Number(subscriberRow?.total ?? 0);
+
     const totalCalls = byEndpoint.reduce((a, r) => a + Number(r.calls), 0);
     const totalXlm = byEndpoint.reduce((a, r) => a + parseFloat(r.totalXlm ?? "0"), 0);
 
     res.json({
-      summary: { totalCalls, totalXlmEarned: totalXlm.toFixed(7) },
+      summary: { totalCalls, totalXlmEarned: totalXlm.toFixed(7), totalSubscribers },
       byEndpoint: byEndpoint.map((r) => ({
         endpoint: r.endpoint,
         calls: Number(r.calls),

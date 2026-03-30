@@ -1,11 +1,33 @@
+import { useState } from "react";
 import { Link } from "wouter";
-import { ArrowRight, Sparkles, Shield, Zap, Search, Bot, FileText, Globe, BarChart2 } from "lucide-react";
+import { ArrowRight, Sparkles, Shield, Zap, Search, Bot, FileText, Globe, BarChart2, Bell } from "lucide-react";
 import { motion } from "framer-motion";
 import { CATEGORIES, TOOLS } from "@/lib/tools-config";
 import { ToolCard } from "@/components/shared/ToolCard";
 import { useGetPopularTools } from "@workspace/api-client-react";
 
 export default function Home() {
+  const [email, setEmail] = useState("");
+  const [subStatus, setSubStatus] = useState<"idle" | "loading" | "success" | "already" | "error">("idle");
+
+  async function handleSubscribe(e: React.FormEvent) {
+    e.preventDefault();
+    if (!email.trim()) return;
+    setSubStatus("loading");
+    try {
+      const res = await fetch("/api/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email.trim(), source: "homepage" }),
+      });
+      const data = await res.json() as { ok?: boolean; alreadySubscribed?: boolean; error?: string };
+      if (!res.ok) { setSubStatus("error"); return; }
+      setSubStatus(data.alreadySubscribed ? "already" : "success");
+    } catch {
+      setSubStatus("error");
+    }
+  }
+
   // Graceful fallback if API is not available
   const { data: popularData, isLoading: isLoadingPopular } = useGetPopularTools({
     query: { retry: false }
@@ -289,6 +311,47 @@ print(r.json()["text"])  # ← full PDF text`}
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Email capture */}
+      <section className="py-20 border-t border-border/50 bg-muted/20">
+        <div className="container mx-auto px-4 max-w-xl text-center">
+          <div className="inline-flex items-center gap-2 bg-primary/10 text-primary text-xs font-semibold px-3 py-1 rounded-full mb-4">
+            <Bell className="w-3.5 h-3.5" />
+            Stay in the loop
+          </div>
+          <h2 className="text-3xl font-display font-bold mb-3">New tools, every week</h2>
+          <p className="text-muted-foreground mb-8">
+            Get notified when we add new tools. No spam, unsubscribe any time.
+          </p>
+
+          {subStatus === "success" ? (
+            <p className="text-green-500 font-semibold text-lg">You're in! We'll let you know when new tools drop.</p>
+          ) : subStatus === "already" ? (
+            <p className="text-muted-foreground font-semibold text-lg">You're already subscribed — we've got your email.</p>
+          ) : (
+            <form onSubmit={handleSubscribe} className="flex gap-2 max-w-md mx-auto">
+              <input
+                type="email"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                placeholder="you@example.com"
+                required
+                className="flex-1 px-4 py-2.5 rounded-lg border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+              />
+              <button
+                type="submit"
+                disabled={subStatus === "loading"}
+                className="px-5 py-2.5 bg-primary text-primary-foreground text-sm font-semibold rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-60 whitespace-nowrap"
+              >
+                {subStatus === "loading" ? "..." : "Notify me"}
+              </button>
+            </form>
+          )}
+          {subStatus === "error" && (
+            <p className="text-destructive text-sm mt-3">Something went wrong — please try again.</p>
+          )}
         </div>
       </section>
     </div>

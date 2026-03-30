@@ -25,3 +25,4 @@ export * from "./pageViews";
 export * from "./tooloraUsers";
 export * from "./apiKeys";
 export * from "./apiUsage";
+export * from "./emailSubscribers";
