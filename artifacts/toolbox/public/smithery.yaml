@@ -17,7 +17,7 @@ categories:
 
 server:
   transport: http
-  url: https://toolora-api.replit.app/api/mcp
+  url: https://toolora.replit.app/api/mcp
 
 tools:
   - name: extract_pdf_text
