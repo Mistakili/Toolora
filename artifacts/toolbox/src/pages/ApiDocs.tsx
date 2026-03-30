@@ -59,9 +59,14 @@ export default function ApiDocs() {
     document.title = "API Docs | Toolora";
   }, []);
 
-  const apiBase = typeof window !== "undefined"
-    ? window.location.origin.replace(/toolora\.dev/, "api.toolora.dev").replace(/:\d+$/, ":8080")
-    : "https://api.toolora.dev";
+  const apiBase = (() => {
+    if (typeof window === "undefined") return "https://toolora-api.replit.app";
+    const { hostname } = window.location;
+    if (hostname === "toolora.dev" || hostname.endsWith(".replit.app")) {
+      return "https://toolora-api.replit.app";
+    }
+    return window.location.origin.replace(/:\d+$/, "");
+  })();
 
   const PRICE_XLM  = "0.5";
   const PRICE_USDC = "0.01";

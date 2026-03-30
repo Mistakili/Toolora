@@ -13,10 +13,12 @@ import { useAuth } from "@workspace/replit-auth-web";
 // ─── URL helper ───────────────────────────────────────────────────────────────
 
 function getApiBase() {
-  if (typeof window === "undefined") return "https://api.toolora.dev";
-  return window.location.origin
-    .replace(/toolora\.dev/, "api.toolora.dev")
-    .replace(/:\d+$/, ":8080");
+  if (typeof window === "undefined") return "https://toolora-api.replit.app";
+  const { hostname } = window.location;
+  if (hostname === "toolora.dev" || hostname.endsWith(".replit.app")) {
+    return "https://toolora-api.replit.app";
+  }
+  return "";
 }
 
 // ─── Types ────────────────────────────────────────────────────────────────────

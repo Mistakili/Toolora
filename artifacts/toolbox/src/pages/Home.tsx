@@ -151,9 +151,12 @@ export default function Home() {
                   Read the Docs
                 </Link>
                 <a
-                  href={typeof window !== "undefined"
-                    ? window.location.origin.replace(/toolora\.dev/, "api.toolora.dev").replace(/:\d+$/, ":8080") + "/api/agent"
-                    : "https://api.toolora.dev/api/agent"}
+                  href={(() => {
+                    if (typeof window === "undefined") return "https://toolora-api.replit.app/api/agent";
+                    const h = window.location.hostname;
+                    const base = (h === "toolora.dev" || h.endsWith(".replit.app")) ? "https://toolora-api.replit.app" : window.location.origin.replace(/:\d+$/, "");
+                    return base + "/api/agent";
+                  })()}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="px-5 py-2.5 border border-yellow-500/30 text-yellow-400 font-semibold rounded-full text-sm hover:bg-yellow-500/10 transition-colors flex items-center gap-2"
@@ -203,9 +206,12 @@ print(r.json()["text"])  # ← full PDF text`}
                   <BarChart2 className="w-3.5 h-3.5" />
                   <span>Usage stats at</span>
                   <a
-                    href={typeof window !== "undefined"
-                      ? window.location.origin.replace(/toolora\.dev/, "api.toolora.dev").replace(/:\d+$/, ":8080") + "/api/agent/stats"
-                      : "https://api.toolora.dev/api/agent/stats"}
+                    href={(() => {
+                      if (typeof window === "undefined") return "https://toolora-api.replit.app/api/agent/stats";
+                      const h = window.location.hostname;
+                      const base = (h === "toolora.dev" || h.endsWith(".replit.app")) ? "https://toolora-api.replit.app" : window.location.origin.replace(/:\d+$/, "");
+                      return base + "/api/agent/stats";
+                    })()}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-primary hover:underline font-mono"
