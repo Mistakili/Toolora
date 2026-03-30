@@ -1,0 +1,393 @@
+# Toolora — Full API Reference for LLMs and AI Agents
+
+> Complete technical reference. For a concise summary, see https://toolora.replit.app/llms.txt
+
+Toolora provides free browser-based utilities and a paid server-side Agent API. This document covers the Agent API in full detail, including request/response schemas, payment flows, and code examples.
+
+---
+
+## About Toolora
+
+- **Website:** https://toolora.replit.app
+- **Type:** Free online tools platform + paid Agent API
+- **Privacy:** All browser tools are 100% client-side. No data uploaded. Agent API processes files server-side for the duration of a single request only — nothing is stored.
+- **Agent manifest:** https://toolora.replit.app/api/agent
+- **Well-known manifest:** https://toolora.replit.app/.well-known/agent.json
+- **Docs page:** https://toolora.replit.app/api-docs
+- **Usage stats (public):** https://toolora.replit.app/api/agent/stats
+
+---
+
+## Free Browser Tools (Client-Side, No Payment)
+
+All tools run entirely in the browser. URLs: https://toolora.replit.app/tools/<slug>
+
+### PDF Tools
+| Name | Slug | Description |
+|------|------|-------------|
+| Merge PDF | pdf-merge | Combine multiple PDF files into one document |
+| Split PDF | pdf-split | Extract pages or split a PDF into multiple files |
+
+### Image Tools
+| Name | Slug | Description |
+|------|------|-------------|
+| Image Resizer | image-resize | Resize by pixels or percentage, lock aspect ratio |
+| Image Compressor | image-compress | Reduce file size with quality control (JPG, PNG, WebP) |
+| Image Converter | image-convert | Convert between JPG, PNG, and WebP |
+
+### Text Tools
+| Name | Slug | Description |
+|------|------|-------------|
+| Word Counter | word-counter | Words, characters, sentences, paragraphs, reading time |
+| Case Converter | case-converter | UPPERCASE, lowercase, Title Case, camelCase, snake_case |
+| Lorem Ipsum Generator | lorem-ipsum | Placeholder text by paragraphs, sentences, or words |
+| Markdown Preview | markdown-preview | Live side-by-side markdown editor and HTML renderer |
+| Text Diff | text-diff | Compare two texts and highlight additions/removals |
+
+### Developer Tools
+| Name | Slug | Description |
+|------|------|-------------|
+| JSON Formatter | json-formatter | Format, validate, and minify JSON with error detection |
+| Base64 Encoder/Decoder | base64 | Encode text to Base64 or decode Base64 strings |
+| URL Encoder/Decoder | url-encoder | Encode/decode URL query parameters |
+| Hash Generator | hash-generator | MD5, SHA-1, SHA-256 cryptographic hashes |
+| UUID Generator | uuid-generator | Generate UUID v4 strings in bulk |
+
+### Productivity Tools
+| Name | Slug | Description |
+|------|------|-------------|
+| QR Code Generator | qr-generator | Create QR codes from any URL or text, download as PNG |
+| Password Generator | password-generator | Strong random passwords with custom length and character sets |
+| Unit Converter | unit-converter | Length, weight, temperature, area, speed, volume |
+| Color Converter | color-picker | Convert between HEX, RGB, and HSL color formats |
+| Timestamp Converter | timestamp-converter | Unix epoch to human-readable date/time and back |
+
+---
+
+## Agent API — Paid, Server-Side (x402)
+
+These endpoints run server-side and handle work that browser tools cannot: parsing uploaded PDFs and fetching remote URLs. Payment is required per request via the x402 micropayment protocol.
+
+**No API key. No subscription. No rate limits on payment.**
+
+---
+
+### Payment Overview
+
+#### Stellar XLM (Live)
+- Network: `stellar:mainnet`
+- Asset: XLM (native Stellar token)
+- Price per request: `0.5 XLM`
+- Receiver address: see 402 response or `/api/agent` manifest
+- Verification: on-chain via Stellar Horizon API
+- Replay protection: each tx hash can only be used once (1-hour window)
+
+#### Solana USDC (Coming Soon)
+- Network: `solana:mainnet`
+- Asset: USDC (SPL token, mint: `EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v`)
+- Price per request: `0.01 USDC` (planned)
+- Verification: on-chain via Solana JSON-RPC
+- Status: in development — watch `/api/agent` manifest for activation
+
+---
+
+### x402 Payment Flow (Step-by-Step)
+
+**Step 1 — Attempt the endpoint (no payment)**
+```
+POST https://toolora.replit.app/api/agent/pdf/text
+Content-Type: multipart/form-data
+```
+
+**Step 2 — Receive 402 Payment Required**
+```json
+{
+  "x402Version": 1,
+  "error": "Payment Required",
+  "accepts": [
+    {
+      "scheme": "exact",
+      "network": "stellar:mainnet",
+      "maxAmountRequired": "0.5",
+      "asset": "XLM",
+      "payTo": "<stellar_wallet_address>",
+      "resource": "https://toolora.replit.app/api/agent/pdf/text",
+      "description": "Toolora Agent API — pay per request via Stellar XLM",
+      "maxTimeoutSeconds": 120
+    }
+  ]
+}
+```
+
+**Step 3 — Send XLM on Stellar**
+Send exactly 0.5 XLM (or more) to the `payTo` address on Stellar mainnet. Note the transaction hash.
+
+**Step 4 — Build the X-PAYMENT header**
+```python
+import base64, json
+
+payload = {
+    "txHash": "<your_stellar_tx_hash>",
+    "from": "<your_stellar_address>",
+    "amount": "0.5",
+    "network": "stellar:mainnet"
+}
+header = base64.b64encode(json.dumps(payload).encode()).decode()
+```
+
+**Step 5 — Retry the request with payment**
+```
+POST https://toolora.replit.app/api/agent/pdf/text
+X-PAYMENT: <base64_encoded_json>
+Content-Type: multipart/form-data
+```
+
+---
+
+### Endpoint Reference
+
+---
+
+#### POST /api/agent/pdf/text
+
+Extract all text content from a PDF file.
+
+**URL:** `https://toolora.replit.app/api/agent/pdf/text`
+**Method:** POST
+**Authentication:** x402 payment via `X-PAYMENT` header
+**Content-Type:** `multipart/form-data`
+
+**Request fields:**
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| file | File | Yes | PDF file, max 20MB |
+
+**Response (200 OK):**
+```json
+{
+  "text": "Full extracted text content of the PDF...",
+  "pages": 12,
+  "words": 4823,
+  "chars": 29411,
+  "info": {
+    "Title": "Document title (if set in PDF metadata)",
+    "Author": "Author name",
+    "CreationDate": "D:20240101120000"
+  }
+}
+```
+
+**Response fields:**
+| Field | Type | Description |
+|-------|------|-------------|
+| text | string | Full plain text extracted from all pages |
+| pages | number | Total page count |
+| words | number | Approximate word count |
+| chars | number | Character count (including spaces) |
+| info | object | Raw PDF metadata object |
+
+**Use case:** Ingest PDF research papers, reports, invoices, or filings for LLM processing.
+
+**curl example:**
+```bash
+PAYMENT_HEADER="$(python3 -c "
+import base64, json
+p = {'txHash':'<hash>','from':'<addr>','amount':'0.5','network':'stellar:mainnet'}
+print(base64.b64encode(json.dumps(p).encode()).decode())
+")"
+
+curl -X POST https://toolora.replit.app/api/agent/pdf/text \
+  -H "X-PAYMENT: $PAYMENT_HEADER" \
+  -F "file=@document.pdf"
+```
+
+**Python example:**
+```python
+import requests, base64, json
+
+payload = base64.b64encode(json.dumps({
+    "txHash": "<stellar_tx_hash>",
+    "from": "<your_stellar_address>",
+    "amount": "0.5",
+    "network": "stellar:mainnet"
+}).encode()).decode()
+
+r = requests.post(
+    "https://toolora.replit.app/api/agent/pdf/text",
+    headers={"X-PAYMENT": payload},
+    files={"file": open("document.pdf", "rb")}
+)
+print(r.json())
+```
+
+---
+
+#### POST /api/agent/pdf/extract
+
+Extract structured sections and headings from a PDF for RAG (Retrieval-Augmented Generation) pipelines.
+
+**URL:** `https://toolora.replit.app/api/agent/pdf/extract`
+**Method:** POST
+**Authentication:** x402 payment via `X-PAYMENT` header
+**Content-Type:** `multipart/form-data`
+
+**Request fields:**
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| file | File | Yes | PDF file, max 20MB |
+
+**Response (200 OK):**
+```json
+{
+  "title": "Document Title",
+  "pages": 12,
+  "words": 4823,
+  "sections": [
+    {
+      "heading": "Introduction",
+      "level": 1,
+      "text": "This paper presents...",
+      "page": 1
+    },
+    {
+      "heading": "Methods",
+      "level": 2,
+      "text": "We conducted...",
+      "page": 3
+    }
+  ],
+  "info": { "Author": "...", "CreationDate": "..." }
+}
+```
+
+**Response fields:**
+| Field | Type | Description |
+|-------|------|-------------|
+| title | string | Document title (from metadata or first heading) |
+| pages | number | Total page count |
+| words | number | Approximate word count |
+| sections | array | Array of section objects with heading, level, text, page |
+| sections[].heading | string | Section heading text |
+| sections[].level | number | Heading level (1 = top-level, 2 = sub-section, etc.) |
+| sections[].text | string | Full text content of the section |
+| sections[].page | number | Page number where this section starts |
+| info | object | Raw PDF metadata |
+
+**Use case:** Chunk a PDF into logical sections for embedding into a vector database. Each section becomes one RAG document with heading as the key.
+
+---
+
+#### POST /api/agent/url/read
+
+Fetch a URL and return clean, readable text content with boilerplate removed.
+
+**URL:** `https://toolora.replit.app/api/agent/url/read`
+**Method:** POST
+**Authentication:** x402 payment via `X-PAYMENT` header
+**Content-Type:** `application/json`
+
+**Request body:**
+```json
+{
+  "url": "https://example.com/article"
+}
+```
+
+**Request fields:**
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| url | string | Yes | Full URL to fetch and parse (must include https://) |
+
+**Response (200 OK):**
+```json
+{
+  "url": "https://example.com/article",
+  "title": "Article Title",
+  "byline": "Author Name",
+  "content": "Clean article text without ads, nav, or boilerplate...",
+  "words": 1247,
+  "length": 7832
+}
+```
+
+**Response fields:**
+| Field | Type | Description |
+|-------|------|-------------|
+| url | string | The URL that was fetched |
+| title | string | Page title extracted by Readability |
+| byline | string | Author name or byline (if detected) |
+| content | string | Clean readable text content |
+| words | number | Word count of the extracted content |
+| length | number | Character count of the extracted content |
+
+**Use case:** Give agents a clean view of any web page for research, summarization, or data extraction — similar to Firecrawl but pay-per-use with no key.
+
+**curl example:**
+```bash
+curl -X POST https://toolora.replit.app/api/agent/url/read \
+  -H "X-PAYMENT: $PAYMENT_HEADER" \
+  -H "Content-Type: application/json" \
+  -d '{"url": "https://en.wikipedia.org/wiki/Artificial_intelligence"}'
+```
+
+**Python example:**
+```python
+import requests, base64, json
+
+payload = base64.b64encode(json.dumps({
+    "txHash": "<stellar_tx_hash>",
+    "from": "<your_stellar_address>",
+    "amount": "0.5",
+    "network": "stellar:mainnet"
+}).encode()).decode()
+
+r = requests.post(
+    "https://toolora.replit.app/api/agent/url/read",
+    headers={
+        "X-PAYMENT": payload,
+        "Content-Type": "application/json"
+    },
+    json={"url": "https://en.wikipedia.org/wiki/Artificial_intelligence"}
+)
+print(r.json())
+```
+
+---
+
+### Error Responses
+
+| Status | Meaning |
+|--------|---------|
+| 402 | Payment required — includes `accepts` array with payment instructions |
+| 400 | Bad request — missing required fields or invalid input |
+| 413 | File too large — PDF exceeds 20MB limit |
+| 500 | Server error — transient, safe to retry |
+
+**402 error variants:**
+- `"Payment Required"` — No X-PAYMENT header sent
+- `"Invalid X-PAYMENT header (expected base64 JSON)"` — Header is malformed
+- `"Transaction already used (replay protection)"` — This tx hash was already used
+- `"No payment of 0.5 XLM to <addr> found in transaction"` — Wrong amount or wrong recipient
+- `"Transaction not successful on chain"` — On-chain verification failed
+
+---
+
+### Discovery Endpoints (No Payment Required)
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| /api/agent | GET | Full manifest: endpoints, pricing, examples |
+| /api/agent/stats | GET | Public aggregate stats (calls, revenue, top endpoints) |
+| /.well-known/agent.json | GET | Standard agent.json manifest |
+| /llms.txt | GET | Concise LLM-readable summary |
+| /llms-full.txt | GET | This document |
+
+---
+
+## Contact and Links
+
+- Website: https://toolora.replit.app
+- API docs: https://toolora.replit.app/api-docs
+- Agent manifest: https://toolora.replit.app/api/agent
+- Privacy: https://toolora.replit.app/privacy
+- Terms: https://toolora.replit.app/terms

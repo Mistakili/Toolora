@@ -1,0 +1,77 @@
+# Toolora
+
+> Free online tools and a paid Agent API for AI agents. Privacy-first — all browser tools run 100% client-side. Agent APIs are server-side and pay-per-request via the x402 protocol.
+
+## Overview
+
+Toolora (https://toolora.replit.app) provides two things:
+
+1. **Free browser tools** — 20+ utilities that run entirely in the browser. No uploads, no accounts, no data stored.
+2. **Paid Agent API** — Three server-side endpoints for document and web content processing, gated by the x402 micropayment protocol. No API key or subscription required — agents pay per request using Stellar XLM (live) or Solana USDC (coming soon).
+
+## Free Browser Tools
+
+All tools are available at https://toolora.replit.app/tools/<slug>
+
+### PDF Tools
+- Merge PDF — /tools/pdf-merge — Combine multiple PDF files into one document
+- Split PDF — /tools/pdf-split — Extract pages or split PDF into multiple files
+
+### Image Tools
+- Image Resizer — /tools/image-resize — Resize images by pixels or percentage
+- Image Compressor — /tools/image-compress — Reduce image file size with quality control
+- Image Converter — /tools/image-convert — Convert between JPG, PNG, and WebP
+
+### Text Tools
+- Word Counter — /tools/word-counter — Count words, characters, sentences, and paragraphs
+- Case Converter — /tools/case-converter — Convert between UPPERCASE, lowercase, camelCase, snake_case
+- Lorem Ipsum Generator — /tools/lorem-ipsum — Generate placeholder text by paragraphs or words
+- Markdown Preview — /tools/markdown-preview — Live side-by-side markdown renderer
+- Text Diff — /tools/text-diff — Compare two texts and highlight differences
+
+### Developer Tools
+- JSON Formatter — /tools/json-formatter — Format, validate, and minify JSON
+- Base64 Encoder/Decoder — /tools/base64 — Encode text to Base64 or decode it back
+- URL Encoder/Decoder — /tools/url-encoder — Encode or decode URL parameters
+- Hash Generator — /tools/hash-generator — Generate MD5, SHA-1, SHA-256 hashes
+- UUID Generator — /tools/uuid-generator — Generate random UUID v4 strings in bulk
+
+### Productivity Tools
+- QR Code Generator — /tools/qr-generator — Create QR codes from URLs or text
+- Password Generator — /tools/password-generator — Generate strong random passwords
+- Unit Converter — /tools/unit-converter — Convert length, weight, temperature, and more
+- Color Converter — /tools/color-picker — Convert between HEX, RGB, and HSL color formats
+- Timestamp Converter — /tools/timestamp-converter — Convert Unix timestamps to readable dates
+
+## Agent API (Paid, x402)
+
+Server-side APIs for AI agents. Pay per request — no API key, no subscription, no rate limits on payment.
+
+**Discovery:** https://toolora.replit.app/api/agent
+**Well-known manifest:** https://toolora.replit.app/.well-known/agent.json
+**Full docs:** https://toolora.replit.app/api-docs
+**Usage stats:** https://toolora.replit.app/api/agent/stats
+
+### Endpoints
+
+- POST /api/agent/pdf/text — Extract full plain text from a PDF file. Returns text, page count, word count, character count, and PDF metadata. Accepts multipart/form-data with a `file` field (max 20MB).
+- POST /api/agent/pdf/extract — Extract structured sections from a PDF for RAG pipelines. Returns headings, section text, tables, and page-level metadata in JSON.
+- POST /api/agent/url/read — Fetch a URL and return clean readable text stripped of navigation, ads, and boilerplate (Mozilla Readability). Returns title, byline, content, and word count.
+
+### Payment (x402)
+
+Payment protocol: x402
+Price per request: 0.5 XLM (Stellar) — USDC (Solana) coming soon
+
+Flow:
+1. Call any paid endpoint — receive a 402 response with payment instructions
+2. Send the required XLM to the Toolora Stellar wallet
+3. Retry the request with header: X-PAYMENT: <base64(JSON)>
+   JSON format: {"txHash":"<stellar_tx_hash>","from":"<your_address>","amount":"0.5","network":"stellar:mainnet"}
+
+## More Information
+
+- Privacy policy: https://toolora.replit.app/privacy
+- Terms of service: https://toolora.replit.app/terms
+- Full API reference: https://toolora.replit.app/api-docs
+- Agent manifest (JSON): https://toolora.replit.app/api/agent
