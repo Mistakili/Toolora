@@ -1,6 +1,6 @@
 import { ReactNode, useState, useRef, useEffect } from "react";
 import { Link, useLocation } from "wouter";
-import { Settings2, Sparkles, Moon, Sun, Search, Menu, X, ShieldCheck, History, LogOut, LogIn, Key, CreditCard } from "lucide-react";
+import { Settings2, Sparkles, Moon, Sun, Search, Menu, X, ShieldCheck, History, LogOut, LogIn, Key, CreditCard, LayoutDashboard } from "lucide-react";
 import { useTheme } from "../ThemeProvider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -133,6 +133,12 @@ export function AppLayout({ children }: { children: ReactNode }) {
                     <Link href="/pricing" onClick={() => setUserMenuOpen(false)}>
                       <div className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-muted transition-colors cursor-pointer">
                         <CreditCard className="w-4 h-4" /> Pricing
+                      </div>
+                    </Link>
+                    <Link href="/admin" onClick={() => setUserMenuOpen(false)}>
+                      <div className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-muted transition-colors cursor-pointer border-t border-border mt-1 pt-2">
+                        <LayoutDashboard className="w-4 h-4 text-primary" />
+                        <span>Admin Dashboard</span>
                       </div>
                     </Link>
                     <button onClick={logout} className="w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-muted transition-colors text-left text-destructive">
