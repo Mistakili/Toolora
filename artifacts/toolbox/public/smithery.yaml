@@ -7,7 +7,7 @@ description: |
 
   Tools: extract text from PDFs, merge PDFs, generate QR codes, convert CSV to/from
   JSON, count words/stats, and fetch + clean any public URL with Mozilla Readability.
-homepage: https://toolora.replit.app
+homepage: https://toolora.dev
 license: MIT
 categories:
   - document-processing
@@ -17,7 +17,7 @@ categories:
 
 server:
   transport: http
-  url: https://toolora-api.replit.app/api/mcp
+  url: https://api.toolora.dev/api/mcp
 
 tools:
   - name: extract_pdf_text

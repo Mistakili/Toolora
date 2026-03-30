@@ -247,7 +247,7 @@ export default function ApiKeys() {
           <h2 className="text-lg font-semibold mb-3">Using your API key</h2>
           <p className="text-zinc-400 text-sm mb-4">Add the key to any request as a Bearer token:</p>
           <pre className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 text-sm font-mono overflow-auto text-zinc-300">
-{`curl -X POST https://toolora-api.replit.app/api/agent/ocr \\
+{`curl -X POST https://api.toolora.dev/api/agent/ocr \\
   -H "Authorization: Bearer sk_toolora_..." \\
   -F "file=@screenshot.png"`}
           </pre>

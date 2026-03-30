@@ -269,7 +269,7 @@ async function handleReadUrl(args: Record<string, unknown>): Promise<string> {
 
   const html = await fetch(url, {
     headers: {
-      "User-Agent": "Mozilla/5.0 (compatible; Toolora-MCP/1.0; +https://toolora.replit.app/api/mcp)",
+      "User-Agent": "Mozilla/5.0 (compatible; Toolora-MCP/1.0; +https://toolora.dev/api/mcp)",
       Accept: "text/html,application/xhtml+xml",
     },
     signal: AbortSignal.timeout(15_000),
@@ -714,7 +714,7 @@ router.get("/", (_req: Request, res: Response) => {
       addToClaudeDesktop: {
         mcpServers: {
           toolora: {
-            url: "https://toolora-api.replit.app/api/mcp",
+            url: "https://api.toolora.dev/api/mcp",
             transport: "http",
           },
         },

@@ -59,7 +59,7 @@ export async function requireApiKey(req: Request, res: Response, next: NextFunct
   if (!rawKey) {
     res.status(401).json({
       error: "Missing API key. Add Authorization: Bearer sk_toolora_... header.",
-      docs: "https://toolora.replit.app/api-keys",
+      docs: "https://toolora.dev/api-keys",
     });
     return;
   }
@@ -91,7 +91,7 @@ export async function requireApiKey(req: Request, res: Response, next: NextFunct
       tier,
       used,
       limit,
-      upgrade: "https://toolora.replit.app/pricing",
+      upgrade: "https://toolora.dev/pricing",
     });
     return;
   }
@@ -101,7 +101,7 @@ export async function requireApiKey(req: Request, res: Response, next: NextFunct
   // Warn at 80%+ so developers can act before hitting the wall
   const usagePct = used / limit;
   if (usagePct >= 0.8) {
-    res.setHeader("X-Toolora-Usage-Warning", `${used}/${limit} calls used this month (${Math.round(usagePct * 100)}%). Upgrade at https://toolora.replit.app/pricing`);
+    res.setHeader("X-Toolora-Usage-Warning", `${used}/${limit} calls used this month (${Math.round(usagePct * 100)}%). Upgrade at https://toolora.dev/pricing`);
     res.setHeader("X-Toolora-Usage-Pct", String(Math.round(usagePct * 100)));
   }
 

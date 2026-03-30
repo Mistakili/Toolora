@@ -229,7 +229,7 @@ function buildManifest(req: Request) {
           },
         },
         example: {
-          curl: `curl -X POST ${base}/api/agent/qr \\\n  -H "Content-Type: application/json" \\\n  -H "X-PAYMENT: <base64_payload>" \\\n  -d '{"text":"https://toolora.replit.app","size":400}'`,
+          curl: `curl -X POST ${base}/api/agent/qr \\\n  -H "Content-Type: application/json" \\\n  -H "X-PAYMENT: <base64_payload>" \\\n  -d '{"text":"https://toolora.dev","size":400}'`,
         },
       },
       {
@@ -496,7 +496,7 @@ router.post("/url/read", requirePaymentOrApiKey, async (req: Request, res: Respo
   try {
     const html = await fetch(url, {
       headers: {
-        "User-Agent": "Mozilla/5.0 (compatible; Toolora-Agent/1.0; +https://toolora.replit.app/api/agent)",
+        "User-Agent": "Mozilla/5.0 (compatible; Toolora-Agent/1.0; +https://toolora.dev/api/agent)",
         Accept: "text/html,application/xhtml+xml",
       },
       signal: AbortSignal.timeout(15_000),

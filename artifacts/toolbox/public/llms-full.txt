@@ -1,6 +1,6 @@
 # Toolora — Full API Reference for LLMs and AI Agents
 
-> Complete technical reference. For a concise summary, see https://toolora.replit.app/llms.txt
+> Complete technical reference. For a concise summary, see https://toolora.dev/llms.txt
 
 Toolora provides free browser-based utilities and a paid server-side Agent API. This document covers the Agent API in full detail, including request/response schemas, payment flows, and code examples.
 
@@ -8,19 +8,19 @@ Toolora provides free browser-based utilities and a paid server-side Agent API. 
 
 ## About Toolora
 
-- **Website:** https://toolora.replit.app
+- **Website:** https://toolora.dev
 - **Type:** Free online tools platform + paid Agent API
 - **Privacy:** All browser tools are 100% client-side. No data uploaded. Agent API processes files server-side for the duration of a single request only — nothing is stored.
-- **Agent manifest:** https://toolora.replit.app/api/agent
-- **Well-known manifest:** https://toolora.replit.app/.well-known/agent.json
-- **Docs page:** https://toolora.replit.app/api-docs
-- **Usage stats (public):** https://toolora.replit.app/api/agent/stats
+- **Agent manifest:** https://toolora.dev/api/agent
+- **Well-known manifest:** https://toolora.dev/.well-known/agent.json
+- **Docs page:** https://toolora.dev/api-docs
+- **Usage stats (public):** https://toolora.dev/api/agent/stats
 
 ---
 
 ## Free Browser Tools (Client-Side, No Payment)
 
-All tools run entirely in the browser. URLs: https://toolora.replit.app/tools/<slug>
+All tools run entirely in the browser. URLs: https://toolora.dev/tools/<slug>
 
 ### PDF Tools
 | Name | Slug | Description |
@@ -68,7 +68,7 @@ All tools run entirely in the browser. URLs: https://toolora.replit.app/tools/<s
 
 Toolora provides a Model Context Protocol (MCP) server for direct integration with AI coding tools and assistants that support MCP.
 
-**Endpoint:** `https://toolora-api.replit.app/api/mcp`
+**Endpoint:** `https://api.toolora.dev/api/mcp`
 **Transport:** Streamable HTTP (MCP protocol version 2025-03-26)
 **Authentication:** None — all MCP tools are free
 **Method:** POST with JSON-RPC 2.0 body
@@ -132,7 +132,7 @@ Add the following to your Claude Desktop `claude_desktop_config.json`:
 {
   "mcpServers": {
     "toolora": {
-      "url": "https://toolora-api.replit.app/api/mcp",
+      "url": "https://api.toolora.dev/api/mcp",
       "transport": "http"
     }
   }
@@ -144,7 +144,7 @@ Once added, Claude will automatically discover the `extract_pdf_text`, `count_wo
 ### Example JSON-RPC Call
 
 ```bash
-curl -X POST https://toolora-api.replit.app/api/mcp \
+curl -X POST https://api.toolora.dev/api/mcp \
   -H 'Content-Type: application/json' \
   -d '{
     "jsonrpc": "2.0",
@@ -191,7 +191,7 @@ These endpoints run server-side and handle work that browser tools cannot: parsi
 
 **Step 1 — Attempt the endpoint (no payment)**
 ```
-POST https://toolora.replit.app/api/agent/pdf/text
+POST https://toolora.dev/api/agent/pdf/text
 Content-Type: multipart/form-data
 ```
 
@@ -207,7 +207,7 @@ Content-Type: multipart/form-data
       "maxAmountRequired": "0.5",
       "asset": "XLM",
       "payTo": "<stellar_wallet_address>",
-      "resource": "https://toolora.replit.app/api/agent/pdf/text",
+      "resource": "https://toolora.dev/api/agent/pdf/text",
       "description": "Toolora Agent API — pay per request via Stellar XLM",
       "maxTimeoutSeconds": 120
     },
@@ -218,7 +218,7 @@ Content-Type: multipart/form-data
       "asset": "USDC",
       "assetAddress": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
       "payTo": "<solana_wallet_address>",
-      "resource": "https://toolora.replit.app/api/agent/pdf/text",
+      "resource": "https://toolora.dev/api/agent/pdf/text",
       "description": "Toolora Agent API — pay per request via Solana USDC",
       "maxTimeoutSeconds": 120
     }
@@ -257,7 +257,7 @@ header = base64.b64encode(json.dumps(payload).encode()).decode()
 
 **Step 5 — Retry the request with payment**
 ```
-POST https://toolora.replit.app/api/agent/pdf/text
+POST https://toolora.dev/api/agent/pdf/text
 X-PAYMENT: <base64_encoded_json>
 Content-Type: multipart/form-data
 ```
@@ -272,7 +272,7 @@ Content-Type: multipart/form-data
 
 Extract all text content from a PDF file.
 
-**URL:** `https://toolora.replit.app/api/agent/pdf/text`
+**URL:** `https://toolora.dev/api/agent/pdf/text`
 **Method:** POST
 **Authentication:** x402 payment via `X-PAYMENT` header
 **Content-Type:** `multipart/form-data`
@@ -316,7 +316,7 @@ p = {'txHash':'<hash>','from':'<addr>','amount':'0.5','network':'stellar:mainnet
 print(base64.b64encode(json.dumps(p).encode()).decode())
 ")"
 
-curl -X POST https://toolora.replit.app/api/agent/pdf/text \
+curl -X POST https://toolora.dev/api/agent/pdf/text \
   -H "X-PAYMENT: $PAYMENT_HEADER" \
   -F "file=@document.pdf"
 ```
@@ -333,7 +333,7 @@ payload = base64.b64encode(json.dumps({
 }).encode()).decode()
 
 r = requests.post(
-    "https://toolora.replit.app/api/agent/pdf/text",
+    "https://toolora.dev/api/agent/pdf/text",
     headers={"X-PAYMENT": payload},
     files={"file": open("document.pdf", "rb")}
 )
@@ -346,7 +346,7 @@ print(r.json())
 
 Extract structured sections and headings from a PDF for RAG (Retrieval-Augmented Generation) pipelines.
 
-**URL:** `https://toolora.replit.app/api/agent/pdf/extract`
+**URL:** `https://toolora.dev/api/agent/pdf/extract`
 **Method:** POST
 **Authentication:** x402 payment via `X-PAYMENT` header
 **Content-Type:** `multipart/form-data`
@@ -397,7 +397,7 @@ Extract structured sections and headings from a PDF for RAG (Retrieval-Augmented
 
 **curl example:**
 ```bash
-curl -X POST https://toolora.replit.app/api/agent/pdf/extract \
+curl -X POST https://toolora.dev/api/agent/pdf/extract \
   -H "X-PAYMENT: $PAYMENT_HEADER" \
   -F "file=@document.pdf"
 ```
@@ -414,7 +414,7 @@ payload = base64.b64encode(json.dumps({
 }).encode()).decode()
 
 r = requests.post(
-    "https://toolora.replit.app/api/agent/pdf/extract",
+    "https://toolora.dev/api/agent/pdf/extract",
     headers={"X-PAYMENT": payload},
     files={"file": open("document.pdf", "rb")}
 )
@@ -429,7 +429,7 @@ for section in data["sections"]:
 
 Fetch a URL and return clean, readable text content with boilerplate removed.
 
-**URL:** `https://toolora.replit.app/api/agent/url/read`
+**URL:** `https://toolora.dev/api/agent/url/read`
 **Method:** POST
 **Authentication:** x402 payment via `X-PAYMENT` header
 **Content-Type:** `application/json`
@@ -474,7 +474,7 @@ Fetch a URL and return clean, readable text content with boilerplate removed.
 
 **curl example:**
 ```bash
-curl -X POST https://toolora.replit.app/api/agent/url/read \
+curl -X POST https://toolora.dev/api/agent/url/read \
   -H "X-PAYMENT: $PAYMENT_HEADER" \
   -H "Content-Type: application/json" \
   -d '{"url": "https://en.wikipedia.org/wiki/Artificial_intelligence"}'
@@ -492,7 +492,7 @@ payload = base64.b64encode(json.dumps({
 }).encode()).decode()
 
 r = requests.post(
-    "https://toolora.replit.app/api/agent/url/read",
+    "https://toolora.dev/api/agent/url/read",
     headers={
         "X-PAYMENT": payload,
         "Content-Type": "application/json"
@@ -508,7 +508,7 @@ print(r.json())
 
 Merge 2–20 PDF files into a single PDF document.
 
-**URL:** `https://toolora.replit.app/api/agent/pdf/merge`
+**URL:** `https://toolora.dev/api/agent/pdf/merge`
 **Method:** POST
 **Authentication:** x402 payment via `X-PAYMENT` header
 **Content-Type:** `application/json`
@@ -548,7 +548,7 @@ Merge 2–20 PDF files into a single PDF document.
 
 Generate a QR code PNG from any text or URL.
 
-**URL:** `https://toolora.replit.app/api/agent/qr`
+**URL:** `https://toolora.dev/api/agent/qr`
 **Method:** POST
 **Authentication:** x402 payment via `X-PAYMENT` header
 **Content-Type:** `application/json`
@@ -556,7 +556,7 @@ Generate a QR code PNG from any text or URL.
 **Request body:**
 ```json
 {
-  "text": "https://toolora.replit.app",
+  "text": "https://toolora.dev",
   "size": 400,
   "errorCorrectionLevel": "M"
 }
@@ -576,7 +576,7 @@ Generate a QR code PNG from any text or URL.
   "format": "png",
   "width": 400,
   "height": 400,
-  "text": "https://toolora.replit.app"
+  "text": "https://toolora.dev"
 }
 ```
 
@@ -588,7 +588,7 @@ Generate a QR code PNG from any text or URL.
 
 Convert a CSV string into a JSON array of objects.
 
-**URL:** `https://toolora.replit.app/api/agent/csv/to-json`
+**URL:** `https://toolora.dev/api/agent/csv/to-json`
 **Method:** POST
 **Authentication:** x402 payment via `X-PAYMENT` header
 **Content-Type:** `application/json`
@@ -625,7 +625,7 @@ Convert a CSV string into a JSON array of objects.
 
 Convert a JSON array of objects into a CSV string.
 
-**URL:** `https://toolora.replit.app/api/agent/json/to-csv`
+**URL:** `https://toolora.dev/api/agent/json/to-csv`
 **Method:** POST
 **Authentication:** x402 payment via `X-PAYMENT` header
 **Content-Type:** `application/json`
@@ -692,8 +692,8 @@ Convert a JSON array of objects into a CSV string.
 
 ## Contact and Links
 
-- Website: https://toolora.replit.app
-- API docs: https://toolora.replit.app/api-docs
-- Agent manifest: https://toolora.replit.app/api/agent
-- Privacy: https://toolora.replit.app/privacy
-- Terms: https://toolora.replit.app/terms
+- Website: https://toolora.dev
+- API docs: https://toolora.dev/api-docs
+- Agent manifest: https://toolora.dev/api/agent
+- Privacy: https://toolora.dev/privacy
+- Terms: https://toolora.dev/terms

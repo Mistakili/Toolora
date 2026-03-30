@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-const BASE_URL = "https://toolora.replit.app";
+const BASE_URL = "https://toolora.dev";
 const DEFAULT_IMAGE = `${BASE_URL}/opengraph.jpg`;
 const SITE_NAME = "Toolora";
 

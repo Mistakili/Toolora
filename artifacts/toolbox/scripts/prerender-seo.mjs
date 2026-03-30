@@ -16,7 +16,7 @@ import { fileURLToPath } from "node:url";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, "..");
 const DIST = path.join(ROOT, "dist/public");
-const BASE_URL = "https://toolora.replit.app";
+const BASE_URL = "https://toolora.dev";
 const TODAY = new Date().toISOString().slice(0, 10);
 
 // ── Tool definitions (kept in sync with src/lib/tools-config.ts) ─────────────

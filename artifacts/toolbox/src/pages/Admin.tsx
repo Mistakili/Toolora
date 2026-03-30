@@ -13,9 +13,9 @@ import { useAuth } from "@workspace/replit-auth-web";
 // ─── URL helper ───────────────────────────────────────────────────────────────
 
 function getApiBase() {
-  if (typeof window === "undefined") return "https://toolora-api.replit.app";
+  if (typeof window === "undefined") return "https://api.toolora.dev";
   return window.location.origin
-    .replace(/toolora\.replit\.app/, "toolora-api.replit.app")
+    .replace(/toolora\.dev/, "api.toolora.dev")
     .replace(/:\d+$/, ":8080");
 }
 

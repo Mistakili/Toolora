@@ -60,8 +60,8 @@ export default function ApiDocs() {
   }, []);
 
   const apiBase = typeof window !== "undefined"
-    ? window.location.origin.replace(/toolora\.replit\.app/, "toolora-api.replit.app").replace(/:\d+$/, ":8080")
-    : "https://toolora-api.replit.app";
+    ? window.location.origin.replace(/toolora\.dev/, "api.toolora.dev").replace(/:\d+$/, ":8080")
+    : "https://api.toolora.dev";
 
   const PRICE_XLM  = "0.5";
   const PRICE_USDC = "0.01";

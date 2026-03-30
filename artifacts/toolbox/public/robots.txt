@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://toolora.replit.app/sitemap.xml
+Sitemap: https://toolora.dev/sitemap.xml

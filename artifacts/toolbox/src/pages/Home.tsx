@@ -152,8 +152,8 @@ export default function Home() {
                 </Link>
                 <a
                   href={typeof window !== "undefined"
-                    ? window.location.origin.replace(/toolora\.replit\.app/, "toolora-api.replit.app").replace(/:\d+$/, ":8080") + "/api/agent"
-                    : "https://toolora-api.replit.app/api/agent"}
+                    ? window.location.origin.replace(/toolora\.dev/, "api.toolora.dev").replace(/:\d+$/, ":8080") + "/api/agent"
+                    : "https://api.toolora.dev/api/agent"}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="px-5 py-2.5 border border-yellow-500/30 text-yellow-400 font-semibold rounded-full text-sm hover:bg-yellow-500/10 transition-colors flex items-center gap-2"
@@ -176,7 +176,7 @@ export default function Home() {
 {`import requests, base64, json
 
 # 1. Call the endpoint — receive 402 with payment details
-r = requests.post("https://toolora-api.replit.app/api/agent/pdf/text",
+r = requests.post("https://api.toolora.dev/api/agent/pdf/text",
                   files={"file": open("report.pdf","rb")})
 # r.status_code == 402  ← pay to continue
 
@@ -191,7 +191,7 @@ payment = base64.b64encode(json.dumps({
 }).encode()).decode()
 
 r = requests.post(
-  "https://toolora-api.replit.app/api/agent/pdf/text",
+  "https://api.toolora.dev/api/agent/pdf/text",
   headers={"X-PAYMENT": payment},
   files={"file": open("report.pdf","rb")}
 )
@@ -204,8 +204,8 @@ print(r.json()["text"])  # ← full PDF text`}
                   <span>Usage stats at</span>
                   <a
                     href={typeof window !== "undefined"
-                      ? window.location.origin.replace(/toolora\.replit\.app/, "toolora-api.replit.app").replace(/:\d+$/, ":8080") + "/api/agent/stats"
-                      : "https://toolora-api.replit.app/api/agent/stats"}
+                      ? window.location.origin.replace(/toolora\.dev/, "api.toolora.dev").replace(/:\d+$/, ":8080") + "/api/agent/stats"
+                      : "https://api.toolora.dev/api/agent/stats"}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-primary hover:underline font-mono"

@@ -164,7 +164,7 @@ export default function ToolView() {
   
   if (!tool || !category) return <NotFound />;
 
-  const BASE = "https://toolora.replit.app";
+  const BASE = "https://toolora.dev";
   const toolUrl = `${BASE}/tools/${tool.category}/${tool.slug}`;
   const catContent = CATEGORY_CONTENT[tool.category];
   const faqs = catContent?.faqs ?? [];

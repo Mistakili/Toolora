@@ -4,14 +4,14 @@
 
 ## Overview
 
-Toolora (https://toolora.replit.app) provides two things:
+Toolora (https://toolora.dev) provides two things:
 
 1. **Free browser tools** — 20+ utilities that run entirely in the browser. No uploads, no accounts, no data stored.
 2. **Paid Agent API** — Three server-side endpoints for document and web content processing, gated by the x402 micropayment protocol. No API key or subscription required — agents pay per request using Stellar XLM (live) or Solana USDC (coming soon).
 
 ## Free Browser Tools
 
-All tools are available at https://toolora.replit.app/tools/<slug>
+All tools are available at https://toolora.dev/tools/<slug>
 
 ### PDF Tools
 - Merge PDF — /tools/pdf-merge — Combine multiple PDF files into one document
@@ -47,7 +47,7 @@ All tools are available at https://toolora.replit.app/tools/<slug>
 
 Toolora exposes an MCP (Model Context Protocol) server for direct integration with Claude Desktop, Cursor, Windsurf, and other MCP-compatible clients.
 
-**Endpoint:** https://toolora-api.replit.app/api/mcp
+**Endpoint:** https://api.toolora.dev/api/mcp
 **Transport:** Streamable HTTP (MCP 2025-03-26)
 **Authentication:** None — free to use
 
@@ -63,7 +63,7 @@ Toolora exposes an MCP (Model Context Protocol) server for direct integration wi
 {
   "mcpServers": {
     "toolora": {
-      "url": "https://toolora-api.replit.app/api/mcp",
+      "url": "https://api.toolora.dev/api/mcp",
       "transport": "http"
     }
   }
@@ -74,10 +74,10 @@ Toolora exposes an MCP (Model Context Protocol) server for direct integration wi
 
 Server-side APIs for AI agents. Pay per request — no API key, no subscription, no rate limits on payment.
 
-**Discovery:** https://toolora.replit.app/api/agent
-**Well-known manifest:** https://toolora.replit.app/.well-known/agent.json
-**Full docs:** https://toolora.replit.app/api-docs
-**Usage stats:** https://toolora.replit.app/api/agent/stats
+**Discovery:** https://toolora.dev/api/agent
+**Well-known manifest:** https://toolora.dev/.well-known/agent.json
+**Full docs:** https://toolora.dev/api-docs
+**Usage stats:** https://toolora.dev/api/agent/stats
 
 ### Endpoints
 
@@ -105,7 +105,7 @@ Flow:
 
 ## More Information
 
-- Privacy policy: https://toolora.replit.app/privacy
-- Terms of service: https://toolora.replit.app/terms
-- Full API reference: https://toolora.replit.app/api-docs
-- Agent manifest (JSON): https://toolora.replit.app/api/agent
+- Privacy policy: https://toolora.dev/privacy
+- Terms of service: https://toolora.dev/terms
+- Full API reference: https://toolora.dev/api-docs
+- Agent manifest (JSON): https://toolora.dev/api/agent

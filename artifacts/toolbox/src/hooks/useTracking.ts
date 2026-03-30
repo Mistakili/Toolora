@@ -4,9 +4,9 @@ import { useLocation } from "wouter";
 const API_BASE =
   typeof window !== "undefined"
     ? window.location.origin
-        .replace(/toolora\.replit\.app/, "toolora-api.replit.app")
+        .replace(/toolora\.dev/, "api.toolora.dev")
         .replace(/:\d+$/, ":8080")
-    : "https://toolora-api.replit.app";
+    : "https://api.toolora.dev";
 
 function getSessionId(): string {
   const key = "toolora_session_id";

@@ -3,164 +3,164 @@
 
   <!-- Main pages -->
   <url>
-    <loc>https://toolora.replit.app/</loc>
+    <loc>https://toolora.dev/</loc>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://toolora.replit.app/api-docs</loc>
+    <loc>https://toolora.dev/api-docs</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://toolora.replit.app/extension</loc>
+    <loc>https://toolora.dev/extension</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://toolora.replit.app/privacy</loc>
+    <loc>https://toolora.dev/privacy</loc>
     <changefreq>monthly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://toolora.replit.app/terms</loc>
+    <loc>https://toolora.dev/terms</loc>
     <changefreq>monthly</changefreq>
     <priority>0.3</priority>
   </url>
 
   <!-- Category pages -->
   <url>
-    <loc>https://toolora.replit.app/tools/text</loc>
+    <loc>https://toolora.dev/tools/text</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://toolora.replit.app/tools/developer</loc>
+    <loc>https://toolora.dev/tools/developer</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://toolora.replit.app/tools/productivity</loc>
+    <loc>https://toolora.dev/tools/productivity</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://toolora.replit.app/tools/image</loc>
+    <loc>https://toolora.dev/tools/image</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://toolora.replit.app/tools/pdf</loc>
+    <loc>https://toolora.dev/tools/pdf</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
 
   <!-- Text tools -->
   <url>
-    <loc>https://toolora.replit.app/tools/text/word-counter</loc>
+    <loc>https://toolora.dev/tools/text/word-counter</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://toolora.replit.app/tools/text/case-converter</loc>
+    <loc>https://toolora.dev/tools/text/case-converter</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://toolora.replit.app/tools/text/lorem-ipsum</loc>
+    <loc>https://toolora.dev/tools/text/lorem-ipsum</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://toolora.replit.app/tools/text/markdown-preview</loc>
+    <loc>https://toolora.dev/tools/text/markdown-preview</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://toolora.replit.app/tools/text/text-diff</loc>
+    <loc>https://toolora.dev/tools/text/text-diff</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <!-- Developer tools -->
   <url>
-    <loc>https://toolora.replit.app/tools/developer/json-formatter</loc>
+    <loc>https://toolora.dev/tools/developer/json-formatter</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://toolora.replit.app/tools/developer/base64</loc>
+    <loc>https://toolora.dev/tools/developer/base64</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://toolora.replit.app/tools/developer/url-encoder</loc>
+    <loc>https://toolora.dev/tools/developer/url-encoder</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://toolora.replit.app/tools/developer/hash-generator</loc>
+    <loc>https://toolora.dev/tools/developer/hash-generator</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://toolora.replit.app/tools/developer/uuid-generator</loc>
+    <loc>https://toolora.dev/tools/developer/uuid-generator</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <!-- Productivity tools -->
   <url>
-    <loc>https://toolora.replit.app/tools/productivity/qr-generator</loc>
+    <loc>https://toolora.dev/tools/productivity/qr-generator</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://toolora.replit.app/tools/productivity/password-generator</loc>
+    <loc>https://toolora.dev/tools/productivity/password-generator</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://toolora.replit.app/tools/productivity/unit-converter</loc>
+    <loc>https://toolora.dev/tools/productivity/unit-converter</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://toolora.replit.app/tools/productivity/color-picker</loc>
+    <loc>https://toolora.dev/tools/productivity/color-picker</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://toolora.replit.app/tools/productivity/timestamp-converter</loc>
+    <loc>https://toolora.dev/tools/productivity/timestamp-converter</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <!-- Image tools -->
   <url>
-    <loc>https://toolora.replit.app/tools/image/image-resize</loc>
+    <loc>https://toolora.dev/tools/image/image-resize</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://toolora.replit.app/tools/image/image-compress</loc>
+    <loc>https://toolora.dev/tools/image/image-compress</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://toolora.replit.app/tools/image/image-convert</loc>
+    <loc>https://toolora.dev/tools/image/image-convert</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <!-- PDF tools -->
   <url>
-    <loc>https://toolora.replit.app/tools/pdf/pdf-merge</loc>
+    <loc>https://toolora.dev/tools/pdf/pdf-merge</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://toolora.replit.app/tools/pdf/pdf-split</loc>
+    <loc>https://toolora.dev/tools/pdf/pdf-split</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
