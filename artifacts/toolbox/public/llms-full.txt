@@ -275,6 +275,34 @@ Extract structured sections and headings from a PDF for RAG (Retrieval-Augmented
 
 **Use case:** Chunk a PDF into logical sections for embedding into a vector database. Each section becomes one RAG document with heading as the key.
 
+**curl example:**
+```bash
+curl -X POST https://toolora.replit.app/api/agent/pdf/extract \
+  -H "X-PAYMENT: $PAYMENT_HEADER" \
+  -F "file=@document.pdf"
+```
+
+**Python example:**
+```python
+import requests, base64, json
+
+payload = base64.b64encode(json.dumps({
+    "txHash": "<stellar_tx_hash>",
+    "from": "<your_stellar_address>",
+    "amount": "0.5",
+    "network": "stellar:mainnet"
+}).encode()).decode()
+
+r = requests.post(
+    "https://toolora.replit.app/api/agent/pdf/extract",
+    headers={"X-PAYMENT": payload},
+    files={"file": open("document.pdf", "rb")}
+)
+data = r.json()
+for section in data["sections"]:
+    print(f"[{section['heading']}] {section['content'][:100]}...")
+```
+
 ---
 
 #### POST /api/agent/url/read
@@ -296,7 +324,7 @@ Fetch a URL and return clean, readable text content with boilerplate removed.
 **Request fields:**
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| url | string | Yes | Full URL to fetch and parse (must include https://) |
+| url | string | Yes | Full URL to fetch and parse (must include http:// or https://) |
 
 **Response (200 OK):**
 ```json
@@ -361,8 +389,10 @@ print(r.json())
 | Status | Meaning |
 |--------|---------|
 | 402 | Payment required — includes `accepts` array with payment instructions |
-| 400 | Bad request — missing required fields or invalid input |
+| 400 | Bad request — missing required fields or invalid input (e.g., no file, bad URL) |
 | 413 | File too large — PDF exceeds 20MB limit |
+| 422 | Unprocessable — file is corrupted, encrypted, or URL content is unreadable |
+| 502 | Bad gateway — the target URL could not be fetched (timeout or connection failure) |
 | 500 | Server error — transient, safe to retry |
 
 **402 error variants:**
