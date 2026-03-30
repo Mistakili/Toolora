@@ -13,6 +13,7 @@ import {
   SESSION_COOKIE,
   SESSION_TTL,
   ISSUER_URL,
+  isAdminSession,
   type SessionData,
 } from "../lib/auth";
 
@@ -80,11 +81,11 @@ async function upsertUser(claims: Record<string, unknown>) {
 }
 
 router.get("/auth/user", (req: Request, res: Response) => {
-  res.json(
-    GetCurrentAuthUserResponse.parse({
-      user: req.isAuthenticated() ? req.user : null,
-    }),
-  );
+  const parsed = GetCurrentAuthUserResponse.parse({
+    user: req.isAuthenticated() ? req.user : null,
+  });
+  const isAdmin = req.sessionData ? isAdminSession(req.sessionData) : false;
+  res.json({ ...parsed, isAdmin });
 });
 
 router.get("/login", async (req: Request, res: Response) => {
@@ -166,6 +167,7 @@ router.get("/callback", async (req: Request, res: Response) => {
   );
 
   const now = Math.floor(Date.now() / 1000);
+  const username = (claims.preferred_username || claims.username || claims.name) as string | undefined;
   const sessionData: SessionData = {
     user: {
       id: dbUser.id,
@@ -174,6 +176,7 @@ router.get("/callback", async (req: Request, res: Response) => {
       lastName: dbUser.lastName,
       profileImageUrl: dbUser.profileImageUrl,
     },
+    username: username || undefined,
     access_token: tokens.access_token,
     refresh_token: tokens.refresh_token,
     expires_at: tokens.expiresIn() ? now + tokens.expiresIn()! : claims.exp,

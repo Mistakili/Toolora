@@ -2,12 +2,17 @@ import { Router, type IRouter, type Request, type Response } from "express";
 import { db } from "@workspace/db";
 import { agentPaymentsTable, pageViewsTable } from "@workspace/db/schema";
 import { desc, sum, count, sql, ne } from "drizzle-orm";
+import { isAdminSession } from "../lib/auth";
 
 const router: IRouter = Router();
 
-function requireAuth(req: Request, res: Response): boolean {
+function requireAdmin(req: Request, res: Response): boolean {
   if (!req.isAuthenticated()) {
     res.status(401).json({ error: "Unauthorized. Sign in to view admin data." });
+    return false;
+  }
+  if (!req.sessionData || !isAdminSession(req.sessionData)) {
+    res.status(403).json({ error: "Forbidden. Admin access only." });
     return false;
   }
   return true;
@@ -16,7 +21,7 @@ function requireAuth(req: Request, res: Response): boolean {
 // ─── GET /api/admin/stats — agent API revenue ────────────────────────────────
 
 router.get("/stats", async (req: Request, res: Response) => {
-  if (!requireAuth(req, res)) return;
+  if (!requireAdmin(req, res)) return;
 
   try {
     const byEndpoint = await db
@@ -80,7 +85,7 @@ router.get("/stats", async (req: Request, res: Response) => {
 // ─── GET /api/admin/analytics — site traffic ─────────────────────────────────
 
 router.get("/analytics", async (req: Request, res: Response) => {
-  if (!requireAuth(req, res)) return;
+  if (!requireAdmin(req, res)) return;
 
   try {
     // Exclude bots from all human-facing metrics

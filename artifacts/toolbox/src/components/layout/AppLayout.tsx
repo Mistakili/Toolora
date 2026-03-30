@@ -135,12 +135,14 @@ export function AppLayout({ children }: { children: ReactNode }) {
                         <CreditCard className="w-4 h-4" /> Pricing
                       </div>
                     </Link>
-                    <Link href="/admin" onClick={() => setUserMenuOpen(false)}>
-                      <div className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-muted transition-colors cursor-pointer border-t border-border mt-1 pt-2">
-                        <LayoutDashboard className="w-4 h-4 text-primary" />
-                        <span>Admin Dashboard</span>
-                      </div>
-                    </Link>
+                    {(user as unknown as { isAdmin?: boolean }).isAdmin && (
+                      <Link href="/admin" onClick={() => setUserMenuOpen(false)}>
+                        <div className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-muted transition-colors cursor-pointer border-t border-border mt-1 pt-2">
+                          <LayoutDashboard className="w-4 h-4 text-primary" />
+                          <span>Admin Dashboard</span>
+                        </div>
+                      </Link>
+                    )}
                     <button onClick={logout} className="w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-muted transition-colors text-left text-destructive">
                       <LogOut className="w-4 h-4" /> Sign Out
                     </button>

@@ -11,9 +11,16 @@ export const SESSION_TTL = 7 * 24 * 60 * 60 * 1000;
 
 export interface SessionData {
   user: AuthUser;
+  username?: string;
   access_token: string;
   refresh_token?: string;
   expires_at?: number;
+}
+
+export function isAdminSession(session: SessionData): boolean {
+  const adminUsername = process.env.REPL_OWNER;
+  if (!adminUsername || !session.username) return false;
+  return session.username.toLowerCase() === adminUsername.toLowerCase();
 }
 
 let oidcConfig: client.Configuration | null = null;
