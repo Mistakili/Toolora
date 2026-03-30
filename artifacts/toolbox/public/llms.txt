@@ -83,7 +83,11 @@ Server-side APIs for AI agents. Pay per request — no API key, no subscription,
 
 - POST /api/agent/pdf/text — Extract full plain text from a PDF file. Returns text, page count, word count, character count, and PDF metadata. Accepts multipart/form-data with a `file` field (max 20MB).
 - POST /api/agent/pdf/extract — Extract structured sections from a PDF for RAG pipelines. Returns a title, sections array (each with heading, level, content text, and word count), total word count, page count, and PDF metadata.
+- POST /api/agent/pdf/merge — Merge 2–20 PDFs into one. Accepts a JSON array of base64-encoded PDFs. Returns the merged PDF as base64 with page count and file size.
 - POST /api/agent/url/read — Fetch a URL and return clean readable text stripped of navigation, ads, and boilerplate (Mozilla Readability). Returns title, byline, excerpt, content, word count, and fetch timestamp.
+- POST /api/agent/qr — Generate a QR code PNG from any text or URL. Returns base64 PNG. Accepts text, size (64–2048px), and error correction level (L/M/Q/H).
+- POST /api/agent/csv/to-json — Convert a CSV string to a JSON array of objects. Handles quoted fields and headers. Returns rows, column names, and row count.
+- POST /api/agent/json/to-csv — Convert a JSON array of objects to a CSV string. Infers column names from keys. Returns CSV with CRLF line endings.
 
 ### Payment (x402)
 

@@ -1,0 +1,51 @@
+name: toolora
+displayName: Toolora
+description: |
+  Document processing, data conversion, and web content APIs for AI agents.
+  All tools are free via MCP. Also available as a paid x402 Agent API (Stellar XLM
+  or Solana USDC, no API key required).
+
+  Tools: extract text from PDFs, merge PDFs, generate QR codes, convert CSV to/from
+  JSON, count words/stats, and fetch + clean any public URL with Mozilla Readability.
+homepage: https://toolora.replit.app
+license: MIT
+categories:
+  - document-processing
+  - productivity
+  - data-conversion
+  - web-scraping
+
+server:
+  transport: http
+  url: https://toolora-api.replit.app/api/mcp
+
+tools:
+  - name: extract_pdf_text
+    description: Extract all plain text from a PDF file (base64). Returns text, page count, word count, and character count.
+    tags: [pdf, document, text-extraction]
+
+  - name: merge_pdfs
+    description: Merge 2–20 PDF files into a single PDF. Each file provided as base64. Returns merged PDF as base64.
+    tags: [pdf, document, merge]
+
+  - name: generate_qr_code
+    description: Generate a QR code PNG from any text or URL. Returns base64 PNG. Supports custom size and error correction.
+    tags: [qr-code, image, productivity]
+
+  - name: csv_to_json
+    description: Convert a CSV string to a JSON array of objects. Handles quoted fields, embedded commas, and headers.
+    tags: [csv, json, data-conversion]
+
+  - name: json_to_csv
+    description: Convert a JSON array of objects to a CSV string with proper quoting and CRLF line endings.
+    tags: [json, csv, data-conversion]
+
+  - name: count_words
+    description: Count words, characters, sentences, paragraphs, and reading time for any text.
+    tags: [text, analysis, productivity]
+
+  - name: read_url
+    description: Fetch a public URL and return clean readable text (Mozilla Readability). Returns title, byline, excerpt, and content.
+    tags: [web, scraping, readability]
+
+config: {}

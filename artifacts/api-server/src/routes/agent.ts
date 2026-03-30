@@ -1,5 +1,7 @@
 import { Router, type IRouter, type Request, type Response } from "express";
 import multer from "multer";
+import { PDFDocument } from "pdf-lib";
+import QRCode from "qrcode";
 import { db } from "@workspace/db";
 import { agentPaymentsTable } from "@workspace/db/schema";
 import { desc, sum, count } from "drizzle-orm";
@@ -144,6 +146,118 @@ function buildManifest(req: Request) {
         example: {
           curl: `curl -X POST ${base}/api/agent/url/read \\\n  -H "Content-Type: application/json" \\\n  -H "X-PAYMENT: <base64_payload>" \\\n  -d '{"url":"https://example.com/article"}'`,
           python: `import requests, base64, json\npayload = base64.b64encode(json.dumps({"txHash":"<hash>","from":"<addr>","amount":"${PRICE_XLM}","network":"stellar:${NETWORK}"}).encode()).decode()\nr = requests.post("${base}/api/agent/url/read", headers={"Content-Type":"application/json","X-PAYMENT": payload}, json={"url":"https://example.com"})\nprint(r.json())`,
+        },
+      },
+      {
+        id: "pdf.merge",
+        method: "POST",
+        path: "/api/agent/pdf/merge",
+        url: `${base}/api/agent/pdf/merge`,
+        paid: true,
+        priceXLM: PRICE_XLM,
+        priceUSDC: PRICE_USDC,
+        description:
+          "Merge 2–20 PDF files into a single PDF. Send files as base64-encoded strings in a JSON array. Returns the merged PDF as a base64 string.",
+        request: {
+          contentType: "application/json",
+          body: { files: "array of {base64: string, filename?: string} (2–20 items, required)" },
+        },
+        response: {
+          schema: {
+            pdf: "string — base64-encoded merged PDF",
+            pages: "number — total page count",
+            mergedFrom: "number — number of input files",
+            sizeBytes: "number — output file size",
+          },
+        },
+        example: {
+          curl: `curl -X POST ${base}/api/agent/pdf/merge \\\n  -H "Content-Type: application/json" \\\n  -H "X-PAYMENT: <base64_payload>" \\\n  -d '{"files":[{"base64":"<pdf1_b64>"},{"base64":"<pdf2_b64>"}]}'`,
+        },
+      },
+      {
+        id: "qr",
+        method: "POST",
+        path: "/api/agent/qr",
+        url: `${base}/api/agent/qr`,
+        paid: true,
+        priceXLM: PRICE_XLM,
+        priceUSDC: PRICE_USDC,
+        description:
+          "Generate a QR code from any text or URL. Returns a base64-encoded PNG. Supports custom size (64–2048px) and error correction level (L/M/Q/H).",
+        request: {
+          contentType: "application/json",
+          body: {
+            text: "string (required, max 2953 chars)",
+            size: "number (optional, default 400, range 64–2048)",
+            errorCorrectionLevel: "L | M | Q | H (optional, default M)",
+          },
+        },
+        response: {
+          schema: {
+            qr: "string — base64-encoded PNG",
+            format: "png",
+            width: "number",
+            height: "number",
+            text: "string — original input",
+          },
+        },
+        example: {
+          curl: `curl -X POST ${base}/api/agent/qr \\\n  -H "Content-Type: application/json" \\\n  -H "X-PAYMENT: <base64_payload>" \\\n  -d '{"text":"https://toolora.replit.app","size":400}'`,
+        },
+      },
+      {
+        id: "csv.to-json",
+        method: "POST",
+        path: "/api/agent/csv/to-json",
+        url: `${base}/api/agent/csv/to-json`,
+        paid: true,
+        priceXLM: PRICE_XLM,
+        priceUSDC: PRICE_USDC,
+        description:
+          "Convert a CSV string to a JSON array of objects. First row is treated as column headers by default. Handles quoted fields and embedded commas.",
+        request: {
+          contentType: "application/json",
+          body: { csv: "string (required)", headers: "boolean (optional, default true)" },
+        },
+        response: {
+          schema: {
+            rows: "array — parsed rows as objects (or arrays if headers=false)",
+            columnNames: "array — column names (when headers=true)",
+            columns: "number",
+            rowCount: "number",
+          },
+        },
+        example: {
+          curl: `curl -X POST ${base}/api/agent/csv/to-json \\\n  -H "Content-Type: application/json" \\\n  -H "X-PAYMENT: <base64_payload>" \\\n  -d '{"csv":"name,age\\nAlice,30\\nBob,25"}'`,
+        },
+      },
+      {
+        id: "json.to-csv",
+        method: "POST",
+        path: "/api/agent/json/to-csv",
+        url: `${base}/api/agent/json/to-csv`,
+        paid: true,
+        priceXLM: PRICE_XLM,
+        priceUSDC: PRICE_USDC,
+        description:
+          "Convert a JSON array of objects to a CSV string. Column names are inferred from all keys across all objects. Handles special characters and proper quoting.",
+        request: {
+          contentType: "application/json",
+          body: {
+            data: "array of objects (required)",
+            delimiter: "string — single char (optional, default ',')",
+          },
+        },
+        response: {
+          schema: {
+            csv: "string — CSV output with CRLF line endings",
+            columnNames: "array — column headers used",
+            columns: "number",
+            rowCount: "number",
+          },
+        },
+        example: {
+          curl: `curl -X POST ${base}/api/agent/json/to-csv \\\n  -H "Content-Type: application/json" \\\n  -H "X-PAYMENT: <base64_payload>" \\\n  -d '{"data":[{"name":"Alice","age":30},{"name":"Bob","age":25}]}'`,
         },
       },
     ],
@@ -389,4 +503,206 @@ router.post("/url/read", requirePayment, async (req: Request, res: Response) => 
   }
 });
 
+// ─── POST /api/agent/pdf/merge ────────────────────────────────────────────────
+
+router.post("/pdf/merge", requirePayment, async (req: Request, res: Response) => {
+  const body = req.body as { files?: unknown[] };
+
+  if (!Array.isArray(body.files) || body.files.length < 2) {
+    res.status(400).json({ error: "Provide at least 2 files in the 'files' array." });
+    return;
+  }
+  if (body.files.length > 20) {
+    res.status(400).json({ error: "Maximum 20 files per merge request." });
+    return;
+  }
+
+  try {
+    const merged = await PDFDocument.create();
+
+    for (let i = 0; i < body.files.length; i++) {
+      const entry = body.files[i] as { base64?: string; filename?: string };
+      if (!entry?.base64 || typeof entry.base64 !== "string") {
+        res.status(400).json({ error: `files[${i}] is missing a 'base64' field.` });
+        return;
+      }
+
+      let buf: Buffer;
+      try {
+        buf = Buffer.from(entry.base64, "base64");
+      } catch {
+        res.status(400).json({ error: `files[${i}].base64 is not valid base64.` });
+        return;
+      }
+
+      if (buf.length < 4 || buf.toString("ascii", 0, 4) !== "%PDF") {
+        res.status(400).json({ error: `files[${i}] does not appear to be a valid PDF.` });
+        return;
+      }
+
+      const doc = await PDFDocument.load(buf);
+      const pages = await merged.copyPages(doc, doc.getPageIndices());
+      pages.forEach((p) => merged.addPage(p));
+    }
+
+    const pdfBytes = await merged.save();
+    const base64 = Buffer.from(pdfBytes).toString("base64");
+
+    await logPayment("/api/agent/pdf/merge", req);
+
+    res.json({
+      pdf: base64,
+      pages: merged.getPageCount(),
+      mergedFrom: body.files.length,
+      sizeBytes: pdfBytes.length,
+    });
+  } catch (err: unknown) {
+    req.log.error({ err }, "PDF merge error");
+    res.status(422).json({ error: "Could not merge PDFs. One or more files may be corrupted or encrypted." });
+  }
+});
+
+// ─── POST /api/agent/qr ───────────────────────────────────────────────────────
+
+router.post("/qr", requirePayment, async (req: Request, res: Response) => {
+  const { text, size = 400, errorCorrectionLevel = "M" } = req.body as {
+    text?: string;
+    size?: number;
+    errorCorrectionLevel?: "L" | "M" | "Q" | "H";
+  };
+
+  if (!text || typeof text !== "string" || text.trim() === "") {
+    res.status(400).json({ error: "Missing or empty 'text' field." });
+    return;
+  }
+  if (text.length > 2953) {
+    res.status(400).json({ error: "Text too long for a QR code. Maximum is 2953 characters." });
+    return;
+  }
+  const clampedSize = Math.min(Math.max(Number(size) || 400, 64), 2048);
+  const validECL = ["L", "M", "Q", "H"];
+  const ecl = validECL.includes(errorCorrectionLevel) ? errorCorrectionLevel : "M";
+
+  try {
+    const dataUrl = await QRCode.toDataURL(text, {
+      width: clampedSize,
+      margin: 2,
+      errorCorrectionLevel: ecl as "L" | "M" | "Q" | "H",
+      color: { dark: "#000000", light: "#ffffff" },
+    });
+
+    const base64 = dataUrl.replace(/^data:image\/png;base64,/, "");
+
+    await logPayment("/api/agent/qr", req);
+
+    res.json({ qr: base64, format: "png", width: clampedSize, height: clampedSize, text });
+  } catch (err: unknown) {
+    req.log.error({ err }, "QR generation error");
+    res.status(422).json({ error: "Could not generate QR code." });
+  }
+});
+
+// ─── POST /api/agent/csv/to-json ──────────────────────────────────────────────
+
+router.post("/csv/to-json", requirePayment, async (req: Request, res: Response) => {
+  const { csv, headers = true } = req.body as { csv?: string; headers?: boolean };
+
+  if (!csv || typeof csv !== "string") {
+    res.status(400).json({ error: "Missing 'csv' field (a CSV string)." });
+    return;
+  }
+
+  try {
+    const lines = csv.split(/\r?\n/).filter((l) => l.trim() !== "");
+    if (lines.length === 0) {
+      res.json({ rows: [], columns: 0, rowCount: 0 });
+      return;
+    }
+
+    const parseRow = (line: string): string[] => {
+      const result: string[] = [];
+      let current = "";
+      let inQuotes = false;
+      for (let i = 0; i < line.length; i++) {
+        const ch = line[i];
+        if (ch === '"') {
+          if (inQuotes && line[i + 1] === '"') { current += '"'; i++; }
+          else { inQuotes = !inQuotes; }
+        } else if (ch === "," && !inQuotes) {
+          result.push(current);
+          current = "";
+        } else {
+          current += ch;
+        }
+      }
+      result.push(current);
+      return result;
+    };
+
+    if (!headers) {
+      const rows = lines.map((l) => parseRow(l));
+      res.json({ rows, columns: rows[0]?.length ?? 0, rowCount: rows.length });
+      return;
+    }
+
+    const columnNames = parseRow(lines[0]);
+    const rows = lines.slice(1).map((line) => {
+      const values = parseRow(line);
+      const obj: Record<string, string> = {};
+      columnNames.forEach((col, idx) => { obj[col] = values[idx] ?? ""; });
+      return obj;
+    });
+
+    await logPayment("/api/agent/csv/to-json", req);
+
+    res.json({ rows, columns: columnNames.length, rowCount: rows.length, columnNames });
+  } catch (err: unknown) {
+    req.log.error({ err }, "CSV to JSON error");
+    res.status(422).json({ error: "Failed to parse CSV." });
+  }
+});
+
+// ─── POST /api/agent/json/to-csv ──────────────────────────────────────────────
+
+router.post("/json/to-csv", requirePayment, async (req: Request, res: Response) => {
+  const { data, delimiter = "," } = req.body as { data?: unknown[]; delimiter?: string };
+
+  if (!Array.isArray(data) || data.length === 0) {
+    res.status(400).json({ error: "Missing or empty 'data' array. Provide an array of objects." });
+    return;
+  }
+  if (typeof delimiter !== "string" || delimiter.length !== 1) {
+    res.status(400).json({ error: "'delimiter' must be a single character (default: ',')." });
+    return;
+  }
+
+  try {
+    const allKeys = Array.from(new Set(data.flatMap((r) => (typeof r === "object" && r !== null ? Object.keys(r as object) : []))));
+    if (allKeys.length === 0) {
+      res.status(400).json({ error: "Could not determine column names. Data must be an array of objects." });
+      return;
+    }
+
+    const escapeCell = (val: unknown): string => {
+      const str = val === null || val === undefined ? "" : String(val);
+      if (str.includes(delimiter) || str.includes('"') || str.includes("\n") || str.includes("\r")) {
+        return `"${str.replace(/"/g, '""')}"`;
+      }
+      return str;
+    };
+
+    const header = allKeys.map(escapeCell).join(delimiter);
+    const dataRows = data.map((row) => allKeys.map((k) => escapeCell((row as Record<string, unknown>)[k])).join(delimiter));
+    const csv = [header, ...dataRows].join("\r\n");
+
+    await logPayment("/api/agent/json/to-csv", req);
+
+    res.json({ csv, columns: allKeys.length, rowCount: data.length, columnNames: allKeys });
+  } catch (err: unknown) {
+    req.log.error({ err }, "JSON to CSV error");
+    res.status(422).json({ error: "Failed to convert JSON to CSV." });
+  }
+});
+
 export default router;
+

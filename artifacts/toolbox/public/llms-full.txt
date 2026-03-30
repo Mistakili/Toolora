@@ -504,6 +504,160 @@ print(r.json())
 
 ---
 
+#### POST /api/agent/pdf/merge
+
+Merge 2–20 PDF files into a single PDF document.
+
+**URL:** `https://toolora.replit.app/api/agent/pdf/merge`
+**Method:** POST
+**Authentication:** x402 payment via `X-PAYMENT` header
+**Content-Type:** `application/json`
+
+**Request body:**
+```json
+{
+  "files": [
+    { "base64": "<pdf1_base64_string>", "filename": "report.pdf" },
+    { "base64": "<pdf2_base64_string>", "filename": "appendix.pdf" }
+  ]
+}
+```
+
+**Request fields:**
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| files | array | Yes | 2–20 PDF files as `{base64, filename?}` objects |
+| files[].base64 | string | Yes | PDF file contents encoded as base64 |
+| files[].filename | string | No | Optional filename for context |
+
+**Response (200 OK):**
+```json
+{
+  "pdf": "<merged_pdf_base64>",
+  "pages": 24,
+  "mergedFrom": 2,
+  "sizeBytes": 182340
+}
+```
+
+**Use case:** Programmatically combine reports, invoices, research papers, or multi-part documents for downstream processing.
+
+---
+
+#### POST /api/agent/qr
+
+Generate a QR code PNG from any text or URL.
+
+**URL:** `https://toolora.replit.app/api/agent/qr`
+**Method:** POST
+**Authentication:** x402 payment via `X-PAYMENT` header
+**Content-Type:** `application/json`
+
+**Request body:**
+```json
+{
+  "text": "https://toolora.replit.app",
+  "size": 400,
+  "errorCorrectionLevel": "M"
+}
+```
+
+**Request fields:**
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| text | string | Yes | Text or URL to encode (max 2953 chars) |
+| size | number | No | Width/height in px (64–2048, default 400) |
+| errorCorrectionLevel | string | No | L / M (default) / Q / H |
+
+**Response (200 OK):**
+```json
+{
+  "qr": "<base64_png>",
+  "format": "png",
+  "width": 400,
+  "height": 400,
+  "text": "https://toolora.replit.app"
+}
+```
+
+**Use case:** Generate QR codes in agent pipelines for links, payment addresses, contact cards, or any scannable payload.
+
+---
+
+#### POST /api/agent/csv/to-json
+
+Convert a CSV string into a JSON array of objects.
+
+**URL:** `https://toolora.replit.app/api/agent/csv/to-json`
+**Method:** POST
+**Authentication:** x402 payment via `X-PAYMENT` header
+**Content-Type:** `application/json`
+
+**Request body:**
+```json
+{
+  "csv": "name,age\nAlice,30\nBob,25",
+  "headers": true
+}
+```
+
+**Request fields:**
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| csv | string | Yes | CSV data |
+| headers | boolean | No | Treat first row as column names (default: true) |
+
+**Response (200 OK):**
+```json
+{
+  "rows": [{"name": "Alice", "age": "30"}, {"name": "Bob", "age": "25"}],
+  "columnNames": ["name", "age"],
+  "columns": 2,
+  "rowCount": 2
+}
+```
+
+**Use case:** Process spreadsheet exports, API CSV responses, or tabular data files in agent workflows.
+
+---
+
+#### POST /api/agent/json/to-csv
+
+Convert a JSON array of objects into a CSV string.
+
+**URL:** `https://toolora.replit.app/api/agent/json/to-csv`
+**Method:** POST
+**Authentication:** x402 payment via `X-PAYMENT` header
+**Content-Type:** `application/json`
+
+**Request body:**
+```json
+{
+  "data": [{"name": "Alice", "age": 30}, {"name": "Bob", "age": 25}],
+  "delimiter": ","
+}
+```
+
+**Request fields:**
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| data | array | Yes | Array of objects to convert |
+| delimiter | string | No | Column separator (default: `,`) |
+
+**Response (200 OK):**
+```json
+{
+  "csv": "name,age\r\nAlice,30\r\nBob,25",
+  "columnNames": ["name", "age"],
+  "columns": 2,
+  "rowCount": 2
+}
+```
+
+**Use case:** Export structured agent results, database query output, or any JSON data to CSV for spreadsheet ingestion.
+
+---
+
 ### Error Responses
 
 | Status | Meaning |
