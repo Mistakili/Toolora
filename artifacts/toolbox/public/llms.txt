@@ -61,13 +61,16 @@ Server-side APIs for AI agents. Pay per request — no API key, no subscription,
 ### Payment (x402)
 
 Payment protocol: x402
-Price per request: 0.5 XLM (Stellar) — USDC (Solana) coming soon
+Accepted payment options:
+- Stellar XLM: 0.5 XLM per request (stellar:mainnet)
+- Solana USDC: 0.01 USDC per request (solana:mainnet, USDC mint: EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v)
 
 Flow:
-1. Call any paid endpoint — receive a 402 response with payment instructions
-2. Send the required XLM to the Toolora Stellar wallet
+1. Call any paid endpoint — receive a 402 response with 'accepts' array listing both options
+2. Send payment on your preferred chain to the 'payTo' address in the 402 response
 3. Retry the request with header: X-PAYMENT: <base64(JSON)>
-   JSON format: {"txHash":"<stellar_tx_hash>","from":"<your_address>","amount":"0.5","network":"stellar:mainnet"}
+   Stellar: {"txHash":"<tx_hash>","from":"<address>","amount":"0.5","network":"stellar:mainnet"}
+   Solana:  {"txHash":"<signature>","from":"<wallet>","amount":"0.01","network":"solana:mainnet"}
 
 ## More Information
 

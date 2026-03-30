@@ -82,12 +82,13 @@ These endpoints run server-side and handle work that browser tools cannot: parsi
 - Verification: on-chain via Stellar Horizon API
 - Replay protection: each tx hash can only be used once (1-hour window)
 
-#### Solana USDC (Coming Soon)
+#### Solana USDC (Live)
 - Network: `solana:mainnet`
 - Asset: USDC (SPL token, mint: `EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v`)
-- Price per request: `0.01 USDC` (planned)
-- Verification: on-chain via Solana JSON-RPC
-- Status: in development — watch `/api/agent` manifest for activation
+- Price per request: `0.01 USDC`
+- Receiver address: see live 402 response or `/api/agent` manifest
+- Verification: on-chain via Solana JSON-RPC (`getTransaction` with `jsonParsed` encoding, checks token balance delta)
+- Replay protection: each Solana tx signature can only be used once (1-hour window)
 
 ---
 
@@ -114,24 +115,48 @@ Content-Type: multipart/form-data
       "resource": "https://toolora.replit.app/api/agent/pdf/text",
       "description": "Toolora Agent API — pay per request via Stellar XLM",
       "maxTimeoutSeconds": 120
+    },
+    {
+      "scheme": "exact",
+      "network": "solana:mainnet",
+      "maxAmountRequired": "0.01",
+      "asset": "USDC",
+      "assetAddress": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+      "payTo": "<solana_wallet_address>",
+      "resource": "https://toolora.replit.app/api/agent/pdf/text",
+      "description": "Toolora Agent API — pay per request via Solana USDC",
+      "maxTimeoutSeconds": 120
     }
   ]
 }
 ```
 
-**Step 3 — Send XLM on Stellar**
-Send exactly 0.5 XLM (or more) to the `payTo` address on Stellar mainnet. Note the transaction hash.
+**Step 3 — Send payment on your chosen chain**
+
+*Option A — Stellar XLM:* Send 0.5 XLM (or more) to the `payTo` Stellar address. Note the transaction hash.
+
+*Option B — Solana USDC:* Send 0.01 USDC (SPL token) to the `payTo` Solana address. Note the transaction signature.
 
 **Step 4 — Build the X-PAYMENT header**
 ```python
 import base64, json
 
+# Stellar
 payload = {
     "txHash": "<your_stellar_tx_hash>",
     "from": "<your_stellar_address>",
     "amount": "0.5",
     "network": "stellar:mainnet"
 }
+
+# OR Solana
+payload = {
+    "txHash": "<your_solana_tx_signature>",
+    "from": "<your_solana_wallet>",
+    "amount": "0.01",
+    "network": "solana:mainnet"
+}
+
 header = base64.b64encode(json.dumps(payload).encode()).decode()
 ```
 

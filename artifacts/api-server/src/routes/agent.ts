@@ -3,7 +3,11 @@ import multer from "multer";
 import { db } from "@workspace/db";
 import { agentPaymentsTable } from "@workspace/db/schema";
 import { desc, sum, count } from "drizzle-orm";
-import { requirePayment, RECEIVER_ADDRESS, NETWORK, PRICE_XLM } from "../middlewares/x402";
+import {
+  requirePayment,
+  RECEIVER_ADDRESS, NETWORK, PRICE_XLM,
+  SOLANA_RECEIVER_ADDRESS, SOLANA_NETWORK, PRICE_USDC,
+} from "../middlewares/x402";
 
 const router: IRouter = Router();
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 20 * 1024 * 1024 } });
@@ -29,23 +33,41 @@ async function logPayment(endpoint: string, req: Request) {
 
 function buildManifest(req: Request) {
   const base = `${req.protocol}://${req.get("host")}`;
-  return {
-    name: "Toolora Agent API",
-    version: "1.0.0",
-    description:
-      "Server-side document processing APIs for AI agents. Pay per request using Stellar XLM via the x402 protocol — no API key, no subscription.",
-    payment: {
+
+  const acceptedPayments: Record<string, unknown>[] = [];
+  if (RECEIVER_ADDRESS) {
+    acceptedPayments.push({
       protocol: "x402",
       network: `stellar:${NETWORK}`,
       asset: "XLM",
       pricePerRequest: PRICE_XLM,
-      payTo: RECEIVER_ADDRESS || "Set STELLAR_RECEIVER_ADDRESS env var",
-      howToPay: [
-        "1. Call any paid endpoint. You will receive a 402 with payment instructions.",
-        "2. Send the required XLM to the 'payTo' address on Stellar.",
-        "3. Retry the same request with header: X-PAYMENT: <base64(JSON.stringify({txHash, from, amount, network}))>",
-      ],
-    },
+      payTo: RECEIVER_ADDRESS,
+    });
+  }
+  if (SOLANA_RECEIVER_ADDRESS) {
+    acceptedPayments.push({
+      protocol: "x402",
+      network: `solana:${SOLANA_NETWORK}`,
+      asset: "USDC",
+      assetAddress: SOLANA_NETWORK === "devnet"
+        ? "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU"
+        : "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+      pricePerRequest: PRICE_USDC,
+      payTo: SOLANA_RECEIVER_ADDRESS,
+    });
+  }
+
+  return {
+    name: "Toolora Agent API",
+    version: "1.0.0",
+    description:
+      "Server-side document processing APIs for AI agents. Pay per request via the x402 protocol using Stellar XLM or Solana USDC — no API key, no subscription.",
+    acceptedPayments,
+    howToPay: [
+      "1. Call any paid endpoint. You will receive a 402 with an 'accepts' array listing payment options.",
+      "2. Send the required amount to the 'payTo' address on your chosen chain.",
+      "3. Retry with header: X-PAYMENT: <base64(JSON.stringify({txHash, from, amount, network}))>",
+    ],
     endpoints: [
       {
         id: "pdf.text",
@@ -54,6 +76,7 @@ function buildManifest(req: Request) {
         url: `${base}/api/agent/pdf/text`,
         paid: true,
         priceXLM: PRICE_XLM,
+        priceUSDC: PRICE_USDC,
         description:
           "Extract all text content from a PDF file. Returns clean text, page count, word count, and character count.",
         request: { contentType: "multipart/form-data", fields: { file: "PDF file (required, max 20MB)" } },
@@ -78,6 +101,7 @@ function buildManifest(req: Request) {
         url: `${base}/api/agent/pdf/extract`,
         paid: true,
         priceXLM: PRICE_XLM,
+        priceUSDC: PRICE_USDC,
         description:
           "Extract structured content from a PDF — sections with headings, paragraphs grouped by hierarchy. Better than raw text for RAG ingestion, knowledge graphs, and document analysis pipelines.",
         request: { contentType: "multipart/form-data", fields: { file: "PDF file (required, max 20MB)" } },
@@ -102,6 +126,7 @@ function buildManifest(req: Request) {
         url: `${base}/api/agent/url/read`,
         paid: true,
         priceXLM: PRICE_XLM,
+        priceUSDC: PRICE_USDC,
         description:
           "Fetch a URL and return clean readable text with boilerplate stripped. Uses Mozilla Readability — same algorithm as Firefox Reader View.",
         request: { contentType: "application/json", body: { url: "string (required)" } },
