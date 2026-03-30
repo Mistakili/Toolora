@@ -29,6 +29,107 @@ import ImageConvert from "@/components/tools/ImageConvert";
 import PdfMerge from "@/components/tools/PdfMerge";
 import PdfSplit from "@/components/tools/PdfSplit";
 
+// ── Per-category SEO content blocks ─────────────────────────────────────────
+
+const CATEGORY_CONTENT: Record<string, { intro: string; bullets: { label: string; text: string }[]; faqs?: { q: string; a: string }[] }> = {
+  text: {
+    intro: "All text processing runs entirely inside your browser using JavaScript. Nothing you type is ever sent over the network — there are no servers receiving your content, no analytics tracking your input, and no file storage.",
+    bullets: [
+      { label: "Instant", text: "Results update as you type — no button to click, no delay." },
+      { label: "Private", text: "Your text never leaves your device. Even your clipboard is not read without action." },
+      { label: "Offline-capable", text: "Works with no internet once the page has loaded." },
+    ],
+    faqs: [
+      { q: "Is there a character or word limit?", a: "No. The tool runs in your browser and is only limited by your device's available memory, which is typically several hundred megabytes of text." },
+      { q: "Does Toolora store my text?", a: "No. All processing is client-side JavaScript. We have no server that receives your input." },
+    ],
+  },
+  developer: {
+    intro: "Every operation runs locally in your browser — no API calls, no data sent to external services. This makes the tools suitable for sensitive data like API keys, credentials, and internal JSON payloads.",
+    bullets: [
+      { label: "Zero data exposure", text: "Cryptographic operations, encoding, and formatting all happen client-side." },
+      { label: "No rate limits", text: "Run thousands of operations without throttling — it's all local compute." },
+      { label: "Standard compliant", text: "Implementations follow RFC specifications and browser-native APIs." },
+    ],
+    faqs: [
+      { q: "Are the hashing and encoding algorithms standard?", a: "Yes. Hash Generator uses the Web Crypto API (SHA-256, SHA-1) and a JavaScript MD5 implementation. Base64 uses the browser's atob/btoa. All follow established standards." },
+      { q: "Can I use these tools with confidential data?", a: "Yes. No data is transmitted. All computation is done in your browser tab." },
+    ],
+  },
+  productivity: {
+    intro: "These tools are built for speed. Whether you need a QR code for a presentation, a strong password for a new account, or a quick unit conversion, results appear instantly with no signup and no waiting.",
+    bullets: [
+      { label: "No account needed", text: "Open the tool, get your result. Nothing to install or register." },
+      { label: "Exportable output", text: "Download QR codes as PNG, copy passwords to clipboard, or share results directly." },
+      { label: "Always free", text: "These tools are free forever — no trial period, no freemium limits." },
+    ],
+    faqs: [
+      { q: "Can I download the output?", a: "Yes. QR codes export as PNG, colors copy as HEX/RGB/HSL, and all text results can be copied with one click." },
+      { q: "How secure is the password generator?", a: "It uses the browser's cryptographically secure random number generator (crypto.getRandomValues), the same API used by password managers." },
+    ],
+  },
+  image: {
+    intro: "Images are processed entirely in your browser using the Canvas API. Your photos, screenshots, and graphics are never uploaded to a server — not even temporarily. This is critical for personal photos, confidential screenshots, and documents.",
+    bullets: [
+      { label: "True privacy", text: "Image data stays on your device at all times. We have no image server." },
+      { label: "Supports all common formats", text: "JPEG, PNG, WebP, GIF, BMP — load any and export to your target format." },
+      { label: "Lossless options available", text: "Choose quality level for compression or convert to a lossless format like PNG." },
+    ],
+    faqs: [
+      { q: "Is there a maximum file size?", a: "There is no server-imposed limit. Very large images (>50MB) may be slower because processing happens in-browser, but there is no hard cap." },
+      { q: "Does compression reduce visual quality?", a: "It depends on the quality slider setting. At 85%+ quality, differences are typically invisible to the human eye." },
+    ],
+  },
+  pdf: {
+    intro: "PDF operations use pdf-lib, a JavaScript PDF library that runs entirely in your browser. Your files are never uploaded — not even to a CDN or temporary storage. This is important for legal documents, financial records, and confidential reports.",
+    bullets: [
+      { label: "Client-side PDF engine", text: "pdf-lib handles merge, split, and page extraction without any server involvement." },
+      { label: "No file size limit", text: "Process PDFs of any size — the limit is your browser's available RAM." },
+      { label: "Preserves formatting", text: "Fonts, images, and vector graphics are maintained through all operations." },
+    ],
+    faqs: [
+      { q: "Do my PDFs ever leave my device?", a: "No. All PDF processing uses pdf-lib running in your browser tab. Nothing is uploaded." },
+      { q: "Can I merge password-protected PDFs?", a: "Password-protected PDFs need to be unlocked first — the browser's PDF tools cannot bypass encryption by design." },
+    ],
+  },
+};
+
+function SeoContent({ tool }: { tool: { name: string; category: string; seoDescription: string } }) {
+  const content = CATEGORY_CONTENT[tool.category];
+  if (!content) return null;
+
+  return (
+    <div className="pt-10 border-t border-border space-y-8">
+      <div className="prose prose-slate dark:prose-invert max-w-none">
+        <h2 className="text-xl font-bold">About this {tool.name}</h2>
+        <p className="text-muted-foreground">{content.intro}</p>
+        <ul className="mt-4 space-y-1 list-none pl-0">
+          {content.bullets.map((b) => (
+            <li key={b.label} className="flex gap-2 text-sm">
+              <span className="font-semibold text-foreground shrink-0">{b.label}:</span>
+              <span className="text-muted-foreground">{b.text}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {content.faqs && content.faqs.length > 0 && (
+        <div>
+          <h2 className="text-xl font-bold mb-4">Frequently Asked Questions</h2>
+          <div className="space-y-4">
+            {content.faqs.map((faq) => (
+              <div key={faq.q} className="bg-muted/30 rounded-xl p-5 border border-border">
+                <p className="font-semibold text-sm mb-1">{faq.q}</p>
+                <p className="text-sm text-muted-foreground">{faq.a}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 const TOOL_COMPONENTS: Record<string, React.ComponentType<any>> = {
   "word-counter": WordCounter,
   "case-converter": CaseConverter,
@@ -63,25 +164,47 @@ export default function ToolView() {
   
   if (!tool || !category) return <NotFound />;
 
-  useSEO({
-    title: tool.seoTitle.replace(" | Toolora", ""),
-    description: tool.seoDescription,
-    canonical: `https://toolora.replit.app/tools/${tool.category}/${tool.slug}`,
-    jsonLd: {
+  const BASE = "https://toolora.replit.app";
+  const toolUrl = `${BASE}/tools/${tool.category}/${tool.slug}`;
+  const catContent = CATEGORY_CONTENT[tool.category];
+  const faqs = catContent?.faqs ?? [];
+
+  const jsonLd: Record<string, unknown>[] = [
+    {
       "@context": "https://schema.org",
       "@type": "WebApplication",
       name: tool.name,
       description: tool.seoDescription,
-      url: `https://toolora.replit.app/tools/${tool.category}/${tool.slug}`,
+      url: toolUrl,
       applicationCategory: "UtilitiesApplication",
       operatingSystem: "Web",
       offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
-      provider: {
-        "@type": "Organization",
-        name: "Toolora",
-        url: "https://toolora.replit.app",
+      provider: { "@type": "Organization", name: "Toolora", url: BASE },
+      breadcrumb: {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Home", item: BASE },
+          { "@type": "ListItem", position: 2, name: `${tool.category.charAt(0).toUpperCase() + tool.category.slice(1)} Tools`, item: `${BASE}/tools/${tool.category}` },
+          { "@type": "ListItem", position: 3, name: tool.name, item: toolUrl },
+        ],
       },
     },
+    ...(faqs.length > 0 ? [{
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: faqs.map(f => ({
+        "@type": "Question",
+        name: f.q,
+        acceptedAnswer: { "@type": "Answer", text: f.a },
+      })),
+    }] : []),
+  ];
+
+  useSEO({
+    title: tool.seoTitle.replace(" | Toolora", ""),
+    description: tool.seoDescription,
+    canonical: toolUrl,
+    jsonLd: jsonLd.length === 1 ? jsonLd[0] : { "@context": "https://schema.org", "@graph": jsonLd.map(j => { const { "@context": _, ...rest } = j as Record<string, unknown>; return rest; }) },
   });
 
   // Fire usage tracking once per visit
@@ -134,15 +257,7 @@ export default function ToolView() {
           </div>
           
           {/* SEO Content Section beneath tool */}
-          <div className="prose prose-slate dark:prose-invert max-w-none pt-10 border-t border-border">
-            <h3>How to use the {tool.name}</h3>
-            <p>Our {tool.name.toLowerCase()} is designed to be simple, fast, and completely secure. Because all processing happens directly in your browser, your data is never uploaded to external servers.</p>
-            <ul>
-              <li><strong>Secure:</strong> No data leaves your device.</li>
-              <li><strong>Fast:</strong> Instant results without network latency.</li>
-              <li><strong>Free:</strong> Unlimited usage without registration.</li>
-            </ul>
-          </div>
+          <SeoContent tool={tool} />
         </div>
 
         {/* Sidebar */}
