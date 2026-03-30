@@ -1,0 +1,17 @@
+{
+  "name": "Toolora Agent API",
+  "version": "1.0.0",
+  "manifestUrl": "https://toolora.replit.app/api/agent",
+  "docsUrl": "https://toolora.replit.app/api-docs",
+  "payment": {
+    "protocol": "x402",
+    "network": "stellar:mainnet",
+    "asset": "XLM",
+    "pricePerRequest": "0.5",
+    "payTo": "GBKLZIM2Z4MT6K5TWQIQSCNSZD5TPZQNBKNORQ6LGTE37AMFLGC46OIO"
+  },
+  "endpoints": [
+    { "id": "pdf.text", "method": "POST", "path": "/api/agent/pdf/text", "paid": true },
+    { "id": "url.read", "method": "POST", "path": "/api/agent/url/read", "paid": true }
+  ]
+}
