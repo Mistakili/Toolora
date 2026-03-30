@@ -137,8 +137,8 @@ router.get("/", (req: Request, res: Response) => {
   res.json(buildManifest(req));
 });
 
-// GET /api/agent/stats — public revenue/usage stats
-router.get("/stats", async (_req: Request, res: Response) => {
+// GET /api/agent/stats — public aggregate stats only (no individual payment details)
+router.get("/stats", async (req: Request, res: Response) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   try {
     const rows = await db
@@ -146,12 +146,6 @@ router.get("/stats", async (_req: Request, res: Response) => {
       .from(agentPaymentsTable)
       .groupBy(agentPaymentsTable.endpoint)
       .orderBy(desc(count()));
-
-    const recent = await db
-      .select()
-      .from(agentPaymentsTable)
-      .orderBy(desc(agentPaymentsTable.createdAt))
-      .limit(5);
 
     const totalCalls = rows.reduce((acc, r) => acc + Number(r.calls), 0);
     const totalXlm = rows.reduce((acc, r) => acc + parseFloat(r.totalXlm ?? "0"), 0);
@@ -164,16 +158,9 @@ router.get("/stats", async (_req: Request, res: Response) => {
         calls: Number(r.calls),
         xlmEarned: parseFloat(r.totalXlm ?? "0").toFixed(7),
       })),
-      recentPayments: recent.map((p) => ({
-        endpoint: p.endpoint,
-        from: p.fromAddress ? `${p.fromAddress.slice(0, 6)}...${p.fromAddress.slice(-4)}` : null,
-        amountXlm: p.amountXlm,
-        network: p.network,
-        at: p.createdAt,
-      })),
     });
   } catch (err: unknown) {
-    _req.log.error({ err }, "Stats query failed");
+    req.log.error({ err }, "Stats query failed");
     res.status(500).json({ error: "Could not fetch stats" });
   }
 });

@@ -14,6 +14,7 @@ import Terms from "@/pages/Terms";
 import History from "@/pages/History";
 import ApiDocs from "@/pages/ApiDocs";
 import ExtensionPage from "@/pages/ExtensionPage";
+import Admin from "@/pages/Admin";
 import NotFound from "@/pages/not-found";
 
 const queryClient = new QueryClient({
@@ -35,6 +36,7 @@ function Router() {
         <Route path="/history" component={History} />
         <Route path="/api-docs" component={ApiDocs} />
         <Route path="/extension" component={ExtensionPage} />
+        <Route path="/admin" component={Admin} />
         <Route path="/tools/:category" component={CategoryView} />
         <Route path="/tools/:category/:slug" component={ToolView} />
         <Route component={NotFound} />

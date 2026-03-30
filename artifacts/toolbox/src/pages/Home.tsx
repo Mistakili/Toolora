@@ -1,5 +1,5 @@
 import { Link } from "wouter";
-import { ArrowRight, Sparkles, Shield, Zap, Search } from "lucide-react";
+import { ArrowRight, Sparkles, Shield, Zap, Search, Bot, FileText, Globe, BarChart2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { CATEGORIES, TOOLS } from "@/lib/tools-config";
 import { ToolCard } from "@/components/shared/ToolCard";
@@ -110,6 +110,115 @@ export default function Home() {
             {popularTools.map((tool, idx) => (
               <ToolCard key={tool.id} tool={tool} delay={idx} />
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* For AI Agents Section */}
+      <section className="py-20 border-y border-border/50 bg-gradient-to-br from-yellow-500/5 via-background to-background">
+        <div className="container mx-auto px-4">
+          <div className="flex flex-col lg:flex-row items-center gap-12">
+            {/* Left: copy */}
+            <div className="flex-1">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-yellow-500/10 text-yellow-400 text-xs font-bold uppercase tracking-wider mb-5 border border-yellow-500/20">
+                <Bot className="w-3.5 h-3.5" /> For AI Agents
+              </div>
+              <h2 className="text-3xl md:text-4xl font-display font-bold mb-4">
+                A paid API built for autonomous agents.
+              </h2>
+              <p className="text-muted-foreground text-lg mb-6 leading-relaxed max-w-xl">
+                Three server-side endpoints that agents can discover, pay for, and use — no API key, no signup. Just send <span className="text-foreground font-semibold">0.5 XLM per request</span> via Stellar and get the data.
+              </p>
+              <div className="space-y-3 mb-8">
+                {[
+                  { icon: FileText, label: "PDF → raw text", desc: "Clean text, page count, word count, PDF metadata" },
+                  { icon: FileText, label: "PDF → structured JSON", desc: "Headings, sections, hierarchy — ideal for RAG ingestion" },
+                  { icon: Globe, label: "URL → readable text", desc: "Boilerplate-stripped article text via Mozilla Readability" },
+                ].map((item) => (
+                  <div key={item.label} className="flex items-start gap-3">
+                    <div className="mt-0.5 w-7 h-7 rounded-lg bg-yellow-500/10 flex items-center justify-center shrink-0">
+                      <item.icon className="w-3.5 h-3.5 text-yellow-400" />
+                    </div>
+                    <div>
+                      <span className="font-semibold text-sm">{item.label}</span>
+                      <span className="text-muted-foreground text-sm"> — {item.desc}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="flex flex-wrap gap-3">
+                <Link href="/api-docs" className="px-5 py-2.5 bg-yellow-500 text-black font-semibold rounded-full text-sm hover:bg-yellow-400 transition-colors">
+                  Read the Docs
+                </Link>
+                <a
+                  href={typeof window !== "undefined"
+                    ? window.location.origin.replace(/toolora\.replit\.app/, "toolora-api.replit.app").replace(/:\d+$/, ":8080") + "/api/agent"
+                    : "https://toolora-api.replit.app/api/agent"}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-5 py-2.5 border border-yellow-500/30 text-yellow-400 font-semibold rounded-full text-sm hover:bg-yellow-500/10 transition-colors flex items-center gap-2"
+                >
+                  <Bot className="w-4 h-4" /> Agent Manifest
+                </a>
+              </div>
+            </div>
+
+            {/* Right: quick-start code box */}
+            <div className="flex-1 w-full max-w-lg">
+              <div className="rounded-2xl border border-border bg-[#0d1117] overflow-hidden">
+                <div className="flex items-center gap-2 px-4 py-3 border-b border-border/50">
+                  <div className="w-3 h-3 rounded-full bg-red-500/60" />
+                  <div className="w-3 h-3 rounded-full bg-yellow-500/60" />
+                  <div className="w-3 h-3 rounded-full bg-green-500/60" />
+                  <span className="ml-2 text-xs text-muted-foreground font-mono">agent_example.py</span>
+                </div>
+                <pre className="p-5 text-xs font-mono text-green-400/90 leading-relaxed overflow-x-auto">
+{`import requests, base64, json
+
+# 1. Call the endpoint — receive 402 with payment details
+r = requests.post("https://toolora-api.replit.app/api/agent/pdf/text",
+                  files={"file": open("report.pdf","rb")})
+# r.status_code == 402  ← pay to continue
+
+# 2. Send 0.5 XLM to payTo address on Stellar, get txHash
+
+# 3. Retry with proof of payment
+payment = base64.b64encode(json.dumps({
+  "txHash":  "<stellar_tx_hash>",
+  "from":    "<your_wallet>",
+  "amount":  "0.5",
+  "network": "stellar:mainnet"
+}).encode()).decode()
+
+r = requests.post(
+  "https://toolora-api.replit.app/api/agent/pdf/text",
+  headers={"X-PAYMENT": payment},
+  files={"file": open("report.pdf","rb")}
+)
+print(r.json()["text"])  # ← full PDF text`}
+                </pre>
+              </div>
+              <div className="flex items-center justify-between mt-3 px-1">
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <BarChart2 className="w-3.5 h-3.5" />
+                  <span>Usage stats at</span>
+                  <a
+                    href={typeof window !== "undefined"
+                      ? window.location.origin.replace(/toolora\.replit\.app/, "toolora-api.replit.app").replace(/:\d+$/, ":8080") + "/api/agent/stats"
+                      : "https://toolora-api.replit.app/api/agent/stats"}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary hover:underline font-mono"
+                  >
+                    /api/agent/stats
+                  </a>
+                </div>
+                <span className="text-xs text-muted-foreground">
+                  <Zap className="w-3 h-3 inline mr-1 text-yellow-400" />
+                  x402 · Stellar XLM
+                </span>
+              </div>
+            </div>
           </div>
         </div>
       </section>
