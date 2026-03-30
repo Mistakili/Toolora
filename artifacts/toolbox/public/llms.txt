@@ -55,8 +55,8 @@ Server-side APIs for AI agents. Pay per request — no API key, no subscription,
 ### Endpoints
 
 - POST /api/agent/pdf/text — Extract full plain text from a PDF file. Returns text, page count, word count, character count, and PDF metadata. Accepts multipart/form-data with a `file` field (max 20MB).
-- POST /api/agent/pdf/extract — Extract structured sections from a PDF for RAG pipelines. Returns headings, section text, tables, and page-level metadata in JSON.
-- POST /api/agent/url/read — Fetch a URL and return clean readable text stripped of navigation, ads, and boilerplate (Mozilla Readability). Returns title, byline, content, and word count.
+- POST /api/agent/pdf/extract — Extract structured sections from a PDF for RAG pipelines. Returns a title, sections array (each with heading, level, content text, and word count), total word count, page count, and PDF metadata.
+- POST /api/agent/url/read — Fetch a URL and return clean readable text stripped of navigation, ads, and boilerplate (Mozilla Readability). Returns title, byline, excerpt, content, word count, and fetch timestamp.
 
 ### Payment (x402)
 

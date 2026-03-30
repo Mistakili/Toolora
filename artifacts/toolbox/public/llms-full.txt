@@ -240,22 +240,22 @@ Extract structured sections and headings from a PDF for RAG (Retrieval-Augmented
 ```json
 {
   "title": "Document Title",
-  "pages": 12,
-  "words": 4823,
   "sections": [
     {
       "heading": "Introduction",
       "level": 1,
-      "text": "This paper presents...",
-      "page": 1
+      "content": "This paper presents...",
+      "wordCount": 312
     },
     {
       "heading": "Methods",
       "level": 2,
-      "text": "We conducted...",
-      "page": 3
+      "content": "We conducted...",
+      "wordCount": 847
     }
   ],
+  "pages": 12,
+  "totalWords": 4823,
   "info": { "Author": "...", "CreationDate": "..." }
 }
 ```
@@ -263,14 +263,14 @@ Extract structured sections and headings from a PDF for RAG (Retrieval-Augmented
 **Response fields:**
 | Field | Type | Description |
 |-------|------|-------------|
-| title | string | Document title (from metadata or first heading) |
+| title | string \| null | Detected document title (first heading found, or null) |
+| sections | array | Array of section objects |
+| sections[].heading | string \| null | Section heading text (null for preamble before first heading) |
+| sections[].level | number | Heading level (1 = top-level, 2 = sub-section, 3 = sub-sub) |
+| sections[].content | string | Full plain text of the section body |
+| sections[].wordCount | number | Word count of this section's content |
 | pages | number | Total page count |
-| words | number | Approximate word count |
-| sections | array | Array of section objects with heading, level, text, page |
-| sections[].heading | string | Section heading text |
-| sections[].level | number | Heading level (1 = top-level, 2 = sub-section, etc.) |
-| sections[].text | string | Full text content of the section |
-| sections[].page | number | Page number where this section starts |
+| totalWords | number | Total word count across all sections |
 | info | object | Raw PDF metadata |
 
 **Use case:** Chunk a PDF into logical sections for embedding into a vector database. Each section becomes one RAG document with heading as the key.
@@ -301,24 +301,26 @@ Fetch a URL and return clean, readable text content with boilerplate removed.
 **Response (200 OK):**
 ```json
 {
-  "url": "https://example.com/article",
   "title": "Article Title",
   "byline": "Author Name",
+  "excerpt": "A short summary sentence extracted from the article...",
   "content": "Clean article text without ads, nav, or boilerplate...",
-  "words": 1247,
-  "length": 7832
+  "wordCount": 1247,
+  "url": "https://example.com/article",
+  "fetchedAt": "2026-03-30T12:00:00.000Z"
 }
 ```
 
 **Response fields:**
 | Field | Type | Description |
 |-------|------|-------------|
+| title | string \| null | Page title extracted by Readability |
+| byline | string \| null | Author name or byline (if detected) |
+| excerpt | string \| null | Short summary or lede extracted from the article |
+| content | string | Full plain text content with boilerplate stripped |
+| wordCount | number | Word count of the extracted content |
 | url | string | The URL that was fetched |
-| title | string | Page title extracted by Readability |
-| byline | string | Author name or byline (if detected) |
-| content | string | Clean readable text content |
-| words | number | Word count of the extracted content |
-| length | number | Character count of the extracted content |
+| fetchedAt | string | ISO 8601 timestamp of when the page was fetched |
 
 **Use case:** Give agents a clean view of any web page for research, summarization, or data extraction — similar to Firecrawl but pay-per-use with no key.
 
