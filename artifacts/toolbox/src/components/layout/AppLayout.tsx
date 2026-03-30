@@ -135,7 +135,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
                         <CreditCard className="w-4 h-4" /> Pricing
                       </div>
                     </Link>
-                    {(user as unknown as { isAdmin?: boolean }).isAdmin && (
+                    {user.email === "akinslaboratory@gmail.com" && (
                       <Link href="/admin" onClick={() => setUserMenuOpen(false)}>
                         <div className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-muted transition-colors cursor-pointer border-t border-border mt-1 pt-2">
                           <LayoutDashboard className="w-4 h-4 text-primary" />
