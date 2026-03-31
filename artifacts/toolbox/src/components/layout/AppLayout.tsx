@@ -271,9 +271,21 @@ export function AppLayout({ children }: { children: ReactNode }) {
             <p className="text-muted-foreground text-sm max-w-sm mb-4">
               A comprehensive suite of free, client-side tools for developers and creators. Privacy-first, lighting fast, and built for modern workflows.
             </p>
-            <div className="flex items-center gap-2 text-sm text-primary font-medium">
+            <div className="flex items-center gap-2 text-sm text-primary font-medium mb-4">
               <Sparkles className="w-4 h-4" /> 100% Free forever
             </div>
+            <a
+              href="https://www.producthunt.com/products/toolora?embed=true&utm_source=badge-featured&utm_medium=badge&utm_campaign=badge-toolora"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <img
+                alt="Toolora - Free online tools that never upload your files. | Product Hunt"
+                width="250"
+                height="54"
+                src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1111647&theme=dark&t=1774947374597"
+              />
+            </a>
           </div>
           <div>
             <h4 className="font-semibold mb-4">Categories</h4>
