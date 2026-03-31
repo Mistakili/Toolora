@@ -179,23 +179,79 @@ export function AppLayout({ children }: { children: ReactNode }) {
             onChange={(e) => setSearchQuery(e.target.value)}
           />
           {searchQuery && (
-              <div className="p-2 bg-muted/30 border border-border rounded-xl max-h-64 overflow-y-auto">
-                {searchResults.map(tool => (
-                  <button
-                    key={tool.id}
-                    onClick={() => {
-                      setLocation(`/tools/${tool.category}/${tool.slug}`);
-                      setSearchQuery("");
-                      setIsMenuOpen(false);
-                    }}
-                    className="w-full text-left p-3 flex items-center gap-3 hover:bg-muted rounded-lg transition-colors"
-                  >
-                    <tool.icon className="w-5 h-5 text-primary" />
-                    <span className="font-medium text-sm">{tool.name}</span>
-                  </button>
-                ))}
+            <div className="p-2 bg-muted/30 border border-border rounded-xl max-h-64 overflow-y-auto">
+              {searchResults.map(tool => (
+                <button
+                  key={tool.id}
+                  onClick={() => {
+                    setLocation(`/tools/${tool.category}/${tool.slug}`);
+                    setSearchQuery("");
+                    setIsMenuOpen(false);
+                  }}
+                  className="w-full text-left p-3 flex items-center gap-3 hover:bg-muted rounded-lg transition-colors"
+                >
+                  <tool.icon className="w-5 h-5 text-primary" />
+                  <span className="font-medium text-sm">{tool.name}</span>
+                </button>
+              ))}
+            </div>
+          )}
+
+          {/* Mobile nav links */}
+          <nav className="flex flex-col gap-1 pt-1 border-t border-border">
+            <Link href="/pricing" onClick={() => setIsMenuOpen(false)}
+              className="flex items-center gap-2 px-3 py-2.5 text-sm rounded-lg hover:bg-muted transition-colors">
+              <CreditCard className="w-4 h-4 text-muted-foreground" /> Pricing
+            </Link>
+            <Link href="/api-docs" onClick={() => setIsMenuOpen(false)}
+              className="flex items-center gap-2 px-3 py-2.5 text-sm rounded-lg hover:bg-muted transition-colors">
+              <Key className="w-4 h-4 text-muted-foreground" /> API Docs
+            </Link>
+            <Link href="/blog" onClick={() => setIsMenuOpen(false)}
+              className="flex items-center gap-2 px-3 py-2.5 text-sm rounded-lg hover:bg-muted transition-colors">
+              <Sparkles className="w-4 h-4 text-muted-foreground" /> Blog
+            </Link>
+          </nav>
+
+          {/* Mobile auth */}
+          <div className="pt-1 border-t border-border">
+            {isAuthenticated && user ? (
+              <div className="space-y-1">
+                <div className="flex items-center gap-3 px-3 py-2 rounded-lg bg-muted/40">
+                  {user.profileImageUrl ? (
+                    <img src={user.profileImageUrl} alt={user.firstName ?? "User"} className="w-8 h-8 rounded-full object-cover" />
+                  ) : (
+                    <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary text-sm font-semibold">
+                      {(user.firstName?.[0] ?? user.email?.[0] ?? "U").toUpperCase()}
+                    </div>
+                  )}
+                  <div>
+                    <div className="text-sm font-medium">{user.firstName || "User"}</div>
+                    <div className="text-xs text-muted-foreground truncate max-w-[180px]">{user.email}</div>
+                  </div>
+                </div>
+                <Link href="/history" onClick={() => setIsMenuOpen(false)}
+                  className="flex items-center gap-2 px-3 py-2.5 text-sm rounded-lg hover:bg-muted transition-colors">
+                  <History className="w-4 h-4 text-muted-foreground" /> Tool History
+                </Link>
+                <Link href="/api-keys" onClick={() => setIsMenuOpen(false)}
+                  className="flex items-center gap-2 px-3 py-2.5 text-sm rounded-lg hover:bg-muted transition-colors">
+                  <Key className="w-4 h-4 text-muted-foreground" /> API Keys
+                </Link>
+                <button onClick={() => { setIsMenuOpen(false); logout(); }}
+                  className="w-full flex items-center gap-2 px-3 py-2.5 text-sm rounded-lg hover:bg-muted transition-colors text-red-500">
+                  <LogOut className="w-4 h-4" /> Sign Out
+                </button>
               </div>
+            ) : (
+              <button
+                onClick={() => { setIsMenuOpen(false); login(); }}
+                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-primary text-primary-foreground rounded-xl font-medium text-sm hover:opacity-90 transition-opacity"
+              >
+                <LogIn className="w-4 h-4" /> Sign In
+              </button>
             )}
+          </div>
         </div>
       )}
 
