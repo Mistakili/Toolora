@@ -1,5 +1,28 @@
 uploads = []
-generated = []
+
+[[generated]]
+id = "2CrssPlscmdrZ_Z4r26P0"
+uri = "file://chrome-extension/store-assets/store-icon-128.png"
+type = "image"
+title = "toolora store icon"
+
+[[generated]]
+id = "y8tCsbBmC7uNc0R9vtBpS"
+uri = "file://chrome-extension/store-assets/screenshot-popup.png"
+type = "image"
+title = "toolora popup screenshot"
+
+[[generated]]
+id = "scyazrJID3mr-m0IWwR1a"
+uri = "file://chrome-extension/store-assets/small-promo-tile.png"
+type = "image"
+title = "toolora small promo tile"
+
+[[generated]]
+id = "Yn5HGuNncxeZd7zxCUfLd"
+uri = "file://chrome-extension/store-assets/marquee-promo-tile.png"
+type = "image"
+title = "toolora marquee banner"
 
 [[outputs]]
 id = "W91hp3ihLhEvWTT51EilJ"
