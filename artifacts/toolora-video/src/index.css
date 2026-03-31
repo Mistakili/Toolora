@@ -1,0 +1,34 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #09090B;
+  --primary: #7C3AED;
+  --accent: #EC4899;
+  --text: #FAFAFA;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--background);
+  color: var(--text);
+  overflow: hidden;
+}
+
+.glow-primary {
+  box-shadow: 0 0 40px 5px rgba(124, 58, 237, 0.4);
+}
+.glow-accent {
+  box-shadow: 0 0 40px 5px rgba(236, 72, 153, 0.4);
+}
+
+.text-gradient {
+  background: linear-gradient(to right, var(--primary), var(--accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}

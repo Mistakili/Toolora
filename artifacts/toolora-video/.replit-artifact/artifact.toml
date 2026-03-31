@@ -1,0 +1,26 @@
+kind = "web"
+previewPath = "/toolora-video"
+title = "Toolora Intro Video"
+version = "1.0.0"
+id = "artifacts/toolora-video"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/toolora-video" ]
+localPort = 23585
+
+[services.development]
+run = "pnpm --filter toolora-video run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "toolora-video", "run", "build" ]
+publicDir = "artifacts/toolora-video/dist"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "23585"

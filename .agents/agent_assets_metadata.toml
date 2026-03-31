@@ -24,6 +24,12 @@ uri = "file://chrome-extension/store-assets/marquee-promo-tile.png"
 type = "image"
 title = "toolora marquee banner"
 
+[[generated]]
+id = "uucDjlwCcKC0vcFvF6vG4"
+uri = "file://artifacts/toolora-video/src/assets/images/shield.png"
+type = "image"
+title = "Privacy shield lock icon"
+
 [[outputs]]
 id = "W91hp3ihLhEvWTT51EilJ"
 uri = "file://artifacts/toolbox/public/og-image.png"
