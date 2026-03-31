@@ -200,9 +200,13 @@ const categoryUrls = CATEGORIES.map(c => `
   </url>`).join("");
 
 const BLOG_POSTS = [
-  { slug: "merge-pdfs-without-uploading",       title: "How to Merge PDFs Without Uploading Files",           description: "Most PDF tools send your files to remote servers. Here's how to merge PDFs entirely in your browser — no uploads, no accounts, no risk." },
-  { slug: "best-free-image-compressor-privacy",  title: "The Best Free Image Compressor That Doesn't See Your Files", description: "TinyPNG, Squoosh, Canva — they all upload your images. Here's a faster alternative that compresses images entirely in your browser." },
-  { slug: "why-i-built-client-side-toolbox",     title: "Why I Built a 100% Client-Side Toolbox",              description: "The story behind Toolora — why I decided every tool should run in the browser, what that means technically, and what the tradeoffs are." },
+  { slug: "merge-pdfs-without-uploading",        title: "How to Merge PDFs Without Uploading Files",                               description: "Most PDF tools send your files to remote servers. Here's how to merge PDFs entirely in your browser — no uploads, no accounts, no risk." },
+  { slug: "best-free-image-compressor-privacy",  title: "The Best Free Image Compressor That Doesn't See Your Files",             description: "TinyPNG, Squoosh, Canva — they all upload your images. Here's a faster alternative that compresses images entirely in your browser." },
+  { slug: "why-i-built-client-side-toolbox",     title: "Why I Built a 100% Client-Side Toolbox",                                  description: "The story behind Toolora — why I decided every tool should run in the browser, what that means technically, and what the tradeoffs are." },
+  { slug: "base64-encode-decode-online",          title: "Free Base64 Encoder & Decoder — No Sign-Up, No Server Required",         description: "Base64 encoding explained in plain English, plus a free browser-based tool that encodes and decodes instantly — no account, no data sent anywhere." },
+  { slug: "free-password-generator-no-signup",   title: "How to Generate Strong Passwords Without a Password Manager",             description: "What makes a password strong, why most people get it wrong, and how to generate truly random passwords instantly — without installing anything." },
+  { slug: "free-qr-code-generator-no-watermark", title: "The Best Free QR Code Generator — No Watermarks, No Sign-Up, No Ads",    description: "Most free QR code generators add watermarks or expire your codes. Here's how to generate clean QR codes instantly, for free, with no strings attached." },
+  { slug: "json-formatter-validate-debug",        title: "JSON Formatter: How to Read, Validate and Debug JSON Online",            description: "JSON errors are cryptic. A missing comma or brace can break everything. Here's how to format, validate, and debug JSON fast — no server required." },
 ];
 
 const blogListUrl = `  <url>
