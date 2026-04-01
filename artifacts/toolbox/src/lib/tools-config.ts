@@ -2,7 +2,7 @@ import {
   FileText, Type, Hash, Shield, KeyRound, QrCode, ArrowLeftRight, 
   Palette, Image as ImageIcon, FileJson, Clock, Link as LinkIcon, 
   Scissors, Minimize, SplitSquareHorizontal, Layers, Fingerprint, RefreshCcw,
-  BookOpen, ListOrdered, Code2, CodeXml
+  BookOpen, ListOrdered, Code2, CodeXml, Coins, GitCompare, CalendarClock
 } from "lucide-react";
 
 export type ToolCategory = "pdf" | "image" | "text" | "developer" | "productivity";
@@ -147,6 +147,25 @@ export const TOOLS: ToolDef[] = [
     description: "Encode and decode HTML special characters and entities.",
     seoTitle: "Free HTML Entity Encoder & Decoder — Encode & Decode HTML Entities Online | Toolora",
     seoDescription: "Encode special characters to HTML entities or decode entities back to text. Supports named entities, numeric references, and common HTML characters. Free online tool.",
+  },
+
+  {
+    id: "token-counter", name: "Token Counter", slug: "token-counter", category: "developer", isPopular: true, icon: Coins,
+    description: "Count tokens for GPT-4, Claude, and Llama models with exact tokenizer logic.",
+    seoTitle: "Free Token Counter — Count LLM Tokens for GPT-4, Claude & Llama Online | Toolora",
+    seoDescription: "Count tokens in any text using accurate tokenizer models for GPT-4o, GPT-4, GPT-3.5, Claude, and Llama. See context window usage. Free, browser-based, 100% private.",
+  },
+  {
+    id: "yaml-json-converter", name: "YAML ↔ JSON Converter", slug: "yaml-json-converter", category: "developer", isPopular: true, icon: GitCompare,
+    description: "Convert between YAML and JSON formats instantly.",
+    seoTitle: "Free YAML to JSON Converter — Convert YAML ↔ JSON Online | Toolora",
+    seoDescription: "Convert YAML to JSON or JSON to YAML instantly. Validate syntax, swap directions, and load examples. Free online YAML JSON converter — nothing uploaded.",
+  },
+  {
+    id: "cron-parser", name: "Cron Expression Parser", slug: "cron-parser", category: "developer", icon: CalendarClock,
+    description: "Translate cron expressions into plain English and preview next run times.",
+    seoTitle: "Free Cron Expression Parser — Decode & Validate Cron Jobs Online | Toolora",
+    seoDescription: "Parse any cron expression into plain English and preview the next 5 run times. Includes common presets and a quick-reference table. Free online cron parser.",
   },
 
   // Image Tools

@@ -462,9 +462,18 @@ importers:
 
   artifacts/toolbox:
     dependencies:
+      cronstrue:
+        specifier: ^3.14.0
+        version: 3.14.0
       crypto-js:
         specifier: ^4.2.0
         version: 4.2.0
+      gpt-tokenizer:
+        specifier: ^3.4.0
+        version: 3.4.0
+      js-yaml:
+        specifier: ^4.1.1
+        version: 4.1.1
       marked:
         specifier: ^17.0.5
         version: 17.0.5
@@ -586,6 +595,9 @@ importers:
       '@types/crypto-js':
         specifier: ^4.2.2
         version: 4.2.2
+      '@types/js-yaml':
+        specifier: ^4.0.9
+        version: 4.0.9
       '@types/marked':
         specifier: ^6.0.0
         version: 6.0.0
@@ -2197,6 +2209,9 @@ packages:
   '@types/http-errors@2.0.5':
     resolution: {integrity: sha512-r8Tayk8HJnX0FztbZN7oVqGccWgw98T/0neJphO91KkmOzug1KkofZURD4UaD5uH8AqcFLfdPErnBod0u71/qg==}
 
+  '@types/js-yaml@4.0.9':
+    resolution: {integrity: sha512-k4MGaQl5TGo/iipqb2UDG2UwjXziSWkh0uysQelTlJpX1qGlpUZYm8PnO4DxG1qBomtJUdYJ6qR6xdIah10JLg==}
+
   '@types/jsdom@28.0.1':
     resolution: {integrity: sha512-GJq2QE4TAZ5ajSoCasn5DOFm8u1mI3tIFvM5tIq3W5U/RTB6gsHwc6Yhpl91X9VSDOUVblgXmG+2+sSvFQrdlw==}
 
@@ -2520,6 +2535,10 @@ packages:
   crc-32@1.2.2:
     resolution: {integrity: sha512-ROmzCKrTnOwybPcJApAA6WBWij23HVfGVNKqqrZpuyZOHqK2CwHSvpGuyt/UNNvaIjEd8X5IFGp4Mh+Ie1IHJQ==}
     engines: {node: '>=0.8'}
+    hasBin: true
+
+  cronstrue@3.14.0:
+    resolution: {integrity: sha512-XnW4vuK/jPJjmTyDWiej1Zq36Od7ITwxaV2O1pzHZuyMVvdy7NAvyvIBzybt+idqSpfqYuoDG7uf/ocGtJVWxA==}
     hasBin: true
 
   cross-spawn@7.0.6:
@@ -3003,6 +3022,9 @@ packages:
   gopd@1.2.0:
     resolution: {integrity: sha512-ZUKRh6/kUFoAiTAtTYPZJ3hw9wNxx+BIBOijnlG9PnrJsCcSjs1wyyD6vJpaYtgnzDrKYRSqf3OO6Rfa93xsRg==}
     engines: {node: '>= 0.4'}
+
+  gpt-tokenizer@3.4.0:
+    resolution: {integrity: sha512-wxFLnhIXTDjYebd9A9pGl3e31ZpSypbpIJSOswbgop5jLte/AsZVDvjlbEuVFlsqZixVKqbcoNmRlFDf6pz/UQ==}
 
   graceful-fs@4.2.11:
     resolution: {integrity: sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ==}
@@ -5863,6 +5885,8 @@ snapshots:
 
   '@types/http-errors@2.0.5': {}
 
+  '@types/js-yaml@4.0.9': {}
+
   '@types/jsdom@28.0.1':
     dependencies:
       '@types/node': 25.3.5
@@ -6189,6 +6213,8 @@ snapshots:
       vary: 1.1.2
 
   crc-32@1.2.2: {}
+
+  cronstrue@3.14.0: {}
 
   cross-spawn@7.0.6:
     dependencies:
@@ -6581,6 +6607,8 @@ snapshots:
       unicorn-magic: 0.4.0
 
   gopd@1.2.0: {}
+
+  gpt-tokenizer@3.4.0: {}
 
   graceful-fs@4.2.11: {}
 

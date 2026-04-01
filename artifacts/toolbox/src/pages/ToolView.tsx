@@ -32,6 +32,9 @@ import JwtDecoder from "@/components/tools/JwtDecoder";
 import RegexTester from "@/components/tools/RegexTester";
 import TextSorter from "@/components/tools/TextSorter";
 import HtmlEntities from "@/components/tools/HtmlEntities";
+import TokenCounter from "@/components/tools/TokenCounter";
+import YamlJsonConverter from "@/components/tools/YamlJsonConverter";
+import CronParser from "@/components/tools/CronParser";
 
 // ── Per-category SEO content blocks ─────────────────────────────────────────
 
@@ -159,6 +162,9 @@ const TOOL_COMPONENTS: Record<string, React.ComponentType<any>> = {
   "regex-tester": RegexTester,
   "text-sorter": TextSorter,
   "html-entities": HtmlEntities,
+  "token-counter": TokenCounter,
+  "yaml-json-converter": YamlJsonConverter,
+  "cron-parser": CronParser,
 };
 
 export default function ToolView() {
