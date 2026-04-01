@@ -6,7 +6,7 @@ import {
 import {
   ChevronRight, Home, BarChart2, Zap, Copy, Check, ExternalLink,
   RefreshCw, Lock, ChevronDown, Monitor, Globe2, Clock, FileText,
-  Smartphone, Tablet, Laptop, TrendingUp, Wrench,
+  Smartphone, Tablet, Laptop, TrendingUp, Wrench, Bot, CreditCard,
 } from "lucide-react";
 import { useAuth } from "@workspace/replit-auth-web";
 
@@ -47,6 +47,27 @@ interface Analytics {
 interface ToolUsageData {
   tools: { slug: string; usageCount: number; pct: number }[];
   total: number;
+}
+
+interface McpStats {
+  summary: { totalCalls: number; successCalls: number; errorCalls: number };
+  byTool: { tool: string; calls: number; errors: number; avgMs: number | null }[];
+  daily: { day: string; calls: number }[];
+  recentErrors: { tool: string; errorMsg: string | null; createdAt: string }[];
+}
+
+interface StripeStats {
+  users: {
+    total: number;
+    byTier: { tier: string; count: number }[];
+    totalCreditsOutstanding: number;
+    usersWithCredits: number;
+  };
+  stripe: {
+    available: boolean;
+    totalRevenueCents: number;
+    recentPayments: { id: string; amount: number; currency: string; status: string; description: string | null; created: number }[];
+  };
 }
 
 // ─── Accordion section ────────────────────────────────────────────────────────
@@ -156,6 +177,8 @@ export default function Admin() {
   const [agentStats, setAgentStats] = useState<AgentStats | null>(null);
   const [analytics, setAnalytics] = useState<Analytics | null>(null);
   const [toolUsage, setToolUsage] = useState<ToolUsageData | null>(null);
+  const [mcpStats, setMcpStats] = useState<McpStats | null>(null);
+  const [stripeStats, setStripeStats] = useState<StripeStats | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [lastRefresh, setLastRefresh] = useState<Date | null>(null);
@@ -167,20 +190,30 @@ export default function Admin() {
     setError(null);
     try {
       const base = getApiBase();
-      const [statsRes, analyticsRes, toolsRes] = await Promise.all([
+      const [statsRes, analyticsRes, toolsRes, mcpRes, stripeRes] = await Promise.all([
         fetch(`${base}/api/admin/stats`, { credentials: "include" }),
         fetch(`${base}/api/admin/analytics`, { credentials: "include" }),
         fetch(`${base}/api/admin/tools`, { credentials: "include" }),
+        fetch(`${base}/api/admin/mcp`, { credentials: "include" }),
+        fetch(`${base}/api/admin/stripe`, { credentials: "include" }),
       ]);
       if (statsRes.status === 401 || analyticsRes.status === 401) {
         setError("Not signed in.");
         return;
       }
       if (!statsRes.ok || !analyticsRes.ok) throw new Error("Server error");
-      const [s, a, t] = await Promise.all([statsRes.json(), analyticsRes.json(), toolsRes.ok ? toolsRes.json() : Promise.resolve(null)]);
+      const [s, a, t, m, sr] = await Promise.all([
+        statsRes.json(),
+        analyticsRes.json(),
+        toolsRes.ok ? toolsRes.json() : Promise.resolve(null),
+        mcpRes.ok ? mcpRes.json() : Promise.resolve(null),
+        stripeRes.ok ? stripeRes.json() : Promise.resolve(null),
+      ]);
       setAgentStats(s as AgentStats);
       setAnalytics(a as Analytics);
       if (t) setToolUsage(t as ToolUsageData);
+      if (m) setMcpStats(m as McpStats);
+      if (sr) setStripeStats(sr as StripeStats);
       setLastRefresh(new Date());
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : "Failed to load");
@@ -621,6 +654,157 @@ export default function Admin() {
                 )}
             </div>
           </Section>
+
+
+          {/* ── Section 9: MCP Server ─────────────────────────────────────── */}
+          {mcpStats && (
+            <Section icon={Bot} title="MCP Server" badge={`${mcpStats.summary.totalCalls} calls`}>
+              <div className="pt-4 space-y-5">
+                <div className="grid grid-cols-3 gap-3">
+                  <StatCard label="Total calls" value={mcpStats.summary.totalCalls} accent="blue" />
+                  <StatCard label="Successful" value={mcpStats.summary.successCalls} accent="green" />
+                  <StatCard label="Errors" value={mcpStats.summary.errorCalls} accent={mcpStats.summary.errorCalls > 0 ? "red" : undefined} />
+                </div>
+
+                {mcpStats.byTool.length > 0 && (
+                  <div>
+                    <div className="text-xs text-muted-foreground mb-2 font-medium uppercase tracking-wider">By tool</div>
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-xs">
+                        <thead>
+                          <tr className="border-b border-border text-left text-muted-foreground uppercase tracking-wider">
+                            <th className="pb-2 pr-6">Tool</th>
+                            <th className="pb-2 pr-4 text-right">Calls</th>
+                            <th className="pb-2 pr-4 text-right">Errors</th>
+                            <th className="pb-2 text-right">Avg ms</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-border">
+                          {mcpStats.byTool.map((r) => (
+                            <tr key={r.tool} className="hover:bg-muted/30">
+                              <td className="py-2 pr-6 font-mono text-blue-400">{r.tool}</td>
+                              <td className="py-2 pr-4 text-right font-semibold">{r.calls}</td>
+                              <td className={`py-2 pr-4 text-right ${r.errors > 0 ? "text-red-400 font-semibold" : "text-muted-foreground"}`}>{r.errors}</td>
+                              <td className="py-2 text-right text-muted-foreground">{r.avgMs != null ? `${r.avgMs}ms` : "—"}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
+
+                {mcpStats.daily.length > 0 && (
+                  <div>
+                    <div className="text-xs text-muted-foreground mb-2 font-medium uppercase tracking-wider">Daily calls (last 7 days)</div>
+                    <ResponsiveContainer width="100%" height={120}>
+                      <BarChart data={mcpStats.daily} margin={{ top: 0, right: 0, left: -24, bottom: 0 }}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
+                        <XAxis dataKey="day" tick={{ fontSize: 9 }} tickFormatter={(d: string) => d.slice(5)} />
+                        <YAxis tick={{ fontSize: 9 }} allowDecimals={false} />
+                        <Tooltip
+                          contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: 8, fontSize: 11 }}
+                          formatter={(v: number) => [v, "calls"]}
+                        />
+                        <Bar dataKey="calls" fill="#3b82f6" radius={[3, 3, 0, 0]} />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                )}
+
+                {mcpStats.recentErrors.length > 0 && (
+                  <div>
+                    <div className="text-xs text-muted-foreground mb-2 font-medium uppercase tracking-wider">Recent errors</div>
+                    <div className="space-y-1.5">
+                      {mcpStats.recentErrors.map((e, i) => (
+                        <div key={i} className="flex items-start gap-3 text-xs py-1.5 border-b border-border/40 last:border-0">
+                          <span className="font-mono text-red-400 shrink-0">{e.tool}</span>
+                          <span className="text-muted-foreground flex-1 truncate">{e.errorMsg ?? "Unknown error"}</span>
+                          <span className="text-muted-foreground shrink-0">{new Date(e.createdAt).toLocaleString()}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {mcpStats.summary.totalCalls === 0 && (
+                  <p className="text-sm text-muted-foreground py-4 text-center">No MCP tool calls yet — data will appear once agents start using the server.</p>
+                )}
+              </div>
+            </Section>
+          )}
+
+          {/* ── Section 10: Stripe Revenue ────────────────────────────────── */}
+          {stripeStats && (
+            <Section icon={CreditCard} title="Revenue & Subscriptions" badge={stripeStats.stripe.available ? `$${(stripeStats.stripe.totalRevenueCents / 100).toFixed(2)} total` : undefined}>
+              <div className="pt-4 space-y-5">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  <StatCard label="Registered users" value={stripeStats.users.total} />
+                  <StatCard
+                    label="Stripe revenue"
+                    value={stripeStats.stripe.available ? `$${(stripeStats.stripe.totalRevenueCents / 100).toFixed(2)}` : "—"}
+                    sub={stripeStats.stripe.available ? "all time" : "Stripe not configured"}
+                    accent="green"
+                  />
+                  <StatCard label="Credits outstanding" value={stripeStats.users.totalCreditsOutstanding.toLocaleString()} sub="across all users" />
+                  <StatCard label="Users with credits" value={stripeStats.users.usersWithCredits} />
+                </div>
+
+                {stripeStats.users.byTier.length > 0 && (
+                  <div>
+                    <div className="text-xs text-muted-foreground mb-2 font-medium uppercase tracking-wider">Users by plan</div>
+                    <div className="flex gap-3 flex-wrap">
+                      {stripeStats.users.byTier.map((t) => (
+                        <div key={t.tier} className="flex items-center gap-2 px-3 py-2 rounded-lg border border-border bg-muted/30 text-sm">
+                          <span className={`w-2 h-2 rounded-full ${t.tier === "pro" ? "bg-blue-400" : t.tier === "team" ? "bg-purple-400" : "bg-muted-foreground"}`} />
+                          <span className="capitalize font-medium">{t.tier}</span>
+                          <span className="text-muted-foreground">{t.count}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {stripeStats.stripe.available && stripeStats.stripe.recentPayments.length > 0 && (
+                  <div>
+                    <div className="text-xs text-muted-foreground mb-2 font-medium uppercase tracking-wider">Recent Stripe payments</div>
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-xs">
+                        <thead>
+                          <tr className="border-b border-border text-left text-muted-foreground uppercase tracking-wider">
+                            <th className="pb-2 pr-4">Description</th>
+                            <th className="pb-2 pr-4 text-right">Amount</th>
+                            <th className="pb-2 pr-4 text-right">Status</th>
+                            <th className="pb-2 text-right">When</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-border">
+                          {stripeStats.stripe.recentPayments.slice(0, 20).map((p) => (
+                            <tr key={p.id} className="hover:bg-muted/30">
+                              <td className="py-2 pr-4 text-muted-foreground truncate max-w-xs">{p.description ?? "—"}</td>
+                              <td className="py-2 pr-4 text-right font-semibold text-green-400">
+                                ${(p.amount / 100).toFixed(2)} {p.currency.toUpperCase()}
+                              </td>
+                              <td className="py-2 pr-4 text-right">
+                                <span className={`px-1.5 py-0.5 rounded text-xs ${p.status === "succeeded" ? "bg-green-900/40 text-green-300" : "bg-yellow-900/40 text-yellow-300"}`}>
+                                  {p.status}
+                                </span>
+                              </td>
+                              <td className="py-2 text-right text-muted-foreground">{new Date(p.created * 1000).toLocaleDateString()}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
+
+                {stripeStats.stripe.available && stripeStats.stripe.recentPayments.length === 0 && (
+                  <p className="text-sm text-muted-foreground py-4 text-center">No Stripe payments yet. First purchase will appear here.</p>
+                )}
+              </div>
+            </Section>
+          )}
 
         </div>
       )}

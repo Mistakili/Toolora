@@ -5,6 +5,8 @@ import { createWorker } from "tesseract.js";
 import mammoth from "mammoth";
 import XLSX from "xlsx";
 import OpenAI from "openai";
+import { db } from "@workspace/db";
+import { mcpCallsTable } from "@workspace/db/schema";
 
 const router: IRouter = Router();
 
@@ -626,6 +628,10 @@ router.post("/", async (req: Request, res: Response) => {
           return;
         }
 
+        const _mcpStartMs = Date.now();
+        let _mcpSuccess = true;
+        let _mcpErrorMsg: string | undefined;
+
         let text: string;
         try {
           switch (name) {
@@ -671,18 +677,28 @@ router.post("/", async (req: Request, res: Response) => {
           }
           res.json(rpcOk(id, { content: [{ type: "text", text }] }));
         } catch (err: unknown) {
+          _mcpSuccess = false;
           if (err instanceof McpToolError) {
+            _mcpErrorMsg = err.message;
             res.json(rpcOk(id, {
               content: [{ type: "text", text: err.message }],
               isError: true,
             }));
           } else {
             const msg = err instanceof Error ? err.message : "Internal error";
+            _mcpErrorMsg = msg;
             res.json(rpcOk(id, {
               content: [{ type: "text", text: `Tool execution failed: ${msg}` }],
               isError: true,
             }));
           }
+        } finally {
+          db.insert(mcpCallsTable).values({
+            tool: name,
+            durationMs: Date.now() - _mcpStartMs,
+            success: _mcpSuccess,
+            errorMsg: _mcpErrorMsg ?? null,
+          }).catch(() => {});
         }
         break;
       }

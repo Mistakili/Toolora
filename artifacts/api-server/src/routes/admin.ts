@@ -1,8 +1,9 @@
 import { Router, type IRouter, type Request, type Response } from "express";
 import { db } from "@workspace/db";
-import { agentPaymentsTable, pageViewsTable, emailSubscribersTable, toolUsageTable } from "@workspace/db/schema";
-import { desc, sum, count, sql, ne } from "drizzle-orm";
+import { agentPaymentsTable, pageViewsTable, emailSubscribersTable, toolUsageTable, mcpCallsTable, tooloraUsersTable } from "@workspace/db/schema";
+import { desc, sum, count, sql, ne, avg } from "drizzle-orm";
 import { isAdminSession } from "../lib/auth";
+import { getUncachableStripeClient } from "../stripeClient";
 
 const router: IRouter = Router();
 
@@ -258,6 +259,137 @@ router.get("/tools", async (req: Request, res: Response) => {
   } catch (err: unknown) {
     req.log.error({ err }, "Admin tools query failed");
     res.status(500).json({ error: "Could not fetch tool usage" });
+  }
+});
+
+// ─── GET /api/admin/mcp — MCP call stats ─────────────────────────────────────
+
+router.get("/mcp", async (req: Request, res: Response) => {
+  if (!requireAdmin(req, res)) return;
+
+  try {
+    const sevenDays = sql`${mcpCallsTable.createdAt} >= NOW() - INTERVAL '7 days'`;
+
+    const [totalRow] = await db
+      .select({ total: count(), successes: sql<number>`SUM(CASE WHEN ${mcpCallsTable.success} THEN 1 ELSE 0 END)` })
+      .from(mcpCallsTable);
+
+    const byTool = await db
+      .select({
+        tool: mcpCallsTable.tool,
+        calls: count(),
+        errors: sql<number>`SUM(CASE WHEN NOT ${mcpCallsTable.success} THEN 1 ELSE 0 END)`,
+        avgMs: avg(mcpCallsTable.durationMs),
+      })
+      .from(mcpCallsTable)
+      .groupBy(mcpCallsTable.tool)
+      .orderBy(desc(count()));
+
+    const daily = await db
+      .select({
+        day: sql<string>`DATE(${mcpCallsTable.createdAt})`.as("day"),
+        calls: count(),
+      })
+      .from(mcpCallsTable)
+      .where(sevenDays)
+      .groupBy(sql`DATE(${mcpCallsTable.createdAt})`)
+      .orderBy(sql`DATE(${mcpCallsTable.createdAt})`);
+
+    const recentErrors = await db
+      .select({
+        tool: mcpCallsTable.tool,
+        errorMsg: mcpCallsTable.errorMsg,
+        createdAt: mcpCallsTable.createdAt,
+      })
+      .from(mcpCallsTable)
+      .where(sql`NOT ${mcpCallsTable.success}`)
+      .orderBy(desc(mcpCallsTable.createdAt))
+      .limit(10);
+
+    res.json({
+      summary: {
+        totalCalls: Number(totalRow?.total ?? 0),
+        successCalls: Number(totalRow?.successes ?? 0),
+        errorCalls: Number(totalRow?.total ?? 0) - Number(totalRow?.successes ?? 0),
+      },
+      byTool: byTool.map((r) => ({
+        tool: r.tool,
+        calls: Number(r.calls),
+        errors: Number(r.errors ?? 0),
+        avgMs: r.avgMs ? Math.round(Number(r.avgMs)) : null,
+      })),
+      daily: daily.map((d) => ({ day: d.day, calls: Number(d.calls) })),
+      recentErrors: recentErrors.map((e) => ({
+        tool: e.tool,
+        errorMsg: e.errorMsg,
+        createdAt: e.createdAt,
+      })),
+    });
+  } catch (err: unknown) {
+    req.log.error({ err }, "Admin MCP query failed");
+    res.status(500).json({ error: "Could not fetch MCP stats" });
+  }
+});
+
+// ─── GET /api/admin/stripe — revenue & subscription stats ────────────────────
+
+router.get("/stripe", async (req: Request, res: Response) => {
+  if (!requireAdmin(req, res)) return;
+
+  try {
+    const tierRows = await db
+      .select({ tier: tooloraUsersTable.tier, count: count() })
+      .from(tooloraUsersTable)
+      .groupBy(tooloraUsersTable.tier);
+
+    const [creditsRow] = await db
+      .select({
+        totalCredits: sum(tooloraUsersTable.creditsBalance),
+        usersWithCredits: sql<number>`SUM(CASE WHEN ${tooloraUsersTable.creditsBalance} > 0 THEN 1 ELSE 0 END)`,
+      })
+      .from(tooloraUsersTable);
+
+    const [totalUsersRow] = await db.select({ total: count() }).from(tooloraUsersTable);
+
+    let recentPayments: { id: string; amount: number; currency: string; status: string; description: string | null; created: number }[] = [];
+    let totalRevenueCents = 0;
+    let stripeAvailable = false;
+
+    try {
+      const stripe = await getUncachableStripeClient();
+      const charges = await stripe.charges.list({ limit: 50 });
+      recentPayments = charges.data.map((c) => ({
+        id: c.id,
+        amount: c.amount,
+        currency: c.currency,
+        status: c.status,
+        description: c.description,
+        created: c.created,
+      }));
+      totalRevenueCents = charges.data
+        .filter((c) => c.status === "succeeded")
+        .reduce((acc, c) => acc + c.amount, 0);
+      stripeAvailable = true;
+    } catch {
+      stripeAvailable = false;
+    }
+
+    res.json({
+      users: {
+        total: Number(totalUsersRow?.total ?? 0),
+        byTier: tierRows.map((r) => ({ tier: r.tier, count: Number(r.count) })),
+        totalCreditsOutstanding: Number(creditsRow?.totalCredits ?? 0),
+        usersWithCredits: Number(creditsRow?.usersWithCredits ?? 0),
+      },
+      stripe: {
+        available: stripeAvailable,
+        totalRevenueCents,
+        recentPayments,
+      },
+    });
+  } catch (err: unknown) {
+    req.log.error({ err }, "Admin stripe query failed");
+    res.status(500).json({ error: "Could not fetch Stripe stats" });
   }
 });
 
