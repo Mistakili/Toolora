@@ -326,6 +326,28 @@
     </image:image>
   </url>
 
+  <!-- Number base + string escape -->
+  <url>
+    <loc>https://toolora.dev/tools/developer/number-base-converter</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://toolora.dev/opengraph.jpg</image:loc>
+      <image:title>Free Number Base Converter — Decimal, Binary, Octal, Hex Online</image:title>
+      <image:caption>Convert between decimal, binary, octal and hex. Free online tool.</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://toolora.dev/tools/developer/string-escape</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://toolora.dev/opengraph.jpg</image:loc>
+      <image:title>Free String Escape Tool — Escape JSON, SQL, Regex, Shell Strings Online</image:title>
+      <image:caption>Escape or unescape strings for JSON, SQL, CSV, Regex, Shell, XML.</image:caption>
+    </image:image>
+  </url>
+
   <!-- Agent-critical tools -->
   <url>
     <loc>https://toolora.dev/tools/developer/token-counter</loc>

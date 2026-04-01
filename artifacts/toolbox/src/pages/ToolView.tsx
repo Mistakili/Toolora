@@ -35,6 +35,8 @@ import HtmlEntities from "@/components/tools/HtmlEntities";
 import TokenCounter from "@/components/tools/TokenCounter";
 import YamlJsonConverter from "@/components/tools/YamlJsonConverter";
 import CronParser from "@/components/tools/CronParser";
+import NumberBaseConverter from "@/components/tools/NumberBaseConverter";
+import StringEscape from "@/components/tools/StringEscape";
 
 // ── Per-category SEO content blocks ─────────────────────────────────────────
 
@@ -165,6 +167,8 @@ const TOOL_COMPONENTS: Record<string, React.ComponentType<any>> = {
   "token-counter": TokenCounter,
   "yaml-json-converter": YamlJsonConverter,
   "cron-parser": CronParser,
+  "number-base-converter": NumberBaseConverter,
+  "string-escape": StringEscape,
 };
 
 export default function ToolView() {

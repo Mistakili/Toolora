@@ -2,7 +2,8 @@ import {
   FileText, Type, Hash, Shield, KeyRound, QrCode, ArrowLeftRight, 
   Palette, Image as ImageIcon, FileJson, Clock, Link as LinkIcon, 
   Scissors, Minimize, SplitSquareHorizontal, Layers, Fingerprint, RefreshCcw,
-  BookOpen, ListOrdered, Code2, CodeXml, Coins, GitCompare, CalendarClock
+  BookOpen, ListOrdered, Code2, CodeXml, Coins, GitCompare, CalendarClock,
+  Binary, Braces
 } from "lucide-react";
 
 export type ToolCategory = "pdf" | "image" | "text" | "developer" | "productivity";
@@ -166,6 +167,18 @@ export const TOOLS: ToolDef[] = [
     description: "Translate cron expressions into plain English and preview next run times.",
     seoTitle: "Free Cron Expression Parser — Decode & Validate Cron Jobs Online | Toolora",
     seoDescription: "Parse any cron expression into plain English and preview the next 5 run times. Includes common presets and a quick-reference table. Free online cron parser.",
+  },
+  {
+    id: "number-base-converter", name: "Number Base Converter", slug: "number-base-converter", category: "developer", icon: Binary,
+    description: "Convert numbers between decimal, binary, octal, and hexadecimal.",
+    seoTitle: "Free Number Base Converter — Decimal, Binary, Octal, Hex Online | Toolora",
+    seoDescription: "Convert numbers between decimal, binary (base 2), octal (base 8), and hexadecimal (base 16) instantly. Free online number base converter for developers.",
+  },
+  {
+    id: "string-escape", name: "String Escape Tool", slug: "string-escape", category: "developer", icon: Braces,
+    description: "Escape or unescape strings for JSON, SQL, Regex, CSV, Shell, and XML.",
+    seoTitle: "Free String Escape Tool — Escape JSON, SQL, Regex, Shell Strings Online | Toolora",
+    seoDescription: "Escape or unescape strings for JSON, SQL, regular expressions, CSV, Bash/Shell, and XML. Free online string escape tool for developers. Nothing uploaded.",
   },
 
   // Image Tools
