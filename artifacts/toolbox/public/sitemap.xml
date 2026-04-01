@@ -1,21 +1,57 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
 
   <!-- Main pages -->
   <url>
     <loc>https://toolora.dev/</loc>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://toolora.dev/opengraph.jpg</image:loc>
+      <image:title>Toolora — Free Online Tools. No Uploads. 100% Private.</image:title>
+      <image:caption>20+ free browser-side tools for PDF, images, text, and developers. No file uploads. 100% private.</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://toolora.dev/api-docs</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://toolora.dev/opengraph.jpg</image:loc>
+      <image:title>Toolora Agent API — PDF extraction, URL scraping, file conversion for AI agents</image:title>
+      <image:caption>Server-side API for AI agents. Supports x402 micropayments with Solana USDC.</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://toolora.dev/extension</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://toolora.dev/opengraph.jpg</image:loc>
+      <image:title>Toolora Chrome Extension — Free Tools in Every Browser Tab</image:title>
+      <image:caption>Access all Toolora tools from any browser tab with the free Chrome extension.</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://toolora.dev/pricing</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://toolora.dev/opengraph.jpg</image:loc>
+      <image:title>Toolora Pricing — Free, Pro $19/mo, Team $79/mo</image:title>
+      <image:caption>Start free with 200 API calls/mo. Upgrade for more capacity.</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://toolora.dev/blog</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://toolora.dev/opengraph.jpg</image:loc>
+      <image:title>Toolora Blog — Privacy, Developer Tools &amp; Browser Tech</image:title>
+      <image:caption>Guides on privacy-first tools, WebAssembly, and developer workflows.</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://toolora.dev/privacy</loc>
@@ -33,26 +69,51 @@
     <loc>https://toolora.dev/tools/text</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://toolora.dev/opengraph.jpg</image:loc>
+      <image:title>Free Text Tools Online — Word Counter, Case Converter &amp; More</image:title>
+      <image:caption>Browser-based text tools. No uploads, no accounts required.</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://toolora.dev/tools/developer</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://toolora.dev/opengraph.jpg</image:loc>
+      <image:title>Free Developer Tools Online — JSON Formatter, Base64, Hash Generator</image:title>
+      <image:caption>Fast, free developer utilities. All browser-based, no signup.</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://toolora.dev/tools/productivity</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://toolora.dev/opengraph.jpg</image:loc>
+      <image:title>Free Productivity Tools Online — QR Code, Password Generator &amp; More</image:title>
+      <image:caption>QR code generator, password generator, unit converter, and more. All free.</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://toolora.dev/tools/image</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://toolora.dev/opengraph.jpg</image:loc>
+      <image:title>Free Online Image Tools — Resize, Compress &amp; Convert Images</image:title>
+      <image:caption>Image tools that process files entirely in your browser. No uploads ever.</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://toolora.dev/tools/pdf</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://toolora.dev/opengraph.jpg</image:loc>
+      <image:title>Free Online PDF Tools — Merge &amp; Split PDFs in Your Browser</image:title>
+      <image:caption>Merge and split PDFs locally. Files never leave your device.</image:caption>
+    </image:image>
   </url>
 
   <!-- Text tools -->
@@ -60,26 +121,51 @@
     <loc>https://toolora.dev/tools/text/word-counter</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://toolora.dev/opengraph.jpg</image:loc>
+      <image:title>Free Word Counter — Count Words, Characters &amp; Sentences Online</image:title>
+      <image:caption>Instantly count words, characters, sentences and reading time. Free, private, browser-based.</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://toolora.dev/tools/text/case-converter</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://toolora.dev/opengraph.jpg</image:loc>
+      <image:title>Free Case Converter — UPPERCASE, lowercase, camelCase &amp; more</image:title>
+      <image:caption>Convert text between any case format instantly. Free online tool.</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://toolora.dev/tools/text/lorem-ipsum</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://toolora.dev/opengraph.jpg</image:loc>
+      <image:title>Free Lorem Ipsum Generator — Placeholder Text for Designers</image:title>
+      <image:caption>Generate lorem ipsum placeholder text instantly. Free online tool.</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://toolora.dev/tools/text/markdown-preview</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://toolora.dev/opengraph.jpg</image:loc>
+      <image:title>Free Markdown Preview — Live Markdown Editor &amp; Renderer Online</image:title>
+      <image:caption>Write markdown and see a live side-by-side HTML preview. Free online tool.</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://toolora.dev/tools/text/text-diff</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://toolora.dev/opengraph.jpg</image:loc>
+      <image:title>Free Text Diff Tool — Compare Two Texts Online &amp; Find Differences</image:title>
+      <image:caption>Compare two texts and highlight additions and removals. Free online diff tool.</image:caption>
+    </image:image>
   </url>
 
   <!-- Developer tools -->
@@ -87,26 +173,51 @@
     <loc>https://toolora.dev/tools/developer/json-formatter</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://toolora.dev/opengraph.jpg</image:loc>
+      <image:title>Free JSON Formatter &amp; Validator — Pretty Print &amp; Minify JSON Online</image:title>
+      <image:caption>Format and validate JSON instantly. Free online JSON formatter with error detection.</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://toolora.dev/tools/developer/base64</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://toolora.dev/opengraph.jpg</image:loc>
+      <image:title>Free Base64 Encoder &amp; Decoder — Encode or Decode Base64 Online</image:title>
+      <image:caption>Encode or decode Base64 strings instantly. No data sent to servers.</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://toolora.dev/tools/developer/url-encoder</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://toolora.dev/opengraph.jpg</image:loc>
+      <image:title>Free URL Encoder &amp; Decoder — Encode or Decode URLs Online</image:title>
+      <image:caption>Encode or decode percent-encoded URLs instantly. Free online developer tool.</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://toolora.dev/tools/developer/hash-generator</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://toolora.dev/opengraph.jpg</image:loc>
+      <image:title>Free Hash Generator — MD5, SHA-1, SHA-256 Hash Online</image:title>
+      <image:caption>Generate cryptographic hashes from any text. All processing done in your browser.</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://toolora.dev/tools/developer/uuid-generator</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://toolora.dev/opengraph.jpg</image:loc>
+      <image:title>Free UUID Generator — Generate Random UUIDs v4 Online in Bulk</image:title>
+      <image:caption>Generate one or multiple UUID v4 strings instantly. Free online tool.</image:caption>
+    </image:image>
   </url>
 
   <!-- Productivity tools -->
@@ -114,26 +225,51 @@
     <loc>https://toolora.dev/tools/productivity/qr-generator</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://toolora.dev/opengraph.jpg</image:loc>
+      <image:title>Free QR Code Generator — Create Custom QR Codes Online</image:title>
+      <image:caption>Generate QR codes from any URL or text. Download as PNG instantly.</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://toolora.dev/tools/productivity/password-generator</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://toolora.dev/opengraph.jpg</image:loc>
+      <image:title>Free Password Generator — Create Strong, Secure Passwords Online</image:title>
+      <image:caption>Generate strong random passwords. Nothing stored or transmitted.</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://toolora.dev/tools/productivity/unit-converter</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://toolora.dev/opengraph.jpg</image:loc>
+      <image:title>Free Unit Converter — Length, Weight, Temperature &amp; More Online</image:title>
+      <image:caption>Convert between units of length, weight, temperature, area, speed and volume. Free online tool.</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://toolora.dev/tools/productivity/color-picker</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://toolora.dev/opengraph.jpg</image:loc>
+      <image:title>Free Color Converter — HEX to RGB to HSL Color Picker Online</image:title>
+      <image:caption>Convert colors between HEX, RGB, and HSL formats. Free online color converter.</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://toolora.dev/tools/productivity/timestamp-converter</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://toolora.dev/opengraph.jpg</image:loc>
+      <image:title>Free Unix Timestamp Converter — Convert Epoch Time Online</image:title>
+      <image:caption>Convert Unix timestamps to human-readable dates. Free online epoch converter.</image:caption>
+    </image:image>
   </url>
 
   <!-- Image tools -->
@@ -141,16 +277,31 @@
     <loc>https://toolora.dev/tools/image/image-resize</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://toolora.dev/opengraph.jpg</image:loc>
+      <image:title>Free Image Resizer — Resize Images Online Without Uploading</image:title>
+      <image:caption>Resize any image by pixels or percentage. Files never leave your device.</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://toolora.dev/tools/image/image-compress</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://toolora.dev/opengraph.jpg</image:loc>
+      <image:title>Free Image Compressor — Compress Images Online Without Losing Quality</image:title>
+      <image:caption>Compress JPG, PNG and WebP images. 100% private, browser-based.</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://toolora.dev/tools/image/image-convert</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://toolora.dev/opengraph.jpg</image:loc>
+      <image:title>Free Image Converter — Convert JPG, PNG, WebP Online</image:title>
+      <image:caption>Convert images between formats instantly. No uploads, no registration.</image:caption>
+    </image:image>
   </url>
 
   <!-- PDF tools -->
@@ -158,11 +309,103 @@
     <loc>https://toolora.dev/tools/pdf/pdf-merge</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://toolora.dev/opengraph.jpg</image:loc>
+      <image:title>Free PDF Merger — Combine &amp; Merge PDF Files Online</image:title>
+      <image:caption>Merge multiple PDFs into one. Files never leave your browser.</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://toolora.dev/tools/pdf/pdf-split</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://toolora.dev/opengraph.jpg</image:loc>
+      <image:title>Free PDF Splitter — Split or Extract Pages from PDF Online</image:title>
+      <image:caption>Split PDFs into pages or ranges. Fully client-side, nothing uploaded.</image:caption>
+    </image:image>
+  </url>
+
+  <!-- Blog posts -->
+  <url>
+    <loc>https://toolora.dev/blog/merge-pdfs-without-uploading</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://toolora.dev/opengraph.jpg</image:loc>
+      <image:title>How to Merge PDFs Without Uploading Them — Toolora Blog</image:title>
+      <image:caption>Merge PDFs privately in your browser without any file uploads.</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://toolora.dev/blog/best-free-image-compressor-privacy</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://toolora.dev/opengraph.jpg</image:loc>
+      <image:title>The Best Free Image Compressor That Doesn't See Your Files — Toolora Blog</image:title>
+      <image:caption>Compare image compressors and find one that keeps your files private.</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://toolora.dev/blog/why-i-built-client-side-toolbox</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://toolora.dev/opengraph.jpg</image:loc>
+      <image:title>Why I Built a Client-Side Toolbox — Toolora Blog</image:title>
+      <image:caption>The story behind building a privacy-first browser tools platform.</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://toolora.dev/blog/base64-encoding-explained</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://toolora.dev/opengraph.jpg</image:loc>
+      <image:title>Base64 Encoding Explained — Toolora Blog</image:title>
+      <image:caption>What Base64 is, how it works, and when to use it.</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://toolora.dev/blog/how-password-generators-work</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://toolora.dev/opengraph.jpg</image:loc>
+      <image:title>How Password Generators Work — Toolora Blog</image:title>
+      <image:caption>The cryptography behind generating secure random passwords.</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://toolora.dev/blog/qr-codes-explained</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://toolora.dev/opengraph.jpg</image:loc>
+      <image:title>QR Codes Explained — Toolora Blog</image:title>
+      <image:caption>How QR codes work and how to generate them for free.</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://toolora.dev/blog/json-formatter-guide</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://toolora.dev/opengraph.jpg</image:loc>
+      <image:title>JSON Formatter Guide — Toolora Blog</image:title>
+      <image:caption>Format, validate, and understand JSON data structures.</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://toolora.dev/blog/hashing-vs-encryption-whats-the-difference</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://toolora.dev/opengraph.jpg</image:loc>
+      <image:title>Hashing vs Encryption: What's the Difference? — Toolora Blog</image:title>
+      <image:caption>Understand the difference between hashing and encryption and when to use each.</image:caption>
+    </image:image>
   </url>
 
 </urlset>
