@@ -1,0 +1,108 @@
+programmatic seo is about building scalable page systems that solve real user problems, not mass-producing low-value pages.
+🔗 www.seoitis.com
+1. templates
+
+pattern: [type] template, free [type] template
+example searches: resume template, invoice template, pitch deck template
+what it is: downloadable or interactive templates users can immediately use
+why it works: high intent, shareable assets, strong fit for product-led growth
+value requirements: usable templates, multiple variations, paid-level quality, frictionless usage
+url structure: /templates/[type]/, /templates/[category]/[type]/
+2. curation
+
+pattern: best [category], top [number] [things]
+example searches: best website builders, top 10 crm software, best free design tools
+what it is: curated lists ranking or recommending products or services
+why it works: high commercial intent, decision-stage traffic, evergreen with updates
+value requirements: clear criteria, real testing, visible updates, non-affiliate bias
+url structure: /best/[category]/, /[category]/best/
+3. conversions
+
+pattern: [x] to [y], [amount] [unit] in [unit]
+example searches: 10 usd to gbp, 100 kg to lbs, pdf to word
+what it is: tools or pages that convert formats, units, or values
+why it works: instant utility, massive volume, repeat usage
+value requirements: accurate data, fast tool, related conversions, mobile-first
+url structure: /convert/[from]-to-[to]/, /[from]-to-[to]-converter/
+4. comparisons
+
+pattern: [x] vs [y], [x] alternative
+example searches: webflow vs wordpress, notion vs coda, figma alternatives
+what it is: side-by-side comparisons between products or solutions
+why it works: high purchase intent, clear search behavior, scalable
+value requirements: honest analysis, real feature data, use-case recommendations, frequent updates
+url structure: /compare/[x]-vs-[y]/, /[x]-vs-[y]/
+5. examples
+
+pattern: [type] examples, [category] inspiration
+example searches: saas landing page examples, email subject line examples, portfolio website examples
+what it is: collections of real-world examples for inspiration or research
+why it works: research-phase traffic, highly shareable, strong creative appeal
+value requirements: real examples, screenshots or embeds, filters, explanation
+url structure: /examples/[type]/, /[type]-examples/
+6. locations
+
+pattern: [service] in [location]
+example searches: coworking spaces in san diego, dentists in austin, best restaurants in brooklyn
+what it is: location-specific pages for services or businesses
+why it works: massive local intent, geographic scalability
+value requirements: real local data, actual listings, location insights, maps
+url structure: /[service]/[city]/, /locations/[city]/[service]/
+7. personas
+
+pattern: [product] for [audience], [solution] for [role or industry]
+example searches: payroll software for agencies, crm for real estate, project management for freelancers
+what it is: persona-specific landing pages
+why it works: higher relevance, better conversion, scalable by audience
+value requirements: tailored messaging, relevant features, persona testimonials, real use cases
+url structure: /for/[persona]/, /solutions/[industry]/
+8. integrations
+
+pattern: [product] [product] integration, [product] + [product]
+example searches: slack asana integration, zapier airtable, hubspot salesforce sync
+what it is: pages explaining how tools work together
+why it works: captures users of other tools, very high intent
+value requirements: real integrations, setup steps, use cases, visuals
+url structure: /integrations/[product]/, /connect/[product]/
+9. glossary
+
+pattern: what is [term], [term] definition
+example searches: what is pseo, api definition, what does crm stand for
+what it is: educational pages explaining industry terms
+why it works: top-of-funnel traffic, authority building, internal linking
+
+value requirements: clear definitions, examples, related terms, depth
+url structure: /glossary/[term]/, /learn/[term]/
+10. translations
+
+pattern: localized versions of existing queries
+example searches: qué es pseo, was ist seo, マーケティングとは
+what it is: translated and localized content for new markets
+why it works: new demand, lower competition, multiplied reach
+value requirements: high-quality translation, localization, hreflang, native review
+url structure: /[language]/[page]/, /es/, /de/, /fr/
+for this you can use @lingodotdev 
+11. directory
+
+pattern: [category] tools, [category] software
+example searches: ai copywriting tools, email marketing software, crm companies
+what it is: structured directories listing tools or companies
+why it works: research traffic, backlink magnet, evergreen
+value requirements: comprehensive coverage, filters, detailed listings, updates
+url structure: /directory/[category]/, /[category]-directory/
+12. profiles
+
+pattern: [name], [entity] + [attribute]
+example searches: stripe ceo, airbnb founding story, elon musk companies
+what it is: profile pages for people, companies, or entities
+why it works: informational demand, topical authority, long-tail coverage
+value requirements: accurate data, sourcing, unique insights, freshness
+url structure: /people/[name]/, /companies/[name]/
+you can layer multiple playbooks:
+
+locations + personas: "marketing agencies for startups in austin"
+curation + locations: "best coworking spaces in san diego"
+integrations + personas: "slack for sales teams"
+glossary + translations: multi-language educational content
+i wanna give all the credit to @coreyhainesco 🫶🏻
+if you want the detailed version of this, check it out here: programmatic SEO playbook
