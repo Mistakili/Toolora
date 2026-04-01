@@ -1,7 +1,26 @@
 import { useEffect } from "react";
 import { Link, useParams } from "wouter";
-import { ArrowLeft, Clock, Tag, Calendar } from "lucide-react";
+import { ArrowLeft, Clock, Tag, Calendar, Lock, Code2, BookOpen, Shield, Wrench, Zap } from "lucide-react";
 import { getBlogPost, BLOG_POSTS } from "@/lib/blog-posts";
+
+function getCoverStyle(category: string): { gradient: string; Icon: React.ElementType; iconColor: string } {
+  switch (category.toLowerCase()) {
+    case "privacy":
+      return { gradient: "from-purple-900/80 via-violet-800/60 to-purple-900/80", Icon: Lock, iconColor: "text-purple-300" };
+    case "developer":
+    case "development":
+      return { gradient: "from-blue-900/80 via-cyan-800/60 to-blue-900/80", Icon: Code2, iconColor: "text-cyan-300" };
+    case "security":
+      return { gradient: "from-red-900/80 via-orange-800/60 to-red-900/80", Icon: Shield, iconColor: "text-orange-300" };
+    case "tutorials":
+    case "tutorial":
+      return { gradient: "from-emerald-900/80 via-teal-800/60 to-emerald-900/80", Icon: BookOpen, iconColor: "text-emerald-300" };
+    case "tools":
+      return { gradient: "from-indigo-900/80 via-purple-800/60 to-indigo-900/80", Icon: Wrench, iconColor: "text-indigo-300" };
+    default:
+      return { gradient: "from-zinc-900/80 via-zinc-700/60 to-zinc-900/80", Icon: Zap, iconColor: "text-zinc-300" };
+  }
+}
 
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
@@ -29,14 +48,26 @@ export default function BlogPost() {
   }
 
   const others = BLOG_POSTS.filter((p) => p.slug !== slug).slice(0, 2);
+  const { gradient, Icon, iconColor } = getCoverStyle(post.category);
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-12">
       {/* Back */}
-      <Link href="/blog" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground mb-10 transition-colors">
+      <Link href="/blog" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground mb-8 transition-colors">
         <ArrowLeft className="w-4 h-4" />
         All posts
       </Link>
+
+      {/* Hero cover */}
+      <div className={`relative w-full h-48 sm:h-56 rounded-2xl overflow-hidden mb-10 bg-gradient-to-br ${gradient} flex items-center justify-center`}>
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-white/5 via-transparent to-transparent" />
+        <div className="flex flex-col items-center gap-3 z-10">
+          <Icon className={`w-14 h-14 ${iconColor} opacity-75`} />
+          <span className={`text-xs font-semibold uppercase tracking-widest ${iconColor} opacity-60`}>
+            {post.category}
+          </span>
+        </div>
+      </div>
 
       {/* Header */}
       <header className="mb-10">
