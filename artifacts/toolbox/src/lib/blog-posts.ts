@@ -911,6 +911,183 @@ console.log(\`Token count: \${tokens.length}\`);</code></pre>
 <p>For example, <code>0 9 * * 1-5</code> should parse as "At 9:00 AM, Monday through Friday" — if you see anything different, the expression isn't what you intended.</p>
     `.trim(),
   },
+  {
+    slug: "competitor-research-claude-mcp",
+    title: "How to Research Any Competitor's Website Using Claude and an MCP Server",
+    description: "Most competitor research is slow, manual, and shallow. With Claude connected to the right MCP tools, you can pull clean content from any competitor page in seconds — and ask questions across multiple pages in one session.",
+    date: "2026-04-01",
+    readTime: "8 min read",
+    category: "Developer Tools",
+    content: `
+<p>Competitor research usually goes like this: open 10 tabs, skim each page, copy a few things into a doc, lose track of what came from where, repeat. It's slow, shallow, and you miss things.</p>
+
+<p>There's a better way. Connect Claude to an MCP server that can read web pages on demand, load your business context once, then run structured research prompts across every competitor page you care about — in a single session, with a searchable record of everything Claude found.</p>
+
+<p>This guide shows you exactly how to do it using <a href="/mcp">Toolora's free MCP server</a>, which gives Claude two tools that handle most of this work: <code>read_url</code> and <code>scrape_url_js</code>.</p>
+
+<h2>What you need</h2>
+
+<ul>
+  <li><strong>Claude Desktop or Cursor</strong> (any MCP-compatible AI client)</li>
+  <li><strong>Toolora MCP server</strong> — one config block, no API key required</li>
+  <li>A list of 3–5 competitor domains you want to analyze</li>
+</ul>
+
+<p>Add this to your Claude Desktop config file (<code>claude_desktop_config.json</code>):</p>
+
+<pre><code>{
+  "mcpServers": {
+    "toolora": {
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "https://toolora.replit.app/api/mcp"]
+    }
+  }
+}</code></pre>
+
+<p>Restart Claude Desktop. You'll see Toolora's tools appear in the tool list. That's all the setup you need.</p>
+
+<h2>Load your context first</h2>
+
+<p>Before running any research prompts, paste your business context into Claude once. This prevents you from re-explaining yourself on every follow-up question and makes every answer sharper:</p>
+
+<pre><code>Here is context about my business. Reference this in every research task I give you today.
+
+Business: [Your business name]
+Website: [your domain]
+Primary product / service: [what you sell]
+Target customer: [who buys from you]
+Main competitors I want to analyze: [domain1, domain2, domain3]
+What I most want to understand: [pricing / positioning / content strategy / feature set — pick what matters]
+
+Don't ask me for this again. Just use it.</code></pre>
+
+<p>Now every prompt you run in this session is anchored to your actual business, not a generic answer.</p>
+
+<h2>The two tools doing the heavy lifting</h2>
+
+<h3>read_url — for standard pages</h3>
+
+<p><code>read_url</code> fetches any public URL and returns the main readable content as clean plain text, stripping nav, footers, ads, and boilerplate. It works on most static and server-rendered pages: marketing sites, blog posts, documentation, pricing pages.</p>
+
+<p>Under the hood it uses a Readability-style extraction — the same algorithm Firefox's Reader Mode uses. You get the signal, not the noise.</p>
+
+<h3>scrape_url_js — for JavaScript-heavy pages</h3>
+
+<p><code>scrape_url_js</code> runs a full browser with JavaScript execution before extracting content. Use this for single-page apps, React/Next.js sites that render content client-side, or any page where <code>read_url</code> comes back mostly empty.</p>
+
+<p>If a competitor is running a modern SaaS app or a Webflow site with a lot of JS-gated content, <code>scrape_url_js</code> is what gets past it.</p>
+
+<h2>5 prompts to run right now</h2>
+
+<h3>1. Positioning and messaging audit</h3>
+
+<p>Start with the homepage. This is where a company makes its clearest statement about who they are, who they serve, and why they're different.</p>
+
+<pre><code>Use read_url to fetch the homepage of [competitor.com]. Then answer:
+
+1. What is their primary headline and subheadline?
+2. What customer problem do they lead with?
+3. What outcome or transformation do they promise?
+4. What proof do they show above the fold (logos, numbers, testimonials)?
+5. How is their positioning different from [your business name]?
+
+Be specific. Quote exact copy where relevant.</code></pre>
+
+<p>Run the same prompt across 3 competitors in sequence. By the end, you'll see exactly where there's a gap in the market that nobody is claiming.</p>
+
+<h3>2. Pricing page teardown</h3>
+
+<p>Pricing pages are a competitor's strategic document. The tiers they offer, the features they highlight, the anchoring — all of it reveals what they think their customers value most.</p>
+
+<pre><code>Use read_url to fetch [competitor.com/pricing]. Then:
+
+1. List every pricing tier, its price, and billing period
+2. What features are on the free or entry tier vs. the paid tiers?
+3. What is their "recommended" or highlighted plan?
+4. What features do they use to push upgrades between tiers?
+5. What's missing that [your business name] offers?
+6. What do they emphasize that we don't?</code></pre>
+
+<p>If the pricing page is behind a login or heavily JS-rendered, swap <code>read_url</code> for <code>scrape_url_js</code> in the prompt.</p>
+
+<h3>3. Content and SEO strategy</h3>
+
+<p>A competitor's blog reveals what keywords they're going after, what audience they're building, and what content gaps exist for you to fill.</p>
+
+<pre><code>Use read_url to fetch [competitor.com/blog]. List:
+
+1. The 10 most recent post titles
+2. The categories or topics they cover most often
+3. Any content series or recurring formats
+4. Which posts look like they target high-intent keywords vs. top-of-funnel awareness
+5. What content themes are completely absent that [your business name] could own?</code></pre>
+
+<p>Then follow up with:</p>
+
+<pre><code>Now use read_url to fetch the full content of their top 2-3 posts. For each post, tell me:
+- What search query it's clearly targeting
+- How long and detailed it is
+- What CTAs it includes
+- Whether it links to a product page and how naturally</code></pre>
+
+<h3>4. Features and product depth</h3>
+
+<p>For SaaS products or tool-based businesses, the features page tells you how a competitor thinks about their product and what they emphasize to buyers.</p>
+
+<pre><code>Use scrape_url_js to fetch [competitor.com/features]. Then:
+
+1. List every feature or capability they mention
+2. Group them into logical categories
+3. Identify which 3-5 features they seem to emphasize most (big headers, dedicated sections)
+4. Flag any features we have that they don't mention
+5. Flag any features they prominently advertise that we don't offer</code></pre>
+
+<h3>5. About page and brand story</h3>
+
+<p>The about page is often skipped in competitor research. That's a mistake. It tells you how a company talks about itself — its founding story, values, and the human side of the brand. That's useful when you're deciding how to differentiate on personality, not just features.</p>
+
+<pre><code>Use read_url to fetch [competitor.com/about]. Extract:
+
+1. How they describe their origin story
+2. What values or principles they emphasize
+3. How they talk about their team
+4. What proof of credibility they include (press mentions, years in business, customer count)
+5. What emotional tone they project — scrappy startup, trusted enterprise, community-driven?
+6. How our about page compares and where we could sharpen our narrative</code></pre>
+
+<h2>Turning the output into decisions</h2>
+
+<p>After running these prompts across 3+ competitors, end the session with a synthesis prompt:</p>
+
+<pre><code>Based on everything you've read today about [competitor1], [competitor2], and [competitor3], give me:
+
+1. The single clearest gap in the market that none of them are owning
+2. The messaging angle that [your business name] could credibly claim that no competitor is using
+3. The one content topic we should write about first based on what's missing from their blogs
+4. The pricing or packaging insight most worth acting on</code></pre>
+
+<p>This is where the research pays off. You're not just collecting information — you're asking Claude to synthesize across multiple sources it just read and produce prioritized recommendations specific to your business.</p>
+
+<h2>When pages don't load</h2>
+
+<p>A few things to know:</p>
+
+<ul>
+  <li>If <code>read_url</code> returns thin content or just navigation text, switch to <code>scrape_url_js</code> — the site likely requires JavaScript to render its content</li>
+  <li>If a page is behind authentication (like a logged-in dashboard), neither tool can access it — you'll need to paste the content manually</li>
+  <li>Some sites block scrapers via user-agent filtering. If you get an error or near-empty result on a known-working page, it's likely blocked</li>
+  <li>PDF resources, case studies, and gated content won't be accessible — but their landing pages usually will be, which often tells you enough</li>
+</ul>
+
+<h2>No API key, no cost, no setup friction</h2>
+
+<p>The Toolora MCP server is completely free. No account required, no rate limits for reasonable use, no data stored server-side. The MCP connection config is one JSON block you add once.</p>
+
+<p>If you want to automate this research at scale — running nightly competitor checks, triggering alerts when a pricing page changes, or building a pipeline that runs these prompts on a schedule — the <a href="/pricing">Toolora Agent API</a> gives you programmatic access to the same tools with higher throughput and usage-based pricing.</p>
+
+<p>For one-off research sessions, the free MCP server is all you need. <a href="/mcp">Get the setup instructions and full tool list here.</a></p>
+    `.trim(),
+  },
 ];
 
 export function getBlogPost(slug: string): BlogPost | undefined {
