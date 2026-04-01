@@ -143,6 +143,12 @@ export default function Showcase() {
           transition={{ duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
           className="relative max-w-4xl mx-auto"
         >
+          <p className="text-base sm:text-xl font-extrabold text-white mb-6 border border-white/10 bg-white/5 rounded-2xl px-6 py-3 inline-block">
+            I built a full privacy-first SaaS —&nbsp;
+            <span className="text-purple-400">20+ tools</span>, an Agent API, and an MCP server —&nbsp;
+            in&nbsp;<span className="text-purple-400">one week</span>, using Replit AI.
+          </p>
+
           <Tag><Shield className="w-3 h-3" /> Privacy First · No Uploads · 100% Free</Tag>
 
           <h1 className="mt-6 text-5xl sm:text-7xl font-extrabold leading-[1.05] tracking-tight">
@@ -202,6 +208,30 @@ export default function Showcase() {
             </Reveal>
           ))}
         </div>
+      </section>
+
+      {/* ── Video section ────────────────────────────────────────────────── */}
+      <section className="py-20 px-6 max-w-4xl mx-auto">
+        <Reveal className="text-center mb-10">
+          <Tag><Zap className="w-3 h-3" /> See it in action</Tag>
+          <h2 className="mt-4 text-3xl sm:text-4xl font-bold">Watch the intro</h2>
+          <p className="mt-3 text-white/50 text-base max-w-lg mx-auto">
+            Two minutes. Everything you need to know about why Toolora exists and how it works.
+          </p>
+        </Reveal>
+        <Reveal delay={0.1}>
+          <div className="relative rounded-2xl overflow-hidden border border-white/10 bg-black shadow-2xl shadow-purple-900/20" style={{ aspectRatio: "16/9" }}>
+            <iframe
+              src={`${window.location.origin}/toolora-video`}
+              className="w-full h-full"
+              allow="autoplay"
+              title="Toolora Intro Video"
+            />
+          </div>
+          <p className="mt-4 text-center text-xs text-white/30">
+            Produced entirely with code — no screen recording, no talking head
+          </p>
+        </Reveal>
       </section>
 
       {/* ── Privacy promises ─────────────────────────────────────────────── */}
