@@ -39,7 +39,7 @@ export default function Blog() {
       </div>
 
       <div className="space-y-6">
-        {BLOG_POSTS.map((post) => {
+        {[...BLOG_POSTS].reverse().map((post) => {
           const { gradient, Icon, iconColor } = getCoverStyle(post.category);
           return (
             <Link key={post.slug} href={`/blog/${post.slug}`} className="block group">
