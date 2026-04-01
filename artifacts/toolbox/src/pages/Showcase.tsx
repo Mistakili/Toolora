@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useInView, useScroll, useTransform } from "framer-motion";
-import { Link } from "wouter";
+
 import {
   Shield, Zap, Globe, Lock, Code2, FileText, Image, Hash, Key,
   QrCode, Type, ArrowRight, Check, Terminal, Server, ChevronDown,
@@ -106,23 +106,23 @@ export default function Showcase() {
 
       {/* ── Sticky nav ───────────────────────────────────────────────────── */}
       <nav className="fixed top-0 inset-x-0 z-50 flex items-center justify-between px-6 py-4 bg-[#080a0f]/80 backdrop-blur border-b border-white/5">
-        <Link href="/">
+        <a href="/">
           <span className="font-bold text-lg tracking-tight">
             Toolora<span className="text-purple-400">.</span>
           </span>
-        </Link>
+        </a>
         <div className="flex items-center gap-3">
-          <Link href="/pricing">
+          <a href="/pricing">
             <span className="text-sm text-white/60 hover:text-white transition-colors cursor-pointer">Pricing</span>
-          </Link>
-          <Link href="/api-docs">
+          </a>
+          <a href="/api-docs">
             <span className="text-sm text-white/60 hover:text-white transition-colors cursor-pointer">API</span>
-          </Link>
-          <Link href="/">
+          </a>
+          <a href="/">
             <span className="inline-flex items-center gap-1.5 text-sm font-semibold bg-purple-600 hover:bg-purple-500 transition-colors text-white px-4 py-1.5 rounded-full cursor-pointer">
               Try it free <ArrowRight className="w-3.5 h-3.5" />
             </span>
-          </Link>
+          </a>
         </div>
       </nav>
 
@@ -166,7 +166,7 @@ export default function Showcase() {
           </p>
 
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link href="/">
+            <a href="/">
               <motion.span
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.97 }}
@@ -174,8 +174,8 @@ export default function Showcase() {
               >
                 Explore all tools <ArrowRight className="w-4 h-4" />
               </motion.span>
-            </Link>
-            <Link href="/api-docs">
+            </a>
+            <a href="/api-docs">
               <motion.span
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.97 }}
@@ -183,7 +183,7 @@ export default function Showcase() {
               >
                 Agent API <Code2 className="w-4 h-4" />
               </motion.span>
-            </Link>
+            </a>
           </div>
         </motion.div>
 
@@ -269,7 +269,7 @@ export default function Showcase() {
           <div className="mt-12 grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {TOOLS.map((tool, i) => (
               <Reveal key={tool.label} delay={i * 0.07}>
-                <Link href={tool.href}>
+                <a href={tool.href}>
                   <motion.div
                     whileHover={{ y: -3, borderColor: "rgba(147,51,234,0.4)" }}
                     className="rounded-2xl border border-white/8 bg-white/[0.03] p-5 cursor-pointer transition-colors h-full"
@@ -281,16 +281,16 @@ export default function Showcase() {
                     <div className="font-semibold text-white text-sm">{tool.label}</div>
                     <div className="mt-1 text-xs text-white/45 leading-relaxed">{tool.desc}</div>
                   </motion.div>
-                </Link>
+                </a>
               </Reveal>
             ))}
           </div>
           <Reveal delay={0.2} className="mt-8 text-center">
-            <Link href="/">
+            <a href="/">
               <span className="text-sm text-purple-400 hover:text-purple-300 transition-colors cursor-pointer inline-flex items-center gap-1">
                 See all 20+ tools <ArrowRight className="w-3.5 h-3.5" />
               </span>
-            </Link>
+            </a>
           </Reveal>
         </div>
       </section>
@@ -339,11 +339,11 @@ export default function Showcase() {
                   ))}
                 </div>
               </div>
-              <Link href="/api-docs">
+              <a href="/api-docs">
                 <div className="mt-5 inline-flex items-center gap-1.5 text-sm text-blue-400 hover:text-blue-300 transition-colors cursor-pointer">
                   View API docs <ArrowRight className="w-3.5 h-3.5" />
                 </div>
-              </Link>
+              </a>
             </div>
           </Reveal>
 
@@ -438,7 +438,7 @@ export default function Showcase() {
             No sign-up. No uploads. No ads. Just tools that work.
           </p>
           <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link href="/">
+            <a href="/">
               <motion.span
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.97 }}
@@ -446,12 +446,12 @@ export default function Showcase() {
               >
                 Open Toolora <ArrowRight className="w-4 h-4" />
               </motion.span>
-            </Link>
-            <Link href="/pricing">
+            </a>
+            <a href="/pricing">
               <span className="text-sm text-white/50 hover:text-white transition-colors cursor-pointer">
                 View API pricing →
               </span>
-            </Link>
+            </a>
           </div>
         </Reveal>
       </section>
@@ -460,9 +460,9 @@ export default function Showcase() {
       <footer className="border-t border-white/5 py-8 px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-white/30">
         <span>Toolora · toolora.dev · Free browser tools, forever</span>
         <div className="flex gap-6">
-          <Link href="/privacy"><span className="hover:text-white/60 transition-colors cursor-pointer">Privacy</span></Link>
-          <Link href="/terms"><span className="hover:text-white/60 transition-colors cursor-pointer">Terms</span></Link>
-          <Link href="/blog"><span className="hover:text-white/60 transition-colors cursor-pointer">Blog</span></Link>
+          <a href="/privacy"><span className="hover:text-white/60 transition-colors cursor-pointer">Privacy</span></a>
+          <a href="/terms"><span className="hover:text-white/60 transition-colors cursor-pointer">Terms</span></a>
+          <a href="/blog"><span className="hover:text-white/60 transition-colors cursor-pointer">Blog</span></a>
         </div>
       </footer>
     </div>
