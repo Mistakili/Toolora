@@ -19,6 +19,9 @@ import Pricing from "@/pages/Pricing";
 import ApiKeys from "@/pages/ApiKeys";
 import Blog from "@/pages/Blog";
 import BlogPost from "@/pages/BlogPost";
+import ConverterPage from "@/pages/ConverterPage";
+import GlossaryPage from "@/pages/GlossaryPage";
+import GlossaryIndex from "@/pages/GlossaryIndex";
 import NotFound from "@/pages/not-found";
 
 const queryClient = new QueryClient({
@@ -47,6 +50,9 @@ function Router() {
         <Route path="/blog/:slug" component={BlogPost} />
         <Route path="/tools/:category" component={CategoryView} />
         <Route path="/tools/:category/:slug" component={ToolView} />
+        <Route path="/convert/:slug" component={ConverterPage} />
+        <Route path="/glossary" component={GlossaryIndex} />
+        <Route path="/glossary/:slug" component={GlossaryPage} />
         <Route component={NotFound} />
       </Switch>
     </AppLayout>

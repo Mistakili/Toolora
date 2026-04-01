@@ -268,6 +268,100 @@ for (const post of BLOG_POSTS) {
 const totalBlogPages = BLOG_POSTS.length + 1;
 console.log(`✅ Pre-rendered ${totalBlogPages} blog pages (list + ${BLOG_POSTS.length} posts).`);
 
+// ── Converter pages ───────────────────────────────────────────────────────────
+const CONVERTERS = [
+  { slug: "jpg-to-png",       title: "JPG to PNG Converter — Free, Online, No Upload",                   description: "Convert JPG images to PNG format instantly in your browser. No upload, no server, 100% private. Supports batch conversion." },
+  { slug: "png-to-jpg",       title: "PNG to JPG Converter — Free, Online, No Upload",                   description: "Convert PNG images to JPG/JPEG format instantly in your browser. 100% private, no upload required. Reduce file size without losing quality." },
+  { slug: "webp-to-jpg",      title: "WebP to JPG Converter — Free Online, No Upload",                   description: "Convert WebP images to JPG format instantly in your browser. No signup, no upload. Works offline." },
+  { slug: "jpg-to-webp",      title: "JPG to WebP Converter — Free Online, Reduce Image Size",           description: "Convert JPG images to WebP format online for free. WebP files are 25–35% smaller than JPG. No upload, no server." },
+  { slug: "base64-encode",    title: "Base64 Encoder Online — Free, No Upload",                          description: "Encode text or files to Base64 format instantly in your browser. No upload, no server, instant results. Free Base64 encoding tool." },
+  { slug: "base64-decode",    title: "Base64 Decoder Online — Free, Instant, No Upload",                 description: "Decode Base64 strings back to readable text or download as a file. Free, instant, runs in your browser." },
+  { slug: "url-encode",       title: "URL Encoder Online — Free, Instant, No Upload",                    description: "Encode strings for safe use in URLs. Converts spaces and special characters to percent-encoded format. Free, instant, browser-based." },
+  { slug: "url-decode",       title: "URL Decoder Online — Free, Instant, No Upload",                    description: "Decode percent-encoded URLs back to readable text. Converts %20, %3D, and all other percent-encoded characters instantly." },
+  { slug: "json-format",      title: "JSON Formatter Online — Free, Validate & Beautify JSON",           description: "Format, validate, and beautify JSON online for free. Syntax highlighting, error detection, collapsible tree view. Runs in your browser." },
+  { slug: "json-minify",      title: "JSON Minifier Online — Free, Remove Whitespace from JSON",         description: "Minify JSON by removing all whitespace and line breaks. Reduce JSON payload size for APIs and config files. Free, instant." },
+  { slug: "csv-to-json",      title: "CSV to JSON Converter Online — Free, Instant, No Upload",          description: "Convert CSV files to JSON format instantly in your browser. Supports headers, custom delimiters, and nested output." },
+  { slug: "md5-hash",         title: "MD5 Hash Generator Online — Free, Instant, No Upload",             description: "Generate MD5 hashes from any text or file in your browser. Instant, free, no upload required. Supports MD5, SHA-1, SHA-256, and SHA-512." },
+  { slug: "sha256-hash",      title: "SHA-256 Hash Generator Online — Free, Instant",                    description: "Generate SHA-256 hashes from text or files for free. Browser-based, private, instant. Also supports MD5, SHA-1, and SHA-512." },
+  { slug: "text-to-qr",       title: "Text to QR Code Generator — Free, No Watermark",                  description: "Generate QR codes from any text, URL, or data instantly. Free, no watermark, downloadable PNG. No sign-up required." },
+  { slug: "unix-timestamp",   title: "Unix Timestamp Converter Online — Free, Instant",                  description: "Convert Unix timestamps to human-readable dates and vice versa. Supports seconds and milliseconds. Free, instant, no upload." },
+  { slug: "uuid-generator",   title: "UUID Generator Online — Free, v4 UUID, Bulk Generate",             description: "Generate random v4 UUIDs instantly. Bulk generate, copy to clipboard, free. No sign-up. Browser-based UUID generation." },
+  { slug: "password-generator",title:"Password Generator Online — Free, Strong, No Signup",             description: "Generate strong, random passwords instantly. Choose length, include symbols, numbers, uppercase. Free, no account, browser-based." },
+  { slug: "hex-to-rgb",       title: "HEX to RGB Color Converter — Free Online Tool",                    description: "Convert HEX color codes to RGB values instantly. Also supports HSL output. Free, browser-based color conversion tool." },
+  { slug: "rgb-to-hex",       title: "RGB to HEX Color Converter — Free Online Tool",                    description: "Convert RGB color values to HEX color codes instantly. Also supports HSL. Free, browser-based, no upload required." },
+  { slug: "word-count",       title: "Word Counter Online — Free, Instant, Characters & Reading Time",   description: "Count words, characters, sentences, and estimate reading time instantly. Free online word counter — no upload, works offline." },
+  { slug: "markdown-preview", title: "Markdown Preview Online — Free, Live, No Upload",                  description: "Preview Markdown as rendered HTML in real time. Supports GitHub-flavored Markdown, tables, code blocks. Free, browser-based." },
+];
+
+for (const conv of CONVERTERS) {
+  const dir = path.join(DIST, "convert", conv.slug);
+  fs.mkdirSync(dir, { recursive: true });
+  const html = template
+    .replace(/<title>[^<]*<\/title>/, `<title>${conv.title}</title>`)
+    .replace(/<meta name="description"[^>]*>/, `<meta name="description" content="${conv.description}">`)
+    .replace(/<link rel="canonical"[^>]*>/, `<link rel="canonical" href="${BASE_URL}/convert/${conv.slug}">`)
+    .replace(/<meta property="og:title"[^>]*>/, `<meta property="og:title" content="${conv.title}">`)
+    .replace(/<meta property="og:description"[^>]*>/, `<meta property="og:description" content="${conv.description}">`)
+    .replace(/<meta property="og:url"[^>]*>/, `<meta property="og:url" content="${BASE_URL}/convert/${conv.slug}">`);
+  fs.writeFileSync(path.join(dir, "index.html"), html);
+}
+console.log(`✅ Pre-rendered ${CONVERTERS.length} converter pages.`);
+
+// ── Glossary pages ────────────────────────────────────────────────────────────
+const GLOSSARY_TERMS = [
+  { slug: "base64",       title: "What is Base64? Definition, Examples & Use Cases — Toolora Glossary",             description: "Base64 is a binary-to-text encoding scheme that represents binary data as ASCII characters. Learn how it works, when to use it, and see examples." },
+  { slug: "jwt",          title: "What is a JWT? JSON Web Token Explained with Examples — Toolora Glossary",         description: "A JWT (JSON Web Token) is a compact, URL-safe token for securely transmitting claims. Learn the structure, how it works, and when to use it." },
+  { slug: "url-encoding", title: "What is URL Encoding? Percent Encoding Explained — Toolora Glossary",              description: "URL encoding converts special characters in URLs to a safe format. Learn what it is, why it's needed, and see examples." },
+  { slug: "json",         title: "What is JSON? JavaScript Object Notation Explained — Toolora Glossary",            description: "JSON is a lightweight data interchange format. Learn the syntax, data types, use cases, and how to work with JSON in JavaScript and APIs." },
+  { slug: "hash",         title: "What is a Hash Function? Cryptographic Hashing Explained — Toolora Glossary",      description: "A hash function maps data of arbitrary size to a fixed-size output. Learn how MD5, SHA-256, and other algorithms work." },
+  { slug: "qr-code",      title: "What is a QR Code? How QR Codes Work Explained — Toolora Glossary",               description: "QR codes are 2D barcodes that store text, URLs, and data. Learn how they work, what they can store, and how to generate them free." },
+  { slug: "regex",        title: "What is a Regular Expression (Regex)? Explained with Examples — Toolora Glossary", description: "A regular expression (regex) is a pattern for matching text. Learn regex syntax, common patterns, and how to use it in JavaScript and Python." },
+  { slug: "unicode",      title: "What is Unicode? The Universal Character Standard Explained — Toolora Glossary",   description: "Unicode is the universal character encoding standard that covers 140,000+ characters. Learn how it works and how UTF-8 relates to it." },
+  { slug: "ascii",        title: "What is ASCII? The ASCII Character Table Explained — Toolora Glossary",            description: "ASCII is a 7-bit character encoding standard. Learn the ASCII table, printable characters, and how it relates to Unicode." },
+  { slug: "pdf",          title: "What is a PDF? Portable Document Format Explained — Toolora Glossary",             description: "PDF is Adobe's open file format for fixed-layout documents. Learn how PDFs work, their structure, and how to process them programmatically." },
+];
+
+// Pre-render glossary index
+const glossaryIndexDir = path.join(DIST, "glossary");
+fs.mkdirSync(glossaryIndexDir, { recursive: true });
+const glossaryIndexHtml = template
+  .replace(/<title>[^<]*<\/title>/, `<title>Developer &amp; Tech Glossary — Toolora</title>`)
+  .replace(/<meta name="description"[^>]*>/, `<meta name="description" content="Free developer glossary explaining Base64, JWT, URL encoding, JSON, regex, hashing, Unicode, and more. Clear definitions with examples.">`)
+  .replace(/<link rel="canonical"[^>]*>/, `<link rel="canonical" href="${BASE_URL}/glossary">`)
+  .replace(/<meta property="og:url"[^>]*>/, `<meta property="og:url" content="${BASE_URL}/glossary">`);
+fs.writeFileSync(path.join(glossaryIndexDir, "index.html"), glossaryIndexHtml);
+
+for (const term of GLOSSARY_TERMS) {
+  const dir = path.join(DIST, "glossary", term.slug);
+  fs.mkdirSync(dir, { recursive: true });
+  const html = template
+    .replace(/<title>[^<]*<\/title>/, `<title>${term.title}</title>`)
+    .replace(/<meta name="description"[^>]*>/, `<meta name="description" content="${term.description}">`)
+    .replace(/<link rel="canonical"[^>]*>/, `<link rel="canonical" href="${BASE_URL}/glossary/${term.slug}">`)
+    .replace(/<meta property="og:title"[^>]*>/, `<meta property="og:title" content="${term.title}">`)
+    .replace(/<meta property="og:description"[^>]*>/, `<meta property="og:description" content="${term.description}">`)
+    .replace(/<meta property="og:url"[^>]*>/, `<meta property="og:url" content="${BASE_URL}/glossary/${term.slug}">`);
+  fs.writeFileSync(path.join(dir, "index.html"), html);
+}
+console.log(`✅ Pre-rendered ${GLOSSARY_TERMS.length + 1} glossary pages (index + ${GLOSSARY_TERMS.length} terms).`);
+
+const converterUrls = CONVERTERS.map(c => `  <url>
+    <loc>${BASE_URL}/convert/${c.slug}</loc>
+    <lastmod>${TODAY}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>`).join("\n");
+
+const glossaryUrls = [
+  `  <url>\n    <loc>${BASE_URL}/glossary</loc>\n    <lastmod>${TODAY}</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.7</priority>\n  </url>`,
+  ...GLOSSARY_TERMS.map(t => `  <url>
+    <loc>${BASE_URL}/glossary/${t.slug}</loc>
+    <lastmod>${TODAY}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>`),
+].join("\n");
+
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
@@ -305,8 +399,11 @@ ${blogListUrl}
 ${blogPostUrls}
 ${categoryUrls}
 ${toolUrls}
+${converterUrls}
+${glossaryUrls}
 </urlset>
 `;
 
 fs.writeFileSync(sitemapPath, sitemap);
-console.log(`✅ Sitemap regenerated with ${TOOLS.length + CATEGORIES.length + 5 + totalBlogPages} URLs and today's lastmod (${TODAY}).`);
+const totalUrls = TOOLS.length + CATEGORIES.length + 5 + totalBlogPages + CONVERTERS.length + GLOSSARY_TERMS.length + 1;
+console.log(`✅ Sitemap regenerated with ${totalUrls} URLs and today's lastmod (${TODAY}).`);

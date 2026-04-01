@@ -6,8 +6,18 @@ import { eq, desc } from "drizzle-orm";
 
 const router: IRouter = Router();
 
+let popularCache: { data: unknown; expiresAt: number } | null = null;
+const POPULAR_CACHE_TTL_MS = 5 * 60 * 1000;
+
 router.get("/popular", async (req, res) => {
   try {
+    const now = Date.now();
+    if (popularCache && now < popularCache.expiresAt) {
+      res.setHeader("X-Cache", "HIT");
+      res.json(popularCache.data);
+      return;
+    }
+
     const rows = await db
       .select()
       .from(toolUsageTable)
@@ -17,6 +27,9 @@ router.get("/popular", async (req, res) => {
     const data = GetPopularToolsResponse.parse({
       tools: rows.map((r) => ({ slug: r.slug, usageCount: r.usageCount })),
     });
+
+    popularCache = { data, expiresAt: now + POPULAR_CACHE_TTL_MS };
+    res.setHeader("X-Cache", "MISS");
     res.json(data);
   } catch (err) {
     req.log.error({ err }, "Failed to fetch popular tools");

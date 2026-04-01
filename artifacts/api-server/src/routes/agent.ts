@@ -345,6 +345,20 @@ router.get("/stats", async (req: Request, res: Response) => {
   }
 });
 
+// ─── GET /api/agent/pdf/text — endpoint info (fixes 404 for probing agents) ───
+router.get("/pdf/text", (req: Request, res: Response) => {
+  res.json({
+    endpoint: "/api/agent/pdf/text",
+    method: "POST",
+    description: "Extract all text content from a PDF file. Returns clean text, page count, word count, and character count.",
+    auth: "Requires API key (Authorization: Bearer sk_toolora_...) or x402 payment header.",
+    contentType: "multipart/form-data",
+    fields: { file: "PDF file (required)" },
+    response: { text: "string", pages: "number", words: "number", chars: "number", info: "object" },
+    docs: "https://toolora.dev/api-docs",
+  });
+});
+
 // ─── POST /api/agent/pdf/text ─────────────────────────────────────────────────
 
 router.post(
