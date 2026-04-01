@@ -2,7 +2,7 @@ import {
   FileText, Type, Hash, Shield, KeyRound, QrCode, ArrowLeftRight, 
   Palette, Image as ImageIcon, FileJson, Clock, Link as LinkIcon, 
   Scissors, Minimize, SplitSquareHorizontal, Layers, Fingerprint, RefreshCcw,
-  BookOpen
+  BookOpen, ListOrdered, Code2, CodeXml
 } from "lucide-react";
 
 export type ToolCategory = "pdf" | "image" | "text" | "developer" | "productivity";
@@ -122,6 +122,31 @@ export const TOOLS: ToolDef[] = [
     description: "Convert Unix timestamps to human-readable dates.",
     seoTitle: "Free Unix Timestamp Converter — Convert Epoch Time Online | Toolora",
     seoDescription: "Convert Unix timestamps to human-readable dates and times. See ISO 8601, UTC, relative time and more. Free online epoch timestamp converter.",
+  },
+
+  {
+    id: "jwt-decoder", name: "JWT Decoder", slug: "jwt-decoder", category: "developer", isPopular: true, icon: KeyRound,
+    description: "Decode and inspect JSON Web Tokens — header, payload, and expiry.",
+    seoTitle: "Free JWT Decoder — Decode & Inspect JSON Web Tokens Online | Toolora",
+    seoDescription: "Decode any JWT token and inspect the header, payload, and signature. Shows expiry status and claims. 100% private — your token never leaves your browser.",
+  },
+  {
+    id: "regex-tester", name: "Regex Tester", slug: "regex-tester", category: "developer", isPopular: true, icon: Code2,
+    description: "Write and test regular expressions with live match highlighting.",
+    seoTitle: "Free Regex Tester — Test Regular Expressions Online with Live Highlighting | Toolora",
+    seoDescription: "Test regex patterns against any text with live match highlighting. Supports flags (g, i, m, s), shows all matches and capture groups. Free online regex tester.",
+  },
+  {
+    id: "text-sorter", name: "Text Sorter", slug: "text-sorter", category: "text", icon: ListOrdered,
+    description: "Sort, deduplicate, shuffle, and clean lines of text.",
+    seoTitle: "Free Text Sorter — Sort, Remove Duplicates & Clean Lines Online | Toolora",
+    seoDescription: "Sort lines A→Z or Z→A, remove duplicates, remove empty lines, reverse, shuffle, trim whitespace, or number lines. Free online text line sorter tool.",
+  },
+  {
+    id: "html-entities", name: "HTML Entities", slug: "html-entities", category: "developer", icon: CodeXml,
+    description: "Encode and decode HTML special characters and entities.",
+    seoTitle: "Free HTML Entity Encoder & Decoder — Encode & Decode HTML Entities Online | Toolora",
+    seoDescription: "Encode special characters to HTML entities or decode entities back to text. Supports named entities, numeric references, and common HTML characters. Free online tool.",
   },
 
   // Image Tools

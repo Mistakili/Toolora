@@ -46,6 +46,11 @@ const TOOLS = [
   // PDF
   { slug: "pdf-merge",         category: "pdf",         name: "Merge PDF",               seoTitle: "Free PDF Merger — Combine & Merge PDF Files Online",                    seoDescription: "Merge multiple PDF files into one document. Drag, reorder and combine PDFs in seconds. Free online PDF merger — files never leave your browser." },
   { slug: "pdf-split",         category: "pdf",         name: "Split PDF",               seoTitle: "Free PDF Splitter — Split or Extract Pages from PDF Online",            seoDescription: "Split a PDF into individual pages, extract page ranges, or divide every N pages. Free online PDF splitter — fully client-side, nothing uploaded." },
+  // New tools
+  { slug: "jwt-decoder",       category: "developer",   name: "JWT Decoder",             seoTitle: "Free JWT Decoder — Decode & Inspect JSON Web Tokens Online",            seoDescription: "Decode any JWT token and inspect the header, payload, and signature. Shows expiry status and claims. 100% private — your token never leaves your browser." },
+  { slug: "regex-tester",      category: "developer",   name: "Regex Tester",            seoTitle: "Free Regex Tester — Test Regular Expressions Online with Live Highlighting", seoDescription: "Test regex patterns against any text with live match highlighting. Supports flags (g, i, m, s), shows all matches and capture groups. Free online regex tester." },
+  { slug: "text-sorter",       category: "text",        name: "Text Sorter",             seoTitle: "Free Text Sorter — Sort, Remove Duplicates & Clean Lines Online",        seoDescription: "Sort lines A→Z or Z→A, remove duplicates, remove empty lines, reverse, shuffle, trim whitespace, or number lines. Free online text line sorter tool." },
+  { slug: "html-entities",     category: "developer",   name: "HTML Entities",           seoTitle: "Free HTML Entity Encoder & Decoder — Encode & Decode HTML Entities Online", seoDescription: "Encode special characters to HTML entities or decode entities back to text. Supports named entities, numeric references, and common HTML characters." },
 ];
 
 const CATEGORIES = [

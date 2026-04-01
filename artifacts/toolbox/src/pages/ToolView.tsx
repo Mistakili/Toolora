@@ -28,6 +28,10 @@ import ImageCompress from "@/components/tools/ImageCompress";
 import ImageConvert from "@/components/tools/ImageConvert";
 import PdfMerge from "@/components/tools/PdfMerge";
 import PdfSplit from "@/components/tools/PdfSplit";
+import JwtDecoder from "@/components/tools/JwtDecoder";
+import RegexTester from "@/components/tools/RegexTester";
+import TextSorter from "@/components/tools/TextSorter";
+import HtmlEntities from "@/components/tools/HtmlEntities";
 
 // ── Per-category SEO content blocks ─────────────────────────────────────────
 
@@ -151,6 +155,10 @@ const TOOL_COMPONENTS: Record<string, React.ComponentType<any>> = {
   "image-convert": ImageConvert,
   "pdf-merge": PdfMerge,
   "pdf-split": PdfSplit,
+  "jwt-decoder": JwtDecoder,
+  "regex-tester": RegexTester,
+  "text-sorter": TextSorter,
+  "html-entities": HtmlEntities,
 };
 
 export default function ToolView() {
