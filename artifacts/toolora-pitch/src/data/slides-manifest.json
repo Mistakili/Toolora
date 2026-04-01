@@ -1,0 +1,58 @@
+[
+  {
+    "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "position": 1,
+    "filepath": "src/pages/slides/Slide01Title.tsx",
+    "title": "Toolora",
+    "description": "Title slide — tools that work entirely in your browser",
+    "speakerNotes": ""
+  },
+  {
+    "id": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
+    "position": 2,
+    "filepath": "src/pages/slides/Slide02Problem.tsx",
+    "title": "The Problem",
+    "description": "Most free tools upload your files to servers you don't control",
+    "speakerNotes": ""
+  },
+  {
+    "id": "c3d4e5f6-a7b8-9012-cdef-123456789012",
+    "position": 3,
+    "filepath": "src/pages/slides/Slide03Solution.tsx",
+    "title": "The Solution",
+    "description": "20+ tools, zero uploads — every tool runs in the browser",
+    "speakerNotes": ""
+  },
+  {
+    "id": "d4e5f6a7-b8c9-0123-defa-234567890123",
+    "position": 4,
+    "filepath": "src/pages/slides/Slide04HowItWorks.tsx",
+    "title": "How It Works",
+    "description": "Browser is the server — WebAssembly + File APIs, no upload",
+    "speakerNotes": ""
+  },
+  {
+    "id": "e5f6a7b8-c9d0-1234-efab-345678901234",
+    "position": 5,
+    "filepath": "src/pages/slides/Slide05ForAgents.tsx",
+    "title": "For AI Agents",
+    "description": "Agent API with x402 micropayments + free MCP server",
+    "speakerNotes": ""
+  },
+  {
+    "id": "f6a7b8c9-d0e1-2345-fabc-456789012345",
+    "position": 6,
+    "filepath": "src/pages/slides/Slide06Traction.tsx",
+    "title": "Traction",
+    "description": "Week 1 stats — 20+ tools, 0 uploads, 12 MCP tools, 3 continents",
+    "speakerNotes": ""
+  },
+  {
+    "id": "a7b8c9d0-e1f2-3456-abcd-567890123456",
+    "position": 7,
+    "filepath": "src/pages/slides/Slide07Closing.tsx",
+    "title": "Built on Replit",
+    "description": "One week. 20+ tools. With AI. toolora.dev",
+    "speakerNotes": ""
+  }
+]

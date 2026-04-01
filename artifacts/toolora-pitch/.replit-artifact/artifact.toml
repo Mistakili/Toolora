@@ -1,0 +1,31 @@
+kind = "slides"
+previewPath = "/toolora-pitch/"
+title = "Toolora Pitch Deck"
+version = "1.0.0"
+id = "artifacts/toolora-pitch"
+router = "path"
+
+[[integratedSkills]]
+name = "slides"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/toolora-pitch/" ]
+localPort = 24132
+
+[services.development]
+run = "pnpm --filter @workspace/toolora-pitch run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/toolora-pitch", "run", "build" ]
+publicDir = "artifacts/toolora-pitch/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "24132"
+BASE_PATH = "/toolora-pitch/"
