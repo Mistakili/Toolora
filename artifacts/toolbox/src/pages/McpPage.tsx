@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { Copy, Check, Zap, Terminal, Bot, Code2, FileText, QrCode, Hash, Lock, Globe, Binary, Braces, FileJson, Type } from "lucide-react";
+import { useState } from "react";
+import { Copy, Check, Zap, Terminal, Bot, FileText, QrCode, Lock, Globe, FileJson, Type, Mic, AlignLeft } from "lucide-react";
 import { useSEO } from "@/hooks/useSEO";
 
 function CopyButton({ text }: { text: string }) {
@@ -35,18 +35,18 @@ function CodeBlock({ code, language = "json" }: { code: string; language?: strin
 }
 
 const MCP_TOOLS = [
-  { icon: FileText,  name: "extract_pdf_text",    desc: "Extract all text from a PDF (base64 input). Returns content, page count, word count." },
-  { icon: FileText,  name: "merge_pdfs",           desc: "Merge 2–20 PDFs into one. All files provided as base64." },
-  { icon: FileText,  name: "split_pdf",            desc: "Split a PDF into individual pages or page ranges." },
-  { icon: QrCode,    name: "generate_qr_code",     desc: "Generate a QR code PNG for any URL or text. Returns base64 image." },
-  { icon: QrCode,    name: "read_qr_code",         desc: "Decode a QR code from an image. Returns the embedded text/URL." },
-  { icon: Terminal,  name: "run_ocr",              desc: "Extract text from any image using Tesseract OCR. Supports 50+ languages." },
-  { icon: FileText,  name: "convert_docx_to_text", desc: "Extract plain text or Markdown from a .docx Word file." },
-  { icon: FileText,  name: "convert_excel_to_json",desc: "Parse .xlsx files and return each sheet as structured JSON." },
-  { icon: Bot,       name: "ask_openai",           desc: "Send a prompt to GPT-4o and get a completion. Requires OPENAI_API_KEY in your environment." },
-  { icon: Globe,     name: "fetch_url",            desc: "Fetch any public URL and return the HTML or JSON content." },
-  { icon: Hash,      name: "generate_hash",        desc: "Generate MD5, SHA-1, SHA-256, or SHA-512 hash of any string." },
-  { icon: QrCode,    name: "convert_image",        desc: "Convert images between PNG, JPEG, WebP, and AVIF formats." },
+  { icon: FileText,  name: "extract_pdf_text",   desc: "Extract all plain text from a PDF (base64 input). Returns content, page count, word count." },
+  { icon: FileText,  name: "merge_pdfs",         desc: "Merge 2–20 PDFs into one document. Each file provided as base64." },
+  { icon: QrCode,    name: "generate_qr_code",   desc: "Generate a QR code PNG for any URL or text. Returns base64 image." },
+  { icon: FileJson,  name: "csv_to_json",        desc: "Convert a CSV string into a JSON array of objects. First row = column headers." },
+  { icon: FileJson,  name: "json_to_csv",        desc: "Convert a JSON array of objects into a CSV string." },
+  { icon: Terminal,  name: "ocr_image",          desc: "Extract text from any image using OCR. Supports 50+ languages via Tesseract." },
+  { icon: FileText,  name: "extract_docx_text",  desc: "Extract all plain text from a Microsoft Word (.docx) file." },
+  { icon: FileText,  name: "excel_to_json",      desc: "Parse .xlsx/.xls/.csv files and return all sheets as structured JSON." },
+  { icon: Mic,       name: "transcribe_audio",   desc: "Transcribe speech from an audio file using OpenAI Whisper (gpt-4o-mini-transcribe)." },
+  { icon: Globe,     name: "scrape_url_js",      desc: "Fetch and extract content from pages that require JavaScript rendering (SPAs)." },
+  { icon: AlignLeft, name: "count_words",        desc: "Count words, characters, sentences, and paragraphs. Returns reading time estimate." },
+  { icon: Globe,     name: "read_url",           desc: "Fetch any public URL and return its main readable content as plain text." },
 ];
 
 const MCP_ENDPOINT = "https://toolora.replit.app/api/mcp";
@@ -103,7 +103,7 @@ const NODE_EXAMPLE = `import fetch from "node-fetch";
 
 const MCP = "https://toolora.replit.app/api/mcp";
 
-// Call the generate_hash tool
+// Call the count_words tool
 const res = await fetch(MCP, {
   method: "POST",
   headers: { "Content-Type": "application/json" },
@@ -112,15 +112,15 @@ const res = await fetch(MCP, {
     method: "tools/call",
     id: 1,
     params: {
-      name: "generate_hash",
-      arguments: { text: "Hello, world!", algorithm: "sha256" }
+      name: "count_words",
+      arguments: { text: "Hello, world! This is a Toolora MCP test." }
     }
   })
 });
 
 const { result } = await res.json();
 console.log(result.content[0].text);
-// → { "algorithm": "sha256", "hash": "315f5bdb..." }`;
+// → { "words": 8, "chars": 41, "sentences": 2, "paragraphs": 1, "readingTimeMin": 1 }`;
 
 export default function McpPage() {
   useSEO({

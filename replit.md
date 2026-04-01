@@ -52,7 +52,7 @@ Every package extends `tsconfig.base.json` which sets `composite: true`. The roo
 
 ### MCP Server
 
-Exposed at `GET|POST /api/mcp` on the API server. Implements MCP Streamable HTTP transport (2025-03-26). 12 tools: `extract_pdf_text`, `merge_pdfs`, `split_pdf`, `generate_qr_code`, `read_qr_code`, `run_ocr`, `convert_docx_to_text`, `convert_excel_to_json`, `ask_openai`, `fetch_url`, `generate_hash`, `convert_image`. No auth required.
+Exposed at `GET|POST /api/mcp` on the API server. Implements MCP Streamable HTTP transport (2025-03-26). 12 tools: `extract_pdf_text`, `merge_pdfs`, `generate_qr_code`, `csv_to_json`, `json_to_csv`, `ocr_image`, `extract_docx_text`, `excel_to_json`, `transcribe_audio`, `scrape_url_js`, `count_words`, `read_url`. No auth required.
 
 **MCP Promotion Page**: `/mcp` — dedicated page with Quick Start tabs for Claude Desktop/Cursor/Cline (copy-paste JSON configs), list of all 12 tools, Python/Node.js direct API usage examples, FAQ, and CTA. Listed in footer and mobile nav.
 
