@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { marked } from "marked";
 import { Textarea } from "@/components/ui/textarea";
+import ApiUpgradeBanner from "@/components/shared/ApiUpgradeBanner";
 
 const DEFAULT_MD = `# Markdown Previewer
 ## Instantly render your markdown
@@ -35,24 +36,27 @@ export default function MarkdownPreview() {
   }, [markdown]);
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 h-full min-h-[600px] -m-2">
-      <div className="flex flex-col border-r border-border pr-2">
-        <div className="bg-muted/50 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground rounded-t-xl">Editor</div>
-        <Textarea 
-          value={markdown}
-          onChange={(e) => setMarkdown(e.target.value)}
-          className="flex-1 rounded-none rounded-b-xl border-0 focus-visible:ring-0 resize-none font-mono text-sm p-4 bg-background"
-          spellCheck={false}
-        />
+    <>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 h-full min-h-[600px] -m-2">
+        <div className="flex flex-col border-r border-border pr-2">
+          <div className="bg-muted/50 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground rounded-t-xl">Editor</div>
+          <Textarea 
+            value={markdown}
+            onChange={(e) => setMarkdown(e.target.value)}
+            className="flex-1 rounded-none rounded-b-xl border-0 focus-visible:ring-0 resize-none font-mono text-sm p-4 bg-background"
+            spellCheck={false}
+          />
+        </div>
+        
+        <div className="flex flex-col pl-2">
+          <div className="bg-primary/5 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-primary rounded-t-xl">Preview</div>
+          <div 
+            className="flex-1 p-6 overflow-y-auto bg-card rounded-b-xl prose prose-slate dark:prose-invert max-w-none"
+            dangerouslySetInnerHTML={{ __html: html }}
+          />
+        </div>
       </div>
-      
-      <div className="flex flex-col pl-2">
-        <div className="bg-primary/5 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-primary rounded-t-xl">Preview</div>
-        <div 
-          className="flex-1 p-6 overflow-y-auto bg-card rounded-b-xl prose prose-slate dark:prose-invert max-w-none"
-          dangerouslySetInnerHTML={{ __html: html }}
-        />
-      </div>
-    </div>
+      <ApiUpgradeBanner variant="markdown-embed" />
+    </>
   );
 }

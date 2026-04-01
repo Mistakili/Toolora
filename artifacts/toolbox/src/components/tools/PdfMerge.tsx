@@ -2,6 +2,7 @@ import { useState, useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 import { Button } from "@/components/ui/button";
 import { FileText, X, Download, MoveUp, MoveDown, Loader2 } from "lucide-react";
+import ApiUpgradeBanner from "@/components/shared/ApiUpgradeBanner";
 
 interface PdfFile {
   id: string;
@@ -141,6 +142,8 @@ export default function PdfMerge() {
       {files.length < 2 && files.length > 0 && (
         <p className="text-sm text-muted-foreground text-center">Add at least 2 PDFs to merge.</p>
       )}
+
+      <ApiUpgradeBanner variant="pdf-merge" />
     </div>
   );
 }

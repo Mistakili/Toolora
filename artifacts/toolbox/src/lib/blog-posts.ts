@@ -1088,6 +1088,86 @@ Be specific. Quote exact copy where relevant.</code></pre>
 <p>For one-off research sessions, the free MCP server is all you need. <a href="/mcp">Get the setup instructions and full tool list here.</a></p>
     `.trim(),
   },
+  {
+    slug: "resize-images-without-uploading",
+    title: "How to Resize Images Without Uploading Them (Free, Private, Instant)",
+    description: "Most image resizers send your photos to a remote server. Here's how to resize images entirely in your browser — no uploads, no accounts, no waiting.",
+    date: "2026-04-01",
+    readTime: "4 min read",
+    category: "Privacy",
+    content: `
+<p>If you search "resize image online free," you'll find dozens of tools. Most of them work the same way: you upload your photo to their server, their server resizes it, and they send you the result back. It's convenient, but your image just traveled to a stranger's computer.</p>
+
+<p>For holiday photos or random screenshots, that's probably fine. But if you're resizing product images, client work, medical scans, screenshots of sensitive documents, or anything you'd rather not share — that upload is a real exposure.</p>
+
+<p>There's a better way. <a href="/tools/image/image-resize">Toolora's image resizer</a> does everything locally in your browser. Your image never leaves your device.</p>
+
+<h2>How browser-side image resizing works</h2>
+
+<p>Modern browsers include a full rendering engine — the same one that draws web pages. That engine can also draw images programmatically using the <code>canvas</code> API.</p>
+
+<p>The process is straightforward:</p>
+<ol>
+  <li>Your image file is read into memory by the browser (never sent anywhere)</li>
+  <li>It's drawn onto an off-screen HTML canvas at the new dimensions you specify</li>
+  <li>The canvas is exported as a JPEG or PNG at the quality level you choose</li>
+  <li>The result is offered to you as a download</li>
+</ol>
+
+<p>The entire operation takes milliseconds and happens without a network request. There's no server involved at any point.</p>
+
+<h2>Using the Toolora image resizer</h2>
+
+<p>Open <a href="/tools/image/image-resize">the tool</a> and drop your image in. You'll see:</p>
+
+<ul>
+  <li><strong>Width and height fields</strong> — enter your target dimensions in pixels</li>
+  <li><strong>Lock aspect ratio</strong> — toggled on by default; adjusting width automatically updates height proportionally</li>
+  <li><strong>Quality slider</strong> — for JPEG output, controls the compression level (92 is a good default; drop to 75–80 for smaller files with minimal visual difference)</li>
+</ul>
+
+<p>Hit "Resize Image" and a preview appears immediately. Download when you're happy. If the result isn't right, adjust and click again — it's instant every time.</p>
+
+<h2>What formats are supported?</h2>
+
+<p>You can drop in JPEG, PNG, or WebP images. The output is always JPEG (which covers almost all use cases for resizing). If you need to convert between formats at the same time, the <a href="/tools/image/image-convert">image converter</a> handles JPEG ↔ PNG ↔ WebP conversions with the same zero-upload approach.</p>
+
+<h2>Resizing vs. compressing: when to use which</h2>
+
+<p>These are related but different operations, and confusing them leads to unnecessarily large files:</p>
+
+<ul>
+  <li><strong>Resizing</strong> changes the pixel dimensions. A 4000×3000 photo resized to 1200×900 has fewer pixels and will be a smaller file — but only because there's less image data, not because of compression.</li>
+  <li><strong>Compressing</strong> keeps the dimensions the same but reduces the file size by throwing away fine detail using JPEG compression algorithms.</li>
+</ul>
+
+<p>For web images, doing both often makes sense: resize to the maximum display size you actually need (no point serving a 4K image on a 1200px-wide website), then compress to reduce the file size further. The <a href="/tools/image/image-compress">Toolora image compressor</a> handles the second step, also entirely in your browser.</p>
+
+<h2>Common use cases</h2>
+
+<p><strong>Profile photos and avatars</strong> — most platforms require images under a specific pixel dimension. Resize to exactly what's required in seconds, without sending your photo to a third party.</p>
+
+<p><strong>Product images for e-commerce</strong> — if you're managing a store, you'll resize product photos repeatedly. Doing it locally means your source files stay on your machine.</p>
+
+<p><strong>Email attachments</strong> — full-resolution photos from modern smartphones are 5–15MB. Resizing to 1200px wide typically brings them under 300KB without noticeable quality loss.</p>
+
+<p><strong>Documentation and screenshots</strong> — when writing technical docs or tutorials, screenshots often need to be a specific width to fit a layout. Drop in the screenshot, set the width, done.</p>
+
+<p><strong>Client deliverables</strong> — if you're a designer or photographer, resizing client work locally means their images never touch infrastructure they haven't approved.</p>
+
+<h2>What about tools that claim to be private?</h2>
+
+<p>Some image resizing tools include privacy claims in their marketing but still process files server-side. The way to verify is simple: open your browser's network inspector (F12 → Network tab), load an image, and click resize. If you see an HTTP request going out with your file, it's uploading. If you see nothing — just local processing — it's genuinely client-side.</p>
+
+<p>Toolora passes this test. The source code is also straightforward if you want to inspect it: the resize logic is a canvas draw call with no outbound requests.</p>
+
+<h2>Batch resizing and automation</h2>
+
+<p>The browser tool handles one image at a time, which covers most individual use cases. If you need to resize hundreds of images as part of a build pipeline, a deployment process, or any automated workflow, the <a href="/pricing">Toolora Agent API</a> offers the same image processing capabilities as a REST endpoint you can call from any script or CI system.</p>
+
+<p>For one-off resizing, the <a href="/tools/image/image-resize">free browser tool</a> is all you need. No account, no signup, no upload.</p>
+    `.trim(),
+  },
 ];
 
 export function getBlogPost(slug: string): BlogPost | undefined {

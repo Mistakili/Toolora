@@ -3,6 +3,7 @@ import { useDropzone } from "react-dropzone";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Upload, Download, ImageIcon, Link } from "lucide-react";
+import ApiUpgradeBanner from "@/components/shared/ApiUpgradeBanner";
 
 interface ImageInfo {
   file: File;
@@ -174,6 +175,8 @@ export default function ImageResize() {
               <img src={result} alt="Resized" className="max-h-64 w-auto rounded-xl border border-border" />
             </div>
           )}
+
+          <ApiUpgradeBanner variant="image-resize" />
         </div>
       )}
     </div>

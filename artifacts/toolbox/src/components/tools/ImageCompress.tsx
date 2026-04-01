@@ -2,6 +2,7 @@ import { useState, useRef, useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 import { Button } from "@/components/ui/button";
 import { ImageIcon, Download, ArrowRight } from "lucide-react";
+import ApiUpgradeBanner from "@/components/shared/ApiUpgradeBanner";
 
 export default function ImageCompress() {
   const [original, setOriginal] = useState<{ file: File; url: string } | null>(null);
@@ -131,6 +132,8 @@ export default function ImageCompress() {
               </div>
             </div>
           )}
+
+          <ApiUpgradeBanner variant="image-compress" />
         </div>
       )}
     </div>

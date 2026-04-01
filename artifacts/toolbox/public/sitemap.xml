@@ -503,5 +503,45 @@
       <image:caption>Understand the difference between hashing and encryption and when to use each.</image:caption>
     </image:image>
   </url>
+  <url>
+    <loc>https://toolora.dev/blog/how-to-count-tokens-chatgpt-openai</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://toolora.dev/opengraph.jpg</image:loc>
+      <image:title>How to Count Tokens for ChatGPT and the OpenAI API — Toolora Blog</image:title>
+      <image:caption>Understand token counting for LLMs and how to estimate API costs before you run a prompt.</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://toolora.dev/blog/cron-expression-guide</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://toolora.dev/opengraph.jpg</image:loc>
+      <image:title>Cron Expressions Explained — A Complete Guide — Toolora Blog</image:title>
+      <image:caption>Learn cron syntax, understand every field, and build reliable schedules with examples.</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://toolora.dev/blog/competitor-research-claude-mcp</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://toolora.dev/opengraph.jpg</image:loc>
+      <image:title>How to Research Any Competitor's Website Using Claude and an MCP Server — Toolora Blog</image:title>
+      <image:caption>Use Claude Desktop with the Toolora MCP server to scrape and analyze competitor websites without writing code.</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://toolora.dev/blog/resize-images-without-uploading</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://toolora.dev/opengraph.jpg</image:loc>
+      <image:title>How to Resize Images Without Uploading Them — Toolora Blog</image:title>
+      <image:caption>Resize images entirely in your browser — no uploads, no accounts, no privacy risk.</image:caption>
+    </image:image>
+  </url>
 
 </urlset>
