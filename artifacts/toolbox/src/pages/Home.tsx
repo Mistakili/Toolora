@@ -75,9 +75,12 @@ export default function Home() {
               </p>
               
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <Link href="#categories" className="px-8 py-4 bg-primary text-primary-foreground font-semibold rounded-full shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/40 hover:-translate-y-0.5 transition-all duration-300">
+                <button
+                  onClick={() => document.getElementById("categories")?.scrollIntoView({ behavior: "smooth" })}
+                  className="px-8 py-4 bg-primary text-primary-foreground font-semibold rounded-full shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/40 hover:-translate-y-0.5 transition-all duration-300 cursor-pointer border-0"
+                >
                   Explore Tools
-                </Link>
+                </button>
                 <div className="flex items-center gap-2 text-sm text-muted-foreground px-6 py-4">
                   <Shield className="w-5 h-5 text-green-500" />
                   100% Client-Side Processing
