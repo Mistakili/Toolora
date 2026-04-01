@@ -52,7 +52,9 @@ Every package extends `tsconfig.base.json` which sets `composite: true`. The roo
 
 ### MCP Server
 
-Exposed at `GET|POST /api/mcp` on the API server. Implements MCP Streamable HTTP transport (2025-03-26). 10 tools: `extract_pdf_text`, `count_words`, `read_url`, `extract_pdf_pages`, `merge_pdfs`, `generate_qr_code`, `csv_to_json`, `json_to_csv`, `ocr_image`, `extract_docx_text`, `excel_to_json`. No auth required. Add to Claude Desktop via `mcpServers.toolora.url = https://toolora-api.replit.app/api/mcp`.
+Exposed at `GET|POST /api/mcp` on the API server. Implements MCP Streamable HTTP transport (2025-03-26). 12 tools: `extract_pdf_text`, `merge_pdfs`, `split_pdf`, `generate_qr_code`, `read_qr_code`, `run_ocr`, `convert_docx_to_text`, `convert_excel_to_json`, `ask_openai`, `fetch_url`, `generate_hash`, `convert_image`. No auth required.
+
+**MCP Promotion Page**: `/mcp` — dedicated page with Quick Start tabs for Claude Desktop/Cursor/Cline (copy-paste JSON configs), list of all 12 tools, Python/Node.js direct API usage examples, FAQ, and CTA. Listed in footer and mobile nav.
 
 ### Monetization
 
@@ -62,10 +64,16 @@ Exposed at `GET|POST /api/mcp` on the API server. Implements MCP Streamable HTTP
 - Stripe products seeded in sandbox: `prod_UF0D1YUfACNb5a` (Pro, `price_1TGWCfDcOSNqIPi8ziL5zLJH`) and `prod_UF0Drk7Q7z1eEC` (Team, `price_1TGWCgDcOSNqIPi8KrXcEcCf`)
 - Stripe integration: Replit connector v2 via `getUncachableStripeClient()` in `stripeClient.ts`
 - Routes: `GET /api/stripe/plans`, `POST /api/stripe/checkout`, `POST /api/stripe/portal`, `GET /api/stripe/subscription`
+- **API Credits (one-time)**: `GET /api/stripe/credits/packs`, `POST /api/stripe/credits/checkout`, `GET /api/stripe/credits/balance`
+  - Credit packs: Starter ($5/500 calls), Growth ($20/2500 calls), Scale ($50/10000 calls)
+  - Credits stored in `tooloraUsers.creditsBalance` (integer, never expire)
+  - Webhook (`checkout.session.completed` with `mode=payment`) atomically adds credits to user
+  - API middleware auto-deducts 1 credit when monthly limit hit; responds with `X-Toolora-Credits-Remaining` header
 - Webhook: `POST /api/stripe/webhook` (registered BEFORE `express.json()` to preserve raw body for signature verification)
-- API key middleware: `middlewares/apiKey.ts` — SHA-256 hashing, tier-based rate limiting, monthly usage tracking
+  - Handles both subscription sync (via `getStripeSync()`) AND credit purchase events
+- API key middleware: `middlewares/apiKey.ts` — SHA-256 hashing, tier-based rate limiting, monthly usage tracking, credit fallback
 - API key CRUD: `GET/POST /api/keys`, `DELETE /api/keys/:id`
-- Frontend: `/pricing` page (three-tier, upgrade CTAs, manage subscription link), `/api-keys` page (create/revoke keys, usage bar)
+- Frontend: `/pricing` page (three-tier, upgrade CTAs, credit packs section with `#credits` anchor, manage subscription link), `/api-keys` page (create/revoke keys, usage bar)
 - Seed script: `scripts/src/seed-products.ts`
 
 **x402 per-call payments (existing):**

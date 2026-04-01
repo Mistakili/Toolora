@@ -1,7 +1,7 @@
 import { type Request, type Response, type NextFunction } from "express";
 import crypto from "crypto";
 import { db, apiKeysTable, apiUsageTable, tooloraUsersTable } from "@workspace/db";
-import { eq, and, sql } from "drizzle-orm";
+import { eq, and, sql, gt } from "drizzle-orm";
 
 export const TIER_LIMITS: Record<string, number> = {
   free: 200,
@@ -71,6 +71,7 @@ export async function requireApiKey(req: Request, res: Response, next: NextFunct
       userId: apiKeysTable.userId,
       revoked: apiKeysTable.revoked,
       tier: tooloraUsersTable.tier,
+      creditsBalance: tooloraUsersTable.creditsBalance,
     })
     .from(apiKeysTable)
     .leftJoin(tooloraUsersTable, eq(apiKeysTable.userId, tooloraUsersTable.id))
@@ -84,14 +85,35 @@ export async function requireApiKey(req: Request, res: Response, next: NextFunct
   const tier = keyRow.tier ?? "free";
   const limit = TIER_LIMITS[tier] ?? TIER_LIMITS.free;
   const used = await getMonthlyUsage(keyRow.id);
+  const creditsBalance = keyRow.creditsBalance ?? 0;
 
   if (used >= limit) {
+    // Try to use credits before returning 429
+    if (creditsBalance > 0 && keyRow.userId) {
+      const updated = await db
+        .update(tooloraUsersTable)
+        .set({ creditsBalance: sql`${tooloraUsersTable.creditsBalance} - 1` })
+        .where(and(eq(tooloraUsersTable.id, keyRow.userId), gt(tooloraUsersTable.creditsBalance, 0)))
+        .returning({ newBalance: tooloraUsersTable.creditsBalance });
+
+      if (updated.length > 0) {
+        // Credit successfully deducted — allow the request
+        req.apiKey = { id: keyRow.id, userId: keyRow.userId, tier };
+        res.setHeader("X-Toolora-Credits-Remaining", String(updated[0].newBalance));
+        res.setHeader("X-Toolora-Credits-Used", "1");
+        next();
+        return;
+      }
+    }
+
     res.status(429).json({
-      error: `Monthly limit reached (${used}/${limit} calls). Upgrade your plan.`,
+      error: `Monthly limit reached (${used}/${limit} calls). Upgrade your plan or buy API credits.`,
       tier,
       used,
       limit,
+      creditsBalance,
       upgrade: "https://toolora.dev/pricing",
+      buyCredits: "https://toolora.dev/pricing#credits",
     });
     return;
   }

@@ -1,6 +1,12 @@
 import { useState } from "react";
-import { Check } from "lucide-react";
+import { Check, Zap, Loader2 } from "lucide-react";
 import { useSEO } from "@/hooks/useSEO";
+
+const CREDIT_PACKS = [
+  { id: "starter", label: "Starter",  credits: 500,   price: 5,  perCall: "$0.010", badge: "" },
+  { id: "growth",  label: "Growth",   credits: 2500,  price: 20, perCall: "$0.008", badge: "Best value" },
+  { id: "scale",   label: "Scale",    credits: 10000, price: 50, perCall: "$0.005", badge: "" },
+];
 
 const TIERS = [
   {
@@ -66,6 +72,8 @@ export default function Pricing() {
   const [loading, setLoading] = useState<string | null>(null);
   const [msg, setMsg] = useState<string | null>(null);
   const [portalLoading, setPortalLoading] = useState(false);
+  const [creditLoading, setCreditLoading] = useState<string | null>(null);
+  const [creditMsg, setCreditMsg] = useState<string | null>(null);
 
   useSEO({
     title: "Pricing — Toolora API",
@@ -87,6 +95,30 @@ export default function Pricing() {
       else setMsg(data.error ?? "Could not open billing portal.");
     } catch { setMsg("Could not open billing portal."); }
     finally { setPortalLoading(false); }
+  }
+
+  async function handleBuyCredits(packId: string) {
+    setCreditLoading(packId);
+    setCreditMsg(null);
+    try {
+      const res = await fetch(`${BASE}/api/stripe/credits/checkout`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ packId }),
+      });
+      if (res.status === 401) {
+        window.location.href = `${BASE}/api/auth/login?returnTo=/pricing`;
+        return;
+      }
+      const data = await res.json() as { url?: string; error?: string };
+      if (data.url) window.location.href = data.url;
+      else setCreditMsg(data.error ?? "Something went wrong.");
+    } catch {
+      setCreditMsg("Could not start checkout. Try again.");
+    } finally {
+      setCreditLoading(null);
+    }
   }
 
   async function handleUpgrade(priceId: string | null, tierId: string) {
@@ -199,6 +231,63 @@ export default function Pricing() {
               </button>
             </div>
           ))}
+        </div>
+
+        {/* API Credits — pay-as-you-go */}
+        <div id="credits" className="mt-16">
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-violet-500/30 bg-violet-500/10 text-violet-300 text-sm font-medium mb-3">
+              <Zap className="h-3.5 w-3.5" />
+              API Credits — Pay Once, Never Expire
+            </div>
+            <h2 className="text-2xl font-bold mb-2">Need calls beyond your monthly limit?</h2>
+            <p className="text-zinc-400">
+              Buy a credit pack. Credits roll over forever and are used automatically when you hit your subscription limit.
+            </p>
+          </div>
+
+          {creditMsg && (
+            <div className="mb-4 text-center text-red-400 text-sm bg-red-900/20 border border-red-800 rounded-lg py-3 px-4">
+              {creditMsg}
+            </div>
+          )}
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {CREDIT_PACKS.map((pack) => (
+              <div key={pack.id} className={`relative rounded-2xl border-2 bg-zinc-900 p-6 flex flex-col ${pack.badge ? "border-violet-500" : "border-zinc-700"}`}>
+                {pack.badge && (
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                    <span className="bg-violet-600 text-white text-xs font-semibold px-3 py-1 rounded-full">
+                      {pack.badge}
+                    </span>
+                  </div>
+                )}
+                <div className="mb-4">
+                  <h3 className="text-lg font-semibold mb-1">{pack.label}</h3>
+                  <div className="flex items-end gap-1">
+                    <span className="text-3xl font-bold">${pack.price}</span>
+                    <span className="text-zinc-400 mb-1">one-time</span>
+                  </div>
+                  <p className="text-zinc-500 text-sm mt-1">
+                    {pack.credits.toLocaleString()} API calls · {pack.perCall}/call
+                  </p>
+                </div>
+                <ul className="space-y-1.5 mb-6 flex-1 text-sm text-zinc-300">
+                  <li className="flex items-center gap-2"><Check className="w-4 h-4 text-green-400 shrink-0" />Credits never expire</li>
+                  <li className="flex items-center gap-2"><Check className="w-4 h-4 text-green-400 shrink-0" />Works with any plan</li>
+                  <li className="flex items-center gap-2"><Check className="w-4 h-4 text-green-400 shrink-0" />Auto-used when limit hit</li>
+                </ul>
+                <button
+                  onClick={() => handleBuyCredits(pack.id)}
+                  disabled={creditLoading === pack.id}
+                  className="w-full py-2.5 rounded-lg font-semibold text-sm transition-colors bg-violet-600 hover:bg-violet-500 text-white disabled:opacity-60 flex items-center justify-center gap-2"
+                >
+                  {creditLoading === pack.id ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+                  {creditLoading === pack.id ? "Loading…" : `Buy ${pack.credits.toLocaleString()} credits`}
+                </button>
+              </div>
+            ))}
+          </div>
         </div>
 
         <div className="mt-16 border-t border-zinc-800 pt-10 grid grid-cols-1 md:grid-cols-3 gap-6 text-sm text-zinc-400">

@@ -7,6 +7,9 @@ import router from "./routes";
 import { logger } from "./lib/logger";
 import { RECEIVER_ADDRESS, NETWORK, PRICE_XLM } from "./middlewares/x402";
 import { WebhookHandlers } from "./webhookHandlers";
+import { db, tooloraUsersTable } from "@workspace/db";
+import { eq, sql } from "drizzle-orm";
+import { getUncachableStripeClient } from "./stripeClient";
 
 const app: Express = express();
 
@@ -17,9 +20,37 @@ app.post(
   async (req: Request, res: Response) => {
     const sig = req.headers["stripe-signature"];
     if (!sig) { res.status(400).json({ error: "Missing stripe-signature" }); return; }
+    const signature = Array.isArray(sig) ? sig[0] : sig;
+    const payload = req.body as Buffer;
+
+    // Handle credit purchases (checkout.session.completed with mode=payment)
     try {
-      const signature = Array.isArray(sig) ? sig[0] : sig;
-      await WebhookHandlers.processWebhook(req.body as Buffer, signature);
+      const stripe = await getUncachableStripeClient();
+      const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+      if (webhookSecret) {
+        const event = stripe.webhooks.constructEvent(payload, signature, webhookSecret);
+        if (event.type === "checkout.session.completed") {
+          const session = event.data.object as { mode: string; metadata?: Record<string, string | null> };
+          if (session.mode === "payment" && session.metadata?.credits && session.metadata?.userId) {
+            const credits = parseInt(session.metadata.credits, 10);
+            const userId = session.metadata.userId;
+            if (!isNaN(credits) && credits > 0 && userId) {
+              await db
+                .update(tooloraUsersTable)
+                .set({ creditsBalance: sql`${tooloraUsersTable.creditsBalance} + ${credits}` })
+                .where(eq(tooloraUsersTable.id, userId));
+              logger.info({ userId, credits }, "API credits added via Stripe payment");
+            }
+          }
+        }
+      }
+    } catch (err) {
+      logger.warn({ err }, "Credit webhook handler failed (non-fatal)");
+    }
+
+    // Also run the standard sync handler (handles subscriptions)
+    try {
+      await WebhookHandlers.processWebhook(payload, signature);
       res.status(200).json({ received: true });
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Webhook error";

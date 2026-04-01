@@ -1,6 +1,6 @@
 import { ReactNode, useState, useRef, useEffect } from "react";
 import { Link, useLocation } from "wouter";
-import { Settings2, Sparkles, Moon, Sun, Search, Menu, X, ShieldCheck, History, LogOut, LogIn, Key, CreditCard, LayoutDashboard } from "lucide-react";
+import { Settings2, Sparkles, Moon, Sun, Search, Menu, X, ShieldCheck, History, LogOut, LogIn, Key, CreditCard, LayoutDashboard, Zap } from "lucide-react";
 import { useTheme } from "../ThemeProvider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -211,6 +211,10 @@ export function AppLayout({ children }: { children: ReactNode }) {
               className="flex items-center gap-2 px-3 py-2.5 text-sm rounded-lg hover:bg-muted transition-colors">
               <Sparkles className="w-4 h-4 text-muted-foreground" /> Blog
             </Link>
+            <Link href="/mcp" onClick={() => setIsMenuOpen(false)}
+              className="flex items-center gap-2 px-3 py-2.5 text-sm rounded-lg hover:bg-muted transition-colors">
+              <Zap className="w-4 h-4 text-muted-foreground" /> MCP Server
+            </Link>
           </nav>
 
           {/* Mobile auth */}
@@ -304,6 +308,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
               <li><Link href="/pricing" className="hover:text-foreground transition-colors">Pricing</Link></li>
               <li><Link href="/api-keys" className="hover:text-foreground transition-colors">API Keys</Link></li>
               <li><Link href="/api-docs" className="hover:text-foreground transition-colors">API Docs</Link></li>
+              <li><Link href="/mcp" className="hover:text-foreground transition-colors">MCP Server</Link></li>
               <li><Link href="/extension" className="hover:text-foreground transition-colors">Browser Extension</Link></li>
               <li><Link href="/history" className="hover:text-foreground transition-colors">My Tool History</Link></li>
               <li><Link href="/privacy" className="hover:text-foreground transition-colors">Privacy Policy</Link></li>

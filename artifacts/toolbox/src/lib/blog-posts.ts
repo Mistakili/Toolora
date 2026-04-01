@@ -684,6 +684,233 @@ const storedPassword = await bcrypt.hash(userPassword, 12);</code></pre>
 <p>For Base64 encoding (a related but different concept), use the <a href="/tools/developer/base64">Base64 Encoder/Decoder</a>.</p>
     `.trim(),
   },
+  {
+    slug: "how-to-count-tokens-chatgpt-openai",
+    title: "How to Count Tokens for ChatGPT and OpenAI API (Free, In-Browser)",
+    description: "OpenAI charges by token, not by word or character. Learn exactly how tokenization works, why it matters for your API costs, and how to count tokens before you send a request.",
+    date: "2026-04-01",
+    readTime: "7 min read",
+    category: "Developer Tools",
+    content: `
+<p>If you've ever hit an OpenAI API error that says <code>This model's maximum context length is 128000 tokens</code>, or noticed your API bill was higher than expected, you need to understand tokens.</p>
+
+<p><strong>Tokens are not words.</strong> They're not characters either. They're chunks of text — usually 3–4 characters long — that language models process as individual units. The word <em>chatting</em> might be 1 token; <em>uncharacteristically</em> might be 4.</p>
+
+<h2>Why token counting matters</h2>
+
+<p>OpenAI charges per token, not per request. As of 2025, GPT-4o costs $2.50 per million input tokens and $10 per million output tokens. GPT-4o mini is roughly 15× cheaper. At scale, knowing your average token count per request determines whether your product is profitable.</p>
+
+<p>Token counts also determine whether your prompt fits within a model's context window:</p>
+
+<ul>
+  <li><strong>GPT-4o</strong>: 128,000 token context window</li>
+  <li><strong>GPT-3.5 Turbo</strong>: 16,385 token context window</li>
+  <li><strong>Claude 3.5 Sonnet</strong>: 200,000 token context window</li>
+</ul>
+
+<p>When you exceed the context window, you'll get an error — or the model will silently truncate your prompt, giving you a worse result without warning.</p>
+
+<h2>How OpenAI tokenization actually works</h2>
+
+<p>OpenAI uses <strong>Byte-Pair Encoding (BPE)</strong>, a subword tokenization algorithm. It starts with characters, then merges the most frequent adjacent pairs into a single token, repeating until it has a fixed vocabulary of ~100,000 tokens (for cl100k_base, used by GPT-3.5 and GPT-4).</p>
+
+<p>In practice, this means:</p>
+
+<ul>
+  <li>Common English words like <em>the</em>, <em>is</em>, <em>in</em> are usually 1 token each</li>
+  <li>Longer or rarer words get split: <em>cryptocurrency</em> → <code>crypt</code> + <code>ocurr</code> + <code>ency</code> (3 tokens)</li>
+  <li>Non-English text is usually less efficient — Japanese or Chinese characters use more tokens per character</li>
+  <li>Code is often efficient because keywords like <code>function</code>, <code>return</code>, and <code>class</code> are single tokens</li>
+</ul>
+
+<h2>The rough rules of thumb</h2>
+
+<p>If you're doing quick estimates:</p>
+
+<ul>
+  <li>1 token ≈ 4 characters of English text</li>
+  <li>1 token ≈ ¾ of a word</li>
+  <li>100 tokens ≈ 75 words</li>
+  <li>A single page of English text ≈ 500–600 tokens</li>
+</ul>
+
+<p>These are rough approximations. Punctuation, whitespace, and code all change the ratios. Never rely on character-based estimates for billing or context window calculations.</p>
+
+<h2>How to count tokens accurately (free, in-browser)</h2>
+
+<p>The only reliable way to count tokens is to use the same tokenizer that OpenAI uses. The official library is <a href="https://github.com/openai/tiktoken" target="_blank" rel="noopener">tiktoken</a> (Python), but there's also a JavaScript port called <a href="https://github.com/dqbd/tiktoken" target="_blank" rel="noopener">tiktoken-node</a> and a lightweight browser implementation called <a href="https://github.com/niieani/gpt-tokenizer" target="_blank" rel="noopener">gpt-tokenizer</a>.</p>
+
+<p>You can count tokens for any text right now — no API key, no sign-up — using the <a href="/tools/developer/token-counter">Toolora Token Counter</a>. It runs entirely in your browser using the cl100k_base encoding (used by GPT-3.5-Turbo, GPT-4, and GPT-4o).</p>
+
+<h2>Counting tokens in Python</h2>
+
+<pre><code>import tiktoken
+
+enc = tiktoken.encoding_for_model("gpt-4o")
+tokens = enc.encode("Your prompt text goes here.")
+print(f"Token count: {len(tokens)}")</code></pre>
+
+<p>Install it with <code>pip install tiktoken</code>.</p>
+
+<h2>Counting tokens in JavaScript / Node.js</h2>
+
+<pre><code>import { encode } from "gpt-tokenizer";
+
+const tokens = encode("Your prompt text goes here.");
+console.log(\`Token count: \${tokens.length}\`);</code></pre>
+
+<p>Install with <code>npm install gpt-tokenizer</code>. This uses cl100k_base by default, matching GPT-4 and GPT-4o.</p>
+
+<h2>Counting tokens for chat messages</h2>
+
+<p>For the Chat Completions API (<code>/v1/chat/completions</code>), the total token count includes overhead for each message's role and formatting. OpenAI adds approximately 4 tokens per message for this structure, plus 2 tokens for the reply priming. A simple estimate:</p>
+
+<pre><code>function countChatTokens(messages, tokensPerMessage = 4, tokensPerReply = 2) {
+  let total = tokensPerReply;
+  for (const msg of messages) {
+    total += tokensPerMessage;
+    total += encode(msg.role).length;
+    total += encode(msg.content).length;
+  }
+  return total;
+}</code></pre>
+
+<h2>Common pitfalls</h2>
+
+<p><strong>System prompts add up fast.</strong> A detailed system prompt can be 500–1,000 tokens. Multiply that by every request and it gets expensive.</p>
+
+<p><strong>Few-shot examples are tokens too.</strong> If you include 5 examples in your prompt, each 200 tokens, that's 1,000 tokens before the user even types anything.</p>
+
+<p><strong>Long conversation histories.</strong> If you maintain conversation context, you're resending the entire history every turn. A 20-turn conversation can easily be 5,000+ tokens before the user's latest message.</p>
+
+<p><strong>Images count as tokens too.</strong> With GPT-4o's vision capabilities, a 512×512 image costs approximately 255 tokens in low-detail mode.</p>
+
+<h2>Reducing token usage without sacrificing quality</h2>
+
+<ul>
+  <li><strong>Be concise in system prompts.</strong> Every sentence costs money on every request.</li>
+  <li><strong>Summarize long conversations</strong> instead of maintaining full history.</li>
+  <li><strong>Use structured output formats</strong> — JSON responses tend to use fewer tokens than verbose prose.</li>
+  <li><strong>Choose the right model.</strong> GPT-4o mini handles many tasks as well as GPT-4o at a fraction of the cost.</li>
+</ul>
+
+<h2>Try the Token Counter</h2>
+
+<p>Count tokens for any text — paste in your system prompt, a user message, or an entire conversation — using the <a href="/tools/developer/token-counter">Toolora Token Counter</a>. It shows token count, character count, word count, and estimated cost across different GPT models. Everything runs in your browser; your text is never sent to a server.</p>
+    `.trim(),
+  },
+  {
+    slug: "cron-expression-guide",
+    title: "Cron Expressions Explained: Schedule Any Job in 5 Fields",
+    description: "A complete guide to cron syntax — from the basics of the five time fields to advanced patterns like 'every 15 minutes on weekdays'. With real examples you can copy.",
+    date: "2026-04-01",
+    readTime: "6 min read",
+    category: "Developer Tools",
+    content: `
+<p>Cron is one of those tools that every developer eventually needs and nobody ever fully remembers the syntax for. You know it's <code>* * * * *</code> for something, but which asterisk is minutes? Hours? Day of month?</p>
+
+<p>This guide covers everything: the five fields, special characters, common patterns, and pitfalls to avoid. There's also a <a href="/tools/developer/cron-parser">free cron expression parser</a> that translates any cron expression to plain English and shows you the next five run times.</p>
+
+<h2>The five cron fields</h2>
+
+<pre><code>┌─────────── minute (0–59)
+│ ┌───────── hour (0–23)
+│ │ ┌─────── day of month (1–31)
+│ │ │ ┌───── month (1–12 or JAN–DEC)
+│ │ │ │ ┌─── day of week (0–6 or SUN–SAT, 0=Sunday)
+│ │ │ │ │
+* * * * *</code></pre>
+
+<p>Every scheduled cron job is defined by these five space-separated fields. A <code>*</code> in any field means "every possible value."</p>
+
+<h2>Special characters</h2>
+
+<table>
+  <thead><tr><th>Character</th><th>Meaning</th><th>Example</th></tr></thead>
+  <tbody>
+    <tr><td><code>*</code></td><td>Any / every value</td><td><code>*</code> in hours = every hour</td></tr>
+    <tr><td><code>*/n</code></td><td>Every nth value</td><td><code>*/15</code> in minutes = every 15 minutes</td></tr>
+    <tr><td><code>n,m</code></td><td>List of values</td><td><code>1,15</code> in days = 1st and 15th</td></tr>
+    <tr><td><code>n-m</code></td><td>Range of values</td><td><code>9-17</code> in hours = 9am to 5pm</td></tr>
+    <tr><td><code>n-m/s</code></td><td>Range with step</td><td><code>0-30/5</code> in minutes = every 5 min for the first 30</td></tr>
+  </tbody>
+</table>
+
+<h2>Common cron expressions</h2>
+
+<p>Copy any of these directly:</p>
+
+<pre><code># Every minute
+* * * * *
+
+# Every 5 minutes
+*/5 * * * *
+
+# Every 15 minutes
+*/15 * * * *
+
+# Every hour (at :00)
+0 * * * *
+
+# Every day at midnight
+0 0 * * *
+
+# Every day at 9am
+0 9 * * *
+
+# Every Monday at 9am
+0 9 * * 1
+
+# Every weekday (Monday–Friday) at 9am
+0 9 * * 1-5
+
+# Every weekday at 9am and 5pm
+0 9,17 * * 1-5
+
+# First day of every month at midnight
+0 0 1 * *
+
+# Every Sunday at midnight
+0 0 * * 0
+
+# Every 6 hours
+0 */6 * * *
+
+# At 2:30am every day
+30 2 * * *
+
+# Every 30 minutes during business hours (9am–6pm weekdays)
+*/30 9-18 * * 1-5</code></pre>
+
+<h2>Named shortcuts</h2>
+
+<p>Many cron implementations support shorthand aliases:</p>
+
+<pre><code>@yearly   → 0 0 1 1 *   (once a year, January 1st midnight)
+@monthly  → 0 0 1 * *   (once a month, 1st day at midnight)
+@weekly   → 0 0 * * 0   (once a week, Sunday midnight)
+@daily    → 0 0 * * *   (once a day at midnight)
+@hourly   → 0 * * * *   (once an hour)</code></pre>
+
+<h2>Common pitfalls</h2>
+
+<p><strong>Day of week vs day of month is OR, not AND.</strong> If you set both <code>day of month = 15</code> and <code>day of week = 1</code> (Monday), the job runs on the 15th of every month AND on every Monday — not on Mondays that fall on the 15th.</p>
+
+<p><strong>Timezone matters.</strong> Cron uses the server's local time by default. If your server is in UTC but your users are in New York, "9am" in cron might be 4am for them. Systems like Kubernetes CronJobs let you specify a timezone explicitly.</p>
+
+<p><strong>Overlap risk with slow jobs.</strong> If a job runs every 5 minutes but takes 7 minutes to complete, two instances will be running simultaneously. Use a cron wrapper that prevents overlapping runs, or add a lock mechanism.</p>
+
+<p><strong>Zero vs six for Sunday.</strong> Both <code>0</code> and <code>6</code> mean Sunday in most implementations, but not all. Stick with <code>0</code> for portability.</p>
+
+<p><strong>Months are 1-indexed, minutes and hours are 0-indexed.</strong> January is <code>1</code>, not <code>0</code>. Midnight is <code>0</code>, noon is <code>12</code>.</p>
+
+<h2>Testing your expressions</h2>
+
+<p>Before deploying a cron job, always verify your expression does what you think. Paste it into the <a href="/tools/developer/cron-parser">Toolora Cron Parser</a> — it shows the plain-English description and the next 5 scheduled run times so you can confirm the pattern is correct.</p>
+
+<p>For example, <code>0 9 * * 1-5</code> should parse as "At 9:00 AM, Monday through Friday" — if you see anything different, the expression isn't what you intended.</p>
+    `.trim(),
+  },
 ];
 
 export function getBlogPost(slug: string): BlogPost | undefined {

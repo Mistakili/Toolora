@@ -6,6 +6,7 @@ import { getToolBySlug, getCategoryById, getToolsByCategory } from "@/lib/tools-
 import NotFound from "./not-found";
 import { useTrackToolUsage } from "@workspace/api-client-react";
 import { useSEO } from "@/hooks/useSEO";
+import EmailCaptureBanner from "@/components/EmailCaptureBanner";
 
 // Tool Implementations
 import WordCounter from "@/components/tools/WordCounter";
@@ -276,6 +277,9 @@ export default function ToolView() {
           
           {/* SEO Content Section beneath tool */}
           <SeoContent tool={tool} />
+
+          {/* Email capture */}
+          <EmailCaptureBanner toolName={tool.name} source="tool-page" />
         </div>
 
         {/* Sidebar */}
