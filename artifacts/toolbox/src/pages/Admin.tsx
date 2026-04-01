@@ -6,7 +6,7 @@ import {
 import {
   ChevronRight, Home, BarChart2, Zap, Copy, Check, ExternalLink,
   RefreshCw, Lock, ChevronDown, Monitor, Globe2, Clock, FileText,
-  Smartphone, Tablet, Laptop, TrendingUp,
+  Smartphone, Tablet, Laptop, TrendingUp, Wrench,
 } from "lucide-react";
 import { useAuth } from "@workspace/replit-auth-web";
 
@@ -42,6 +42,11 @@ interface Analytics {
   dailyTrend: { day: string; views: number; sessions: number }[];
   hourlyDist: { hour: number; views: number }[];
   byReferrer: { referrer: string; views: number }[];
+}
+
+interface ToolUsageData {
+  tools: { slug: string; usageCount: number; pct: number }[];
+  total: number;
 }
 
 // ─── Accordion section ────────────────────────────────────────────────────────
@@ -150,6 +155,7 @@ export default function Admin() {
   const { isAuthenticated, login } = useAuth();
   const [agentStats, setAgentStats] = useState<AgentStats | null>(null);
   const [analytics, setAnalytics] = useState<Analytics | null>(null);
+  const [toolUsage, setToolUsage] = useState<ToolUsageData | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [lastRefresh, setLastRefresh] = useState<Date | null>(null);
@@ -161,18 +167,20 @@ export default function Admin() {
     setError(null);
     try {
       const base = getApiBase();
-      const [statsRes, analyticsRes] = await Promise.all([
+      const [statsRes, analyticsRes, toolsRes] = await Promise.all([
         fetch(`${base}/api/admin/stats`, { credentials: "include" }),
         fetch(`${base}/api/admin/analytics`, { credentials: "include" }),
+        fetch(`${base}/api/admin/tools`, { credentials: "include" }),
       ]);
       if (statsRes.status === 401 || analyticsRes.status === 401) {
         setError("Not signed in.");
         return;
       }
       if (!statsRes.ok || !analyticsRes.ok) throw new Error("Server error");
-      const [s, a] = await Promise.all([statsRes.json(), analyticsRes.json()]);
+      const [s, a, t] = await Promise.all([statsRes.json(), analyticsRes.json(), toolsRes.ok ? toolsRes.json() : Promise.resolve(null)]);
       setAgentStats(s as AgentStats);
       setAnalytics(a as Analytics);
+      if (t) setToolUsage(t as ToolUsageData);
       setLastRefresh(new Date());
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : "Failed to load");
@@ -438,7 +446,32 @@ export default function Admin() {
             </div>
           </Section>
 
-          {/* ── Section 6: Referrers ──────────────────────────────────────── */}
+          {/* ── Section 6: Top Tools ─────────────────────────────────────── */}
+          {toolUsage && (
+            <Section icon={Wrench} title="Top Tools" badge={`${toolUsage.total.toLocaleString()} total uses`}>
+              <div className="pt-4 space-y-1.5">
+                {toolUsage.tools.length === 0
+                  ? <p className="text-xs text-muted-foreground">No tool usage yet</p>
+                  : toolUsage.tools.map((t) => (
+                    <div key={t.slug} className="flex items-center gap-3 py-1">
+                      <div className="flex-1 min-w-0">
+                        <span className="font-mono text-xs text-foreground">{t.slug}</span>
+                      </div>
+                      <div className="w-32 shrink-0">
+                        <div className="bg-muted/50 rounded-full h-1.5 overflow-hidden">
+                          <div className="h-full bg-purple-500 rounded-full" style={{ width: `${t.pct}%` }} />
+                        </div>
+                      </div>
+                      <div className="w-20 text-right text-xs font-semibold shrink-0 text-muted-foreground">
+                        {t.usageCount.toLocaleString()} <span className="text-purple-400">({t.pct}%)</span>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            </Section>
+          )}
+
+          {/* ── Section 7: Referrers ──────────────────────────────────────── */}
           {analytics.byReferrer.length > 0 && (
             <Section icon={Globe2} title="Referrers" badge={analytics.byReferrer.length}>
               <div className="pt-4 space-y-1.5">

@@ -1,6 +1,6 @@
 import { Router, type IRouter, type Request, type Response } from "express";
 import { db } from "@workspace/db";
-import { agentPaymentsTable, pageViewsTable, emailSubscribersTable } from "@workspace/db/schema";
+import { agentPaymentsTable, pageViewsTable, emailSubscribersTable, toolUsageTable } from "@workspace/db/schema";
 import { desc, sum, count, sql, ne } from "drizzle-orm";
 import { isAdminSession } from "../lib/auth";
 
@@ -230,6 +230,34 @@ router.get("/analytics", async (req: Request, res: Response) => {
   } catch (err: unknown) {
     req.log.error({ err }, "Admin analytics query failed");
     res.status(500).json({ error: "Could not fetch analytics" });
+  }
+});
+
+// ─── GET /api/admin/tools — tool usage breakdown ─────────────────────────────
+
+router.get("/tools", async (req: Request, res: Response) => {
+  if (!requireAdmin(req, res)) return;
+
+  try {
+    const rows = await db
+      .select()
+      .from(toolUsageTable)
+      .orderBy(desc(toolUsageTable.usageCount))
+      .limit(30);
+
+    const total = rows.reduce((sum, r) => sum + r.usageCount, 0);
+
+    res.json({
+      tools: rows.map((r) => ({
+        slug: r.slug,
+        usageCount: r.usageCount,
+        pct: total > 0 ? Math.round((r.usageCount / total) * 100) : 0,
+      })),
+      total,
+    });
+  } catch (err: unknown) {
+    req.log.error({ err }, "Admin tools query failed");
+    res.status(500).json({ error: "Could not fetch tool usage" });
   }
 });
 
