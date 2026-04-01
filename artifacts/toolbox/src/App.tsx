@@ -22,6 +22,7 @@ import BlogPost from "@/pages/BlogPost";
 import ConverterPage from "@/pages/ConverterPage";
 import GlossaryPage from "@/pages/GlossaryPage";
 import GlossaryIndex from "@/pages/GlossaryIndex";
+import Showcase from "@/pages/Showcase";
 import NotFound from "@/pages/not-found";
 
 const queryClient = new QueryClient({
@@ -35,27 +36,35 @@ const queryClient = new QueryClient({
 
 function Router() {
   return (
-    <AppLayout>
-      <Switch>
-        <Route path="/" component={Home} />
-        <Route path="/privacy" component={Privacy} />
-        <Route path="/terms" component={Terms} />
-        <Route path="/history" component={History} />
-        <Route path="/api-docs" component={ApiDocs} />
-        <Route path="/extension" component={ExtensionPage} />
-        <Route path="/admin" component={Admin} />
-        <Route path="/pricing" component={Pricing} />
-        <Route path="/api-keys" component={ApiKeys} />
-        <Route path="/blog" component={Blog} />
-        <Route path="/blog/:slug" component={BlogPost} />
-        <Route path="/tools/:category" component={CategoryView} />
-        <Route path="/tools/:category/:slug" component={ToolView} />
-        <Route path="/convert/:slug" component={ConverterPage} />
-        <Route path="/glossary" component={GlossaryIndex} />
-        <Route path="/glossary/:slug" component={GlossaryPage} />
-        <Route component={NotFound} />
-      </Switch>
-    </AppLayout>
+    <Switch>
+      {/* Standalone pages — no header/footer */}
+      <Route path="/showcase" component={Showcase} />
+
+      {/* All other pages — wrapped in AppLayout */}
+      <Route>
+        <AppLayout>
+          <Switch>
+            <Route path="/" component={Home} />
+            <Route path="/privacy" component={Privacy} />
+            <Route path="/terms" component={Terms} />
+            <Route path="/history" component={History} />
+            <Route path="/api-docs" component={ApiDocs} />
+            <Route path="/extension" component={ExtensionPage} />
+            <Route path="/admin" component={Admin} />
+            <Route path="/pricing" component={Pricing} />
+            <Route path="/api-keys" component={ApiKeys} />
+            <Route path="/blog" component={Blog} />
+            <Route path="/blog/:slug" component={BlogPost} />
+            <Route path="/tools/:category" component={CategoryView} />
+            <Route path="/tools/:category/:slug" component={ToolView} />
+            <Route path="/convert/:slug" component={ConverterPage} />
+            <Route path="/glossary" component={GlossaryIndex} />
+            <Route path="/glossary/:slug" component={GlossaryPage} />
+            <Route component={NotFound} />
+          </Switch>
+        </AppLayout>
+      </Route>
+    </Switch>
   );
 }
 

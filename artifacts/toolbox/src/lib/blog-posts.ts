@@ -535,6 +535,155 @@ echo "SGVsbG8sIHdvcmxkIQ==" | base64 -d  # decode</code></pre>
 <p>The Toolora JSON Formatter includes a minify option that strips all unnecessary whitespace. Paste your formatted JSON, click Minify, copy the output. No build step required.</p>
     `.trim(),
   },
+  {
+    slug: "hashing-vs-encryption-whats-the-difference",
+    title: "Hashing vs Encryption: What's the Difference and When to Use Each",
+    description: "Hashing and encryption are both used to protect data, but they work very differently. Learn the key distinctions, common algorithms, and when to use each — with code examples.",
+    date: "2026-04-01",
+    readTime: "7 min read",
+    category: "Security",
+    content: `
+<p>Every developer will eventually hit the moment where they need to "secure some data" and the question comes up: should I hash this or encrypt it?</p>
+
+<p>Most tutorials give you one line — "use bcrypt for passwords" — and move on. But understanding <em>why</em> changes how you think about every security decision you make. Let's actually explain it.</p>
+
+<h2>What Is Hashing?</h2>
+
+<p>A hash function takes any input and returns a fixed-length output called a <strong>hash</strong> (or digest). The key properties:</p>
+
+<ul>
+  <li><strong>One-way</strong>: You can hash a value but you cannot reverse the hash back to the original</li>
+  <li><strong>Deterministic</strong>: The same input always produces the same hash</li>
+  <li><strong>Avalanche effect</strong>: Changing even one character completely changes the output</li>
+  <li><strong>Fixed-size output</strong>: SHA-256 always outputs 64 hex characters regardless of input size</li>
+</ul>
+
+<p>Example with SHA-256:</p>
+
+<pre><code>Input:  "password123"
+Output: ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f
+
+Input:  "password124"  ← one character different
+Output: 6b4ab9b17e3c...  ← completely different</code></pre>
+
+<h3>Common Hash Algorithms</h3>
+
+<table>
+  <thead><tr><th>Algorithm</th><th>Output Size</th><th>Use Today?</th></tr></thead>
+  <tbody>
+    <tr><td>MD5</td><td>128-bit (32 hex chars)</td><td>No — collision attacks known</td></tr>
+    <tr><td>SHA-1</td><td>160-bit (40 hex chars)</td><td>No — deprecated</td></tr>
+    <tr><td>SHA-256</td><td>256-bit (64 hex chars)</td><td>Yes — file integrity, digital signatures</td></tr>
+    <tr><td>SHA-512</td><td>512-bit (128 hex chars)</td><td>Yes — high-security contexts</td></tr>
+    <tr><td>bcrypt</td><td>Variable</td><td>Yes — passwords only</td></tr>
+    <tr><td>Argon2</td><td>Variable</td><td>Yes — passwords (best choice)</td></tr>
+  </tbody>
+</table>
+
+<h2>What Is Encryption?</h2>
+
+<p>Encryption also transforms data — but it's <strong>two-way</strong>. You encrypt a value and you can decrypt it back to the original using a key.</p>
+
+<ul>
+  <li><strong>Reversible</strong>: With the right key, anyone can decrypt the data</li>
+  <li><strong>Requires a key</strong>: Security depends entirely on keeping the key secret</li>
+  <li><strong>Two types</strong>: Symmetric (same key encrypts and decrypts) and asymmetric (public/private key pairs)</li>
+</ul>
+
+<pre><code>const encrypted = encrypt("secret message", key)  // → "a3f9b2c1..."
+const decrypted = decrypt(encrypted, key)          // → "secret message"</code></pre>
+
+<h2>The Core Difference</h2>
+
+<table>
+  <thead><tr><th></th><th>Hashing</th><th>Encryption</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Reversible?</strong></td><td>No</td><td>Yes (with key)</td></tr>
+    <tr><td><strong>Use for passwords?</strong></td><td>Yes (with bcrypt/Argon2)</td><td>Never</td></tr>
+    <tr><td><strong>Use for data you need back?</strong></td><td>No</td><td>Yes</td></tr>
+    <tr><td><strong>Depends on a secret key?</strong></td><td>No</td><td>Yes</td></tr>
+  </tbody>
+</table>
+
+<p>The mental model: <strong>hash when you only need to verify, encrypt when you need to recover.</strong></p>
+
+<h2>When to Use Hashing</h2>
+
+<h3>1. Storing passwords</h3>
+
+<p>Never store plain-text passwords. Never store <em>encrypted</em> passwords either — if your database leaks along with your encryption key, every password is exposed instantly.</p>
+
+<p>Hash passwords with a slow algorithm designed for this purpose:</p>
+
+<pre><code>// Node.js with bcrypt
+const bcrypt = require('bcrypt');
+const hash = await bcrypt.hash('userpassword', 12);
+
+// Verify later
+const match = await bcrypt.compare('userpassword', hash); // → true</code></pre>
+
+<p>Why slow? Bcrypt and Argon2 are intentionally slow to make brute-force attacks impractical. SHA-256 is too fast for passwords — attackers can try billions of guesses per second.</p>
+
+<h3>2. File integrity verification</h3>
+
+<p>When you download a file, you can hash it and compare to the publisher's published hash. If they match, the file wasn't tampered with.</p>
+
+<h3>3. Data deduplication</h3>
+
+<p>Hash file contents to detect duplicates without storing the files twice. Git does exactly this — every commit, tree, and blob is identified by its SHA-1 hash.</p>
+
+<h3>4. Digital signatures</h3>
+
+<p>You hash a document, then sign the hash with your private key. The recipient verifies the signature against the hash to confirm authenticity and integrity.</p>
+
+<h2>When to Use Encryption</h2>
+
+<h3>1. Data you need to retrieve</h3>
+
+<p>Credit card numbers, API keys, SSNs, personal messages — anything you need to read back in plaintext later must be encrypted, not hashed.</p>
+
+<h3>2. Data in transit</h3>
+
+<p>TLS (HTTPS) uses asymmetric encryption to exchange a symmetric session key, then encrypts all traffic with that session key.</p>
+
+<h3>3. Sensitive configuration values</h3>
+
+<p>API keys in your database should be encrypted at rest. If your DB leaks, raw keys are immediately exploitable — encrypted keys are not (unless the encryption key also leaks, which is why key management matters).</p>
+
+<h2>The Mistake That Gets People Hacked</h2>
+
+<p>The most common mistake: hashing data that needs to be retrieved later, or encrypting passwords.</p>
+
+<pre><code>// Wrong — don't encrypt passwords
+const storedPassword = encrypt(userPassword, APP_SECRET);
+
+// Wrong — SHA-256 is too fast for passwords
+const storedPassword = crypto.createHash('sha256').update(userPassword).digest('hex');
+
+// Right — use bcrypt or Argon2
+const storedPassword = await bcrypt.hash(userPassword, 12);</code></pre>
+
+<h2>Quick Reference</h2>
+
+<table>
+  <thead><tr><th>You want to…</th><th>Use</th></tr></thead>
+  <tbody>
+    <tr><td>Store a user's password</td><td>bcrypt or Argon2</td></tr>
+    <tr><td>Verify a downloaded file wasn't tampered with</td><td>SHA-256</td></tr>
+    <tr><td>Store an API key so you can use it later</td><td>AES-256 encryption</td></tr>
+    <tr><td>Generate a unique fingerprint for deduplication</td><td>SHA-256</td></tr>
+    <tr><td>Send data securely over a network</td><td>TLS (handles encryption for you)</td></tr>
+    <tr><td>Sign a document to prove authenticity</td><td>SHA-256 hash + RSA/ECDSA signature</td></tr>
+  </tbody>
+</table>
+
+<h2>Try It in Your Browser</h2>
+
+<p>You can generate MD5, SHA-1, SHA-256, and SHA-512 hashes instantly without installing anything using the <a href="/tools/developer/hash-generator">Toolora Hash Generator</a> — it runs entirely in your browser, so nothing you type is ever sent to a server.</p>
+
+<p>For Base64 encoding (a related but different concept), use the <a href="/tools/developer/base64">Base64 Encoder/Decoder</a>.</p>
+    `.trim(),
+  },
 ];
 
 export function getBlogPost(slug: string): BlogPost | undefined {

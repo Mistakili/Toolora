@@ -207,6 +207,7 @@ const BLOG_POSTS = [
   { slug: "free-password-generator-no-signup",   title: "How to Generate Strong Passwords Without a Password Manager",             description: "What makes a password strong, why most people get it wrong, and how to generate truly random passwords instantly — without installing anything." },
   { slug: "free-qr-code-generator-no-watermark", title: "The Best Free QR Code Generator — No Watermarks, No Sign-Up, No Ads",    description: "Most free QR code generators add watermarks or expire your codes. Here's how to generate clean QR codes instantly, for free, with no strings attached." },
   { slug: "json-formatter-validate-debug",        title: "JSON Formatter: How to Read, Validate and Debug JSON Online",            description: "JSON errors are cryptic. A missing comma or brace can break everything. Here's how to format, validate, and debug JSON fast — no server required." },
+  { slug: "hashing-vs-encryption-whats-the-difference", title: "Hashing vs Encryption: What's the Difference and When to Use Each", description: "Hashing and encryption are both used to protect data, but they work very differently. Learn the key distinctions, common algorithms, and when to use each — with code examples." },
 ];
 
 const blogListUrl = `  <url>
