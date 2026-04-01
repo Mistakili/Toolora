@@ -71,7 +71,7 @@ export default function Home() {
                 Free online tools for <span className="gradient-text">every workflow.</span>
               </h1>
               <p className="text-xl text-muted-foreground mb-10 leading-relaxed">
-                Format JSON, convert PDFs, resize images, and generate passwords. All processing happens locally in your browser for maximum privacy and speed.
+                Format JSON, convert PDFs, resize images, and generate passwords — all powered by WebAssembly, running entirely in your browser. Your files never leave your device. No uploads, no accounts, no tracking.
               </p>
               
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4">

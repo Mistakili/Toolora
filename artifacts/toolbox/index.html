@@ -3,17 +3,19 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
-    <title>Toolora - Free Online Tools</title>
-    <meta name="description" content="Toolora — 20+ free online tools for developers and creators. Word counter, JSON formatter, PDF merge, image resizer, QR generator and more. 100% private, browser-side processing." />
+    <title>Toolora — Free Browser-Side Tools. No Uploads. 100% Private.</title>
+    <meta name="description" content="20+ free tools that run entirely in your browser — PDF merge, image compression, JSON formatter, QR code generator, password generator, and more. Your files never leave your device. No uploads, no accounts, no tracking." />
+    <meta name="keywords" content="free online tools, browser-side tools, no upload tools, privacy tools, PDF merge, image compressor, JSON formatter, QR code generator, password generator, hash generator, WebAssembly tools" />
+    <meta name="robots" content="index, follow" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Toolora - Free Online Tools" />
-    <meta property="og:description" content="Toolora — 20+ free online tools for developers and creators. Word counter, JSON formatter, PDF merge, image resizer, QR generator and more. 100% private, browser-side processing." />
+    <meta property="og:title" content="Toolora — Free Browser-Side Tools. No Uploads. 100% Private." />
+    <meta property="og:description" content="20+ free tools that run entirely in your browser. PDF merge, image compression, JSON formatter, QR codes, and more. Your files never leave your device." />
     <meta property="og:url" content="https://toolora.dev/" />
     <meta property="og:image" content="https://toolora.dev/opengraph.jpg" />
     <meta property="og:site_name" content="Toolora" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Toolora - Free Online Tools" />
-    <meta name="twitter:description" content="Toolora — 20+ free online tools for developers and creators. 100% private, browser-side processing." />
+    <meta name="twitter:title" content="Toolora — Free Browser-Side Tools. No Uploads. 100% Private." />
+    <meta name="twitter:description" content="20+ free tools that run entirely in your browser. No uploads, no accounts, no tracking. 100% private." />
     <meta name="twitter:image" content="https://toolora.dev/opengraph.jpg" />
     <link rel="canonical" href="https://toolora.dev/" />
     <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
@@ -21,6 +23,68 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://toolora.dev/#organization",
+          "name": "Toolora",
+          "url": "https://toolora.dev",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://toolora.dev/favicon.svg"
+          },
+          "description": "Toolora builds free, privacy-first browser-side tools. All processing happens locally using WebAssembly — no uploads, no accounts, no tracking.",
+          "sameAs": []
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://toolora.dev/#website",
+          "url": "https://toolora.dev",
+          "name": "Toolora",
+          "description": "Free browser-side tools — PDF, image, text, developer utilities. No uploads. 100% private.",
+          "publisher": { "@id": "https://toolora.dev/#organization" },
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": {
+              "@type": "EntryPoint",
+              "urlTemplate": "https://toolora.dev/?q={search_term_string}"
+            },
+            "query-input": "required name=search_term_string"
+          }
+        },
+        {
+          "@type": "SoftwareApplication",
+          "@id": "https://toolora.dev/#app",
+          "name": "Toolora",
+          "url": "https://toolora.dev",
+          "applicationCategory": "UtilitiesApplication",
+          "operatingSystem": "Web",
+          "description": "20+ free browser-side tools for PDF, images, text, and developers. All processing happens locally in your browser using WebAssembly. No file uploads, no accounts, no data collection.",
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+          },
+          "featureList": [
+            "100% browser-side processing using WebAssembly",
+            "No file uploads — files never leave your device",
+            "No account required",
+            "No tracking or data collection",
+            "PDF merge and split",
+            "Image compression and resizing",
+            "JSON formatter and validator",
+            "QR code generator",
+            "Password generator",
+            "Hash generator (MD5, SHA-1, SHA-256)"
+          ],
+          "provider": { "@id": "https://toolora.dev/#organization" }
+        }
+      ]
+    }
+    </script>
   </head>
   <body>
     <div id="root"></div>

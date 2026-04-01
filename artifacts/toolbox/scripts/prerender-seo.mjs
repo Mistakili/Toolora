@@ -85,6 +85,47 @@ function buildJsonLd(tool) {
   });
 }
 
+function buildFaqJsonLd(tool) {
+  return JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: [
+      {
+        "@type": "Question",
+        name: `Does ${tool.name} upload my files?`,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: `No. ${tool.name} runs entirely in your browser using WebAssembly. Your files never leave your device and are never sent to any server.`,
+        },
+      },
+      {
+        "@type": "Question",
+        name: `Is ${tool.name} free?`,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: `Yes, ${tool.name} is completely free with no signup or account required.`,
+        },
+      },
+      {
+        "@type": "Question",
+        name: `Is ${tool.name} private and secure?`,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: `Yes. All processing happens locally in your browser — no data is collected, no files are uploaded, and no usage is tracked. Your privacy is fully preserved.`,
+        },
+      },
+      {
+        "@type": "Question",
+        name: `Do I need to create an account to use ${tool.name}?`,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: `No account or registration is required. Open the tool and start using it instantly.`,
+        },
+      },
+    ],
+  });
+}
+
 function buildCategoryJsonLd(cat) {
   const url = `${BASE_URL}/tools/${cat.id}`;
   return JSON.stringify({
@@ -125,9 +166,10 @@ function patchHtml(template, { title, description, canonical, jsonLd }) {
   html = html.replace(/(<meta name="twitter:description" content=")[^"]*(")/,
     `$1${esc(description)}$2`);
 
-  // Inject JSON-LD right before </head>
-  const ldTag = `  <script type="application/ld+json">${jsonLd}</script>\n</head>`;
-  html = html.replace(/<\/head>/, ldTag);
+  // Inject JSON-LD right before </head> — supports array for multiple blocks
+  const ldBlocks = Array.isArray(jsonLd) ? jsonLd : [jsonLd];
+  const ldTags = ldBlocks.map(ld => `  <script type="application/ld+json">${ld}</script>`).join("\n");
+  html = html.replace(/<\/head>/, `${ldTags}\n</head>`);
 
   return html;
 }
@@ -153,7 +195,7 @@ for (const tool of TOOLS) {
     title: tool.seoTitle,
     description: tool.seoDescription,
     canonical: url,
-    jsonLd: buildJsonLd(tool),
+    jsonLd: [buildJsonLd(tool), buildFaqJsonLd(tool)],
   });
 
   fs.writeFileSync(path.join(outDir, "index.html"), html);
