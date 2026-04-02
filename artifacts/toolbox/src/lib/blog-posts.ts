@@ -1168,6 +1168,161 @@ Be specific. Quote exact copy where relevant.</code></pre>
 <p>For one-off resizing, the <a href="/tools/image/image-resize">free browser tool</a> is all you need. No account, no signup, no upload.</p>
     `.trim(),
   },
+  {
+    slug: "word-counter-online-free",
+    title: "Word Counter Online: Count Words, Characters, and Reading Time Instantly",
+    description: "A free, instant word counter that runs in your browser. Count words, characters, sentences, paragraphs, and get a reading time estimate — no upload, no account, no ads.",
+    date: "2026-04-02",
+    readTime: "6 min read",
+    category: "Tools",
+    content: `
+<p>Every writer, developer, student, and marketer eventually needs to count something. How many words is this essay? Does this tweet fit? Will Google show this meta description in full? How long will this article take to read?</p>
+
+<p>The answers are a paste away — using the <a href="/tools/text/word-counter">Toolora Word Counter</a>. Paste any text and get word count, character count, sentence count, paragraph count, and estimated reading time instantly. Everything runs in your browser; your text is never sent to a server.</p>
+
+<img src="/images/blog-word-count-stats.png" alt="Word count statistics dashboard showing words, characters, sentences and reading time" class="w-full rounded-2xl my-8 border border-border" />
+
+<h2>Word count vs. character count — what's the difference?</h2>
+
+<p>They measure different things and matter in different contexts:</p>
+
+<ul>
+  <li><strong>Word count</strong> is the number of space-separated tokens. "The quick brown fox" = 4 words. Used for academic papers, editorial briefs, content contracts, and readability estimates.</li>
+  <li><strong>Character count</strong> is the number of individual characters including spaces and punctuation. "The quick brown fox" = 19 characters. Used for social media limits, SMS, database field constraints, and UI copy that has a fixed display length.</li>
+  <li><strong>Character count without spaces</strong> is used in some academic contexts (particularly European universities) where density of content matters more than total length.</li>
+</ul>
+
+<p>Most platforms enforce one or the other — rarely both. Knowing which metric you're working against before you start writing saves a lot of editing.</p>
+
+<h2>Platform character limits you should have memorised</h2>
+
+<img src="/images/blog-platform-limits.png" alt="Illustration of character limits across different platforms including social media and email" class="w-full rounded-2xl my-8 border border-border" />
+
+<table>
+  <thead>
+    <tr>
+      <th>Platform / Context</th>
+      <th>Limit</th>
+      <th>What's counted</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>X (Twitter) post</td><td>280 characters</td><td>Characters including spaces; URLs count as 23</td></tr>
+    <tr><td>X (Twitter) bio</td><td>160 characters</td><td>Characters</td></tr>
+    <tr><td>LinkedIn post</td><td>3,000 characters</td><td>Characters; preview truncates at ~210</td></tr>
+    <tr><td>LinkedIn headline</td><td>220 characters</td><td>Characters</td></tr>
+    <tr><td>Instagram caption</td><td>2,200 characters</td><td>Characters; preview shows ~125 before "more"</td></tr>
+    <tr><td>Google meta description</td><td>155–160 characters</td><td>Characters; Google truncates beyond this</td></tr>
+    <tr><td>Google page title</td><td>50–60 characters</td><td>Characters; longer titles get cut in SERPs</td></tr>
+    <tr><td>Email subject line</td><td>40–60 characters</td><td>Characters; mobile shows ~30 before cut-off</td></tr>
+    <tr><td>YouTube description</td><td>5,000 characters</td><td>Characters; search shows first 100–120</td></tr>
+    <tr><td>Reddit post title</td><td>300 characters</td><td>Characters</td></tr>
+    <tr><td>SMS</td><td>160 characters</td><td>Characters (GSM-7); 70 for Unicode</td></tr>
+  </tbody>
+</table>
+
+<p>The ones that bite people most often: Google meta descriptions (going over 160 means your carefully crafted sentence gets truncated mid-word in search results) and email subject lines (40 characters is aggressive, but that's what mobile inboxes typically show before clipping).</p>
+
+<h2>Academic word count requirements</h2>
+
+<p>Universities typically enforce strict word count ranges, and most allow ±10% tolerance. Common requirements:</p>
+
+<ul>
+  <li><strong>Personal statement / application essay</strong>: 500–650 words (Common App), 150–650 words (UC)</li>
+  <li><strong>Short essay / response paper</strong>: 500–1,000 words</li>
+  <li><strong>Standard essay</strong>: 1,500–2,500 words</li>
+  <li><strong>Research paper / term paper</strong>: 3,000–5,000 words</li>
+  <li><strong>Dissertation chapter</strong>: 8,000–12,000 words</li>
+  <li><strong>Full dissertation / thesis</strong>: 10,000–80,000 words (varies widely by institution and level)</li>
+</ul>
+
+<p>A critical note: most academic word counts <strong>exclude</strong> the bibliography, footnotes, and appendices. Always check your institution's specific guidance — some exclude abstract and headings too. When in doubt, paste each section separately into the counter to verify.</p>
+
+<h2>How reading time is calculated</h2>
+
+<p>The standard reading time formula is based on an average adult reading speed of <strong>200–238 words per minute</strong> for non-fiction prose. The Toolora Word Counter uses 200 WPM, which slightly over-estimates reading time — better to set reader expectations accurately than under-promise.</p>
+
+<p>The formula is straightforward:</p>
+
+<pre><code>reading_time_minutes = word_count / 200</code></pre>
+
+<p>A 1,000-word article = 5 minutes. A 2,500-word long-form piece = 12.5 minutes. A 500-word email update = 2.5 minutes.</p>
+
+<p>Reading time varies significantly by content type:</p>
+<ul>
+  <li><strong>Fiction and literary prose</strong>: slower, ~180 WPM (more attention per word)</li>
+  <li><strong>Technical documentation and code-heavy content</strong>: slower, ~100–150 WPM</li>
+  <li><strong>News articles and blog posts</strong>: faster, ~200–238 WPM (skimming-friendly structure)</li>
+  <li><strong>Poetry</strong>: much slower — word count is meaningless as a time proxy</li>
+</ul>
+
+<p>Medium and most blogging platforms show reading time estimates on article previews. Readers use this to decide whether to commit to a piece. Studies suggest articles shown as "5 min read" perform better than the same content shown as "12 min read" — which is an argument for keeping posts tight, not padding to hit a target.</p>
+
+<h2>Word count targets for SEO content</h2>
+
+<p>There's a lot of mythology around word count and SEO. The truth is nuanced:</p>
+
+<ul>
+  <li><strong>There is no magic word count</strong> that Google rewards universally. Content that fully answers a query ranks regardless of whether it's 600 words or 6,000.</li>
+  <li><strong>Thin content (&lt;300 words) can hurt</strong> for informational queries where users expect depth. Google's quality guidelines explicitly flag thin content.</li>
+  <li><strong>Match the intent</strong>. A "how to restart nginx" query is satisfied in 150 words. A "how to build a SaaS business" query probably isn't satisfied in 800.</li>
+  <li><strong>Competitive pages matter more than arbitrary targets</strong>. If the top 3 results for your target keyword average 1,800 words, you probably need comparable depth — not because of word count itself, but because the depth correlates with covering the topic thoroughly.</li>
+</ul>
+
+<p>Practical ranges that tend to work, based on query type:</p>
+
+<table>
+  <thead><tr><th>Content type</th><th>Word count range</th></tr></thead>
+  <tbody>
+    <tr><td>FAQ / definition page</td><td>300–600 words</td></tr>
+    <tr><td>How-to guide (simple)</td><td>600–1,200 words</td></tr>
+    <tr><td>How-to guide (detailed)</td><td>1,200–2,500 words</td></tr>
+    <tr><td>Comparison / versus page</td><td>1,500–3,000 words</td></tr>
+    <tr><td>Pillar / topic authority page</td><td>2,500–5,000 words</td></tr>
+    <tr><td>Original research / data piece</td><td>1,500–4,000 words</td></tr>
+  </tbody>
+</table>
+
+<h2>How to use the Toolora Word Counter</h2>
+
+<ol>
+  <li>Go to <a href="/tools/text/word-counter">toolora.dev/tools/text/word-counter</a></li>
+  <li>Paste or type your text into the input area</li>
+  <li>The counter updates in real time — no button to click</li>
+  <li>Read off your word count, character count (with and without spaces), sentence count, paragraph count, and estimated reading time</li>
+</ol>
+
+<p>It handles any language. The word count is based on whitespace-separated tokens, which is accurate for English, Spanish, French, German, and other space-delimited languages. For languages without spaces between words (Chinese, Japanese, Thai), the character count is the more meaningful metric.</p>
+
+<h2>Counting words in code: quick reference</h2>
+
+<p>If you need word count programmatically:</p>
+
+<pre><code># Python
+text = "The quick brown fox jumps over the lazy dog"
+word_count = len(text.split())
+char_count = len(text)
+char_no_spaces = len(text.replace(" ", ""))
+print(word_count, char_count, char_no_spaces)  # 9 44 36</code></pre>
+
+<pre><code>// JavaScript
+const text = "The quick brown fox jumps over the lazy dog";
+const wordCount = text.trim().split(/\s+/).length;
+const charCount = text.length;
+const charNoSpaces = text.replace(/\s/g, "").length;
+console.log(wordCount, charCount, charNoSpaces); // 9 44 36</code></pre>
+
+<p>The JavaScript version uses a regex split (<code>/\s+/</code>) to handle multiple consecutive spaces correctly. The Python <code>split()</code> with no arguments also handles this.</p>
+
+<h2>Why a browser-based word counter?</h2>
+
+<p>Word counters don't need server infrastructure — it's string processing, not heavy computation. Any tool that uploads your text to count words is adding unnecessary complexity (and a privacy exposure) for a task your browser handles in microseconds.</p>
+
+<p>This matters more than it sounds if you're counting sensitive content: legal drafts, confidential client copy, medical documentation, or anything under NDA. With a client-side counter, nothing leaves your machine.</p>
+
+<p>Try it now: <a href="/tools/text/word-counter">Paste your text into the Toolora Word Counter →</a></p>
+    `.trim(),
+  },
 ];
 
 export function getBlogPost(slug: string): BlogPost | undefined {

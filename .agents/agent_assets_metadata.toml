@@ -30,6 +30,18 @@ uri = "file://artifacts/toolora-video/src/assets/images/shield.png"
 type = "image"
 title = "Privacy shield lock icon"
 
+[[generated]]
+id = "6Rp7YzUKffcuCaK9D_A1I"
+uri = "file://artifacts/toolbox/public/images/blog-word-count-stats.png"
+type = "image"
+title = "word count blog illustration"
+
+[[generated]]
+id = "k3KipP03OGWu9_pEtV9v9"
+uri = "file://artifacts/toolbox/public/images/blog-platform-limits.png"
+type = "image"
+title = "platform character limits illustration"
+
 [[outputs]]
 id = "W91hp3ihLhEvWTT51EilJ"
 uri = "file://artifacts/toolbox/public/og-image.png"

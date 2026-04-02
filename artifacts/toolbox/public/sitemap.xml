@@ -544,4 +544,16 @@
     </image:image>
   </url>
 
+  <url>
+    <loc>https://toolora.dev/blog/word-counter-online-free</loc>
+    <lastmod>2026-04-02</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://toolora.dev/images/blog-word-count-stats.png</image:loc>
+      <image:title>Word Counter Online: Count Words, Characters, and Reading Time — Toolora Blog</image:title>
+      <image:caption>Free word counter that runs in your browser. Count words, characters, sentences, paragraphs, and reading time instantly.</image:caption>
+    </image:image>
+  </url>
+
 </urlset>
