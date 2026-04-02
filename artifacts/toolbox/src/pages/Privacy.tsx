@@ -21,7 +21,7 @@ export default function Privacy() {
         </div>
         <div>
           <h1 className="text-3xl font-display font-bold">Privacy Policy</h1>
-          <p className="text-muted-foreground text-sm mt-1">Last updated: March 2026</p>
+          <p className="text-muted-foreground text-sm mt-1">Last updated: April 2026</p>
         </div>
       </div>
 
@@ -41,40 +41,55 @@ export default function Privacy() {
         </section>
 
         <section>
-          <h2 className="text-xl font-bold mb-3">2. What We Do NOT Collect</h2>
+          <h2 className="text-xl font-bold mb-3">2. What We Do NOT Collect During Tool Use</h2>
           <ul className="space-y-2 text-muted-foreground">
             <li>✗ Your files (PDFs, images, documents)</li>
             <li>✗ Text you paste or type into any tool</li>
-            <li>✗ Your name, email address, or account information</li>
+            <li>✗ Your name or account information (for free tools — no account required)</li>
             <li>✗ Passwords you generate using our Password Generator</li>
             <li>✗ Any output produced by our tools</li>
           </ul>
-          <p className="mt-3 text-muted-foreground">All tool processing is performed entirely within your browser using browser APIs and WebAssembly. No data is transmitted to our servers during tool usage.</p>
+          <p className="mt-3 text-muted-foreground">All tool processing is performed entirely within your browser using browser APIs and WebAssembly. No file or document data is transmitted to our servers during tool usage.</p>
         </section>
 
         <section>
-          <h2 className="text-xl font-bold mb-3">3. Cookies & Local Storage</h2>
-          <p className="text-muted-foreground leading-relaxed">Toolora uses browser local storage solely to remember your theme preference (dark/light mode). No tracking cookies are set. No third-party advertising or analytics services are used.</p>
+          <h2 className="text-xl font-bold mb-3">3. Email & Account Data</h2>
+          <p className="text-muted-foreground leading-relaxed">If you voluntarily subscribe to our newsletter or create an API account, we collect and store your email address. This data is used solely to:</p>
+          <ul className="mt-3 space-y-2 text-muted-foreground">
+            <li>• Send you product update notifications (newsletter subscribers)</li>
+            <li>• Manage your API key access and subscription tier (API users)</li>
+          </ul>
+          <p className="mt-3 text-muted-foreground">We do not sell, rent, or share your email address with third parties for marketing purposes. You can unsubscribe at any time by contacting us at <strong className="text-foreground">privacy@toolora.dev</strong>.</p>
         </section>
 
         <section>
-          <h2 className="text-xl font-bold mb-3">4. Third-Party Services</h2>
-          <p className="text-muted-foreground leading-relaxed">Toolora is hosted on Replit. Replit's own privacy policy applies to infrastructure-level data. Beyond hosting, we do not share data with any third-party analytics, advertising, or data brokers.</p>
+          <h2 className="text-xl font-bold mb-3">4. Cookies & Local Storage</h2>
+          <p className="text-muted-foreground leading-relaxed">Toolora uses browser local storage solely to remember your theme preference (dark/light mode). If you sign in for API access, a session cookie is set for authentication. No tracking cookies are set. No third-party advertising or analytics services are used.</p>
         </section>
 
         <section>
-          <h2 className="text-xl font-bold mb-3">5. Children's Privacy</h2>
+          <h2 className="text-xl font-bold mb-3">5. Third-Party Services</h2>
+          <p className="text-muted-foreground leading-relaxed">Toolora uses the following third-party services:</p>
+          <ul className="mt-3 space-y-2 text-muted-foreground">
+            <li><strong className="text-foreground">Replit</strong> — our hosting infrastructure. Replit's privacy policy applies to infrastructure-level data.</li>
+            <li><strong className="text-foreground">Stripe</strong> — payment processing for API subscriptions and credit packs. When you make a payment, Stripe receives your payment method and billing information directly. We do not store card details. Stripe's privacy policy applies to payment data.</li>
+          </ul>
+          <p className="mt-3 text-muted-foreground">Beyond these services, we do not share data with any third-party analytics, advertising, or data brokers.</p>
+        </section>
+
+        <section>
+          <h2 className="text-xl font-bold mb-3">6. Children's Privacy</h2>
           <p className="text-muted-foreground leading-relaxed">Toolora does not knowingly collect data from children under 13. The service is general-purpose and not directed at children.</p>
         </section>
 
         <section>
-          <h2 className="text-xl font-bold mb-3">6. Changes to This Policy</h2>
+          <h2 className="text-xl font-bold mb-3">7. Changes to This Policy</h2>
           <p className="text-muted-foreground leading-relaxed">We may update this policy as the service evolves. Significant changes will be noted on this page with an updated date. Continued use of Toolora after changes constitutes acceptance of the updated policy.</p>
         </section>
 
         <section>
-          <h2 className="text-xl font-bold mb-3">7. Contact</h2>
-          <p className="text-muted-foreground leading-relaxed">Questions about this policy? You can reach us through the Toolora website. We'll respond as quickly as possible.</p>
+          <h2 className="text-xl font-bold mb-3">8. Contact & Data Deletion</h2>
+          <p className="text-muted-foreground leading-relaxed">Questions about this policy, or requests to access or delete your data? Email us at <strong className="text-foreground">privacy@toolora.dev</strong>. We'll respond within 30 days.</p>
         </section>
       </div>
     </div>

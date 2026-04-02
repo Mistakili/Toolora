@@ -2,6 +2,8 @@ import express, { type Express, type Request, type Response } from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import pinoHttp from "pino-http";
+import helmet from "helmet";
+import { rateLimit } from "express-rate-limit";
 import { authMiddleware } from "./middlewares/authMiddleware";
 import router from "./routes";
 import { logger } from "./lib/logger";
@@ -59,6 +61,41 @@ app.post(
     }
   },
 );
+
+// ── Security headers ─────────────────────────────────────────────────────────
+app.use(helmet({
+  contentSecurityPolicy: false,
+  crossOriginEmbedderPolicy: false,
+}));
+
+// ── Rate limiting ─────────────────────────────────────────────────────────────
+const standardLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 200,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: "Too many requests, please try again later." },
+});
+
+const subscribeLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 5,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: "Too many subscription attempts. Please wait before trying again." },
+});
+
+const agentLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 30,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: "Rate limit exceeded. Agent endpoints allow 30 requests/minute." },
+});
+
+app.use("/api/subscribe", subscribeLimiter);
+app.use("/api/agent", agentLimiter);
+app.use("/api", standardLimiter);
 
 app.use(
   pinoHttp({

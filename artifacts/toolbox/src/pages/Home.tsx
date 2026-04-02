@@ -335,12 +335,15 @@ print(r.json()["text"])  # ← full PDF text`}
             <p className="text-muted-foreground font-semibold text-lg">You're already subscribed — we've got your email.</p>
           ) : (
             <form onSubmit={handleSubscribe} className="flex gap-2 max-w-md mx-auto">
+              <label htmlFor="subscribe-email" className="sr-only">Email address</label>
               <input
+                id="subscribe-email"
                 type="email"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
                 placeholder="you@example.com"
                 required
+                autoComplete="email"
                 className="flex-1 px-4 py-2.5 rounded-lg border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
               />
               <button
