@@ -15,6 +15,11 @@ import { getUncachableStripeClient } from "./stripeClient";
 
 const app: Express = express();
 
+// ── Trust Replit's proxy so rate limiting and IP detection work correctly ─────
+// Without this, all users appear to come from the same IP (the proxy),
+// causing rate limits to fire globally instead of per-user.
+app.set("trust proxy", 1);
+
 // ── Stripe webhook: must be registered BEFORE express.json() ─────────────────
 app.post(
   "/api/stripe/webhook",
