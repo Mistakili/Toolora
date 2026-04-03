@@ -129,6 +129,81 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Architecture Section */}
+      <section className="py-20 border-b border-border/50">
+        <div className="container mx-auto px-4 max-w-5xl">
+          <div className="text-center mb-14">
+            <p className="text-xs font-mono text-muted-foreground uppercase tracking-widest mb-3">How it works</p>
+            <h2 className="text-3xl md:text-4xl font-display font-bold">One privacy guarantee.<br className="hidden sm:block" /> Three ways to use it.</h2>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-0 relative">
+            {/* Connector lines on desktop */}
+            <div className="hidden md:block absolute top-10 left-1/3 right-1/3 h-px bg-gradient-to-r from-border via-primary/30 to-border" />
+
+            {[
+              {
+                num: "01",
+                color: "text-green-400",
+                border: "border-green-500/20",
+                bg: "bg-green-500/5",
+                dot: "bg-green-500",
+                title: "Browser Tools",
+                sub: "Zero-upload processing",
+                desc: "28 tools run entirely in WebAssembly inside your browser tab. Files are never transmitted anywhere — not even to us.",
+                bullets: ["PDF · OCR · Image · Audio", "Works offline after load", "No account required", "Verifiable in DevTools"],
+              },
+              {
+                num: "02",
+                color: "text-primary",
+                border: "border-primary/20",
+                bg: "bg-primary/5",
+                dot: "bg-primary",
+                title: "MCP Server",
+                sub: "Claude · Cursor · Windsurf",
+                desc: "12 of those same tools available as an MCP server. Paste one config block and your AI client can call them directly.",
+                bullets: ["Free · No API key", "Listed in Anthropic Registry", "Streamable HTTP transport", "toolora.dev/api/mcp"],
+              },
+              {
+                num: "03",
+                color: "text-amber-400",
+                border: "border-amber-500/20",
+                bg: "bg-amber-500/5",
+                dot: "bg-amber-500",
+                title: "Agent API",
+                sub: "For autonomous workflows",
+                desc: "A metered REST API for agents and pipelines. Pay per use via x402 micropayments or subscribe for a monthly call budget.",
+                bullets: ["x402 USDC micropayments", "Pro $19 · Team $79 · Ent $199", "OpenAPI spec included", "Same privacy, at scale"],
+              },
+            ].map((layer, i) => (
+              <div key={layer.num} className={`relative flex flex-col p-8 ${i === 1 ? `border border-x-0 md:border-x md:border-y-0 ${layer.border} ${layer.bg}` : ""}`}>
+                <div className="flex items-center gap-3 mb-5">
+                  <span className={`font-mono text-xs font-bold ${layer.color} opacity-60`}>{layer.num}</span>
+                  <span className={`w-1.5 h-1.5 rounded-full ${layer.dot}`} />
+                  <span className="text-xs text-muted-foreground font-medium">{layer.sub}</span>
+                </div>
+                <h3 className={`text-xl font-display font-bold mb-3 ${layer.color}`}>{layer.title}</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed mb-5">{layer.desc}</p>
+                <ul className="space-y-1.5 mt-auto">
+                  {layer.bullets.map(b => (
+                    <li key={b} className="flex items-center gap-2 text-xs text-muted-foreground">
+                      <span className={`w-1 h-1 rounded-full shrink-0 ${layer.dot}`} />
+                      {b}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-10 text-center">
+            <p className="text-xs text-muted-foreground font-mono">
+              Every layer shares the same guarantee: <span className="text-foreground">your content is never stored or logged on our servers.</span>
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* Popular Tools Section */}
       <section className="py-20 bg-muted/30">
         <div className="container mx-auto px-4">
