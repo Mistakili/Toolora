@@ -1448,6 +1448,168 @@ console.log(wordCount, charCount, charNoSpaces); // 9 44 36</code></pre>
 <p>Try it now: <a href="/tools/text/word-counter">Paste your text into the Toolora Word Counter →</a></p>
     `.trim(),
   },
+  {
+    slug: "hipaa-compliant-online-document-tools",
+    title: "Why Most Online Document Tools Are a HIPAA Liability (And What to Use Instead)",
+    description: "SmallPDF, ILovePDF, Adobe online tools — they all upload your files to their servers. For law firms, healthcare teams, and financial services, that's a compliance problem. Here's the architecture-first solution.",
+    date: "2026-04-03",
+    readTime: "7 min read",
+    category: "Privacy",
+    content: `
+<img src="/images/blog-hipaa-compliance.png" alt="Document processing: cloud upload vs. browser-local processing" style="width:100%;border-radius:12px;margin-bottom:2rem;" />
+
+<p>If you work in healthcare, legal, or financial services, you've almost certainly run into this problem: someone on your team needs to merge a PDF, extract text from a scanned document, or convert a spreadsheet — and they reach for the first free tool Google returns.</p>
+
+<p>That tool uploads the file. Your file. Containing patient records, client contracts, or financial statements. To a server you know nothing about.</p>
+
+<p>This isn't a hypothetical risk. It's a structural problem with how the online tools industry works — and it has real compliance consequences for regulated industries.</p>
+
+<h2>The upload problem, explained</h2>
+
+<p>When you use a web-based document tool like SmallPDF, ILovePDF, or Adobe Acrobat Online, here's what happens technically:</p>
+
+<ol>
+  <li>You click "upload" and select your file</li>
+  <li>Your browser sends the file to the tool's servers over HTTPS</li>
+  <li>The server processes the file (merges, compresses, converts, extracts, etc.)</li>
+  <li>The server sends the result back to your browser</li>
+  <li>Your file sits on their infrastructure — sometimes for hours, sometimes longer</li>
+</ol>
+
+<p>Step 2 is the problem. The moment your document crosses the internet to someone else's server, you've lost control over it. You're relying on their privacy policy, their security practices, their compliance posture, and their breach incident response.</p>
+
+<p>For most use cases — compressing a photo, merging a recipe PDF — that's fine. For protected health information (PHI), privileged legal communications, or regulated financial data, it's not.</p>
+
+<h2>What HIPAA actually requires</h2>
+
+<p>The Health Insurance Portability and Accountability Act (HIPAA) doesn't prohibit using cloud tools — but it imposes strict requirements on who handles PHI on your behalf.</p>
+
+<p>Under HIPAA, any vendor that creates, receives, maintains, or transmits PHI on behalf of a covered entity is a <strong>Business Associate</strong>. You're required to have a signed <strong>Business Associate Agreement (BAA)</strong> with every business associate before sharing any PHI with them.</p>
+
+<p>Most online document tools don't offer BAAs. SmallPDF's HIPAA page, for example, requires an enterprise plan and an active BAA — which most users never set up. Adobe Acrobat Online has similar requirements. ILovePDF doesn't appear to offer HIPAA compliance at all.</p>
+
+<p>When a team member uploads a patient intake form to a free PDF merger without a BAA in place, that's a HIPAA violation — regardless of whether the data was ever misused.</p>
+
+<h2>The attorney-client privilege issue</h2>
+
+<p>For law firms, the problem is different but equally serious. Attorney-client privilege protects confidential communications between lawyers and their clients. The privilege can be waived if a communication is disclosed to a third party without client consent.</p>
+
+<p>Courts have generally not treated secure cloud services as a per se waiver of privilege — but the question of whether using a third-party document processing service constitutes a "disclosure" is still unsettled in many jurisdictions, and the answer depends heavily on:</p>
+
+<ul>
+  <li>Whether the third party has access to the content of the communication</li>
+  <li>Whether reasonable precautions were taken to maintain confidentiality</li>
+  <li>Whether the service's terms of service create any rights over your data</li>
+</ul>
+
+<p>Uploading a client's contract or confidential correspondence to a free online PDF tool creates risk on all three fronts. The safest answer is: don't upload it at all.</p>
+
+<h2>Financial services: data sovereignty and regulatory requirements</h2>
+
+<p>Financial services firms face a patchwork of regulations depending on their jurisdiction and business type:</p>
+
+<table>
+  <thead>
+    <tr><th>Regulation</th><th>Jurisdiction</th><th>Relevant requirement</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>SEC Regulation S-P</td><td>United States</td><td>Safeguard nonpublic personal information of clients</td></tr>
+    <tr><td>GLBA Safeguards Rule</td><td>United States</td><td>Written security program for customer financial data</td></tr>
+    <tr><td>MiFID II / GDPR</td><td>European Union</td><td>Data minimization, purpose limitation, transfers to third countries</td></tr>
+    <tr><td>FCA SYSC</td><td>United Kingdom</td><td>Adequate organizational controls and record-keeping</td></tr>
+    <tr><td>PIPEDA</td><td>Canada</td><td>Consent and accountability for third-party data processors</td></tr>
+  </tbody>
+</table>
+
+<p>Under GDPR alone, transferring personal data to a US-based online tool without an appropriate legal basis (Standard Contractual Clauses, Binding Corporate Rules, or adequacy decision) is a violation. Most free online tools haven't addressed this adequately for the average user.</p>
+
+<h2>The architectural solution: client-side processing</h2>
+
+<p>The reason most document tools upload your files is historical: PDF manipulation, OCR, image compression, and format conversion used to require serious server-side computing power. The libraries involved were heavyweight and impractical to run in a browser.</p>
+
+<p>That's no longer true. WebAssembly (WASM) lets browsers run near-native code locally. Libraries that were previously server-only now run entirely in the browser tab, with no server involved in the actual processing:</p>
+
+<ul>
+  <li><strong>pdf-lib</strong> — merge, split, modify PDFs entirely in browser memory</li>
+  <li><strong>Tesseract.js</strong> — OCR (text extraction from images) via WASM in-browser</li>
+  <li><strong>Sharp / browser-image-compression</strong> — image compression without upload</li>
+  <li><strong>xlsx.js</strong> — Excel/spreadsheet parsing in-browser</li>
+  <li><strong>mammoth.js</strong> — Word document (DOCX) extraction in-browser</li>
+</ul>
+
+<p>When a tool is built on these libraries, the processing happens inside your browser tab. Your files are read from your local filesystem, manipulated in memory, and made available for download — without ever touching a network request.</p>
+
+<h2>How to verify a tool is actually client-side</h2>
+
+<p>Don't take a vendor's word for it. You can verify client-side processing yourself in 30 seconds:</p>
+
+<ol>
+  <li>Open the tool in your browser</li>
+  <li>Press <strong>F12</strong> to open DevTools</li>
+  <li>Click the <strong>Network</strong> tab</li>
+  <li>Clear the existing log</li>
+  <li>Use the tool (upload your file, process it, download the result)</li>
+  <li>Look at the Network log — are there any file upload requests?</li>
+</ol>
+
+<p>For a truly client-side tool, you'll see <em>zero</em> upload requests in the Network tab. The only outbound requests will be for the page assets themselves (JS, CSS, fonts) — which were already loaded before you used the tool.</p>
+
+<p>For any server-side tool, you'll see a POST or PUT request containing your file data, usually to an API endpoint.</p>
+
+<img src="/images/blog-hipaa-compliance.png" alt="DevTools Network tab showing zero upload requests on a client-side tool" style="width:100%;border-radius:8px;margin:1.5rem 0;" />
+
+<h2>What "no upload" means for compliance, practically</h2>
+
+<p>If a document tool processes your file without ever transmitting it, the compliance picture changes significantly:</p>
+
+<table>
+  <thead>
+    <tr><th>Compliance question</th><th>Server-side tool</th><th>Client-side tool</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Is the vendor a HIPAA Business Associate?</td><td>Yes — BAA required</td><td>No — they never receive PHI</td></tr>
+    <tr><td>Does privilege risk exist?</td><td>Potentially — data disclosed to third party</td><td>No — no third party ever sees the content</td></tr>
+    <tr><td>GDPR data transfer issue?</td><td>Yes — if processing crosses borders</td><td>No — processing stays in user's browser</td></tr>
+    <tr><td>What's stored on the vendor's servers?</td><td>Your file, for some period</td><td>Nothing — they never receive it</td></tr>
+    <tr><td>What happens in a vendor breach?</td><td>Your documents are at risk</td><td>Your documents aren't there to breach</td></tr>
+  </tbody>
+</table>
+
+<p>The key insight: <strong>if a tool never receives your data, it cannot be a data processor, a business associate, or a breach point for that data.</strong> The compliance question doesn't arise because the architectural condition that creates the compliance risk doesn't exist.</p>
+
+<p>This isn't a workaround or a technicality — it's a fundamentally different approach to building document tools.</p>
+
+<h2>The tools your compliance team will clear</h2>
+
+<p>Toolora's document tools are built on this architecture. Every tool that handles files — PDF merging and splitting, Word document extraction, Excel parsing, image OCR, image compression, QR code generation — processes your files entirely in your browser using the WebAssembly libraries described above.</p>
+
+<p>You can verify this with the DevTools test above on any Toolora tool. Zero file uploads. Zero server involvement in document processing.</p>
+
+<p>For teams with specific compliance requirements, Toolora's <a href="/enterprise">Enterprise plan</a> includes architecture documentation designed for compliance review — a written explanation of exactly how processing works that your legal or security team can use in a vendor assessment.</p>
+
+<h2>The practical checklist</h2>
+
+<p>Before your team uses any online document tool with sensitive files:</p>
+
+<ol>
+  <li><strong>Check the Network tab</strong> — does it upload your file?</li>
+  <li><strong>If it uploads: does the vendor offer a BAA?</strong> (for HIPAA-covered entities)</li>
+  <li><strong>What does their privacy policy say</strong> about how long files are retained?</li>
+  <li><strong>Where are their servers?</strong> (relevant for GDPR data transfer restrictions)</li>
+  <li><strong>Is there a security contact or incident response policy?</strong></li>
+</ol>
+
+<p>Or: use a client-side tool where none of those questions apply.</p>
+
+<h2>The bottom line</h2>
+
+<p>The free online document tools most people reach for — SmallPDF, ILovePDF, Adobe Online — are legitimate products. They're just not built for regulated data. The upload architecture that made them possible 10 years ago is no longer necessary, but it hasn't gone away because these tools were built before WebAssembly changed the equation.</p>
+
+<p>If your organization works with PHI, privileged communications, or regulated financial data, the right answer isn't to find the "most compliant" uploading tool. It's to use a tool that doesn't upload at all.</p>
+
+<p><a href="/enterprise">Toolora for Enterprise →</a> — client-side document processing for compliance-sensitive teams. Architecture documentation included.</p>
+    `.trim(),
+  },
 ];
 
 export function getBlogPost(slug: string): BlogPost | undefined {

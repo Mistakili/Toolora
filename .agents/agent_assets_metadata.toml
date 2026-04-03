@@ -54,6 +54,12 @@ uri = "file://artifacts/toolbox/public/images/blog-jwt-privacy.png"
 type = "image"
 title = "client-side vs server-side privacy illustration"
 
+[[generated]]
+id = "7nvQVJQ_TeqBJu3ipjZ6s"
+uri = "file://attached_assets/generated_images/generated_image.png"
+type = "image"
+title = "generated_image"
+
 [[outputs]]
 id = "W91hp3ihLhEvWTT51EilJ"
 uri = "file://artifacts/toolbox/public/og-image.png"
