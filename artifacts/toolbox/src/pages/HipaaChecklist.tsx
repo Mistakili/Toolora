@@ -423,7 +423,7 @@ export default function HipaaChecklist() {
                 </div>
               </Link>
               <a
-                href="mailto:enterprise@toolora.dev?subject=HIPAA%20Compliance%20Inquiry&body=Hi%2C%20I%20downloaded%20the%20HIPAA%20checklist%20and%20would%20like%20to%20learn%20more%20about%20Toolora%20Enterprise.%0A%0AOrganization%3A%0AUse%20case%3A%0ATeam%20size%3A"
+                href="mailto:support@toolora.dev?subject=HIPAA%20Compliance%20Inquiry&body=Hi%2C%20I%20downloaded%20the%20HIPAA%20checklist%20and%20would%20like%20to%20learn%20more%20about%20Toolora%20Enterprise.%0A%0AOrganization%3A%0AUse%20case%3A%0ATeam%20size%3A"
                 className="inline-flex items-center gap-2 px-6 py-3 border border-border rounded-full font-semibold text-sm hover:bg-muted transition-colors"
               >
                 <Mail className="w-4 h-4" /> Talk to us

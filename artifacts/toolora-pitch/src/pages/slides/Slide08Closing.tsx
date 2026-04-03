@@ -35,8 +35,6 @@ export default function Slide08Closing() {
         </div>
 
         <div className="mt-[1.5vh] flex items-center justify-center gap-[2vw]">
-          <span className="font-body text-[1.3vw] text-white/30">enterprise@toolora.dev</span>
-          <span className="font-body text-[1.3vw] text-white/20">·</span>
           <span className="font-body text-[1.3vw] text-white/30">support@toolora.dev</span>
         </div>
       </div>

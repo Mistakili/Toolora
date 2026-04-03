@@ -102,11 +102,11 @@ const FAQS = [
   },
   {
     q: "How does the 30-day money-back guarantee work?",
-    a: "If you're not satisfied for any reason within 30 days of subscribing, email enterprise@toolora.dev and we'll issue a full refund. No forms, no questions, no hoops.",
+    a: "If you're not satisfied for any reason within 30 days of subscribing, email support@toolora.dev and we'll issue a full refund. No forms, no questions, no hoops.",
   },
   {
     q: "Is there a self-hosted option for maximum control?",
-    a: "We are evaluating a self-hosted enterprise tier for organizations that require all infrastructure to run within their own environment. Contact us at enterprise@toolora.dev to discuss requirements.",
+    a: "We are evaluating a self-hosted enterprise tier for organizations that require all infrastructure to run within their own environment. Contact us at support@toolora.dev to discuss requirements.",
   },
 ];
 
@@ -140,9 +140,9 @@ export default function Enterprise() {
       }
       const data = await res.json() as { url?: string; error?: string };
       if (data.url) window.location.href = data.url;
-      else setErrMsg(data.error ?? "Something went wrong. Try again or email enterprise@toolora.dev.");
+      else setErrMsg(data.error ?? "Something went wrong. Try again or email support@toolora.dev.");
     } catch {
-      setErrMsg("Could not start checkout. Try again or email enterprise@toolora.dev.");
+      setErrMsg("Could not start checkout. Try again or email support@toolora.dev.");
     } finally {
       setLoading(null);
     }
@@ -187,7 +187,7 @@ export default function Enterprise() {
             Start Enterprise — $199/month
           </button>
           <a
-            href="mailto:enterprise@toolora.dev?subject=Enterprise%20Inquiry&body=Hi%2C%20I%27m%20interested%20in%20Toolora%20for%20my%20organization.%0A%0AOrganization%3A%0ATeam%20size%3A%0AUse%20case%3A"
+            href="mailto:support@toolora.dev?subject=Enterprise%20Inquiry&body=Hi%2C%20I%27m%20interested%20in%20Toolora%20for%20my%20organization.%0A%0AOrganization%3A%0ATeam%20size%3A%0AUse%20case%3A"
             className="inline-flex items-center gap-2 px-6 py-3 border border-border rounded-xl text-sm font-medium hover:bg-muted transition-colors"
           >
             <Mail className="w-4 h-4" /> Questions? Email us
@@ -370,7 +370,7 @@ export default function Enterprise() {
                 </button>
               ) : (
                 <a
-                  href="mailto:enterprise@toolora.dev?subject=Self-Hosted%20Inquiry"
+                  href="mailto:support@toolora.dev?subject=Self-Hosted%20Inquiry"
                   className="w-full text-center py-2.5 rounded-xl text-sm font-semibold border border-border hover:bg-muted transition-colors"
                 >
                   {tier.cta}
@@ -439,7 +439,7 @@ export default function Enterprise() {
             Start Enterprise Plan — $199/mo
           </button>
           <a
-            href="mailto:enterprise@toolora.dev?subject=Enterprise%20Inquiry&body=Hi%2C%20I%27m%20interested%20in%20Toolora%20for%20my%20organization.%0A%0AOrganization%3A%0ATeam%20size%3A%0AUse%20case%3A%0ACompliance%20requirements%3A"
+            href="mailto:support@toolora.dev?subject=Enterprise%20Inquiry&body=Hi%2C%20I%27m%20interested%20in%20Toolora%20for%20my%20organization.%0A%0AOrganization%3A%0ATeam%20size%3A%0AUse%20case%3A%0ACompliance%20requirements%3A"
             className="inline-flex items-center gap-2 px-8 py-4 border border-border rounded-xl font-semibold hover:bg-muted transition-colors text-sm"
           >
             <Mail className="w-4 h-4" /> Questions first? Email us
