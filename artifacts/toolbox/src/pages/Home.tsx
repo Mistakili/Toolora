@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "wouter";
-import { ArrowRight, Sparkles, Shield, Zap, Search, Bot, FileText, Globe, BarChart2, Bell } from "lucide-react";
+import { ArrowRight, Sparkles, Shield, Zap, Bot, FileText, Globe, BarChart2, Bell, Building2, Server, BookOpen } from "lucide-react";
 import { motion } from "framer-motion";
 import { CATEGORIES, TOOLS } from "@/lib/tools-config";
 import { ToolCard } from "@/components/shared/ToolCard";
@@ -139,6 +139,74 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Platform Features Section */}
+      <section className="py-16 border-b border-border/50">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-10">
+            <h2 className="text-2xl md:text-3xl font-display font-bold mb-2">More than just free tools</h2>
+            <p className="text-muted-foreground">Toolora is a full privacy-first platform — for individuals, developers, and regulated teams.</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Enterprise */}
+            <Link href="/enterprise">
+              <div className="group relative rounded-2xl border border-border bg-card hover:border-amber-500/50 hover:bg-amber-500/5 transition-all duration-300 p-6 cursor-pointer h-full flex flex-col">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="w-11 h-11 rounded-xl bg-amber-500/10 flex items-center justify-center">
+                    <Building2 className="w-5 h-5 text-amber-500" />
+                  </div>
+                  <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">$199/mo</span>
+                </div>
+                <h3 className="text-lg font-bold mb-2 group-hover:text-amber-500 transition-colors">Enterprise Plan</h3>
+                <p className="text-muted-foreground text-sm leading-relaxed flex-1">
+                  Built for law firms, healthcare teams, and financial services. Privacy by architecture — no BAA, no server uploads, full compliance story.
+                </p>
+                <div className="flex items-center gap-1 mt-4 text-sm font-semibold text-amber-500">
+                  Learn more <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                </div>
+              </div>
+            </Link>
+
+            {/* MCP Hub */}
+            <Link href="/mcp-hub">
+              <div className="group relative rounded-2xl border border-border bg-card hover:border-purple-500/50 hover:bg-purple-500/5 transition-all duration-300 p-6 cursor-pointer h-full flex flex-col">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="w-11 h-11 rounded-xl bg-purple-500/10 flex items-center justify-center">
+                    <Server className="w-5 h-5 text-purple-500" />
+                  </div>
+                  <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20">Free</span>
+                </div>
+                <h3 className="text-lg font-bold mb-2 group-hover:text-purple-500 transition-colors">MCP Server Hub</h3>
+                <p className="text-muted-foreground text-sm leading-relaxed flex-1">
+                  A curated directory of privacy-first MCP servers. Drop Toolora's endpoint into Claude or Cursor and get 12 tools instantly — plus find other vetted local-first servers.
+                </p>
+                <div className="flex items-center gap-1 mt-4 text-sm font-semibold text-purple-500">
+                  Browse the hub <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                </div>
+              </div>
+            </Link>
+
+            {/* Blog */}
+            <Link href="/blog">
+              <div className="group relative rounded-2xl border border-border bg-card hover:border-primary/50 hover:bg-primary/5 transition-all duration-300 p-6 cursor-pointer h-full flex flex-col">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="w-11 h-11 rounded-xl bg-primary/10 flex items-center justify-center">
+                    <BookOpen className="w-5 h-5 text-primary" />
+                  </div>
+                  <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-primary/10 text-primary border border-primary/20">16 posts</span>
+                </div>
+                <h3 className="text-lg font-bold mb-2 group-hover:text-primary transition-colors">Privacy & Dev Blog</h3>
+                <p className="text-muted-foreground text-sm leading-relaxed flex-1">
+                  Deep dives on HIPAA compliance, JWT security, hashing vs encryption, MCP servers, and why most "free" tools are a data risk. Written for developers and compliance teams.
+                </p>
+                <div className="flex items-center gap-1 mt-4 text-sm font-semibold text-primary">
+                  Read the blog <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                </div>
+              </div>
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* For AI Agents Section */}
       <section className="py-20 border-y border-border/50 bg-gradient-to-br from-yellow-500/5 via-background to-background">
         <div className="container mx-auto px-4">
@@ -151,9 +219,16 @@ export default function Home() {
               <h2 className="text-3xl md:text-4xl font-display font-bold mb-4">
                 A paid API built for autonomous agents.
               </h2>
-              <p className="text-muted-foreground text-lg mb-6 leading-relaxed max-w-xl">
-                Three server-side endpoints that agents can discover, pay for, and use — no API key, no signup. Just send <span className="text-foreground font-semibold">0.5 XLM per request</span> via Stellar and get the data.
+              <p className="text-muted-foreground text-lg mb-4 leading-relaxed max-w-xl">
+                Three server-side endpoints that agents can discover, pay for, and use. Pay per-call with Solana USDC or Stellar XLM via x402 — or subscribe monthly via Stripe for higher volume.
               </p>
+              <div className="flex flex-wrap gap-2 mb-6">
+                {[["Free", "200 calls/mo"], ["Pro", "$19/mo · 5k calls"], ["Team", "$79/mo · 50k calls"]].map(([plan, desc]) => (
+                  <span key={plan} className="text-xs px-3 py-1.5 rounded-full border border-yellow-500/20 bg-yellow-500/5 text-yellow-600 dark:text-yellow-400 font-semibold">
+                    {plan} <span className="font-normal text-muted-foreground">— {desc}</span>
+                  </span>
+                ))}
+              </div>
               <div className="space-y-3 mb-8">
                 {[
                   { icon: FileText, label: "PDF → raw text", desc: "Clean text, page count, word count, PDF metadata" },
@@ -313,6 +388,66 @@ print(r.json()["text"])  # ← full PDF text`}
                 />
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Blog teaser */}
+      <section className="py-20 border-t border-border/50">
+        <div className="container mx-auto px-4">
+          <div className="flex items-end justify-between mb-10">
+            <div>
+              <h2 className="text-3xl font-display font-bold mb-2">From the Blog</h2>
+              <p className="text-muted-foreground">Privacy, security, and developer deep dives.</p>
+            </div>
+            <Link href="/blog" className="hidden sm:flex items-center text-sm font-medium text-primary hover:underline">
+              View all 16 posts <ArrowRight className="w-4 h-4 ml-1" />
+            </Link>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[
+              {
+                slug: "hipaa-compliant-online-document-tools",
+                category: "Privacy",
+                date: "Apr 3",
+                title: "Why Most Online Document Tools Are a HIPAA Liability",
+                desc: "Most 'free' tools upload your files to servers you don't control. Here's why that matters for regulated industries.",
+                color: "text-red-500",
+                bg: "bg-red-500/10",
+              },
+              {
+                slug: "stop-pasting-jwts-into-random-websites",
+                category: "Security",
+                date: "Apr 3",
+                title: "Stop Pasting JWT Tokens Into Random Websites",
+                desc: "JWT.io is great — but pasting tokens into any third-party site is a security risk. Here's the safer alternative.",
+                color: "text-orange-500",
+                bg: "bg-orange-500/10",
+              },
+              {
+                slug: "competitor-research-claude-mcp",
+                category: "Developer Tools",
+                date: "Apr 1",
+                title: "How to Research Any Competitor Using Claude and an MCP Server",
+                desc: "Use Claude Desktop + Toolora's free MCP server to automate competitor research without touching a spreadsheet.",
+                color: "text-purple-500",
+                bg: "bg-purple-500/10",
+              },
+            ].map((post) => (
+              <Link key={post.slug} href={`/blog/${post.slug}`}>
+                <div className="group rounded-2xl border border-border bg-card hover:border-primary/40 hover:bg-muted/40 transition-all duration-300 p-6 h-full flex flex-col cursor-pointer">
+                  <div className="flex items-center gap-2 mb-4">
+                    <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${post.bg} ${post.color}`}>{post.category}</span>
+                    <span className="text-xs text-muted-foreground">{post.date}</span>
+                  </div>
+                  <h3 className="font-bold text-base mb-2 leading-snug group-hover:text-primary transition-colors flex-1">{post.title}</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed mb-4">{post.desc}</p>
+                  <div className="flex items-center gap-1 text-sm font-semibold text-primary">
+                    Read more <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                  </div>
+                </div>
+              </Link>
+            ))}
           </div>
         </div>
       </section>
