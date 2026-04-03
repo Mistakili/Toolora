@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Copy, Check, Zap, Terminal, Bot, FileText, QrCode, Lock, Globe, FileJson, Type, Mic, AlignLeft } from "lucide-react";
+import { Copy, Check, Zap, Terminal, Bot, FileText, QrCode, Lock, Globe, FileJson, Mic, AlignLeft, Hash, FileCode2, Link2, Download } from "lucide-react";
 import { useSEO } from "@/hooks/useSEO";
 
 function CopyButton({ text }: { text: string }) {
@@ -35,18 +35,21 @@ function CodeBlock({ code, language = "json" }: { code: string; language?: strin
 }
 
 const MCP_TOOLS = [
-  { icon: FileText,  name: "extract_pdf_text",   desc: "Extract all plain text from a PDF (base64 input). Returns content, page count, word count." },
-  { icon: FileText,  name: "merge_pdfs",         desc: "Merge 2–20 PDFs into one document. Each file provided as base64." },
-  { icon: QrCode,    name: "generate_qr_code",   desc: "Generate a QR code PNG for any URL or text. Returns base64 image." },
-  { icon: FileJson,  name: "csv_to_json",        desc: "Convert a CSV string into a JSON array of objects. First row = column headers." },
-  { icon: FileJson,  name: "json_to_csv",        desc: "Convert a JSON array of objects into a CSV string." },
-  { icon: Terminal,  name: "ocr_image",          desc: "Extract text from any image using OCR. Supports 50+ languages via Tesseract." },
-  { icon: FileText,  name: "extract_docx_text",  desc: "Extract all plain text from a Microsoft Word (.docx) file." },
-  { icon: FileText,  name: "excel_to_json",      desc: "Parse .xlsx/.xls/.csv files and return all sheets as structured JSON." },
-  { icon: Mic,       name: "transcribe_audio",   desc: "Transcribe speech from an audio file using OpenAI Whisper (gpt-4o-mini-transcribe)." },
-  { icon: Globe,     name: "scrape_url_js",      desc: "Fetch and extract content from pages that require JavaScript rendering (SPAs)." },
-  { icon: AlignLeft, name: "count_words",        desc: "Count words, characters, sentences, and paragraphs. Returns reading time estimate." },
-  { icon: Globe,     name: "read_url",           desc: "Fetch any public URL and return its main readable content as plain text." },
+  { icon: FileText,  name: "extract_pdf_text",       desc: "Extract all plain text from a PDF (base64 input). Returns content, page count, word count." },
+  { icon: FileText,  name: "merge_pdfs",             desc: "Merge 2–20 PDFs into one document. Each file provided as base64." },
+  { icon: QrCode,    name: "generate_qr_code",       desc: "Generate a QR code PNG for any URL or text. Returns base64 image." },
+  { icon: FileJson,  name: "csv_to_json",            desc: "Convert a CSV string into a JSON array of objects. First row = column headers." },
+  { icon: FileJson,  name: "json_to_csv",            desc: "Convert a JSON array of objects into a CSV string." },
+  { icon: Terminal,  name: "ocr_image",              desc: "Extract text from any image using OCR. Supports 50+ languages via Tesseract." },
+  { icon: FileText,  name: "extract_docx_text",      desc: "Extract all plain text from a Microsoft Word (.docx) file." },
+  { icon: FileText,  name: "excel_to_json",          desc: "Parse .xlsx/.xls/.csv files and return all sheets as structured JSON." },
+  { icon: Mic,       name: "transcribe_audio",       desc: "Transcribe speech from an audio file using OpenAI Whisper (gpt-4o-mini-transcribe)." },
+  { icon: Globe,     name: "scrape_url_js",          desc: "Fetch and extract content from pages that require JavaScript rendering (SPAs)." },
+  { icon: AlignLeft, name: "count_words",            desc: "Count words, characters, sentences, and paragraphs. Returns reading time estimate." },
+  { icon: Globe,     name: "read_url",               desc: "Fetch any public URL and return its main readable content as plain text." },
+  { icon: FileCode2, name: "generate_pdf_from_text", desc: "Render plain text or markdown into a formatted, downloadable PDF. Returns base64." },
+  { icon: Hash,      name: "markdown_to_html",       desc: "Convert markdown to a complete styled HTML document with all standard syntax supported." },
+  { icon: Link2,     name: "create_shareable_paste", desc: "Store text and get a public link (toolora.dev/p/[id]). Expires in 7 days." },
 ];
 
 const MCP_ENDPOINT = "https://toolora.replit.app/api/mcp";
@@ -124,8 +127,8 @@ console.log(result.content[0].text);
 
 export default function McpPage() {
   useSEO({
-    title: "Free MCP Server — 12 Tools for Claude, Cursor & AI Agents",
-    description: "Toolora's free MCP server gives Claude, Cursor, Cline, and any MCP-compatible AI agent access to 15 tools: PDF extraction, OCR, QR codes, hash generation, and more. No auth required.",
+    title: "Free MCP Server — 15 Tools for Claude, Cursor & AI Agents",
+    description: "Toolora's free MCP server gives Claude, Cursor, Cline, and any MCP-compatible AI agent 15 real server-side tools: PDF, OCR, QR codes, markdown, pastes, and more. No API key. Listed in the Anthropic MCP Registry.",
     canonical: "https://toolora.dev/mcp",
   });
 
@@ -141,14 +144,23 @@ export default function McpPage() {
           Free MCP Server
         </h1>
         <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-          15 tools — PDF processing, OCR, QR codes, file conversion, and more — ready for Claude, Cursor, Cline, or any MCP-compatible agent.{" "}
-          <strong className="text-foreground">No API key. No auth. Completely free.</strong>
+          Not a prompt wrapper.{" "}
+          <strong className="text-foreground">A real server</strong>{" "}
+          that processes files, generates PDFs, runs OCR, and returns structured results — used in Claude workflows across 15 countries.{" "}
+          <strong className="text-foreground">No API key. No auth. Nothing stored.</strong>
         </p>
         <div className="mt-5 flex items-center justify-center gap-2">
           <code className="text-sm bg-muted border border-border rounded-lg px-4 py-2 font-mono text-primary">
             {MCP_ENDPOINT}
           </code>
           <CopyButton text={MCP_ENDPOINT} />
+        </div>
+        {/* Social proof strip */}
+        <div className="mt-5 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-muted-foreground">
+          <span className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-green-500" /> Listed in Anthropic MCP Registry</span>
+          <span className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-green-500" /> Smithery verified</span>
+          <span className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-green-500" /> 15 countries</span>
+          <span className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-green-500" /> 15 tools, no rate limits</span>
         </div>
       </div>
 
@@ -242,7 +254,7 @@ export default function McpPage() {
   );
 }
 
-type ClientKey = "claude" | "cursor" | "cline";
+type ClientKey = "claude" | "cursor" | "cline" | "claudecode";
 
 const CONFIGS: Record<ClientKey, { label: string; filename: string; config: string; instructions: string }> = {
   claude: {
@@ -262,6 +274,12 @@ const CONFIGS: Record<ClientKey, { label: string; filename: string; config: stri
     filename: "cline_mcp_settings.json",
     config: CLINE_CONFIG,
     instructions: "In Cline's settings, open the MCP Servers tab and add a new remote server with the config below.",
+  },
+  claudecode: {
+    label: "Claude Code",
+    filename: ".claude/skills/toolora.md",
+    config: "",
+    instructions: "Download the Toolora skill file and drop it into your project's .claude/skills/ folder. Claude Code will automatically pick it up and know how to use all 15 tools.",
   },
 };
 
@@ -290,7 +308,18 @@ function QuickStart() {
       </div>
       <div className="rounded-xl border border-border bg-card p-5 space-y-4">
         <p className="text-sm text-muted-foreground">{cfg.instructions}</p>
-        <CodeBlock code={cfg.config} language={cfg.filename} />
+        {active === "claudecode" ? (
+          <a
+            href="/toolora-skill.md"
+            download="toolora.md"
+            className="inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
+          >
+            <Download className="h-4 w-4" />
+            Download toolora.md skill file
+          </a>
+        ) : (
+          <CodeBlock code={cfg.config} language={cfg.filename} />
+        )}
       </div>
     </section>
   );

@@ -1,6 +1,6 @@
 # Toolora
 
-> Free online tools and a free MCP server for AI agents. Privacy-first — all browser tools run 100% client-side. Agent API is server-side and pay-per-request via the x402 protocol.
+> Free online tools and a free MCP server for AI agents. Not a prompt wrapper — a real server that processes files, generates PDFs, runs OCR, and returns structured results. Used in Claude workflows across 15 countries. Listed in the Anthropic MCP Registry. Privacy-first: all browser tools run 100% client-side, nothing stored.
 
 ## Overview
 
