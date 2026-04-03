@@ -964,13 +964,14 @@ router.post("/", async (req: Request, res: Response) => {
             }));
           }
         } finally {
+          // Fire-and-forget — response already sent; use console so it's always visible in server logs
           db.insert(mcpCallsTable).values({
             tool: name,
             durationMs: Date.now() - _mcpStartMs,
             success: _mcpSuccess,
             errorMsg: _mcpErrorMsg ?? null,
           }).catch((err: unknown) => {
-            req.log?.warn({ err, tool: name }, "Failed to record MCP call in DB");
+            console.error("[mcp] Failed to record tool call in DB", { err, tool: name });
           });
         }
         break;
