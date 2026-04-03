@@ -3,7 +3,7 @@ import { Link } from "wouter";
 import {
   ShieldCheck, Copy, Check, ExternalLink,
   Zap, Database, FolderOpen, GitBranch, Brain,
-  Globe, Terminal, FileText, Search, ChevronDown, ChevronUp, Mail, Monitor
+  Globe, Terminal, FileText, Search, ChevronDown, ChevronUp, Mail, Monitor, Coins
 } from "lucide-react";
 import { useSEO } from "@/hooks/useSEO";
 
@@ -91,6 +91,29 @@ const SERVERS: ServerEntry[] = [
       },
     }, null, 2),
     tags: ["PDF", "OCR", "CSV", "utilities", "audio"],
+  },
+  {
+    id: "soliris",
+    name: "Soliris MCP",
+    tagline: "19 Solana tools for autonomous agents: balance reads, Jupiter swaps with MEV risk scoring, SOL/token transfers, and native x402 USDC micropayments. Private key stays local. Mainnet-ready.",
+    icon: Coins,
+    privacyLevel: "api",
+    github: "https://www.npmjs.com/package/soliris-mcp",
+    installNote: "Private key never leaves your machine. Runs via npx — no server-side custody.",
+    claudeConfig: JSON.stringify({
+      mcpServers: {
+        soliris: {
+          command: "npx",
+          args: ["-y", "soliris-mcp"],
+          env: {
+            RPC_URL: "https://mainnet.helius-rpc.com/?api-key=YOUR_KEY",
+            SOLANA_PRIVATE_KEY: "your_base58_key",
+            SOLIRIS_API_URL: "https://soliris.replit.app",
+          },
+        },
+      },
+    }, null, 2),
+    tags: ["Solana", "DeFi", "x402", "payments", "swaps"],
   },
   {
     id: "filesystem",
