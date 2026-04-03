@@ -1,0 +1,17 @@
+Move 1: Own the MCP registry before anyone else does
+
+The Model Context Protocol is growing faster than any developer tool ecosystem since npm. Claude, GPT, Gemini, and every local LLM tool is adding MCP support. Developers are building servers and there is currently no canonical place to discover, search, and install them — no npm, no App Store, no hub. That gap is sitting wide open right now.
+
+Toolora is uniquely positioned: you already run an MCP server with 12 tools, you have developer credibility, and you have the domain. Build a searchable, categorized registry where any developer can list their MCP server. One-click config generation for Claude Desktop and Cursor. Stars, reviews, install counts. The content markets itself — every server owner links back to their listing, every blog post gets shared in AI communities.
+
+This is a first-mover bet. In 12 months someone will own this position. Revenue path: premium listings, verified badges, analytics dashboards for server owners, and Toolora's own servers featured at the top. The HN post practically writes itself: "Show HN: I built an MCP server registry because nothing else existed."
+
+Move 2: Enterprise "Private by Default" tier — target the buyers who can't use anything else
+
+Individual users convert poorly everywhere. The real money is in organizations that legally cannot use cloud-based tools: law firms handling privileged communications, hospitals under HIPAA, financial services under strict data sovereignty rules, government contractors. These buyers exist, they are desperate for solutions, and they pay $200–500/month per team without blinking.
+
+Toolora's entire architecture is already the answer to their problem. Your tools don't upload. Your AI processing can run locally. Nothing leaves the device. You don't need SOC2 certification when data never hits your servers in the first place — that IS the pitch. Reposition one tier as "Toolora Private" at $199/month, write one case-study landing page around "tools your legal team can actually use," and start closing inbound from people searching "HIPAA-compliant online tools" or "client-side document processing enterprise."
+
+The product barely changes. The narrative changes completely.
+
+Why these two specifically: MCP hub is an ecosystem play that compounds — more servers listed means more developers, means more users, means more revenue, and it puts Toolora at the center of the fastest-moving AI infrastructure category right now. Enterprise tier is a revenue play that doesn't require more traffic — it converts the serious buyers already landing on the site at 50–100x the revenue per user. One builds reach, the other builds revenue. Together they're the fastest path to a defensible business.
