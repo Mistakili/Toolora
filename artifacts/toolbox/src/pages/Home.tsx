@@ -87,6 +87,17 @@ export default function Home() {
                 </div>
               </div>
 
+              {/* MCP callout */}
+              <div className="mt-6 flex items-center justify-center">
+                <Link href="/mcp-hub" className="group inline-flex items-center gap-2.5 px-4 py-2.5 rounded-xl border border-border bg-muted/30 hover:border-primary/40 hover:bg-primary/5 transition-all duration-200 text-sm">
+                  <span className="flex items-center gap-1.5 text-muted-foreground">
+                    <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                    Also an MCP server for Claude Desktop &amp; Cursor
+                  </span>
+                  <span className="text-primary font-medium group-hover:underline">12 tools, no API key →</span>
+                </Link>
+              </div>
+
               {/* Stats bar */}
               <div className="flex flex-wrap items-center justify-center gap-8 mt-12 pt-8 border-t border-border/40">
                 <div className="text-center">
