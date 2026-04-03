@@ -3,9 +3,13 @@ import { Link } from "wouter";
 import {
   ShieldCheck, Lock, FileText, Scale, Heart, Building2,
   CheckCircle2, ArrowRight, Server, Wifi, Eye, Database,
-  ChevronDown, ChevronUp, Mail, Zap, Users, Globe
+  ChevronDown, ChevronUp, Mail, Zap, Globe, Loader2,
+  RotateCcw, CreditCard
 } from "lucide-react";
 import { useSEO } from "@/hooks/useSEO";
+
+const ENTERPRISE_PRICE_ID = "price_1TI6JODcOSNqIPi8pQChuQIm";
+const TEAM_PRICE_ID = "price_1TGWCgDcOSNqIPi8KrXcEcCf";
 
 function FAQItem({ q, a }: { q: string; a: string }) {
   const [open, setOpen] = useState(false);
@@ -72,7 +76,7 @@ const FEATURES = [
   { icon: Wifi, label: "Works offline", desc: "After the initial page load, document processing tools function with no internet connection." },
   { icon: Eye, label: "No compliance risk on our side", desc: "You don't need to audit Toolora's SOC2 because we're not a data processor for your content." },
   { icon: Database, label: "No data retention", desc: "There is no database of your files. Browser memory is cleared when the tab closes." },
-  { icon: Users, label: "Team access controls", desc: "Manage your team via the admin dashboard. Centralized billing, per-seat visibility." },
+  { icon: RotateCcw, label: "30-day money-back guarantee", desc: "If Toolora doesn't work for your team for any reason, we'll refund in full. No questions." },
 ];
 
 const FAQS = [
@@ -97,19 +101,67 @@ const FAQS = [
     a: "We collect anonymized page view analytics (path visited, browser type, country — no PII), email addresses of users who sign up, and API usage counts (number of calls, not content). We do not collect, store, or process the content of any files you use with the browser tools.",
   },
   {
+    q: "How does the 30-day money-back guarantee work?",
+    a: "If you're not satisfied for any reason within 30 days of subscribing, email enterprise@toolora.dev and we'll issue a full refund. No forms, no questions, no hoops.",
+  },
+  {
     q: "Is there a self-hosted option for maximum control?",
     a: "We are evaluating a self-hosted enterprise tier for organizations that require all infrastructure to run within their own environment. Contact us at enterprise@toolora.dev to discuss requirements.",
   },
 ];
 
 export default function Enterprise() {
+  const [loading, setLoading] = useState<string | null>(null);
+  const [errMsg, setErrMsg] = useState<string | null>(null);
+
   useSEO({
     title: "Toolora for Enterprise — Private-by-Default Tools for Regulated Industries",
-    description: "Browser-side document tools for law firms, healthcare, financial services, and government. No uploads. No HIPAA risk. No BAA required. Your data never leaves the device.",
+    description: "Browser-side document tools for law firms, healthcare, financial services, and government. No uploads. No HIPAA risk. No BAA required. 30-day money-back guarantee.",
   });
+
+  const BASE = import.meta.env.BASE_URL.replace(/\/$/, "");
+  const params = new URLSearchParams(window.location.search);
+  const justSucceeded = params.get("success") === "1";
+  const justCanceled = params.get("canceled") === "1";
+
+  async function handleCheckout(priceId: string, tierId: string) {
+    setLoading(tierId);
+    setErrMsg(null);
+    try {
+      const res = await fetch(`${BASE}/api/stripe/checkout`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ priceId, returnPath: "/enterprise" }),
+      });
+      if (res.status === 401) {
+        window.location.href = `${BASE}/api/auth/login?returnTo=/enterprise`;
+        return;
+      }
+      const data = await res.json() as { url?: string; error?: string };
+      if (data.url) window.location.href = data.url;
+      else setErrMsg(data.error ?? "Something went wrong. Try again or email enterprise@toolora.dev.");
+    } catch {
+      setErrMsg("Could not start checkout. Try again or email enterprise@toolora.dev.");
+    } finally {
+      setLoading(null);
+    }
+  }
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-16 space-y-24">
+
+      {/* ── Success / canceled banners ────────────────────────────────────── */}
+      {justSucceeded && (
+        <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-green-900/90 border border-green-600 text-green-200 text-sm rounded-xl px-6 py-3 shadow-xl backdrop-blur">
+          🎉 Enterprise plan activated — welcome aboard. Check your email for next steps.
+        </div>
+      )}
+      {justCanceled && (
+        <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-zinc-900/90 border border-zinc-600 text-zinc-300 text-sm rounded-xl px-6 py-3 shadow-xl backdrop-blur">
+          Checkout canceled — no charge was made.
+        </div>
+      )}
 
       {/* ── Hero ──────────────────────────────────────────────────────────── */}
       <section className="text-center space-y-6">
@@ -126,21 +178,26 @@ export default function Enterprise() {
           Nothing hits our servers. There's no data to breach, audit, or regulate on our side.
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
+          <button
+            onClick={() => handleCheckout(ENTERPRISE_PRICE_ID, "enterprise-hero")}
+            disabled={!!loading}
+            className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-xl font-semibold hover:opacity-90 transition-opacity text-sm disabled:opacity-60"
+          >
+            {loading === "enterprise-hero" ? <Loader2 className="w-4 h-4 animate-spin" /> : <CreditCard className="w-4 h-4" />}
+            Start Enterprise — $199/month
+          </button>
           <a
             href="mailto:enterprise@toolora.dev?subject=Enterprise%20Inquiry&body=Hi%2C%20I%27m%20interested%20in%20Toolora%20for%20my%20organization.%0A%0AOrganization%3A%0ATeam%20size%3A%0AUse%20case%3A"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-xl font-semibold hover:opacity-90 transition-opacity text-sm"
-          >
-            <Mail className="w-4 h-4" />
-            Talk to us — enterprise@toolora.dev
-          </a>
-          <Link
-            href="/pricing"
             className="inline-flex items-center gap-2 px-6 py-3 border border-border rounded-xl text-sm font-medium hover:bg-muted transition-colors"
           >
-            View all plans <ArrowRight className="w-4 h-4" />
-          </Link>
+            <Mail className="w-4 h-4" /> Questions? Email us
+          </a>
         </div>
-        <p className="text-xs text-muted-foreground">No sales calls required. Email us and we'll respond within one business day.</p>
+        <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
+          <RotateCcw className="w-3.5 h-3.5 text-green-500" />
+          <span>30-day money-back guarantee — no questions asked</span>
+        </div>
+        {errMsg && <p className="text-sm text-red-400">{errMsg}</p>}
       </section>
 
       {/* ── The core difference ──────────────────────────────────────────── */}
@@ -240,43 +297,46 @@ export default function Enterprise() {
       {/* ── Pricing ──────────────────────────────────────────────────────── */}
       <section className="rounded-2xl border border-primary/20 bg-primary/5 p-8 sm:p-10 space-y-8">
         <div className="text-center space-y-2">
-          <h2 className="text-2xl sm:text-3xl font-display font-bold">Enterprise pricing</h2>
-          <p className="text-muted-foreground">Flat team pricing — no per-seat surprises.</p>
+          <h2 className="text-2xl sm:text-3xl font-display font-bold">Get started in 60 seconds</h2>
+          <p className="text-muted-foreground">Pick a plan, pay with card, and your team has access immediately.</p>
         </div>
         <div className="grid sm:grid-cols-3 gap-5">
           {[
             {
+              id: "team",
+              priceId: TEAM_PRICE_ID,
               name: "Team",
               price: "$79",
               period: "/month",
               desc: "Up to 10 users. All tools, API access, MCP server.",
               features: ["50,000 API calls/month", "All 28 browser tools", "MCP server access", "Team dashboard", "Priority support"],
-              cta: "Get started",
-              href: "/pricing",
+              cta: "Start Team Plan",
               highlight: false,
             },
             {
+              id: "enterprise",
+              priceId: ENTERPRISE_PRICE_ID,
               name: "Enterprise",
               price: "$199",
               period: "/month",
               desc: "Unlimited users. Compliance-ready documentation included.",
-              features: ["Unlimited API calls", "All browser tools + API", "Architecture documentation for auditors", "Usage audit log", "Dedicated support", "Custom invoicing"],
-              cta: "Contact us",
-              href: "mailto:enterprise@toolora.dev?subject=Enterprise%20Plan%20Inquiry",
+              features: ["Unlimited API calls", "All browser tools + API", "Architecture docs for auditors", "Usage audit log", "Dedicated support", "Custom invoicing"],
+              cta: "Start Enterprise Plan",
               highlight: true,
             },
             {
+              id: "selfhosted",
+              priceId: null,
               name: "Self-Hosted",
               price: "Custom",
               period: "",
               desc: "Run Toolora entirely within your own infrastructure.",
               features: ["Air-gap compatible", "Your servers, your logs", "Meets strictest data sovereignty", "On-premise deployment", "ITAR / CMMC compatible"],
-              cta: "Talk to us",
-              href: "mailto:enterprise@toolora.dev?subject=Self-Hosted%20Inquiry",
+              cta: "Email us",
               highlight: false,
             },
           ].map(tier => (
-            <div key={tier.name} className={`rounded-2xl border p-6 space-y-5 flex flex-col ${tier.highlight ? "border-primary bg-primary/10" : "border-border bg-background/60"}`}>
+            <div key={tier.id} className={`rounded-2xl border p-6 space-y-5 flex flex-col ${tier.highlight ? "border-primary bg-primary/10" : "border-border bg-background/60"}`}>
               <div>
                 <p className="text-sm font-medium text-muted-foreground mb-1">{tier.name}</p>
                 <div className="flex items-baseline gap-1">
@@ -293,15 +353,31 @@ export default function Enterprise() {
                   </li>
                 ))}
               </ul>
-              <a
-                href={tier.href}
-                className={`w-full text-center py-2.5 rounded-xl text-sm font-semibold transition-opacity hover:opacity-90 ${tier.highlight ? "bg-primary text-primary-foreground" : "border border-border hover:bg-muted"}`}
-              >
-                {tier.cta}
-              </a>
+              {tier.priceId ? (
+                <button
+                  onClick={() => handleCheckout(tier.priceId!, tier.id)}
+                  disabled={!!loading}
+                  className={`w-full text-center py-2.5 rounded-xl text-sm font-semibold transition-opacity hover:opacity-90 disabled:opacity-60 flex items-center justify-center gap-2 ${tier.highlight ? "bg-primary text-primary-foreground" : "border border-border hover:bg-muted"}`}
+                >
+                  {loading === tier.id ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
+                  {loading === tier.id ? "Redirecting…" : tier.cta}
+                </button>
+              ) : (
+                <a
+                  href="mailto:enterprise@toolora.dev?subject=Self-Hosted%20Inquiry"
+                  className="w-full text-center py-2.5 rounded-xl text-sm font-semibold border border-border hover:bg-muted transition-colors"
+                >
+                  {tier.cta}
+                </a>
+              )}
             </div>
           ))}
         </div>
+        <div className="text-center flex items-center justify-center gap-2 text-sm text-muted-foreground">
+          <RotateCcw className="w-4 h-4 text-green-500" />
+          All paid plans include a <strong className="text-foreground">30-day money-back guarantee</strong>. No questions asked.
+        </div>
+        {errMsg && <p className="text-sm text-red-400 text-center">{errMsg}</p>}
       </section>
 
       {/* ── Verification block ───────────────────────────────────────────── */}
@@ -341,19 +417,33 @@ export default function Enterprise() {
         </div>
       </section>
 
-      {/* ── CTA ──────────────────────────────────────────────────────────── */}
+      {/* ── Final CTA ────────────────────────────────────────────────────── */}
       <section className="text-center space-y-6 py-4">
         <h2 className="text-2xl sm:text-3xl font-display font-bold">Ready to get your team set up?</h2>
         <p className="text-muted-foreground max-w-lg mx-auto">
-          Tell us your organization, team size, and use case. We'll respond within one business day with a plan recommendation and any documentation your compliance team needs.
+          Self-serve setup. Instant access. 30-day money-back if it's not the right fit.
         </p>
-        <a
-          href="mailto:enterprise@toolora.dev?subject=Enterprise%20Inquiry&body=Hi%2C%20I%27m%20interested%20in%20Toolora%20for%20my%20organization.%0A%0AOrganization%3A%0ATeam%20size%3A%0AUse%20case%3A%0ACompliance%20requirements%3A"
-          className="inline-flex items-center gap-2 px-8 py-4 bg-primary text-primary-foreground rounded-xl font-semibold hover:opacity-90 transition-opacity"
-        >
-          <Mail className="w-5 h-5" />
-          enterprise@toolora.dev
-        </a>
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <button
+            onClick={() => handleCheckout(ENTERPRISE_PRICE_ID, "enterprise-bottom")}
+            disabled={!!loading}
+            className="inline-flex items-center gap-2 px-8 py-4 bg-primary text-primary-foreground rounded-xl font-semibold hover:opacity-90 transition-opacity disabled:opacity-60"
+          >
+            {loading === "enterprise-bottom" ? <Loader2 className="w-5 h-5 animate-spin" /> : <CreditCard className="w-5 h-5" />}
+            Start Enterprise Plan — $199/mo
+          </button>
+          <a
+            href="mailto:enterprise@toolora.dev?subject=Enterprise%20Inquiry&body=Hi%2C%20I%27m%20interested%20in%20Toolora%20for%20my%20organization.%0A%0AOrganization%3A%0ATeam%20size%3A%0AUse%20case%3A%0ACompliance%20requirements%3A"
+            className="inline-flex items-center gap-2 px-8 py-4 border border-border rounded-xl font-semibold hover:bg-muted transition-colors text-sm"
+          >
+            <Mail className="w-4 h-4" /> Questions first? Email us
+          </a>
+        </div>
+        <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
+          <RotateCcw className="w-3.5 h-3.5 text-green-500" />
+          30-day money-back guarantee on all plans
+        </div>
+        {errMsg && <p className="text-sm text-red-400">{errMsg}</p>}
         <p className="text-xs text-muted-foreground">
           Or explore the tools yourself first —{" "}
           <Link href="/" className="text-primary hover:underline">start with the free plan →</Link>

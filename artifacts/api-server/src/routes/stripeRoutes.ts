@@ -51,8 +51,11 @@ router.get("/plans", async (_req: Request, res: Response) => {
 // POST /api/stripe/checkout — create Stripe Checkout session
 router.post("/checkout", async (req: Request, res: Response) => {
   if (!requireAuth(req, res)) return;
-  const { priceId } = req.body as { priceId?: string };
+  const { priceId, returnPath } = req.body as { priceId?: string; returnPath?: string };
   if (!priceId) { res.status(400).json({ error: "priceId required." }); return; }
+
+  // Validate returnPath is a safe relative path
+  const safePath = returnPath && /^\/[a-zA-Z0-9\-_/?=&]*$/.test(returnPath) ? returnPath : "/pricing";
 
   try {
     const email = req.user!.email;
@@ -72,8 +75,8 @@ router.post("/checkout", async (req: Request, res: Response) => {
       payment_method_types: ["card"],
       line_items: [{ price: priceId, quantity: 1 }],
       mode: "subscription",
-      success_url: `${baseUrl}/pricing?success=1`,
-      cancel_url: `${baseUrl}/pricing?canceled=1`,
+      success_url: `${baseUrl}${safePath}${safePath.includes("?") ? "&" : "?"}success=1`,
+      cancel_url: `${baseUrl}${safePath}${safePath.includes("?") ? "&" : "?"}canceled=1`,
     });
 
     res.json({ url: session.url });
