@@ -698,7 +698,9 @@ router.post("/", async (req: Request, res: Response) => {
             durationMs: Date.now() - _mcpStartMs,
             success: _mcpSuccess,
             errorMsg: _mcpErrorMsg ?? null,
-          }).catch(() => {});
+          }).catch((err: unknown) => {
+            req.log?.warn({ err, tool: name }, "Failed to record MCP call in DB");
+          });
         }
         break;
       }
