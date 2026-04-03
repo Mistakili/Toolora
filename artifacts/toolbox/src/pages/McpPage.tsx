@@ -125,7 +125,7 @@ console.log(result.content[0].text);
 export default function McpPage() {
   useSEO({
     title: "Free MCP Server — 12 Tools for Claude, Cursor & AI Agents",
-    description: "Toolora's free MCP server gives Claude, Cursor, Cline, and any MCP-compatible AI agent access to 12 tools: PDF extraction, OCR, QR codes, hash generation, and more. No auth required.",
+    description: "Toolora's free MCP server gives Claude, Cursor, Cline, and any MCP-compatible AI agent access to 15 tools: PDF extraction, OCR, QR codes, hash generation, and more. No auth required.",
     canonical: "https://toolora.dev/mcp",
   });
 
@@ -141,7 +141,7 @@ export default function McpPage() {
           Free MCP Server
         </h1>
         <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-          12 tools — PDF processing, OCR, QR codes, file conversion, and more — ready for Claude, Cursor, Cline, or any MCP-compatible agent.{" "}
+          15 tools — PDF processing, OCR, QR codes, file conversion, and more — ready for Claude, Cursor, Cline, or any MCP-compatible agent.{" "}
           <strong className="text-foreground">No API key. No auth. Completely free.</strong>
         </p>
         <div className="mt-5 flex items-center justify-center gap-2">
@@ -158,7 +158,7 @@ export default function McpPage() {
       {/* Tool list */}
       <section className="mt-12">
         <h2 className="text-2xl font-display font-bold mb-2">Available Tools</h2>
-        <p className="text-muted-foreground mb-6">All 12 tools are free with no rate limits for MCP usage.</p>
+        <p className="text-muted-foreground mb-6">All 15 tools are free with no rate limits for MCP usage.</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {MCP_TOOLS.map((t) => (
             <div key={t.name} className="flex items-start gap-3 p-4 rounded-xl border border-border bg-card hover:border-primary/30 transition-colors">
@@ -223,7 +223,7 @@ export default function McpPage() {
       {/* CTA */}
       <section className="mt-12 text-center py-10 rounded-2xl border border-primary/20 bg-gradient-to-r from-primary/5 to-violet-500/5">
         <h2 className="text-2xl font-display font-bold mb-2">Ready to connect?</h2>
-        <p className="text-muted-foreground mb-5">Copy the endpoint, add it to your AI client, and start using 12 tools immediately.</p>
+        <p className="text-muted-foreground mb-5">Copy the endpoint, add it to your AI client, and start using 15 tools immediately.</p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
           <div className="flex items-center gap-2 bg-background border border-border rounded-lg px-4 py-2">
             <code className="text-sm font-mono text-primary">{MCP_ENDPOINT}</code>

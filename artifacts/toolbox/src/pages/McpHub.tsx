@@ -371,7 +371,7 @@ function QuickInstall() {
             <span className="font-semibold text-sm">Add Toolora to your AI client</span>
             <span className="text-xs px-2 py-0.5 rounded-full bg-green-500/15 text-green-400 border border-green-500/20 font-medium">Free · No API key</span>
           </div>
-          <p className="text-xs text-muted-foreground">12 tools: PDF, OCR, QR codes, audio transcription, URL reader, CSV↔JSON and more</p>
+          <p className="text-xs text-muted-foreground">15 tools: PDF, OCR, QR codes, audio transcription, URL reader, CSV↔JSON and more</p>
         </div>
         <div className="flex items-center gap-1 bg-muted/60 rounded-lg p-1 self-start sm:self-auto">
           {INSTALL_TABS.map(t => (

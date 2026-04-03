@@ -1,13 +1,14 @@
 # Toolora
 
-> Free online tools and a paid Agent API for AI agents. Privacy-first — all browser tools run 100% client-side. Agent APIs are server-side and pay-per-request via the x402 protocol.
+> Free online tools and a free MCP server for AI agents. Privacy-first — all browser tools run 100% client-side. Agent API is server-side and pay-per-request via the x402 protocol.
 
 ## Overview
 
-Toolora (https://toolora.dev) provides two things:
+Toolora (https://toolora.dev) provides three things:
 
-1. **Free browser tools** — 20+ utilities that run entirely in the browser. No uploads, no accounts, no data stored.
-2. **Paid Agent API** — Three server-side endpoints for document and web content processing, gated by the x402 micropayment protocol. No API key or subscription required — agents pay per request using Stellar XLM (live) or Solana USDC (coming soon).
+1. **Free browser tools** — 28 utilities that run entirely in the browser. No uploads, no accounts, no data stored.
+2. **Free MCP server** — 15 tools for Claude Desktop, Cursor, Windsurf, and any MCP-compatible AI agent. No API key required.
+3. **Paid Agent API** — Server-side endpoints for document and web content processing, gated by the x402 micropayment protocol. Agents pay per request using Stellar XLM or Solana USDC.
 
 ## Free Browser Tools
 
@@ -47,15 +48,29 @@ All tools are available at https://toolora.dev/tools/<slug>
 
 Toolora exposes an MCP (Model Context Protocol) server for direct integration with Claude Desktop, Cursor, Windsurf, and other MCP-compatible clients.
 
-**Endpoint:** https://api.toolora.dev/api/mcp
+**Endpoint:** https://toolora.dev/api/mcp
 **Transport:** Streamable HTTP (MCP 2025-03-26)
 **Authentication:** None — free to use
+**Registry:** io.github.Mistakili/toolora-mcp (Anthropic MCP Registry)
+**Smithery:** smithery.ai/servers/mistakili/toolora-mcp
 
-### MCP Tools Available
+### MCP Tools Available (15 total)
 
 - `extract_pdf_text` — Extract plain text from a PDF (pass base64-encoded file content). Returns text, pages, word count, character count.
+- `merge_pdfs` — Merge 2–20 PDF files into a single PDF. Each file as base64. Returns merged PDF as base64.
+- `generate_qr_code` — Generate a QR code PNG from any text or URL. Returns base64 PNG. Configurable size and error correction.
+- `csv_to_json` — Convert a CSV string to a JSON array of objects. Handles quoted fields and headers.
+- `json_to_csv` — Convert a JSON array of objects to a CSV string. Infers column names from keys.
+- `ocr_image` — Extract text from an image using OCR (Tesseract). Accepts base64 PNG/JPEG/WEBP. Returns text and confidence score.
+- `extract_docx_text` — Extract plain text from a Word .docx file (base64). Returns text, paragraph count, word count.
+- `excel_to_json` — Parse an Excel file (.xlsx, .xls, .csv) and return all sheets as JSON arrays.
+- `transcribe_audio` — Transcribe speech from an audio file using OpenAI Whisper. Accepts base64 MP3/WAV/M4A/OGG (max 25MB).
+- `scrape_url_js` — Fetch and extract content from a JavaScript-rendered web page using a headless browser. Returns text or markdown.
 - `count_words` — Count words, characters, sentences, paragraphs, and reading time for any text.
 - `read_url` — Fetch a public URL and return clean readable text (Mozilla Readability). Returns title, byline, excerpt, and content.
+- `generate_pdf_from_text` — Generate a formatted PDF from plain text or markdown content. Supports headings, bullet lists, paragraphs. Returns base64 PDF.
+- `markdown_to_html` — Convert markdown to a complete styled HTML document. Supports all common markdown syntax.
+- `create_shareable_paste` — Store text content and return a public URL (toolora.dev/p/[id]) that anyone can visit. Expires in 7 days.
 
 ### Adding to Claude Desktop
 
@@ -63,7 +78,20 @@ Toolora exposes an MCP (Model Context Protocol) server for direct integration wi
 {
   "mcpServers": {
     "toolora": {
-      "url": "https://api.toolora.dev/api/mcp",
+      "type": "http",
+      "url": "https://toolora.dev/api/mcp"
+    }
+  }
+}
+```
+
+### Adding to Cursor / Windsurf
+
+```json
+{
+  "mcpServers": {
+    "toolora": {
+      "url": "https://toolora.dev/api/mcp",
       "transport": "http"
     }
   }
@@ -72,22 +100,21 @@ Toolora exposes an MCP (Model Context Protocol) server for direct integration wi
 
 ## Agent API (Paid, x402)
 
-Server-side APIs for AI agents. Pay per request — no API key, no subscription, no rate limits on payment.
+Server-side APIs for AI agents. Pay per request — no API key, no subscription.
 
 **Discovery:** https://toolora.dev/api/agent
 **Well-known manifest:** https://toolora.dev/.well-known/agent.json
 **Full docs:** https://toolora.dev/api-docs
-**Usage stats:** https://toolora.dev/api/agent/stats
 
 ### Endpoints
 
 - POST /api/agent/pdf/text — Extract full plain text from a PDF file. Returns text, page count, word count, character count, and PDF metadata. Accepts multipart/form-data with a `file` field (max 20MB).
-- POST /api/agent/pdf/extract — Extract structured sections from a PDF for RAG pipelines. Returns a title, sections array (each with heading, level, content text, and word count), total word count, page count, and PDF metadata.
-- POST /api/agent/pdf/merge — Merge 2–20 PDFs into one. Accepts a JSON array of base64-encoded PDFs. Returns the merged PDF as base64 with page count and file size.
-- POST /api/agent/url/read — Fetch a URL and return clean readable text stripped of navigation, ads, and boilerplate (Mozilla Readability). Returns title, byline, excerpt, content, word count, and fetch timestamp.
-- POST /api/agent/qr — Generate a QR code PNG from any text or URL. Returns base64 PNG. Accepts text, size (64–2048px), and error correction level (L/M/Q/H).
-- POST /api/agent/csv/to-json — Convert a CSV string to a JSON array of objects. Handles quoted fields and headers. Returns rows, column names, and row count.
-- POST /api/agent/json/to-csv — Convert a JSON array of objects to a CSV string. Infers column names from keys. Returns CSV with CRLF line endings.
+- POST /api/agent/pdf/extract — Extract structured sections from a PDF for RAG pipelines.
+- POST /api/agent/pdf/merge — Merge 2–20 PDFs into one.
+- POST /api/agent/url/read — Fetch a URL and return clean readable text (Mozilla Readability).
+- POST /api/agent/qr — Generate a QR code PNG from any text or URL.
+- POST /api/agent/csv/to-json — Convert CSV to JSON array of objects.
+- POST /api/agent/json/to-csv — Convert JSON array to CSV string.
 
 ### Payment (x402)
 
@@ -100,12 +127,16 @@ Flow:
 1. Call any paid endpoint — receive a 402 response with 'accepts' array listing both options
 2. Send payment on your preferred chain to the 'payTo' address in the 402 response
 3. Retry the request with header: X-PAYMENT: <base64(JSON)>
-   Stellar: {"txHash":"<tx_hash>","from":"<address>","amount":"0.5","network":"stellar:mainnet"}
-   Solana:  {"txHash":"<signature>","from":"<wallet>","amount":"0.01","network":"solana:mainnet"}
+
+## Shareable Pastes
+
+Claude agents can create public paste links using the `create_shareable_paste` MCP tool. Anyone can view a paste at toolora.dev/p/[id] — no account required.
 
 ## More Information
 
 - Privacy policy: https://toolora.dev/privacy
 - Terms of service: https://toolora.dev/terms
 - Full API reference: https://toolora.dev/api-docs
-- Agent manifest (JSON): https://toolora.dev/api/agent
+- MCP Hub (directory): https://toolora.dev/mcp-hub
+- Enterprise: https://toolora.dev/enterprise
+- Blog: https://toolora.dev/blog

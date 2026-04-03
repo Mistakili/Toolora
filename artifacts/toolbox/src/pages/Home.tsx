@@ -94,7 +94,7 @@ export default function Home() {
                     <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
                     Also an MCP server for Claude Desktop &amp; Cursor
                   </span>
-                  <span className="text-primary font-medium group-hover:underline">12 tools, no API key →</span>
+                  <span className="text-primary font-medium group-hover:underline">15 tools, no API key →</span>
                 </Link>
               </div>
 
@@ -263,7 +263,7 @@ export default function Home() {
                 </div>
                 <h3 className="text-lg font-bold mb-2 group-hover:text-purple-500 transition-colors">MCP Server Hub</h3>
                 <p className="text-muted-foreground text-sm leading-relaxed flex-1">
-                  A curated directory of privacy-first MCP servers. Drop Toolora's endpoint into Claude or Cursor and get 12 tools instantly — plus find other vetted local-first servers.
+                  A curated directory of privacy-first MCP servers. Drop Toolora's endpoint into Claude or Cursor and get 15 tools instantly — plus find other vetted local-first servers.
                 </p>
                 <div className="flex items-center gap-1 mt-4 text-sm font-semibold text-purple-500">
                   Browse the hub <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />

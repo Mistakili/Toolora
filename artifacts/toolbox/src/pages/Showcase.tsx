@@ -356,7 +356,7 @@ export default function Showcase() {
                 </div>
                 <div>
                   <div className="font-bold text-white">MCP Server</div>
-                  <div className="text-xs text-purple-400">Free · 12 tools · Claude / Cursor</div>
+                  <div className="text-xs text-purple-400">Free · 15 tools · Claude / Cursor</div>
                 </div>
               </div>
               <p className="text-sm text-white/55 leading-relaxed mb-5">
