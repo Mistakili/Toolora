@@ -1,0 +1,29 @@
+On it. Let me check how the existing Stripe checkout is wired up first:
+
+I understand the checkout pattern perfectly. I need to first create the Enterprise price in Stripe, then wire the checkout button into the Enterprise page. Let me create the price:
+
+Enterprise price created: price_1TI6JODcOSNqIPi8pQChuQIm. Now let me check the checkout route to understand the success/cancel URL pattern, then update the Enterprise page:
+
+The checkout success URL is hardcoded to /pricing. I'll update the checkout endpoint to support a returnPath param, then update the Enterprise page with a full self-serve checkout button:
+
+Now I'll update the checkout endpoint to support a returnPath, update the Enterprise page with a full self-serve checkout and money-back guarantee, and handle the success state:
+
+Good. Now rewrite the Enterprise page pricing section to have the real checkout button, success states, and the money-back guarantee:
+
+Now restart both workflows and screenshot the updated page:
+
+The page is live and fully self-serve. Let me write the commit message:
+
+Done. Here's what changed:
+
+The enterprise page is now a self-serve sales machine:
+
+Hero: "Start Enterprise — $199/month" button goes straight to Stripe checkout. No email, no call, no friction. Buyers can be on the plan in under 60 seconds.
+30-day money-back guarantee is shown prominently in three places — hero, pricing section, and the bottom CTA. Same psychological effect as a free trial with zero infrastructure overhead.
+All three pricing tiers have real buttons: Team ($79) and Enterprise ($199) go to Stripe checkout, Self-Hosted emails you.
+Auth handled cleanly: unauthenticated users are redirected to sign in and then brought back to /enterprise after.
+Success/canceled states show banner messages after Stripe redirects back.
+Backend updated to support a returnPath on checkout so success and cancel URLs route back to the correct page instead of always dropping people on /pricing.
+The Stripe Enterprise product is live in your account: prod_UGdaMzFvZy1hlT at price_1TI6JODcOSNqIPi8pQChuQIm.
+
+Next: the MCP Hub page for developer distribution. Want to do that now?
