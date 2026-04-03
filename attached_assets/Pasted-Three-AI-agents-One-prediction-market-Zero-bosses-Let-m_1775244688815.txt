@@ -1,0 +1,122 @@
+Three AI agents. One prediction market. Zero bosses. Let me tell you something that happened to me last Thursday. I was dead asleep. My phone buzzed. Not an alarm, a Telegram message from my own bot:
+Market Scan 03:15:22 UTC
+Market: BTC 5-min UP/DOWN
+YES: 0.48  NO: 0.52
+BTC Δ5m: +0.31%
+
+Claude Analysis
+P(up): 0.71
+Edge:   0.23
+Conf:   0.88
+Signal: BUY YES
+Execution
+Order:  YES @0.48 x $10
+Status: filled
+PnL 24h: +$47.20
+I didn’t touch a keyboard. I didn’t approve anything. The system found an edge, ran it through Claude, placed the trade, and reported back — all while I was horizontal.
+That’s what I want to show you today.
+Image
+The Setup: Three Agents, Each With a Job
+
+Here’s the thing most people get wrong about “AI trading bots.” They build one massive script that tries to do everything. It becomes a mess. You can’t debug it. You can’t improve it.
+I split it into three agents with clean responsibilities:
+Claude (Anthropic API) — the thinker. It gets market data and news, then returns a probability estimate, a recommendation, and a confidence score. That’s it.
+Codex (OpenAI) — the builder. When something breaks or performance drops, Codex patches the code, writes tests, and deploys. You describe what you want in plain English and get a working script back.
+OpenClaw (formerly Clawdbot) — the orchestrator. Open-source, runs on your own hardware. It has persistent memory, cron jobs, modular skills, and a Telegram interface. This is what ties Claude and Codex together, runs trades, and logs everything.
+One thinks. One builds. One runs.
+Why Not Just Use a Cron Script?
+
+I get this question a lot. A cron script feels simpler.
+But a cron script can’t remember that “last Tuesday, the strategy lost 3% on Fed-related markets.” It can’t adapt its strategy based on that. It can’t deploy new logic when conditions change. It definitely can’t text you a P&L summary on demand.
+OpenClaw is different. It’s less of a chatbot and more of an operating system for running your life without an office. Persistent memory means context survives across sessions. Skills are just folders — drop in a SKILL.md and some scripts, and OpenClaw automatically picks them up.
+The Telegram interface is genuinely useful. You can type “stop all positions” and it stops. You can ask for a weekly report and it shows up in chat.
+The Core: market_scanner
+
+Here’s the main file. Twenty lines. This is where Claude, Polymarket, and decision logic all meet:
+import json
+from anthropic import Anthropic
+from py_clob_client import ClobClient
+
+client = Anthropic()
+poly = ClobClient("https://clob.polymarket.com")
+def scan_and_trade():
+    markets = poly.get_markets()
+    btc = get_spot("BTCUSDT")
+    
+    analysis = client.messages.create(
+        model="claude-sonnet-4-20250514",
+        system="You are a prediction market analyst",
+        messages=[{"role": "user",
+                   "content": json.dumps(payload)}]
+    )
+    
+    if analysis.confidence > 0.7:
+        poly.place_order(analysis.side, analysis.size)
+
+OpenClaw calls this every 5 minutes via cron. The loop is: get data → ask Claude → if confident enough, trade.
+Simple. That's intentional.
+---
+## The System Prompt: Claude's Strategy Brain
+Every time Claude gets called, it receives this prompt. This is where your trading strategy actually lives:
+
+You are a prediction market analyst.
+INPUT:
+Market: "{market_question}"
+YES price: {yes_price}  NO price: {no_price}
+BTC spot: {btc_price} (45min: {delta}%)
+Headlines: {news_summary}
+TASK:
+1. Estimate real probability (0.0–1.0)
+2. Compare with Polymarket YES price
+3. If edge > 10% → recommend BUY
+RESPOND IN JSON ONLY:
+{
+  "probability":      float,
+  "edge":             float,
+  "recommendation":   "BUY_YES" | "BUY_NO" | "HOLD",
+  "confidence":       float,
+  "reasoning":        string
+}
+The rule is dead simple: edge above 0.10 AND confidence above 0.70 means trade. Everything else is HOLD.
+That JSON constraint matters. Claude returns clean structured data that your script can parse without regex gymnastics.
+The Part That’s Kind of Wild: The Bot Improves Itself
+
+This is where Codex comes in. OpenClaw watches performance. When win rate drops below 55%, it doesn’t email you. It just… fixes itself:
+# OpenClaw monitors win_rate, triggers Codex
+def check_performance():
+    stats = memory.get_stats(days=7)
+    if stats.win_rate < 0.55:
+        codex.submit_task(
+            repo="trading-bot",
+            prompt="Increase confidence threshold "
+                   "to 0.8. Add volume filter >$50K. "
+                   "Run backtest on last 7 days."
+        )
+# Codex: patch → test → PR
+# OpenClaw: review → deploy
+# You: sleeping
+Codex patches the code, runs tests, opens a PR. OpenClaw reviews and deploys. You wake up to a better bot.
+Getting It Running
+
+The setup is shorter than most tutorials make it sound:
+$ git clone https://github.com/openclaw/openclaw
+Cloning into 'openclaw'...
+
+$ cd openclaw && docker compose up -d
+gateway  running on :18789
+agent    connected to Claude API
+$ openclaw wizard
+? Platform: Telegram
+? API key: sk-ant-..........
+Bot linked to @your_bot
+$ openclaw skill create market_scanner
+Skill created at skills/market_scanner/SKILL.md
+$ openclaw send "scan polymarket BTC markets"
+☐ Scanning 12 active markets...
+Four commands. Bot in Telegram. First signal the same evening.
+What Actually Matters Here
+
+The architecture isn’t magic. Claude gets things wrong. Markets are weird. You’ll have losing days.
+But the point isn’t perfection. It’s that you’ve built something that runs, learns, and reports back — without you needing to babysit it every hour.
+The system prompt is your real leverage. Tweak the edge threshold. Add news sources. Change how Claude weights BTC momentum versus headline sentiment. That’s where your edge comes from, not the code itself.
+You don’t need a hedge fund to build this. You need a terminal, an Anthropic API key.
