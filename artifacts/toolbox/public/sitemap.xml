@@ -556,4 +556,23 @@
     </image:image>
   </url>
 
+  <url>
+    <loc>https://toolora.dev/blog/stop-pasting-jwts-into-random-websites</loc>
+    <lastmod>2026-04-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://toolora.dev/images/blog-jwt-anatomy.png</image:loc>
+      <image:title>Stop Pasting JWT Tokens Into Random Websites — Toolora Blog</image:title>
+      <image:caption>Most online JWT decoders send your token to a server. Decode JWTs safely in your browser instead.</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://toolora.dev/tools/developer/jwt-decoder</loc>
+    <lastmod>2026-04-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
 </urlset>

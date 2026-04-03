@@ -1169,6 +1169,131 @@ Be specific. Quote exact copy where relevant.</code></pre>
     `.trim(),
   },
   {
+    slug: "stop-pasting-jwts-into-random-websites",
+    title: "Stop Pasting JWT Tokens Into Random Websites",
+    description: "Most online JWT decoders send your token to a server. Here's why that's risky, what JWTs actually contain, and how to decode them safely in your browser.",
+    date: "2026-04-03",
+    readTime: "7 min read",
+    category: "Security",
+    content: `
+<p>JWT tokens are everywhere. Every time you log into a web app, there's a good chance your session is represented by one. Every time you call a protected API, you're probably sending one in the <code>Authorization</code> header. And every time a developer needs to debug an authentication problem, they reach for an online JWT decoder.</p>
+
+<p>Here's the problem: most of those online decoders send your token to a server.</p>
+
+<p>Before explaining why that matters, let's look at what a JWT actually contains — and why pasting one into an unknown website is a risk you probably don't need to take.</p>
+
+<img src="/images/blog-jwt-anatomy.png" alt="JWT token showing three distinct segments: header, payload, and signature" class="w-full rounded-2xl my-8 border border-border" />
+
+<h2>What a JWT actually is</h2>
+
+<p>A JSON Web Token looks like this:</p>
+
+<pre><code>eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyXzEyMyIsImVtYWlsIjoiYWxpY2VAZXhhbXBsZS5jb20iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MDAwMDAwMDAsImV4cCI6MTcwMDAwMzYwMH0.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c</code></pre>
+
+<p>Three base64url-encoded segments separated by dots:</p>
+
+<ul>
+  <li><strong style="color: #a78bfa">Header</strong> — the algorithm and token type (<code>{"alg":"HS256","typ":"JWT"}</code>)</li>
+  <li><strong style="color: #60a5fa">Payload</strong> — the actual claims: user ID, email, roles, expiry, and whatever else the application put there</li>
+  <li><strong style="color: #fb923c">Signature</strong> — an HMAC or RSA signature that proves the token hasn't been tampered with</li>
+</ul>
+
+<p>Crucially, the header and payload are <em>not encrypted</em> — they're just base64url-encoded. Anyone who has the token can read those two parts. Only the signature requires a secret key to verify.</p>
+
+<p>Decode that example payload and you get:</p>
+
+<pre><code>{
+  "sub": "user_123",
+  "email": "alice@example.com",
+  "role": "admin",
+  "iat": 1700000000,
+  "exp": 1700003600
+}</code></pre>
+
+<p>User ID. Email address. Role. Issued at. Expiry. That's a real user's session data — and it's all sitting in a token that looks like random characters.</p>
+
+<h2>Why pasting it into a random website is a problem</h2>
+
+<img src="/images/blog-jwt-privacy.png" alt="Comparison showing data leaving the browser to a server versus staying local in the browser" class="w-full rounded-2xl my-8 border border-border" />
+
+<p>A JWT is effectively a bearer token — whoever holds it can use it. If your token hasn't expired, an attacker who gets a copy can make authenticated API requests as you, without your password.</p>
+
+<p>When you paste a token into a server-side decoder:</p>
+
+<ol>
+  <li>Your token travels over the network to their server</li>
+  <li>It lands in their access logs (most web servers log request bodies)</li>
+  <li>It's processed by code you haven't reviewed</li>
+  <li>It may be stored, even temporarily</li>
+</ol>
+
+<p>For a short-lived token with no sensitive claims, the risk is low. But developers rarely stop to check expiry before pasting — and production tokens often have long lifetimes (24 hours, 7 days, 30 days in some applications).</p>
+
+<p>The worst-case scenario: you paste a long-lived admin token from a production system into a sketchy decoder site. Their logs now have a valid credential. Nothing about that is theoretical — it's exactly how session hijacking happens when developers aren't careful.</p>
+
+<h2>Base64url decoding in 30 seconds</h2>
+
+<p>The reason online decoders became popular is that base64url has two non-standard characters (<code>-</code> and <code>_</code> instead of <code>+</code> and <code>/</code>) that trip up the standard <code>atob()</code> function in browsers. But this is a trivially small fix:</p>
+
+<pre><code>// Decode a JWT payload in your browser console — no external tools needed
+function decodeJwtPayload(token) {
+  const payload = token.split('.')[1];
+  const base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
+  const json = atob(base64);
+  return JSON.parse(decodeURIComponent(
+    [...json].map(c => '%' + c.charCodeAt(0).toString(16).padStart(2, '0')).join('')
+  ));
+}
+
+// Usage
+decodeJwtPayload('eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyXzEyMyJ9.signature')
+// → { sub: "user_123" }</code></pre>
+
+<p>Paste that into your browser's DevTools console and run it there. Nothing leaves your machine. No server involved.</p>
+
+<p>Or use the <a href="/tools/developer/jwt-decoder">Toolora JWT Decoder</a>, which runs the same logic entirely in your browser — the token never touches a network request.</p>
+
+<h2>What the claims actually mean</h2>
+
+<p>JWT has a set of registered claim names defined in <a href="https://datatracker.ietf.org/doc/html/rfc7519" target="_blank" rel="noopener">RFC 7519</a>. When you're inspecting a payload, these are the ones to look for:</p>
+
+<table>
+  <thead><tr><th>Claim</th><th>Full name</th><th>Meaning</th></tr></thead>
+  <tbody>
+    <tr><td><code>sub</code></td><td>Subject</td><td>The user or entity the token represents (usually a user ID)</td></tr>
+    <tr><td><code>iss</code></td><td>Issuer</td><td>Who created the token (your auth server URL)</td></tr>
+    <tr><td><code>aud</code></td><td>Audience</td><td>Who the token is intended for (your API)</td></tr>
+    <tr><td><code>exp</code></td><td>Expiry</td><td>Unix timestamp when the token expires — check this first</td></tr>
+    <tr><td><code>iat</code></td><td>Issued at</td><td>Unix timestamp when the token was issued</td></tr>
+    <tr><td><code>nbf</code></td><td>Not before</td><td>Token isn't valid before this timestamp</td></tr>
+    <tr><td><code>jti</code></td><td>JWT ID</td><td>Unique identifier for this specific token</td></tr>
+  </tbody>
+</table>
+
+<p>Everything else in the payload — <code>email</code>, <code>role</code>, <code>permissions</code>, <code>org_id</code>, custom claims — is application-specific and defined by whoever issued the token.</p>
+
+<h2>A note on signature verification</h2>
+
+<p>Decoding a JWT tells you what it claims. Verifying it tells you whether those claims are trustworthy.</p>
+
+<p>Client-side decoders (including Toolora's) can only decode — they don't have access to your signing secret or public key, so they can't verify the signature. For reading your own tokens during debugging, that's fine. For anything security-critical, verification must happen server-side where the secret is stored.</p>
+
+<p>The failure mode to avoid: building a frontend that trusts the decoded payload without server-side verification. A user can create a fake JWT with a forged <code>role: "admin"</code> claim, and if your frontend makes access decisions based on decoded-but-unverified tokens, that's an exploitable vulnerability.</p>
+
+<h2>Safer debugging habits</h2>
+
+<ul>
+  <li><strong>Use your browser console</strong> — the snippet above works anywhere. No third-party tool needed.</li>
+  <li><strong>Use a client-side tool</strong> — <a href="/tools/developer/jwt-decoder">Toolora's JWT Decoder</a> processes everything locally.</li>
+  <li><strong>Check expiry before sharing</strong> — if you must paste a token somewhere for help (a colleague, a support ticket), verify it's expired first. An expired token is harmless.</li>
+  <li><strong>Never paste production tokens anywhere</strong> — use a test environment token for debugging when possible.</li>
+  <li><strong>Don't put secrets in payloads</strong> — JWTs are encoded, not encrypted. Treat everything in the payload as readable by anyone who intercepts the token.</li>
+</ul>
+
+<p>Decode your next JWT the safe way: <a href="/tools/developer/jwt-decoder">Toolora JWT Decoder — runs entirely in your browser →</a></p>
+    `.trim(),
+  },
+  {
     slug: "word-counter-online-free",
     title: "Word Counter Online: Count Words, Characters, and Reading Time Instantly",
     description: "A free, instant word counter that runs in your browser. Count words, characters, sentences, paragraphs, and get a reading time estimate — no upload, no account, no ads.",

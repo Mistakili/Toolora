@@ -42,6 +42,18 @@ uri = "file://artifacts/toolbox/public/images/blog-platform-limits.png"
 type = "image"
 title = "platform character limits illustration"
 
+[[generated]]
+id = "VS-FaxLoqfqG373C7GS-a"
+uri = "file://artifacts/toolbox/public/images/blog-jwt-anatomy.png"
+type = "image"
+title = "JWT token anatomy illustration"
+
+[[generated]]
+id = "jjgUIzgGYa2J4XpgltVVR"
+uri = "file://artifacts/toolbox/public/images/blog-jwt-privacy.png"
+type = "image"
+title = "client-side vs server-side privacy illustration"
+
 [[outputs]]
 id = "W91hp3ihLhEvWTT51EilJ"
 uri = "file://artifacts/toolbox/public/og-image.png"
