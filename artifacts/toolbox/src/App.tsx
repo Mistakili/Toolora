@@ -24,6 +24,7 @@ import GlossaryPage from "@/pages/GlossaryPage";
 import GlossaryIndex from "@/pages/GlossaryIndex";
 import Showcase from "@/pages/Showcase";
 import McpPage from "@/pages/McpPage";
+import McpHub from "@/pages/McpHub";
 import Enterprise from "@/pages/Enterprise";
 import NotFound from "@/pages/not-found";
 
@@ -58,6 +59,7 @@ function Router() {
             <Route path="/blog" component={Blog} />
             <Route path="/blog/:slug" component={BlogPost} />
             <Route path="/mcp" component={McpPage} />
+            <Route path="/mcp-hub" component={McpHub} />
             <Route path="/enterprise" component={Enterprise} />
             <Route path="/tools/:category" component={CategoryView} />
             <Route path="/tools/:category/:slug" component={ToolView} />

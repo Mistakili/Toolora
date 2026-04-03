@@ -215,6 +215,10 @@ export function AppLayout({ children }: { children: ReactNode }) {
               className="flex items-center gap-2 px-3 py-2.5 text-sm rounded-lg hover:bg-muted transition-colors">
               <Zap className="w-4 h-4 text-muted-foreground" /> MCP Server
             </Link>
+            <Link href="/mcp-hub" onClick={() => setIsMenuOpen(false)}
+              className="flex items-center gap-2 px-3 py-2.5 text-sm rounded-lg hover:bg-muted transition-colors">
+              <ShieldCheck className="w-4 h-4 text-muted-foreground" /> MCP Hub
+            </Link>
             <Link href="/enterprise" onClick={() => setIsMenuOpen(false)}
               className="flex items-center gap-2 px-3 py-2.5 text-sm rounded-lg hover:bg-muted transition-colors">
               <Building2 className="w-4 h-4 text-muted-foreground" /> Enterprise
@@ -313,6 +317,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
               <li><Link href="/api-keys" className="hover:text-foreground transition-colors">API Keys</Link></li>
               <li><Link href="/api-docs" className="hover:text-foreground transition-colors">API Docs</Link></li>
               <li><Link href="/mcp" className="hover:text-foreground transition-colors">MCP Server</Link></li>
+              <li><Link href="/mcp-hub" className="hover:text-foreground transition-colors">MCP Hub</Link></li>
               <li><Link href="/enterprise" className="hover:text-foreground transition-colors">Enterprise</Link></li>
               <li><Link href="/extension" className="hover:text-foreground transition-colors">Browser Extension</Link></li>
               <li><Link href="/history" className="hover:text-foreground transition-colors">My Tool History</Link></li>
