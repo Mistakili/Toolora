@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Link } from "wouter";
 import {
-  ShieldCheck, Copy, Check, ExternalLink, Star,
+  ShieldCheck, Copy, Check, ExternalLink,
   Zap, Database, FolderOpen, GitBranch, Brain,
-  Globe, Terminal, FileText, Search, ChevronDown, ChevronUp, Mail
+  Globe, Terminal, FileText, Search, ChevronDown, ChevronUp, Mail, Monitor
 } from "lucide-react";
 import { useSEO } from "@/hooks/useSEO";
 
@@ -81,13 +81,13 @@ const SERVERS: ServerEntry[] = [
       mcpServers: {
         toolora: {
           command: "npx",
-          args: ["-y", "mcp-remote", "https://toolora.replit.app/api/mcp"],
+          args: ["-y", "mcp-remote", "https://toolora.dev/api/mcp"],
         },
       },
     }, null, 2),
     cursorConfig: JSON.stringify({
       mcpServers: {
-        toolora: { url: "https://toolora.replit.app/api/mcp", type: "sse" },
+        toolora: { url: "https://toolora.dev/api/mcp", type: "http" },
       },
     }, null, 2),
     tags: ["PDF", "OCR", "CSV", "utilities", "audio"],
@@ -295,6 +295,82 @@ const CRITERIA = [
   { icon: Terminal,    label: "Actively maintained",             desc: "Has recent commits or is part of the official modelcontextprotocol/servers repo." },
 ];
 
+const INSTALL_TABS = [
+  {
+    id: "claude",
+    label: "Claude Desktop",
+    file: "claude_desktop_config.json",
+    hint: "Open Claude Desktop → Settings → Developer → Edit Config",
+    config: JSON.stringify({
+      mcpServers: {
+        toolora: {
+          command: "npx",
+          args: ["-y", "mcp-remote", "https://toolora.dev/api/mcp"],
+        },
+      },
+    }, null, 2),
+  },
+  {
+    id: "cursor",
+    label: "Cursor",
+    file: ".cursor/mcp.json",
+    hint: "Open Cursor → Settings → MCP → Add Server, or edit .cursor/mcp.json",
+    config: JSON.stringify({
+      mcpServers: {
+        toolora: { url: "https://toolora.dev/api/mcp", type: "http" },
+      },
+    }, null, 2),
+  },
+  {
+    id: "windsurf",
+    label: "Windsurf",
+    file: "~/.codeium/windsurf/mcp_config.json",
+    hint: "Open Windsurf → Cascade → Click the hammer icon → Configure MCP",
+    config: JSON.stringify({
+      mcpServers: {
+        toolora: {
+          serverUrl: "https://toolora.dev/api/mcp",
+        },
+      },
+    }, null, 2),
+  },
+];
+
+function QuickInstall() {
+  const [tab, setTab] = useState("claude");
+  const active = INSTALL_TABS.find(t => t.id === tab)!;
+  return (
+    <div className="rounded-2xl border border-primary/30 bg-primary/5 p-6 space-y-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div>
+          <div className="flex items-center gap-2 mb-1">
+            <Zap className="w-4 h-4 text-primary" />
+            <span className="font-semibold text-sm">Add Toolora to your AI client</span>
+            <span className="text-xs px-2 py-0.5 rounded-full bg-green-500/15 text-green-400 border border-green-500/20 font-medium">Free · No API key</span>
+          </div>
+          <p className="text-xs text-muted-foreground">12 tools: PDF, OCR, QR codes, audio transcription, URL reader, CSV↔JSON and more</p>
+        </div>
+        <div className="flex items-center gap-1 bg-muted/60 rounded-lg p-1 self-start sm:self-auto">
+          {INSTALL_TABS.map(t => (
+            <button
+              key={t.id}
+              onClick={() => setTab(t.id)}
+              className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${tab === t.id ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
+      </div>
+      <CodeBlock code={active.config} lang="json" />
+      <div className="flex flex-col sm:flex-row sm:items-center gap-2 text-xs text-muted-foreground">
+        <Monitor className="w-3.5 h-3.5 shrink-0 hidden sm:block" />
+        <span><span className="text-foreground font-medium">Paste into</span> <code className="font-mono bg-muted px-1 py-0.5 rounded">{active.file}</code> — {active.hint}</span>
+      </div>
+    </div>
+  );
+}
+
 export default function McpHub() {
   useSEO({
     title: "Privacy-First MCP Servers — Curated Local & Self-Hosted Directory",
@@ -325,6 +401,9 @@ export default function McpHub() {
           <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-amber-500" /> {SERVERS.filter(s => s.privacyLevel === "api").length} privacy-respecting API</span>
         </div>
       </section>
+
+      {/* ── Quick Install ─────────────────────────────────────────────────── */}
+      <QuickInstall />
 
       {/* ── Criteria ─────────────────────────────────────────────────────── */}
       <section className="space-y-6">
