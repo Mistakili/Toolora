@@ -24,6 +24,7 @@ import GlossaryPage from "@/pages/GlossaryPage";
 import GlossaryIndex from "@/pages/GlossaryIndex";
 import Showcase from "@/pages/Showcase";
 import McpPage from "@/pages/McpPage";
+import Enterprise from "@/pages/Enterprise";
 import NotFound from "@/pages/not-found";
 
 const queryClient = new QueryClient({
@@ -57,6 +58,7 @@ function Router() {
             <Route path="/blog" component={Blog} />
             <Route path="/blog/:slug" component={BlogPost} />
             <Route path="/mcp" component={McpPage} />
+            <Route path="/enterprise" component={Enterprise} />
             <Route path="/tools/:category" component={CategoryView} />
             <Route path="/tools/:category/:slug" component={ToolView} />
             <Route path="/convert/:slug" component={ConverterPage} />
