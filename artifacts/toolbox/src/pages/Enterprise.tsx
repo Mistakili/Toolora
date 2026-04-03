@@ -195,7 +195,7 @@ export default function Enterprise() {
         </div>
         <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
           <RotateCcw className="w-3.5 h-3.5 text-green-500" />
-          <span>30-day money-back guarantee — no questions asked</span>
+          <span>✓ 30-day money-back guarantee &bull; Cancel anytime &bull; No hidden fees</span>
         </div>
         {errMsg && <p className="text-sm text-red-400">{errMsg}</p>}
       </section>
@@ -316,7 +316,7 @@ export default function Enterprise() {
             {
               id: "enterprise",
               priceId: ENTERPRISE_PRICE_ID,
-              name: "Enterprise",
+              name: "Enterprise ★ Most Popular",
               price: "$199",
               period: "/month",
               desc: "Unlimited users. Compliance-ready documentation included.",
