@@ -1616,6 +1616,116 @@ console.log(wordCount, charCount, charNoSpaces); // 9 44 36</code></pre>
 <p><a href="/enterprise">Toolora for Enterprise →</a> — client-side document processing for compliance-sensitive teams. Architecture documentation included.</p>
     `.trim(),
   },
+  {
+    slug: "claude-skills-tool-stack",
+    title: "The Free Tool Stack Behind Every Claude Skills Business",
+    description: "Those '17 Claude skills that pay real money' posts go viral for a reason. But they skip one thing: what handles the output. Here's the missing infrastructure layer.",
+    date: "2026-04-03",
+    readTime: "6 min read",
+    category: "AI Builders",
+    content: `
+<p>The "17 Claude skills that pay real money" posts are everywhere right now — and for good reason. The skills are real. The money is real. People are charging per lead, per SOP, per deliverable.</p>
+
+<p>But every single post skips the same thing: <strong>what happens to Claude's output?</strong></p>
+
+<p>Claude writes a cold email sequence — now what? The client needs a file, not a chat window. Claude builds a vendor comparison — now what? The procurement team wants a spreadsheet, not a screenshot. Claude drafts an SOP — now what? The operations manager needs a PDF they can actually send around.</p>
+
+<p>The skill is the thinking. The delivery is everything else. And most people are copy-pasting from Claude into Word, manually.</p>
+
+<h2>The last-mile problem</h2>
+
+<p>Claude is a brilliant collaborator who can't hand you anything. Every output lives inside a chat thread until you extract it. For one-off tasks, that's fine. For a service business running 20 clients, it's a bottleneck.</p>
+
+<p>The professional version of this workflow looks different: Claude produces the output, a tool packages it, the client receives something they can actually use. That gap — from Claude's response to a usable deliverable — is what I'd call the last mile.</p>
+
+<p>Here's the tool stack that covers it, all free, all browser-side or MCP-native.</p>
+
+<h2>Tool 1: Turn any Claude output into a shareable link</h2>
+
+<p>The fastest win. Instead of pasting Claude's output into an email, you share a clean link.</p>
+
+<p>With the <a href="/mcp">Toolora MCP server</a> connected to Claude Desktop or Cursor, you can ask Claude to:</p>
+
+<blockquote>
+<p>"Write a market objection analysis for [company], then create a shareable paste so I can send the client a link."</p>
+</blockquote>
+
+<p>Claude writes the analysis and calls <code>create_shareable_paste</code> — you get back a <code>toolora.dev/p/[id]</code> link in seconds. No copy-paste. No file attachment. The client clicks a link and sees a clean, formatted page.</p>
+
+<p>Expires in 7 days by default. No account required for the recipient.</p>
+
+<h2>Tool 2: Export to PDF without leaving the conversation</h2>
+
+<p>SOPs. Reports. Briefs. Proposals. Every Claude skills business produces documents that clients expect as PDFs.</p>
+
+<p>The MCP tool <code>generate_pdf_from_text</code> takes Claude's output — headings, bullet points, paragraphs — and converts it directly to a formatted PDF. Claude returns the base64, which your workflow or Claude Desktop can save or send.</p>
+
+<p>Ask Claude:</p>
+
+<blockquote>
+<p>"Write a 5-step onboarding SOP for [role], then generate it as a PDF document titled 'Onboarding Guide.'"</p>
+</blockquote>
+
+<p>Same conversation. PDF in your hands. No Word, no Google Docs, no reformatting.</p>
+
+<h2>Tool 3: Convert research outputs to spreadsheets</h2>
+
+<p>Skills 4–7 in the viral post — market objection mining, competitor feature mapping, pricing tear-downs — all produce structured data. Tables. Lists. Comparisons.</p>
+
+<p>The <code>json_to_csv</code> MCP tool converts any JSON array Claude produces into a clean CSV. Ask Claude to structure its competitor research as JSON first, then convert — your client gets a spreadsheet they can open in Excel.</p>
+
+<p>This alone removes the single most annoying step in research delivery work.</p>
+
+<h2>Tool 4: Read client documents without a vision model</h2>
+
+<p>Clients send you their existing documents to work from. PDFs of their current SOPs. Word docs of their job descriptions. Excel files of their lead lists.</p>
+
+<p>The Toolora MCP server can extract text from all of these:</p>
+<ul>
+  <li><code>extract_pdf_text</code> — pulls clean text from any PDF</li>
+  <li><code>extract_docx_text</code> — reads Word documents directly</li>
+  <li><code>excel_to_json</code> — parses spreadsheets into structured data</li>
+  <li><code>ocr_image</code> — extracts text from scanned images and screenshots</li>
+</ul>
+
+<p>Ask Claude to read a client's existing SOP, identify gaps, and rewrite it. The entire workflow stays inside one conversation — no manual copy-pasting from PDFs.</p>
+
+<h2>Tool 5: Publish to HTML for web delivery</h2>
+
+<p>If your Claude skill delivers web content — landing page rewrites, email sequences, ad copy — your client often needs clean HTML, not markdown.</p>
+
+<p><code>markdown_to_html</code> converts Claude's markdown output into a complete, styled HTML document. Proper heading hierarchy, formatted lists, readable typography. Ready to paste into a CMS or send as a standalone page.</p>
+
+<h2>The MCP setup (one config block)</h2>
+
+<p>All of these tools — <code>create_shareable_paste</code>, <code>generate_pdf_from_text</code>, <code>json_to_csv</code>, <code>extract_pdf_text</code>, <code>markdown_to_html</code>, and 10 more — are available in the free Toolora MCP server.</p>
+
+<p>Add this to your Claude Desktop config:</p>
+
+<pre><code>{
+  "mcpServers": {
+    "toolora": {
+      "type": "http",
+      "url": "https://toolora.dev/api/mcp"
+    }
+  }
+}</code></pre>
+
+<p>Or in Cursor / Windsurf — same URL, HTTP transport. No API key, no account.</p>
+
+<h2>The workflow this enables</h2>
+
+<p>Before: Claude produces output → you copy-paste → you reformat → you export → you send.</p>
+
+<p>After: Claude produces output → Claude packages it → client receives a link or file.</p>
+
+<p>That's not a small improvement. For anyone running Claude skills as a real service, removing the manual delivery step is the difference between a side project and a scalable workflow.</p>
+
+<p>The 17 skills still need your judgment, your prompts, your client relationships. But the output packaging? That's infrastructure. And infrastructure should be free.</p>
+
+<p><a href="/mcp">Toolora MCP — free, 15 tools, no account required →</a></p>
+    `.trim(),
+  },
 ];
 
 export function getBlogPost(slug: string): BlogPost | undefined {

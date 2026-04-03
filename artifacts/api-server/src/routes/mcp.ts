@@ -6,7 +6,7 @@ import mammoth from "mammoth";
 import XLSX from "xlsx";
 import OpenAI from "openai";
 import { db } from "@workspace/db";
-import { mcpCallsTable } from "@workspace/db/schema";
+import { mcpCallsTable, pastesTable } from "@workspace/db/schema";
 
 const router: IRouter = Router();
 
@@ -190,6 +190,49 @@ const TOOLS = [
         url: { type: "string", description: "The full URL to fetch (must be http:// or https://)." },
       },
       required: ["url"],
+    },
+  },
+  {
+    name: "generate_pdf_from_text",
+    description:
+      "Generate a PDF document from plain text or markdown-style content. Supports headings (lines starting with #), bullet lists, and paragraphs. Returns the PDF as a base64-encoded string. Ideal for packaging Claude's output — reports, summaries, plans — into a shareable PDF file.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        content: { type: "string", description: "The text content to render into a PDF. Supports # headings, ## subheadings, - bullet points, and plain paragraphs." },
+        title: { type: "string", description: "Optional document title shown at the top of the PDF." },
+        author: { type: "string", description: "Optional author name added to PDF metadata." },
+      },
+      required: ["content"],
+    },
+  },
+  {
+    name: "markdown_to_html",
+    description:
+      "Convert markdown text into a clean, complete HTML document. Supports headings, bold, italic, code blocks, inline code, bullet lists, numbered lists, blockquotes, horizontal rules, and links. Returns a full HTML page ready to save, share, or embed. Great for turning Claude's markdown output into publishable web content.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        markdown: { type: "string", description: "The markdown content to convert." },
+        title: { type: "string", description: "Optional page title used in the <title> tag." },
+        includeStyles: { type: "boolean", description: "Include basic CSS styling for readability (default: true)." },
+      },
+      required: ["markdown"],
+    },
+  },
+  {
+    name: "create_shareable_paste",
+    description:
+      "Store any text content and get back a public URL at toolora.dev/p/[id] that anyone can visit to read it. Perfect for sharing Claude's output — reports, code, analysis — as a clean link without needing a file or account. Content expires after 7 days by default.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        content: { type: "string", description: "The text content to store and share. Max 500KB." },
+        title: { type: "string", description: "Optional title displayed at the top of the paste page." },
+        language: { type: "string", description: "Optional language hint for display (e.g. 'python', 'markdown', 'json')." },
+        expiresInHours: { type: "number", description: "How many hours until the paste expires (default: 168 = 7 days, max: 720 = 30 days)." },
+      },
+      required: ["content"],
     },
   },
 ];
@@ -573,6 +616,225 @@ async function handleScrapeUrlJs(args: Record<string, unknown>): Promise<string>
   return JSON.stringify({ title, content, words, chars: content.length, format, url, engine: "jina-reader" });
 }
 
+async function handleGeneratePdfFromText(args: Record<string, unknown>): Promise<string> {
+  const { content, title, author } = args as { content?: string; title?: string; author?: string };
+  if (!content || typeof content !== "string" || content.trim().length === 0) {
+    throw new McpToolError("Missing required argument: content");
+  }
+  if (content.length > 200_000) throw new McpToolError("Content too large. Maximum 200,000 characters.");
+
+  const { PDFDocument: PDoc, rgb, StandardFonts } = await import("pdf-lib");
+  const doc = await PDoc.create();
+  doc.setTitle(title ?? "Document");
+  if (author) doc.setAuthor(author);
+  doc.setCreator("Toolora MCP");
+  doc.setCreationDate(new Date());
+
+  const fontBold = await doc.embedFont(StandardFonts.HelveticaBold);
+  const fontRegular = await doc.embedFont(StandardFonts.Helvetica);
+
+  const pageWidth = 595;
+  const pageHeight = 842;
+  const marginX = 60;
+  const contentWidth = pageWidth - marginX * 2;
+
+  let page = doc.addPage([pageWidth, pageHeight]);
+  let y = pageHeight - 60;
+
+  const addPage = () => {
+    page = doc.addPage([pageWidth, pageHeight]);
+    y = pageHeight - 60;
+  };
+
+  const drawLine = (text: string, fontSize: number, font: typeof fontRegular, color = rgb(0, 0, 0), indent = 0) => {
+    const maxWidth = contentWidth - indent;
+    const words = text.split(" ");
+    let line = "";
+    for (const word of words) {
+      const testLine = line ? `${line} ${word}` : word;
+      const w = font.widthOfTextAtSize(testLine, fontSize);
+      if (w > maxWidth && line) {
+        if (y < 60) addPage();
+        page.drawText(line, { x: marginX + indent, y, size: fontSize, font, color });
+        y -= fontSize * 1.5;
+        line = word;
+      } else {
+        line = testLine;
+      }
+    }
+    if (line) {
+      if (y < 60) addPage();
+      page.drawText(line, { x: marginX + indent, y, size: fontSize, font, color });
+      y -= fontSize * 1.5;
+    }
+  };
+
+  if (title) {
+    drawLine(title, 20, fontBold);
+    y -= 10;
+  }
+
+  const lines = content.split("\n");
+  for (let i = 0; i < lines.length; i++) {
+    const raw = lines[i];
+    const line = raw.trimEnd();
+    if (line === "") { y -= 8; continue; }
+
+    if (line.startsWith("### ")) {
+      y -= 4;
+      drawLine(line.slice(4), 13, fontBold);
+    } else if (line.startsWith("## ")) {
+      y -= 8;
+      drawLine(line.slice(3), 15, fontBold);
+      y -= 2;
+    } else if (line.startsWith("# ")) {
+      y -= 12;
+      drawLine(line.slice(2), 18, fontBold);
+      y -= 4;
+    } else if (line.startsWith("- ") || line.startsWith("* ")) {
+      drawLine(`• ${line.slice(2)}`, 11, fontRegular, rgb(0, 0, 0), 12);
+    } else if (/^\d+\. /.test(line)) {
+      drawLine(line, 11, fontRegular, rgb(0, 0, 0), 12);
+    } else if (line.startsWith("> ")) {
+      drawLine(line.slice(2), 11, fontRegular, rgb(0.3, 0.3, 0.3), 16);
+    } else {
+      drawLine(line.replace(/\*\*([^*]+)\*\*/g, "$1").replace(/\*([^*]+)\*/g, "$1").replace(/`([^`]+)`/g, "$1"), 11, fontRegular);
+    }
+  }
+
+  const pdfBytes = await doc.save();
+  const base64 = Buffer.from(pdfBytes).toString("base64");
+  return JSON.stringify({ pdf: base64, format: "pdf", pages: doc.getPageCount(), chars: content.length });
+}
+
+function handleMarkdownToHtml(args: Record<string, unknown>): string {
+  const { markdown, title, includeStyles = true } = args as { markdown?: string; title?: string; includeStyles?: boolean };
+  if (!markdown || typeof markdown !== "string" || markdown.trim().length === 0) {
+    throw new McpToolError("Missing required argument: markdown");
+  }
+
+  const escape = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+  const lines = markdown.split("\n");
+  const htmlLines: string[] = [];
+  let inCodeBlock = false;
+  let inUl = false;
+  let inOl = false;
+
+  const closeList = () => {
+    if (inUl) { htmlLines.push("</ul>"); inUl = false; }
+    if (inOl) { htmlLines.push("</ol>"); inOl = false; }
+  };
+
+  const inlineFormat = (s: string) => {
+    return escape(s)
+      .replace(/`([^`]+)`/g, "<code>$1</code>")
+      .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
+      .replace(/\*([^*]+)\*/g, "<em>$1</em>")
+      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
+  };
+
+  for (const line of lines) {
+    if (line.startsWith("```")) {
+      if (inCodeBlock) { htmlLines.push("</code></pre>"); inCodeBlock = false; }
+      else { closeList(); htmlLines.push("<pre><code>"); inCodeBlock = true; }
+      continue;
+    }
+    if (inCodeBlock) { htmlLines.push(escape(line)); continue; }
+
+    if (line.startsWith("# ")) { closeList(); htmlLines.push(`<h1>${inlineFormat(line.slice(2))}</h1>`); continue; }
+    if (line.startsWith("## ")) { closeList(); htmlLines.push(`<h2>${inlineFormat(line.slice(3))}</h2>`); continue; }
+    if (line.startsWith("### ")) { closeList(); htmlLines.push(`<h3>${inlineFormat(line.slice(4))}</h3>`); continue; }
+    if (line.startsWith("#### ")) { closeList(); htmlLines.push(`<h4>${inlineFormat(line.slice(5))}</h4>`); continue; }
+    if (/^---+$/.test(line.trim())) { closeList(); htmlLines.push("<hr>"); continue; }
+    if (line.startsWith("> ")) { closeList(); htmlLines.push(`<blockquote><p>${inlineFormat(line.slice(2))}</p></blockquote>`); continue; }
+
+    if (line.startsWith("- ") || line.startsWith("* ")) {
+      if (inOl) { htmlLines.push("</ol>"); inOl = false; }
+      if (!inUl) { htmlLines.push("<ul>"); inUl = true; }
+      htmlLines.push(`<li>${inlineFormat(line.slice(2))}</li>`);
+      continue;
+    }
+    const olMatch = line.match(/^\d+\. (.+)/);
+    if (olMatch) {
+      if (inUl) { htmlLines.push("</ul>"); inUl = false; }
+      if (!inOl) { htmlLines.push("<ol>"); inOl = true; }
+      htmlLines.push(`<li>${inlineFormat(olMatch[1])}</li>`);
+      continue;
+    }
+
+    closeList();
+    if (line.trim() === "") { htmlLines.push(""); continue; }
+    htmlLines.push(`<p>${inlineFormat(line)}</p>`);
+  }
+  closeList();
+
+  const pageTitle = title ?? "Document";
+  const styles = includeStyles ? `
+    <style>
+      body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 800px; margin: 2rem auto; padding: 0 1.5rem; color: #1a1a1a; line-height: 1.7; }
+      h1, h2, h3, h4 { margin: 1.5rem 0 0.5rem; line-height: 1.3; }
+      h1 { font-size: 2rem; } h2 { font-size: 1.5rem; } h3 { font-size: 1.25rem; }
+      p { margin: 0.75rem 0; }
+      code { background: #f4f4f5; padding: 0.15em 0.4em; border-radius: 4px; font-size: 0.875em; font-family: 'Fira Code', monospace; }
+      pre { background: #f4f4f5; padding: 1rem; border-radius: 8px; overflow-x: auto; }
+      pre code { background: none; padding: 0; }
+      blockquote { border-left: 4px solid #e4e4e7; margin: 1rem 0; padding: 0.5rem 1rem; color: #52525b; }
+      ul, ol { padding-left: 1.5rem; } li { margin: 0.25rem 0; }
+      hr { border: none; border-top: 1px solid #e4e4e7; margin: 2rem 0; }
+      a { color: #2563eb; }
+      table { border-collapse: collapse; width: 100%; }
+      th, td { border: 1px solid #e4e4e7; padding: 0.5rem 0.75rem; text-align: left; }
+    </style>` : "";
+
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>${escape(pageTitle)}</title>${styles}
+</head>
+<body>
+${htmlLines.join("\n")}
+</body>
+</html>`;
+
+  return JSON.stringify({ html, title: pageTitle, chars: html.length, lines: htmlLines.length });
+}
+
+async function handleCreateShareablePaste(args: Record<string, unknown>): Promise<string> {
+  const { content, title, language, expiresInHours } = args as {
+    content?: string; title?: string; language?: string; expiresInHours?: number;
+  };
+  if (!content || typeof content !== "string" || content.trim().length === 0) {
+    throw new McpToolError("Missing required argument: content");
+  }
+  if (content.length > 500_000) throw new McpToolError("Content too large. Maximum 500KB.");
+
+  const id = Array.from(crypto.getRandomValues(new Uint8Array(9)))
+    .map((b) => "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"[b % 62])
+    .join("");
+
+  const hours = typeof expiresInHours === "number" && expiresInHours > 0 ? Math.min(expiresInHours, 720) : 168;
+  const expiresAt = new Date(Date.now() + hours * 60 * 60 * 1000);
+
+  await db.insert(pastesTable).values({
+    id,
+    content: content.trim(),
+    title: title?.trim() || null,
+    language: language?.trim() || null,
+    expiresAt,
+  });
+
+  return JSON.stringify({
+    id,
+    url: `https://toolora.dev/p/${id}`,
+    expiresAt: expiresAt.toISOString(),
+    expiresInHours: hours,
+    chars: content.length,
+  });
+}
+
 // ─── JSON-RPC helpers ─────────────────────────────────────────────────────────
 
 function rpcOk(id: string | number | null, result: unknown) {
@@ -670,6 +932,15 @@ router.post("/", async (req: Request, res: Response) => {
               break;
             case "read_url":
               text = await handleReadUrl(args);
+              break;
+            case "generate_pdf_from_text":
+              text = await handleGeneratePdfFromText(args);
+              break;
+            case "markdown_to_html":
+              text = handleMarkdownToHtml(args);
+              break;
+            case "create_shareable_paste":
+              text = await handleCreateShareablePaste(args);
               break;
             default:
               res.json(rpcErr(id, -32602, `Unknown tool: ${name}`));

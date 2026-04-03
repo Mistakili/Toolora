@@ -10,6 +10,7 @@ import mcpRouter from "./mcp";
 import keysRouter from "./keys";
 import stripeRouter from "./stripeRoutes";
 import subscribeRouter from "./subscribe";
+import pasteRouter from "./paste";
 
 const router: IRouter = Router();
 
@@ -24,5 +25,6 @@ router.use("/mcp", mcpRouter);
 router.use("/keys", keysRouter);
 router.use("/stripe", stripeRouter);
 router.use(subscribeRouter);
+router.use("/paste", pasteRouter);
 
 export default router;

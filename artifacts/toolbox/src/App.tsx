@@ -28,6 +28,7 @@ import McpHub from "@/pages/McpHub";
 import Enterprise from "@/pages/Enterprise";
 import HipaaChecklist from "@/pages/HipaaChecklist";
 import NotFound from "@/pages/not-found";
+import Paste from "@/pages/Paste";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -43,6 +44,7 @@ function Router() {
     <Switch>
       {/* Standalone pages — no header/footer */}
       <Route path="/showcase" component={Showcase} />
+      <Route path="/p/:id" component={Paste} />
 
       {/* All other pages — wrapped in AppLayout */}
       <Route>
