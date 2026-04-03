@@ -4,7 +4,7 @@
     "position": 1,
     "filepath": "src/pages/slides/Slide01Title.tsx",
     "title": "Toolora",
-    "description": "Title slide — tools that work entirely in your browser",
+    "description": "28 free browser-side tools · Developer API · Enterprise · MCP ecosystem",
     "speakerNotes": ""
   },
   {
@@ -20,7 +20,7 @@
     "position": 3,
     "filepath": "src/pages/slides/Slide03Solution.tsx",
     "title": "The Solution",
-    "description": "20+ tools, zero uploads — every tool runs in the browser",
+    "description": "28 tools, zero uploads — every tool runs in the browser via WebAssembly",
     "speakerNotes": ""
   },
   {
@@ -32,11 +32,11 @@
     "speakerNotes": ""
   },
   {
-    "id": "e5f6a7b8-c9d0-1234-efab-345678901234",
+    "id": "11223344-5566-7788-99aa-bbccddeeff00",
     "position": 5,
-    "filepath": "src/pages/slides/Slide05ForAgents.tsx",
-    "title": "For AI Agents",
-    "description": "Agent API with x402 micropayments + free MCP server",
+    "filepath": "src/pages/slides/Slide05BusinessModel.tsx",
+    "title": "Business Model",
+    "description": "Four revenue layers: Free Tools → Agent API → Enterprise → MCP Hub",
     "speakerNotes": ""
   },
   {
@@ -44,15 +44,23 @@
     "position": 6,
     "filepath": "src/pages/slides/Slide06Traction.tsx",
     "title": "Traction",
-    "description": "Week 1 stats — 20+ tools, 0 uploads, 12 MCP tools, 3 continents",
+    "description": "28 tools · 15 countries · 377 human views · 16 blog posts · x402 live",
+    "speakerNotes": ""
+  },
+  {
+    "id": "e5f6a7b8-c9d0-1234-efab-345678901234",
+    "position": 7,
+    "filepath": "src/pages/slides/Slide07ForAgents.tsx",
+    "title": "For AI Agents & Developers",
+    "description": "Agent API (Stripe + x402) · Free MCP Server · Enterprise ($199/mo)",
     "speakerNotes": ""
   },
   {
     "id": "a7b8c9d0-e1f2-3456-abcd-567890123456",
-    "position": 7,
-    "filepath": "src/pages/slides/Slide07Closing.tsx",
-    "title": "Built on Replit",
-    "description": "One week. 20+ tools. With AI. toolora.dev",
+    "position": 8,
+    "filepath": "src/pages/slides/Slide08Closing.tsx",
+    "title": "One Platform",
+    "description": "Free tools · Developer API · Enterprise tier · MCP ecosystem. toolora.dev",
     "speakerNotes": ""
   }
 ]
