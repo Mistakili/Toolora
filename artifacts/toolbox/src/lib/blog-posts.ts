@@ -1601,6 +1601,12 @@ console.log(wordCount, charCount, charNoSpaces); // 9 44 36</code></pre>
 
 <p>Or: use a client-side tool where none of those questions apply.</p>
 
+<div style="margin: 2rem 0; padding: 1.5rem; border: 1px solid #e2e8f0; border-radius: 12px; background: #f8fafc;">
+  <p style="font-weight: 700; margin: 0 0 0.5rem 0;">Free resource: The 20-Point HIPAA Audit Checklist for Online Tools</p>
+  <p style="color: #64748b; margin: 0 0 1rem 0; font-size: 0.9rem;">A structured audit checklist for compliance officers and IT security teams — covering data residency, BAAs, encryption, audit logging, access controls, and incident response. Enter your email to unlock it.</p>
+  <a href="/hipaa-checklist" style="display: inline-block; padding: 0.5rem 1.25rem; background: #0f172a; color: #fff; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.9rem;">Get the checklist →</a>
+</div>
+
 <h2>The bottom line</h2>
 
 <p>The free online document tools most people reach for — SmallPDF, ILovePDF, Adobe Online — are legitimate products. They're just not built for regulated data. The upload architecture that made them possible 10 years ago is no longer necessary, but it hasn't gone away because these tools were built before WebAssembly changed the equation.</p>

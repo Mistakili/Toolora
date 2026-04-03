@@ -147,15 +147,42 @@ app.get("/.well-known/agent.json", (_req: Request, res: Response) => {
   });
 });
 
+app.get("/.well-known/mcp.json", (_req: Request, res: Response) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.json({
+    name: "Toolora MCP Server",
+    description: "12 tools for AI agents — PDF extraction, OCR, QR codes, audio transcription, URL scraping, spreadsheet parsing, and more. 100% free. Privacy-first: browser tools never upload your files.",
+    version: "1.0.0",
+    protocolVersion: "2025-03-26",
+    endpoint: "https://toolora.dev/api/mcp",
+    transport: "Streamable HTTP",
+    license: "free",
+    homepage: "https://toolora.dev/mcp",
+    tools: [
+      "extract_pdf_text", "merge_pdfs", "generate_qr_code", "csv_to_json", "json_to_csv",
+      "ocr_image", "extract_docx_text", "excel_to_json", "transcribe_audio",
+      "scrape_url_js", "count_words", "read_url",
+    ],
+    categories: ["document-processing", "file-conversion", "web-scraping", "productivity"],
+    keywords: ["pdf", "ocr", "qr-code", "audio-transcription", "csv", "excel", "docx", "web-scraping", "privacy"],
+  });
+});
+
 app.get("/robots.txt", (_req: Request, res: Response) => {
   res.type("text/plain").send([
     "User-agent: *",
     "Allow: /api/agent",
+    "Allow: /api/mcp",
     "Allow: /.well-known/agent.json",
+    "Allow: /.well-known/mcp.json",
     "",
     "# Toolora Agent API — paid document processing endpoints for AI agents",
     "# Discovery: GET /api/agent",
     "# Full docs: /api-docs",
+    "",
+    "# Toolora MCP Server — 12 free tools for Claude Desktop / Cursor",
+    "# Endpoint: /api/mcp",
+    "# Discovery: /.well-known/mcp.json",
   ].join("\n"));
 });
 

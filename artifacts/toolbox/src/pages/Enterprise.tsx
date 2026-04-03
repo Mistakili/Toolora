@@ -198,6 +198,12 @@ export default function Enterprise() {
           <span>✓ 30-day money-back guarantee &bull; Cancel anytime &bull; No hidden fees</span>
         </div>
         {errMsg && <p className="text-sm text-red-400">{errMsg}</p>}
+        <p className="text-xs text-muted-foreground">
+          Need to make the compliance case internally?{" "}
+          <Link href="/hipaa-checklist" className="text-primary underline underline-offset-2 hover:no-underline">
+            Download the free HIPAA Audit Checklist →
+          </Link>
+        </p>
       </section>
 
       {/* ── The core difference ──────────────────────────────────────────── */}

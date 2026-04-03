@@ -26,6 +26,7 @@ import Showcase from "@/pages/Showcase";
 import McpPage from "@/pages/McpPage";
 import McpHub from "@/pages/McpHub";
 import Enterprise from "@/pages/Enterprise";
+import HipaaChecklist from "@/pages/HipaaChecklist";
 import NotFound from "@/pages/not-found";
 
 const queryClient = new QueryClient({
@@ -61,6 +62,7 @@ function Router() {
             <Route path="/mcp" component={McpPage} />
             <Route path="/mcp-hub" component={McpHub} />
             <Route path="/enterprise" component={Enterprise} />
+            <Route path="/hipaa-checklist" component={HipaaChecklist} />
             <Route path="/tools/:category" component={CategoryView} />
             <Route path="/tools/:category/:slug" component={ToolView} />
             <Route path="/convert/:slug" component={ConverterPage} />
