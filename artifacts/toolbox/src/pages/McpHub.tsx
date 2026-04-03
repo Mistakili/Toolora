@@ -388,10 +388,10 @@ export default function McpHub() {
           and a short description. If it meets the criteria above, we'll add it to the directory.
         </p>
         <a
-          href="mailto:hi@toolora.dev?subject=MCP%20Server%20Submission&body=Server%20name%3A%0AGitHub%20URL%3A%0APrivacy%20model%20(local%20%2F%20self-hosted%20%2F%20API)%3A%0AShort%20description%3A"
+          href="mailto:support@toolora.dev?subject=MCP%20Server%20Submission&body=Server%20name%3A%0AGitHub%20URL%3A%0APrivacy%20model%20(local%20%2F%20self-hosted%20%2F%20API)%3A%0AShort%20description%3A"
           className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-xl font-semibold hover:opacity-90 transition-opacity text-sm"
         >
-          <Mail className="w-4 h-4" /> Submit a server — hi@toolora.dev
+          <Mail className="w-4 h-4" /> Submit a server — support@toolora.dev
         </a>
         <p className="text-xs text-muted-foreground">No backlink required. We list servers on merit.</p>
       </section>
