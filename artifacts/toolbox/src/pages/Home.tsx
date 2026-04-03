@@ -65,13 +65,13 @@ export default function Home() {
               transition={{ duration: 0.5 }}
             >
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-8 border border-primary/20">
-                <Sparkles className="w-4 h-4" /> The Ultimate Collection
+                <Sparkles className="w-4 h-4" /> MCP-ready &middot; Claude Desktop &middot; Cursor &middot; Windsurf
               </div>
               <h1 className="text-5xl md:text-7xl font-display font-bold tracking-tight mb-6">
-                Free online tools for <span className="gradient-text">every workflow.</span>
+                Free tools for <span className="gradient-text">AI builders.</span>
               </h1>
               <p className="text-xl text-muted-foreground mb-10 leading-relaxed">
-                Format JSON, convert PDFs, resize images, and generate passwords — all powered by WebAssembly, running entirely in your browser. Your files never leave your device. No uploads, no accounts, no tracking.
+                28 browser tools + a free MCP server for Claude Desktop and Cursor. Format JSON, convert PDFs, transcribe audio, read URLs — processed in your browser. Files never leave your device. No uploads, no accounts, no tracking.
               </p>
               
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
