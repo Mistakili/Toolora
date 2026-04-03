@@ -1,0 +1,53 @@
+**Honest thoughts on this plan:**
+
+### The Good
+- **Direction is smart**: Expanding the MCP server with more useful tools is a logical next step. Adding developer utilities (hash, base64, regex, JSON format, etc.) helps reposition Toolora from “document tools” to a more complete utility platform that developers and AI users actually want.
+- **Time estimate is realistic**: ~4 hours for 10 new tools is believable since most are simple logic + existing libraries.
+- **SEO angle**: Yes, tools like “JSON formatter”, “base64 decode”, “regex tester” have real search volume. Adding them gives you more long-tail landing pages.
+- **Tweet/blog potential**: The “22 tools Claude can now call” angle is decent for awareness in AI communities.
+
+### The Problems (Where I Push Back Hard)
+1. **This is not a 100x move**  
+   Going from 12 → 22 MCP tools is incremental improvement, not exponential growth. It’s nice, but it won’t dramatically change discovery or revenue in the short term. The MCP ecosystem is still young — more tools alone won’t make you the default choice.
+
+2. **Misplaced priority**  
+   You already have self-serve Enterprise checkout live. Instead of spending 4 hours adding more MCP tools, the highest-leverage move right now is **driving traffic and conversions to the paid layers** (Enterprise + Agent API). Adding more free MCP tools risks spreading your focus thinner without solving the core problem: low qualified traffic and low conversion.
+
+3. **Developer utilities in MCP**  
+   Many of the suggested tools (hash, base64, regex, JSON format) are already available as **client-side tools** on the main site. Duplicating them in the MCP server adds maintenance overhead with limited extra value for AI agents.
+
+### My Revised Recommendation (Better 100x Path)
+
+**Priority Order Right Now:**
+
+1. **Drive traffic to the new self-serve Enterprise page** (This week)  
+   - Write and post one strong tweet/thread about the Enterprise tier + privacy angle.
+   - Share the /enterprise page on Indie Hackers and relevant communities.
+   - Add a prominent banner on the homepage pointing to /enterprise.
+
+2. **Launch & promote the Chrome Extension** (This week)  
+   This has much higher virality and daily-use potential than adding 10 more MCP tools.
+
+3. **Selective MCP expansion** (Next week, not 10 tools)  
+   Add only 3–4 high-impact tools that AI agents actually need and can’t do client-side easily:
+   - `generate_pdf_from_text`
+   - `markdown_to_html`
+   - `create_shareable_paste`
+   - Maybe one more (e.g. `ocr_image` improvements)
+
+   Skip duplicating things that already exist as client-side tools.
+
+### Bottom Line
+The proposed plan is **safe and incremental**, but it’s not aggressive enough for “100x this shit”.
+
+**What I would actually do this week instead:**
+- Make the homepage promote the paid paths (Enterprise + Agent API) more visibly.
+- Get the Chrome Extension live and promoted.
+- Do one strong targeted post (HN / Indie Hackers / X) about the privacy-first MCP + Enterprise offering.
+
+Would you like me to:
+- Write a strong tweet/thread for the Enterprise page launch?
+- Give you a revised, minimal MCP tool addition list (only the highest-impact ones)?
+- Or draft homepage banner copy to push the self-serve Enterprise tier?
+
+Tell me your priority and we’ll move fast.
