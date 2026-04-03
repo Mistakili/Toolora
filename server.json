@@ -1,0 +1,17 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.Mistakili/toolora-mcp",
+  "title": "Toolora MCP Server",
+  "description": "12 free tools for AI agents — PDF extraction, OCR, audio transcription, QR code generation, URL scraping, spreadsheet parsing, CSV/JSON conversion, Word document extraction, and web content reading. No API key required. Privacy-first.",
+  "version": "1.0.0",
+  "repository": {
+    "url": "https://github.com/Mistakili/toolora",
+    "source": "github"
+  },
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://toolora.dev/api/mcp"
+    }
+  ]
+}
