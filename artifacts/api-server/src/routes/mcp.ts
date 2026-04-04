@@ -7,6 +7,7 @@ import XLSX from "xlsx";
 import OpenAI from "openai";
 import { db } from "@workspace/db";
 import { mcpCallsTable, pastesTable, memoriesTable } from "@workspace/db/schema";
+import { logger } from "../lib/logger";
 
 const router: IRouter = Router();
 
@@ -941,9 +942,9 @@ router.post("/", async (req: Request, res: Response) => {
         res.json(rpcOk(id, {
           protocolVersion: PROTOCOL_VERSION,
           serverInfo: { name: SERVER_NAME, version: SERVER_VERSION },
-          capabilities: { tools: {} },
+          capabilities: { tools: {}, resources: {} },
           instructions:
-            "Toolora MCP server exposes browser-side tool functionality as server-side APIs. All tools are free to use. For high-volume or programmatic use, the direct HTTP Agent API at /api/agent supports x402 micropayments.",
+            "Toolora MCP server exposes browser-side tool functionality as server-side APIs. All tools are free to use. For high-volume or programmatic use, the direct HTTP Agent API at /api/agent supports x402 micropayments. Read the toolora://getting-started resource for a quick-start guide.",
         }));
         break;
 
@@ -955,6 +956,96 @@ router.post("/", async (req: Request, res: Response) => {
         res.json(rpcOk(id, { tools: TOOLS }));
         break;
 
+      case "resources/list":
+        res.json(rpcOk(id, {
+          resources: [
+            {
+              uri: "toolora://getting-started",
+              name: "Toolora Quick-Start Guide",
+              description: "What Toolora can do, how to call each tool, and links to the Agent API and MCP Hub.",
+              mimeType: "text/markdown",
+            },
+            {
+              uri: "toolora://tools-list",
+              name: "Available Tools",
+              description: "Complete list of all 17 MCP tools with their input schemas.",
+              mimeType: "application/json",
+            },
+          ],
+        }));
+        break;
+
+      case "resources/read": {
+        const { uri } = params as { uri?: string };
+        if (uri === "toolora://getting-started") {
+          res.json(rpcOk(id, {
+            contents: [{
+              uri,
+              mimeType: "text/markdown",
+              text: `# Toolora MCP Server — Quick-Start Guide
+
+**17 free tools. No API key. No rate limits. Files never stored.**
+
+## What you can do
+
+| Tool | What it does |
+|------|-------------|
+| \`extract_pdf_text\` | Extract all text from a PDF (base64 input) |
+| \`merge_pdfs\` | Combine 2–20 PDFs into one |
+| \`ocr_image\` | Read text from any image (JPEG/PNG/WebP) |
+| \`transcribe_audio\` | Transcribe MP3/WAV/M4A using Whisper |
+| \`read_url\` | Fetch and extract clean text from any URL |
+| \`scrape_url_js\` | Scrape JS-rendered pages (full browser render) |
+| \`generate_qr_code\` | Create QR codes as base64 PNG |
+| \`generate_pdf_from_text\` | Generate a styled PDF from plain text or Markdown |
+| \`csv_to_json\` | Convert CSV → JSON array |
+| \`json_to_csv\` | Convert JSON array → CSV |
+| \`excel_to_json\` | Parse XLSX/XLS spreadsheets to JSON |
+| \`extract_docx_text\` | Extract text from Word documents |
+| \`markdown_to_html\` | Convert Markdown to clean HTML |
+| \`count_words\` | Word, character, sentence, and paragraph counts |
+| \`create_shareable_paste\` | Create a public shareable text snippet |
+| \`save_memory\` | Persist a named value between sessions |
+| \`recall_memory\` | Retrieve a previously saved memory |
+
+## Endpoint
+
+\`\`\`
+https://api.toolora.dev/api/mcp
+\`\`\`
+
+## High-volume / Agent API
+
+For programmatic or high-volume use, Toolora's HTTP Agent API supports **x402 micropayments** on Stellar and Solana — no subscription required.
+
+Docs: https://toolora.dev/api-docs
+
+## Privacy
+
+Tools process files in memory only. Nothing is stored, logged, or retained beyond the request lifetime (except pastes/memories, which are explicit opt-in).
+
+## More
+
+- Website: https://toolora.dev
+- MCP Hub (compare other servers): https://toolora.dev/mcp-hub
+- Blog: https://toolora.dev/blog
+`,
+            }],
+          }));
+        } else if (uri === "toolora://tools-list") {
+          res.json(rpcOk(id, {
+            contents: [{
+              uri,
+              mimeType: "application/json",
+              text: JSON.stringify({ tools: TOOLS }, null, 2),
+            }],
+          }));
+        } else {
+          res.json(rpcErr(id, -32002, `Resource not found: ${uri}`));
+        }
+        break;
+      }
+
       case "tools/call": {
         const { name, arguments: args = {} } = params as { name?: string; arguments?: Record<string, unknown> };
 
@@ -963,6 +1054,7 @@ router.post("/", async (req: Request, res: Response) => {
           return;
         }
 
+        logger.info({ tool: name, sessionId: req.headers["mcp-session-id"] ?? null }, "[mcp] tool call");
         const _mcpStartMs = Date.now();
         let _mcpSuccess = true;
         let _mcpErrorMsg: string | undefined;
@@ -1043,14 +1135,15 @@ router.post("/", async (req: Request, res: Response) => {
             }));
           }
         } finally {
-          // Fire-and-forget — response already sent; use console so it's always visible in server logs
+          const durationMs = Date.now() - _mcpStartMs;
+          logger.info({ tool: name, durationMs, success: _mcpSuccess, error: _mcpErrorMsg ?? null }, "[mcp] tool done");
           db.insert(mcpCallsTable).values({
             tool: name,
-            durationMs: Date.now() - _mcpStartMs,
+            durationMs,
             success: _mcpSuccess,
             errorMsg: _mcpErrorMsg ?? null,
           }).catch((err: unknown) => {
-            console.error("[mcp] Failed to record tool call in DB", { err, tool: name });
+            logger.error({ err, tool: name }, "[mcp] Failed to record tool call in DB");
           });
         }
         break;

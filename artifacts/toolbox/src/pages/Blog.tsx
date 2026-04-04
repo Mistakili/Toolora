@@ -1,8 +1,67 @@
 import { useState } from "react";
 import { Link } from "wouter";
-import { ArrowRight, Clock, Tag } from "lucide-react";
+import { ArrowRight, Clock, Mail, CheckCircle } from "lucide-react";
 import { BLOG_POSTS, getPostImage } from "@/lib/blog-posts";
 import { useSEO } from "@/hooks/useSEO";
+
+function NewsletterStrip() {
+  const [email, setEmail] = useState("");
+  const [state, setState] = useState<"idle" | "loading" | "done" | "error">("idle");
+  const BASE = import.meta.env.BASE_URL.replace(/\/$/, "");
+
+  async function submit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!email) return;
+    setState("loading");
+    try {
+      const res = await fetch(`${BASE}/api/subscribe`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, source: "blog" }),
+      });
+      if (res.ok) setState("done");
+      else setState("error");
+    } catch {
+      setState("error");
+    }
+  }
+
+  return (
+    <div className="rounded-2xl border border-primary/20 bg-primary/5 px-6 py-7 flex flex-col sm:flex-row items-center gap-5 my-10">
+      <div className="flex-1 min-w-0">
+        <p className="text-sm font-semibold text-foreground flex items-center gap-2 mb-1">
+          <Mail className="w-4 h-4 text-primary" />
+          New posts, straight to your inbox
+        </p>
+        <p className="text-xs text-muted-foreground">Privacy tools, MCP guides, and developer deep-dives. No spam. Unsubscribe anytime.</p>
+      </div>
+      {state === "done" ? (
+        <div className="flex items-center gap-2 text-sm text-green-400 font-medium shrink-0">
+          <CheckCircle className="w-4 h-4" /> You're in!
+        </div>
+      ) : (
+        <form onSubmit={submit} className="flex gap-2 w-full sm:w-auto shrink-0">
+          <input
+            type="email"
+            required
+            placeholder="you@example.com"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            className="flex-1 sm:w-52 rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus:border-primary placeholder:text-muted-foreground"
+          />
+          <button
+            type="submit"
+            disabled={state === "loading"}
+            className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors disabled:opacity-60 shrink-0"
+          >
+            {state === "loading" ? "..." : "Subscribe"}
+          </button>
+        </form>
+      )}
+      {state === "error" && <p className="text-xs text-red-400 mt-1">Something went wrong — try again.</p>}
+    </div>
+  );
+}
 
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
@@ -137,6 +196,9 @@ export default function Blog() {
             </article>
           </Link>
         )}
+
+        {/* ── Newsletter ── */}
+        <NewsletterStrip />
 
         {/* ── Post grid ── */}
         {rest.length > 0 && (
