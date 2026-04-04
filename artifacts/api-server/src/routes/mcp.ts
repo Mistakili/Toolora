@@ -939,6 +939,7 @@ router.post("/", async (req: Request, res: Response) => {
   try {
     switch (method) {
       case "initialize":
+        db.insert(mcpCallsTable).values({ tool: "_connect", durationMs: 0, success: true }).catch(() => {});
         res.json(rpcOk(id, {
           protocolVersion: PROTOCOL_VERSION,
           serverInfo: { name: SERVER_NAME, version: SERVER_VERSION },
@@ -953,6 +954,7 @@ router.post("/", async (req: Request, res: Response) => {
         break;
 
       case "tools/list":
+        db.insert(mcpCallsTable).values({ tool: "_list", durationMs: 0, success: true }).catch(() => {});
         res.json(rpcOk(id, { tools: TOOLS }));
         break;
 

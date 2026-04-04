@@ -270,8 +270,16 @@ router.get("/mcp", async (req: Request, res: Response) => {
   try {
     const sevenDays = sql`${mcpCallsTable.createdAt} >= NOW() - INTERVAL '7 days'`;
 
+    const isRealTool = sql`${mcpCallsTable.tool} NOT IN ('_connect', '_list')`;
+
     const [totalRow] = await db
-      .select({ total: count(), successes: sql<number>`SUM(CASE WHEN ${mcpCallsTable.success} THEN 1 ELSE 0 END)` })
+      .select({
+        total: count(),
+        successes: sql<number>`SUM(CASE WHEN ${mcpCallsTable.success} THEN 1 ELSE 0 END)`,
+        connections: sql<number>`SUM(CASE WHEN ${mcpCallsTable.tool} = '_connect' THEN 1 ELSE 0 END)`,
+        discoveries: sql<number>`SUM(CASE WHEN ${mcpCallsTable.tool} = '_list' THEN 1 ELSE 0 END)`,
+        toolCalls: sql<number>`SUM(CASE WHEN ${mcpCallsTable.tool} NOT IN ('_connect','_list') THEN 1 ELSE 0 END)`,
+      })
       .from(mcpCallsTable);
 
     const byTool = await db
@@ -282,13 +290,15 @@ router.get("/mcp", async (req: Request, res: Response) => {
         avgMs: avg(mcpCallsTable.durationMs),
       })
       .from(mcpCallsTable)
+      .where(isRealTool)
       .groupBy(mcpCallsTable.tool)
       .orderBy(desc(count()));
 
     const daily = await db
       .select({
         day: sql<string>`DATE(${mcpCallsTable.createdAt})`.as("day"),
-        calls: count(),
+        connections: sql<number>`SUM(CASE WHEN ${mcpCallsTable.tool} = '_connect' THEN 1 ELSE 0 END)`,
+        toolCalls: sql<number>`SUM(CASE WHEN ${mcpCallsTable.tool} NOT IN ('_connect','_list') THEN 1 ELSE 0 END)`,
       })
       .from(mcpCallsTable)
       .where(sevenDays)
@@ -302,15 +312,17 @@ router.get("/mcp", async (req: Request, res: Response) => {
         createdAt: mcpCallsTable.createdAt,
       })
       .from(mcpCallsTable)
-      .where(sql`NOT ${mcpCallsTable.success}`)
+      .where(sql`NOT ${mcpCallsTable.success} AND ${isRealTool}`)
       .orderBy(desc(mcpCallsTable.createdAt))
       .limit(10);
 
     res.json({
       summary: {
-        totalCalls: Number(totalRow?.total ?? 0),
-        successCalls: Number(totalRow?.successes ?? 0),
-        errorCalls: Number(totalRow?.total ?? 0) - Number(totalRow?.successes ?? 0),
+        totalCalls: Number(totalRow?.toolCalls ?? 0),
+        successCalls: Number(totalRow?.successes ?? 0) - Number(totalRow?.connections ?? 0) - Number(totalRow?.discoveries ?? 0),
+        errorCalls: 0,
+        connections: Number(totalRow?.connections ?? 0),
+        discoveries: Number(totalRow?.discoveries ?? 0),
       },
       byTool: byTool.map((r) => ({
         tool: r.tool,
@@ -318,7 +330,7 @@ router.get("/mcp", async (req: Request, res: Response) => {
         errors: Number(r.errors ?? 0),
         avgMs: r.avgMs ? Math.round(Number(r.avgMs)) : null,
       })),
-      daily: daily.map((d) => ({ day: d.day, calls: Number(d.calls) })),
+      daily: daily.map((d) => ({ day: d.day, connections: Number(d.connections ?? 0), toolCalls: Number(d.toolCalls ?? 0) })),
       recentErrors: recentErrors.map((e) => ({
         tool: e.tool,
         errorMsg: e.errorMsg,

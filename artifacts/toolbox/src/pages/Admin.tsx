@@ -50,9 +50,9 @@ interface ToolUsageData {
 }
 
 interface McpStats {
-  summary: { totalCalls: number; successCalls: number; errorCalls: number };
+  summary: { totalCalls: number; successCalls: number; errorCalls: number; connections: number; discoveries: number };
   byTool: { tool: string; calls: number; errors: number; avgMs: number | null }[];
-  daily: { day: string; calls: number }[];
+  daily: { day: string; connections: number; toolCalls: number }[];
   recentErrors: { tool: string; errorMsg: string | null; createdAt: string }[];
 }
 
@@ -658,13 +658,31 @@ export default function Admin() {
 
           {/* ── Section 9: MCP Server ─────────────────────────────────────── */}
           {mcpStats && (
-            <Section icon={Bot} title="MCP Server" badge={`${mcpStats.summary.totalCalls} calls`}>
+            <Section icon={Bot} title="MCP Server" badge={`${mcpStats.summary.connections} connections · ${mcpStats.summary.totalCalls} tool calls`}>
               <div className="pt-4 space-y-5">
+
+                {/* Funnel: connect → discover → use */}
                 <div className="grid grid-cols-3 gap-3">
-                  <StatCard label="Total calls" value={mcpStats.summary.totalCalls} accent="blue" />
-                  <StatCard label="Successful" value={mcpStats.summary.successCalls} accent="green" />
-                  <StatCard label="Errors" value={mcpStats.summary.errorCalls} accent={mcpStats.summary.errorCalls > 0 ? "red" : undefined} />
+                  <StatCard label="Connections" value={mcpStats.summary.connections} accent="blue"
+                    sub="clients that connected" />
+                  <StatCard label="Tool discoveries" value={mcpStats.summary.discoveries} accent="yellow"
+                    sub="tools/list requests" />
+                  <StatCard label="Tool calls" value={mcpStats.summary.totalCalls} accent="green"
+                    sub="actual tool executions" />
                 </div>
+
+                {/* Funnel conversion hint */}
+                {mcpStats.summary.connections > 0 && (
+                  <div className="rounded-lg bg-muted/30 border border-border px-4 py-3 text-xs text-muted-foreground">
+                    <span className="text-foreground font-medium">Funnel: </span>
+                    {mcpStats.summary.connections} connected →{" "}
+                    {mcpStats.summary.discoveries} discovered tools →{" "}
+                    {mcpStats.summary.totalCalls} executed a tool
+                    {mcpStats.summary.connections > 0 && mcpStats.summary.totalCalls === 0 && (
+                      <span className="ml-2 text-yellow-400">— people are connecting but not yet invoking tools</span>
+                    )}
+                  </div>
+                )}
 
                 {mcpStats.byTool.length > 0 && (
                   <div>
@@ -696,17 +714,17 @@ export default function Admin() {
 
                 {mcpStats.daily.length > 0 && (
                   <div>
-                    <div className="text-xs text-muted-foreground mb-2 font-medium uppercase tracking-wider">Daily calls (last 7 days)</div>
-                    <ResponsiveContainer width="100%" height={120}>
+                    <div className="text-xs text-muted-foreground mb-2 font-medium uppercase tracking-wider">Daily activity (last 7 days)</div>
+                    <ResponsiveContainer width="100%" height={130}>
                       <BarChart data={mcpStats.daily} margin={{ top: 0, right: 0, left: -24, bottom: 0 }}>
                         <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
                         <XAxis dataKey="day" tick={{ fontSize: 9 }} tickFormatter={(d: string) => d.slice(5)} />
                         <YAxis tick={{ fontSize: 9 }} allowDecimals={false} />
                         <Tooltip
                           contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: 8, fontSize: 11 }}
-                          formatter={(v: number) => [v, "calls"]}
                         />
-                        <Bar dataKey="calls" fill="#3b82f6" radius={[3, 3, 0, 0]} />
+                        <Bar dataKey="connections" name="Connections" fill="#3b82f6" radius={[3, 3, 0, 0]} />
+                        <Bar dataKey="toolCalls" name="Tool calls" fill="#22c55e" radius={[3, 3, 0, 0]} />
                       </BarChart>
                     </ResponsiveContainer>
                   </div>
@@ -727,8 +745,8 @@ export default function Admin() {
                   </div>
                 )}
 
-                {mcpStats.summary.totalCalls === 0 && (
-                  <p className="text-sm text-muted-foreground py-4 text-center">No MCP tool calls yet — data will appear once agents start using the server.</p>
+                {mcpStats.summary.connections === 0 && (
+                  <p className="text-sm text-muted-foreground py-4 text-center">No MCP activity yet — data will appear once clients connect.</p>
                 )}
               </div>
             </Section>
