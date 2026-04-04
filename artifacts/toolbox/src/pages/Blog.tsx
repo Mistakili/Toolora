@@ -1,33 +1,41 @@
+import { useState } from "react";
 import { Link } from "wouter";
-import { ArrowRight, Clock, Tag, Lock, Code2, BookOpen, Shield, Wrench, Zap } from "lucide-react";
-import { BLOG_POSTS } from "@/lib/blog-posts";
+import { ArrowRight, Clock, Tag } from "lucide-react";
+import { BLOG_POSTS, getPostImage } from "@/lib/blog-posts";
 import { useSEO } from "@/hooks/useSEO";
 
 function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+  return new Date(iso).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
 }
 
-function getCoverStyle(category: string): { gradient: string; Icon: React.ElementType; iconColor: string } {
-  switch (category.toLowerCase()) {
-    case "privacy":
-      return { gradient: "from-purple-900/80 via-violet-800/60 to-purple-900/80", Icon: Lock, iconColor: "text-purple-300" };
-    case "developer":
-    case "development":
-      return { gradient: "from-blue-900/80 via-cyan-800/60 to-blue-900/80", Icon: Code2, iconColor: "text-cyan-300" };
-    case "security":
-      return { gradient: "from-red-900/80 via-orange-800/60 to-red-900/80", Icon: Shield, iconColor: "text-orange-300" };
-    case "tutorials":
-    case "tutorial":
-      return { gradient: "from-emerald-900/80 via-teal-800/60 to-emerald-900/80", Icon: BookOpen, iconColor: "text-emerald-300" };
-    case "tools":
-      return { gradient: "from-indigo-900/80 via-purple-800/60 to-indigo-900/80", Icon: Wrench, iconColor: "text-indigo-300" };
-    default:
-      return { gradient: "from-zinc-900/80 via-zinc-700/60 to-zinc-900/80", Icon: Zap, iconColor: "text-zinc-300" };
-  }
+const CATEGORY_COLORS: Record<string, string> = {
+  "Privacy":         "bg-violet-500/15 text-violet-300 border-violet-500/30",
+  "Security":        "bg-red-500/15 text-red-300 border-red-500/30",
+  "Developer":       "bg-cyan-500/15 text-cyan-300 border-cyan-500/30",
+  "Developer Tools": "bg-cyan-500/15 text-cyan-300 border-cyan-500/30",
+  "AI Builders":     "bg-yellow-500/15 text-yellow-300 border-yellow-500/30",
+  "Tools":           "bg-green-500/15 text-green-300 border-green-500/30",
+  "Productivity":    "bg-green-500/15 text-green-300 border-green-500/30",
+  "Behind the Build":"bg-orange-500/15 text-orange-300 border-orange-500/30",
+};
+
+function CategoryBadge({ category }: { category: string }) {
+  const cls = CATEGORY_COLORS[category] ?? "bg-zinc-500/15 text-zinc-300 border-zinc-500/30";
+  return (
+    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold uppercase tracking-wider border ${cls}`}>
+      {category}
+    </span>
+  );
 }
 
 export default function Blog() {
   const sorted = [...BLOG_POSTS].reverse();
+  const categories = ["All", ...Array.from(new Set(sorted.map(p => p.category)))];
+  const [active, setActive] = useState("All");
+
+  const filtered = active === "All" ? sorted : sorted.filter(p => p.category === active);
+  const [featured, ...rest] = filtered;
+
   useSEO({
     title: "Blog — Privacy, Security & Developer Tool Insights | Toolora",
     description: "Guides, tutorials, and deep dives on browser-based privacy tools, MCP servers, developer utilities, and secure document processing — from the Toolora team.",
@@ -49,85 +57,129 @@ export default function Blog() {
             datePublished: p.date,
           })),
         },
-        {
-          "@type": "BreadcrumbList",
-          itemListElement: [
-            { "@type": "ListItem", position: 1, name: "Home", item: "https://toolora.dev" },
-            { "@type": "ListItem", position: 2, name: "Blog", item: "https://toolora.dev/blog" },
-          ],
-        },
       ],
     },
   });
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-16">
-      <div className="mb-8">
-        <h1 className="text-4xl font-display font-bold mb-3">Blog</h1>
-        <p className="text-muted-foreground text-lg">Privacy, tools, and the indie web.</p>
-      </div>
+    <div className="w-full">
 
-      {/* Blog hero visual */}
-      <div className="relative rounded-2xl overflow-hidden border border-border/50 mb-12">
+      {/* ── Full-bleed hero ── */}
+      <section className="relative h-[320px] overflow-hidden">
         <img
           src="/images/blog-hero.png"
-          alt="Creative editorial workspace"
-          className="w-full object-cover max-h-56 object-center"
+          alt="Toolora Blog"
+          className="absolute inset-0 w-full h-full object-cover object-center"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-background/80 via-background/30 to-transparent flex items-center">
-          <div className="px-8 max-w-xs">
-            <p className="text-xs font-mono text-primary uppercase tracking-widest mb-1">Toolora Blog</p>
-            <p className="text-base font-display font-bold leading-snug">Writing about privacy, AI tools, and the open web.</p>
-          </div>
+        <div className="absolute inset-0 bg-gradient-to-b from-background/50 via-background/30 to-background/95" />
+        <div className="relative z-10 h-full flex flex-col items-center justify-center text-center px-4 gap-3">
+          <p className="text-xs font-mono text-primary uppercase tracking-widest">Toolora Blog</p>
+          <h1 className="text-4xl md:text-5xl font-display font-bold drop-shadow-lg">Writing about privacy, AI tools,<br className="hidden md:block" /> and the open web.</h1>
+          <p className="text-muted-foreground text-base max-w-xl">{sorted.length} articles · updated weekly</p>
         </div>
-      </div>
+      </section>
 
-      <div className="space-y-6">
-        {[...BLOG_POSTS].reverse().map((post) => {
-          const { gradient, Icon, iconColor } = getCoverStyle(post.category);
-          return (
-            <Link key={post.slug} href={`/blog/${post.slug}`} className="block group">
-              <article className="rounded-2xl border border-border hover:border-primary/40 overflow-hidden transition-all duration-200 hover:shadow-lg hover:shadow-primary/10">
-                {/* Cover image */}
-                <div className={`relative h-36 bg-gradient-to-br ${gradient} flex items-center justify-center`}>
-                  <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-white/5 via-transparent to-transparent" />
-                  <div className="flex flex-col items-center gap-2 z-10">
-                    <Icon className={`w-10 h-10 ${iconColor} opacity-80`} />
-                    <span className={`text-xs font-semibold uppercase tracking-widest ${iconColor} opacity-70`}>
-                      {post.category}
+      <div className="max-w-5xl mx-auto px-4 py-10">
+
+        {/* ── Category tabs ── */}
+        <div className="flex flex-wrap gap-2 mb-10 border-b border-border pb-6">
+          {categories.map(cat => (
+            <button
+              key={cat}
+              onClick={() => setActive(cat)}
+              className={`px-3.5 py-1.5 rounded-full text-sm font-medium transition-all ${
+                active === cat
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-muted text-muted-foreground hover:text-foreground hover:bg-muted/70"
+              }`}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
+
+        {filtered.length === 0 && (
+          <p className="text-muted-foreground text-center py-16">No posts in this category yet.</p>
+        )}
+
+        {/* ── Featured post ── */}
+        {featured && (
+          <Link href={`/blog/${featured.slug}`} className="block group mb-10">
+            <article className="rounded-2xl border border-border hover:border-primary/40 overflow-hidden transition-all duration-200 hover:shadow-xl hover:shadow-primary/10 grid md:grid-cols-2">
+              <div className="relative h-56 md:h-auto overflow-hidden bg-muted">
+                <img
+                  src={getPostImage(featured.slug, featured.category)}
+                  alt={featured.title}
+                  className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-background/40 to-transparent md:bg-gradient-to-r" />
+              </div>
+              <div className="p-8 flex flex-col justify-center gap-4">
+                <div className="flex items-center gap-2">
+                  <CategoryBadge category={featured.category} />
+                  <span className="text-xs text-muted-foreground">Featured</span>
+                </div>
+                <h2 className="text-2xl font-display font-bold leading-snug group-hover:text-primary transition-colors">
+                  {featured.title}
+                </h2>
+                <p className="text-muted-foreground text-sm leading-relaxed line-clamp-3">
+                  {featured.description}
+                </p>
+                <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                  <span>{formatDate(featured.date)}</span>
+                  <span>·</span>
+                  <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{featured.readTime}</span>
+                </div>
+                <span className="inline-flex items-center gap-1.5 text-sm text-primary font-medium mt-1">
+                  Read article <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                </span>
+              </div>
+            </article>
+          </Link>
+        )}
+
+        {/* ── Post grid ── */}
+        {rest.length > 0 && (
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {rest.map(post => (
+              <Link key={post.slug} href={`/blog/${post.slug}`} className="block group">
+                <article className="rounded-2xl border border-border hover:border-primary/40 overflow-hidden transition-all duration-200 hover:shadow-lg hover:shadow-primary/10 h-full flex flex-col">
+                  {/* Thumbnail */}
+                  <div className="relative h-44 overflow-hidden bg-muted flex-shrink-0">
+                    <img
+                      src={getPostImage(post.slug, post.category)}
+                      alt={post.title}
+                      className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-transparent" />
+                    <div className="absolute bottom-3 left-3">
+                      <CategoryBadge category={post.category} />
+                    </div>
+                  </div>
+
+                  {/* Body */}
+                  <div className="p-5 flex flex-col gap-2 flex-1">
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                      <span>{formatDate(post.date)}</span>
+                      <span>·</span>
+                      <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{post.readTime}</span>
+                    </div>
+                    <h2 className="text-base font-semibold leading-snug group-hover:text-primary transition-colors line-clamp-2">
+                      {post.title}
+                    </h2>
+                    <p className="text-muted-foreground text-xs leading-relaxed line-clamp-2 flex-1">
+                      {post.description}
+                    </p>
+                    <span className="inline-flex items-center gap-1 text-xs text-primary font-medium mt-auto pt-2">
+                      Read <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
                     </span>
                   </div>
-                </div>
+                </article>
+              </Link>
+            ))}
+          </div>
+        )}
 
-                {/* Card body */}
-                <div className="p-6 hover:bg-muted/30 transition-colors">
-                  <div className="flex items-center gap-3 text-xs text-muted-foreground mb-3">
-                    <span className="flex items-center gap-1">
-                      <Tag className="w-3 h-3" />
-                      {post.category}
-                    </span>
-                    <span>·</span>
-                    <span>{formatDate(post.date)}</span>
-                    <span>·</span>
-                    <span className="flex items-center gap-1">
-                      <Clock className="w-3 h-3" />
-                      {post.readTime}
-                    </span>
-                  </div>
-                  <h2 className="text-xl font-semibold mb-2 group-hover:text-primary transition-colors leading-snug">
-                    {post.title}
-                  </h2>
-                  <p className="text-muted-foreground text-sm leading-relaxed mb-4">
-                    {post.description}
-                  </p>
-                  <span className="inline-flex items-center gap-1.5 text-sm text-primary font-medium">
-                    Read post <ArrowRight className="w-3.5 h-3.5" />
-                  </span>
-                </div>
-              </article>
-            </Link>
-          );
-        })}
       </div>
     </div>
   );

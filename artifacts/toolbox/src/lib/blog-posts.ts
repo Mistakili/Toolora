@@ -8,6 +8,39 @@ export interface BlogPost {
   content: string;
 }
 
+const SLUG_IMAGE_MAP: Record<string, string> = {
+  "hipaa-compliant-online-document-tools":              "blog-hipaa-compliance.png",
+  "law-firm-secure-document-workflow-no-cloud-uploads": "blog-hipaa-compliance.png",
+  "stop-pasting-jwts-into-random-websites":             "blog-jwt-privacy.png",
+  "hashing-vs-encryption-whats-the-difference":        "blog-jwt-anatomy.png",
+  "how-to-count-tokens-chatgpt-openai":                "blog-platform-limits.png",
+  "word-counter-online-free":                          "blog-word-count-stats.png",
+  "competitor-research-claude-mcp":                    "mcp-tools-visual.png",
+  "what-is-x402-payments-for-ai-apis":                 "mcp-visual.png",
+  "local-mcp-servers-vs-hosted-mcp-servers":           "mcp-hub-hero.png",
+  "claude-skills-tool-stack":                          "mcp-tools-visual.png",
+  "why-i-built-client-side-toolbox":                   "blog-hero.png",
+  "resize-images-without-uploading":                   "privacy-shield-new.png",
+  "best-free-image-compressor-privacy":                "privacy-shield-new.png",
+  "merge-pdfs-without-uploading":                      "privacy-shield-new.png",
+};
+
+const CATEGORY_IMAGE_MAP: Record<string, string> = {
+  "privacy":        "privacy-shield-new.png",
+  "security":       "blog-jwt-anatomy.png",
+  "developer":      "hero-bg-new.png",
+  "developer tools":"hero-bg-new.png",
+  "ai builders":    "mcp-tools-visual.png",
+  "tools":          "blog-word-count-stats.png",
+  "productivity":   "blog-hero.png",
+  "behind the build":"blog-hero.png",
+};
+
+export function getPostImage(slug: string, category: string): string {
+  const file = SLUG_IMAGE_MAP[slug] ?? CATEGORY_IMAGE_MAP[category.toLowerCase()] ?? "blog-hero.png";
+  return `/images/${file}`;
+}
+
 export const BLOG_POSTS: BlogPost[] = [
   {
     slug: "merge-pdfs-without-uploading",

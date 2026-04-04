@@ -1,26 +1,7 @@
 import { Link, useParams } from "wouter";
-import { ArrowLeft, Clock, Tag, Calendar, Lock, Code2, BookOpen, Shield, Wrench, Zap } from "lucide-react";
-import { getBlogPost, BLOG_POSTS } from "@/lib/blog-posts";
+import { ArrowLeft, Clock, Tag, Calendar } from "lucide-react";
+import { getBlogPost, BLOG_POSTS, getPostImage } from "@/lib/blog-posts";
 import { useSEO } from "@/hooks/useSEO";
-
-function getCoverStyle(category: string): { gradient: string; Icon: React.ElementType; iconColor: string } {
-  switch (category.toLowerCase()) {
-    case "privacy":
-      return { gradient: "from-purple-900/80 via-violet-800/60 to-purple-900/80", Icon: Lock, iconColor: "text-purple-300" };
-    case "developer":
-    case "development":
-      return { gradient: "from-blue-900/80 via-cyan-800/60 to-blue-900/80", Icon: Code2, iconColor: "text-cyan-300" };
-    case "security":
-      return { gradient: "from-red-900/80 via-orange-800/60 to-red-900/80", Icon: Shield, iconColor: "text-orange-300" };
-    case "tutorials":
-    case "tutorial":
-      return { gradient: "from-emerald-900/80 via-teal-800/60 to-emerald-900/80", Icon: BookOpen, iconColor: "text-emerald-300" };
-    case "tools":
-      return { gradient: "from-indigo-900/80 via-purple-800/60 to-indigo-900/80", Icon: Wrench, iconColor: "text-indigo-300" };
-    default:
-      return { gradient: "from-zinc-900/80 via-zinc-700/60 to-zinc-900/80", Icon: Zap, iconColor: "text-zinc-300" };
-  }
-}
 
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
@@ -77,8 +58,7 @@ export default function BlogPost() {
     );
   }
 
-  const others = BLOG_POSTS.filter((p) => p.slug !== slug).slice(0, 2);
-  const { gradient, Icon, iconColor } = getCoverStyle(post.category);
+  const others = BLOG_POSTS.filter((p) => p.slug !== slug).slice(0, 3);
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-12">
@@ -89,12 +69,16 @@ export default function BlogPost() {
         All posts
       </Link>
 
-      {/* Hero cover */}
-      <div className={`relative w-full h-48 sm:h-56 rounded-2xl overflow-hidden mb-10 bg-gradient-to-br ${gradient} flex items-center justify-center`}>
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-white/5 via-transparent to-transparent" />
-        <div className="flex flex-col items-center gap-3 z-10">
-          <Icon className={`w-14 h-14 ${iconColor} opacity-75`} />
-          <span className={`text-xs font-semibold uppercase tracking-widest ${iconColor} opacity-60`}>
+      {/* Hero image */}
+      <div className="relative w-full h-52 sm:h-64 rounded-2xl overflow-hidden mb-10">
+        <img
+          src={getPostImage(post.slug, post.category)}
+          alt={post.title}
+          className="w-full h-full object-cover object-center"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-background/70 via-background/10 to-transparent" />
+        <div className="absolute bottom-4 left-4">
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold uppercase tracking-wider border bg-background/60 backdrop-blur-sm text-muted-foreground border-border">
             {post.category}
           </span>
         </div>
@@ -146,12 +130,22 @@ export default function BlogPost() {
       {others.length > 0 && (
         <section>
           <h2 className="text-lg font-semibold mb-5">More posts</h2>
-          <div className="space-y-4">
+          <div className="grid sm:grid-cols-3 gap-4">
             {others.map((p) => (
               <Link key={p.slug} href={`/blog/${p.slug}`} className="block group">
-                <div className="p-4 rounded-xl border border-border hover:border-primary/40 hover:bg-muted/20 transition-all">
-                  <p className="text-xs text-muted-foreground mb-1">{p.category} · {p.readTime}</p>
-                  <p className="font-medium text-sm group-hover:text-primary transition-colors leading-snug">{p.title}</p>
+                <div className="rounded-xl border border-border hover:border-primary/40 overflow-hidden transition-all hover:shadow-md">
+                  <div className="relative h-28 overflow-hidden bg-muted">
+                    <img
+                      src={getPostImage(p.slug, p.category)}
+                      alt={p.title}
+                      className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-background/50 to-transparent" />
+                  </div>
+                  <div className="p-3">
+                    <p className="text-[10px] text-muted-foreground mb-1 uppercase tracking-wider">{p.category} · {p.readTime}</p>
+                    <p className="font-medium text-xs group-hover:text-primary transition-colors leading-snug line-clamp-2">{p.title}</p>
+                  </div>
                 </div>
               </Link>
             ))}
