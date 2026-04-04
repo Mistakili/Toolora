@@ -54,7 +54,7 @@ export default function ApiKeys() {
     try {
       const res = await fetch(`${BASE}/api/keys`, { credentials: "include" });
       if (res.status === 401) {
-        window.location.href = `${BASE}/api/auth/login?returnTo=/api-keys`;
+        window.location.href = `${BASE}/api/login?returnTo=/api-keys`;
         return;
       }
       const json = await res.json() as KeysResponse;

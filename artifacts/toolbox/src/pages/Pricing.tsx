@@ -167,7 +167,7 @@ export default function Pricing() {
     setPortalLoading(true);
     try {
       const res = await fetch(`${BASE}/api/stripe/portal`, { method: "POST", credentials: "include" });
-      if (res.status === 401) { window.location.href = `${BASE}/api/auth/login?returnTo=/pricing`; return; }
+      if (res.status === 401) { window.location.href = `${BASE}/api/login?returnTo=/pricing`; return; }
       const data = await res.json() as { url?: string; error?: string };
       if (data.url) window.location.href = data.url;
       else setMsg(data.error ?? "Could not open billing portal.");
@@ -186,7 +186,7 @@ export default function Pricing() {
         body: JSON.stringify({ packId }),
       });
       if (res.status === 401) {
-        window.location.href = `${BASE}/api/auth/login?returnTo=/pricing`;
+        window.location.href = `${BASE}/api/login?returnTo=/pricing`;
         return;
       }
       const data = await res.json() as { url?: string; error?: string };
@@ -214,7 +214,7 @@ export default function Pricing() {
         body: JSON.stringify({ priceId }),
       });
       if (res.status === 401) {
-        window.location.href = `${BASE}/api/auth/login?returnTo=/pricing`;
+        window.location.href = `${BASE}/api/login?returnTo=/pricing`;
         return;
       }
       const data = await res.json() as { url?: string; error?: string };

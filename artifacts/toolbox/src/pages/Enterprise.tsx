@@ -170,7 +170,7 @@ export default function Enterprise() {
         body: JSON.stringify({ priceId, returnPath: "/enterprise" }),
       });
       if (res.status === 401) {
-        window.location.href = `${BASE}/api/auth/login?returnTo=/enterprise`;
+        window.location.href = `${BASE}/api/login?returnTo=/enterprise`;
         return;
       }
       const data = await res.json() as { url?: string; error?: string };
