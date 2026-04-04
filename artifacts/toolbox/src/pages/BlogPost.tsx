@@ -10,6 +10,7 @@ function formatDate(iso: string) {
 const BASE = "https://toolora.dev";
 
 function BlogPostSEO({ post }: { post: NonNullable<ReturnType<typeof getBlogPost>> }) {
+  const postImage = `${BASE}${getPostImage(post.slug, post.category)}`;
   useSEO({
     title: post.title,
     description: post.description,
@@ -17,15 +18,23 @@ function BlogPostSEO({ post }: { post: NonNullable<ReturnType<typeof getBlogPost
     type: "article",
     jsonLd: {
       "@context": "https://schema.org",
-      "@type": "Article",
+      "@type": "BlogPosting",
       headline: post.title,
       description: post.description,
       datePublished: post.date,
       dateModified: post.date,
       url: `${BASE}/blog/${post.slug}`,
       mainEntityOfPage: { "@type": "WebPage", "@id": `${BASE}/blog/${post.slug}` },
-      image: `${BASE}/opengraph.jpg`,
-      author: { "@type": "Organization", name: "Toolora", url: BASE },
+      image: { "@type": "ImageObject", url: postImage, width: 1200, height: 630 },
+      keywords: post.category,
+      articleSection: post.category,
+      inLanguage: "en-US",
+      author: {
+        "@type": "Organization",
+        name: "Toolora",
+        url: BASE,
+        logo: { "@type": "ImageObject", url: `${BASE}/favicon.svg` },
+      },
       publisher: {
         "@type": "Organization",
         name: "Toolora",
