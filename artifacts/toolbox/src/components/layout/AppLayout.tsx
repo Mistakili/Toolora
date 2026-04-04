@@ -321,6 +321,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
               <li><Link href="/enterprise" className="hover:text-foreground transition-colors">Enterprise</Link></li>
               <li><Link href="/extension" className="hover:text-foreground transition-colors">Browser Extension</Link></li>
               <li><Link href="/history" className="hover:text-foreground transition-colors">My Tool History</Link></li>
+              <li><Link href="/about" className="hover:text-foreground transition-colors">About</Link></li>
               <li><Link href="/privacy" className="hover:text-foreground transition-colors">Privacy Policy</Link></li>
               <li><Link href="/terms" className="hover:text-foreground transition-colors">Terms of Service</Link></li>
               <li><div className="mt-3 p-3 bg-primary/10 text-primary text-xs rounded-lg border border-primary/20 flex items-start gap-2">

@@ -29,6 +29,7 @@ import Enterprise from "@/pages/Enterprise";
 import HipaaChecklist from "@/pages/HipaaChecklist";
 import NotFound from "@/pages/not-found";
 import Paste from "@/pages/Paste";
+import About from "@/pages/About";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -63,6 +64,7 @@ function Router() {
             <Route path="/blog/:slug" component={BlogPost} />
             <Route path="/mcp" component={McpPage} />
             <Route path="/mcp-hub" component={McpHub} />
+            <Route path="/about" component={About} />
             <Route path="/enterprise" component={Enterprise} />
             <Route path="/hipaa-checklist" component={HipaaChecklist} />
             <Route path="/tools/:category" component={CategoryView} />
