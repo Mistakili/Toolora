@@ -433,117 +433,163 @@ export default function McpHub() {
   });
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-16 space-y-20">
+    <div className="w-full">
 
-      {/* ── Hero ──────────────────────────────────────────────────────────── */}
-      <section className="text-center space-y-5">
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-sm font-medium">
-          <ShieldCheck className="w-4 h-4" />
-          Privacy-First MCP Directory
-        </div>
-        <h1 className="text-4xl sm:text-5xl font-display font-bold leading-tight">
-          MCP servers that keep<br className="hidden sm:block" />
-          <span className="text-primary"> your data on your machine</span>
-        </h1>
-        <p className="text-muted-foreground text-lg max-w-2xl mx-auto leading-relaxed">
-          A curated list of Model Context Protocol servers that are local-first,
-          self-hostable, or privacy-respecting by design — vetted for use with
-          Claude Desktop, Cursor, and Cline.
-        </p>
-        <div className="flex flex-wrap items-center justify-center gap-4 text-sm text-muted-foreground">
-          <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-green-500" /> {SERVERS.filter(s => s.privacyLevel === "local").length} fully local</span>
-          <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-blue-500" /> {SERVERS.filter(s => s.privacyLevel === "self-hosted").length} self-hostable</span>
-          <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-amber-500" /> {SERVERS.filter(s => s.privacyLevel === "api").length} privacy-respecting API</span>
+      {/* ── IMAGE 1: Full-bleed hero ──────────────────────────────────────── */}
+      <section className="relative h-[540px] overflow-hidden">
+        <img
+          src={`${import.meta.env.BASE_URL}images/mcp-hub-hero.png`}
+          alt="MCP server hub — spoke network of privacy-first servers"
+          className="absolute inset-0 w-full h-full object-cover object-center"
+        />
+        {/* Gradient: dark top (nav blend) → transparent middle → dark bottom */}
+        <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/10 to-background/90" />
+        <div className="relative z-10 h-full flex flex-col items-center justify-center text-center px-4 space-y-5">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-sm font-medium backdrop-blur-sm">
+            <ShieldCheck className="w-4 h-4" />
+            Privacy-First MCP Directory
+          </div>
+          <h1 className="text-4xl sm:text-5xl font-display font-bold leading-tight max-w-2xl drop-shadow-lg">
+            MCP servers that keep<br className="hidden sm:block" />
+            <span className="text-primary"> your data on your machine</span>
+          </h1>
+          <p className="text-muted-foreground text-lg max-w-xl leading-relaxed">
+            A curated list of Model Context Protocol servers that are local-first,
+            self-hostable, or privacy-respecting by design — vetted for Claude
+            Desktop, Cursor, and Cline.
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-4 text-sm text-muted-foreground">
+            <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-green-500" /> {SERVERS.filter(s => s.privacyLevel === "local").length} fully local</span>
+            <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-blue-500" /> {SERVERS.filter(s => s.privacyLevel === "self-hosted").length} self-hostable</span>
+            <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-amber-500" /> {SERVERS.filter(s => s.privacyLevel === "api").length} privacy-respecting API</span>
+          </div>
         </div>
       </section>
 
-      {/* ── Hub network visual ───────────────────────────────────────────── */}
-      <div className="relative rounded-2xl overflow-hidden border border-border/50">
+      {/* ── Quick Install + Criteria ──────────────────────────────────────── */}
+      <div className="max-w-4xl mx-auto px-4 py-16 space-y-20">
+        <QuickInstall />
+
+        <section className="space-y-6">
+          <div className="text-center space-y-1">
+            <h2 className="text-xl font-display font-bold">How we vet servers</h2>
+            <p className="text-sm text-muted-foreground">Every server in this directory meets all four criteria.</p>
+          </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {CRITERIA.map(({ icon: Icon, label, desc }) => (
+              <div key={label} className="rounded-xl border border-border bg-muted/20 p-4 space-y-2">
+                <Icon className="w-5 h-5 text-primary" />
+                <p className="font-medium text-sm">{label}</p>
+                <p className="text-xs text-muted-foreground leading-relaxed">{desc}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      </div>
+
+      {/* ── IMAGE 2: Server room — full-bleed cinematic break ────────────── */}
+      <div className="relative overflow-hidden h-[340px]">
         <img
-          src={`${import.meta.env.BASE_URL}images/mcp-hub-hero.png`}
-          alt="MCP server hub — privacy-first directory of local and self-hosted servers"
-          className="w-full object-cover max-h-72 object-center"
+          src={`${import.meta.env.BASE_URL}images/mcp-server-room.png`}
+          alt="Server rack corridor — local-first infrastructure, data never leaves your machine"
+          className="absolute inset-0 w-full h-full object-cover object-center"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-background/85 via-background/30 to-transparent flex items-center">
-          <div className="px-8 max-w-xs">
-            <p className="text-xs font-mono text-primary uppercase tracking-widest mb-2">Curated. Vetted. Local-first.</p>
-            <p className="text-lg font-display font-bold leading-snug">9 servers. Every one keeps your data on your machine.</p>
+        <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/50 to-background/10" />
+        <div className="relative z-10 h-full flex items-center">
+          <div className="max-w-4xl mx-auto px-8 w-full">
+            <p className="text-xs font-mono text-primary uppercase tracking-widest mb-3">Local-first architecture</p>
+            <p className="text-3xl font-display font-bold leading-tight max-w-sm">
+              Every byte stays<br />on your machine.
+            </p>
+            <p className="text-sm text-muted-foreground mt-3 max-w-sm leading-relaxed">
+              No server receives your files. No third party sees your data.
+              That's not a feature — it's the baseline requirement.
+            </p>
           </div>
         </div>
       </div>
 
-      {/* ── Quick Install ─────────────────────────────────────────────────── */}
-      <QuickInstall />
-
-      {/* ── Criteria ─────────────────────────────────────────────────────── */}
-      <section className="space-y-6">
-        <div className="text-center space-y-1">
-          <h2 className="text-xl font-display font-bold">How we vet servers</h2>
-          <p className="text-sm text-muted-foreground">Every server in this directory meets all four criteria.</p>
-        </div>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {CRITERIA.map(({ icon: Icon, label, desc }) => (
-            <div key={label} className="rounded-xl border border-border bg-muted/20 p-4 space-y-2">
-              <Icon className="w-5 h-5 text-primary" />
-              <p className="font-medium text-sm">{label}</p>
-              <p className="text-xs text-muted-foreground leading-relaxed">{desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
       {/* ── Server list ──────────────────────────────────────────────────── */}
-      <section className="space-y-6">
-        <div className="flex items-center justify-between">
-          <h2 className="text-2xl font-display font-bold">Vetted servers</h2>
-          <span className="text-sm text-muted-foreground">{SERVERS.length} servers</span>
-        </div>
-        <div className="space-y-4">
-          {SERVERS.map(s => <ServerCard key={s.id} server={s} />)}
-        </div>
-      </section>
+      <div className="max-w-4xl mx-auto px-4 py-16">
+        <section className="space-y-6">
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-display font-bold">Vetted servers</h2>
+            <span className="text-sm text-muted-foreground">{SERVERS.length} servers</span>
+          </div>
+          <div className="space-y-4">
+            {SERVERS.map(s => <ServerCard key={s.id} server={s} />)}
+          </div>
+        </section>
+      </div>
 
       {/* ── What MCP is ──────────────────────────────────────────────────── */}
-      <section className="rounded-2xl border border-border bg-muted/20 p-8 space-y-4">
-        <h2 className="text-xl font-display font-bold flex items-center gap-2">
-          <Search className="w-5 h-5 text-primary" /> What is MCP?
-        </h2>
-        <p className="text-muted-foreground text-sm leading-relaxed">
-          The Model Context Protocol (MCP) is an open standard that lets AI assistants like Claude
-          connect to external tools and data sources. Instead of the AI knowing only what's in its training data,
-          MCP lets it call tools: read your files, query databases, run searches, and more.
-        </p>
-        <p className="text-muted-foreground text-sm leading-relaxed">
-          The privacy question matters because an MCP server sits between your AI assistant and your data.
-          If that server uploads your files to a third party, you've lost control of your data in exchange for a capability.
-          Local-first MCP servers give you the capability without the trade-off.
-        </p>
-        <div className="flex flex-wrap gap-3 pt-2">
-          <a href="https://modelcontextprotocol.io" target="_blank" rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline">
-            <ExternalLink className="w-3.5 h-3.5" /> Official MCP documentation
-          </a>
-          <Link href="/mcp" className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline">
-            <Zap className="w-3.5 h-3.5" /> Toolora MCP setup guide
-          </Link>
+      <div className="max-w-4xl mx-auto px-4 pb-16">
+        <section className="rounded-2xl border border-border bg-muted/20 p-8 space-y-4">
+          <h2 className="text-xl font-display font-bold flex items-center gap-2">
+            <Search className="w-5 h-5 text-primary" /> What is MCP?
+          </h2>
+          <p className="text-muted-foreground text-sm leading-relaxed">
+            The Model Context Protocol (MCP) is an open standard that lets AI assistants like Claude
+            connect to external tools and data sources. Instead of the AI knowing only what's in its training data,
+            MCP lets it call tools: read your files, query databases, run searches, and more.
+          </p>
+          <p className="text-muted-foreground text-sm leading-relaxed">
+            The privacy question matters because an MCP server sits between your AI assistant and your data.
+            If that server uploads your files to a third party, you've lost control of your data in exchange for a capability.
+            Local-first MCP servers give you the capability without the trade-off.
+          </p>
+          <div className="flex flex-wrap gap-3 pt-2">
+            <a href="https://modelcontextprotocol.io" target="_blank" rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline">
+              <ExternalLink className="w-3.5 h-3.5" /> Official MCP documentation
+            </a>
+            <Link href="/mcp" className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline">
+              <Zap className="w-3.5 h-3.5" /> Toolora MCP setup guide
+            </Link>
+          </div>
+        </section>
+      </div>
+
+      {/* ── IMAGE 3: Tools visual — full-bleed closing banner ────────────── */}
+      <div className="relative overflow-hidden h-[300px]">
+        <img
+          src={`${import.meta.env.BASE_URL}images/mcp-tools-visual.png`}
+          alt="MCP tools connecting AI to your local environment"
+          className="absolute inset-0 w-full h-full object-cover object-center"
+        />
+        <div className="absolute inset-0 bg-gradient-to-l from-background/95 via-background/50 to-background/10" />
+        <div className="relative z-10 h-full flex items-center justify-end">
+          <div className="max-w-4xl mx-auto px-8 w-full flex justify-end">
+            <div className="max-w-xs text-right">
+              <p className="text-xs font-mono text-primary uppercase tracking-widest mb-3">The directory standard</p>
+              <p className="text-2xl font-display font-bold leading-snug">
+                Privacy isn't a tier.<br />It's the requirement.
+              </p>
+              <p className="text-sm text-muted-foreground mt-2 leading-relaxed">
+                Every server listed here meets our vetting criteria — no exceptions.
+              </p>
+            </div>
+          </div>
         </div>
-      </section>
+      </div>
 
       {/* ── Submit ───────────────────────────────────────────────────────── */}
-      <section className="text-center space-y-5">
-        <h2 className="text-2xl font-display font-bold">Submit your server</h2>
-        <p className="text-muted-foreground max-w-lg mx-auto text-sm leading-relaxed">
-          Built an MCP server that's local-first, self-hostable, or privacy-respecting? Send us a link
-          and a short description. If it meets the criteria above, we'll add it to the directory.
-        </p>
-        <a
-          href="mailto:support@toolora.dev?subject=MCP%20Server%20Submission&body=Server%20name%3A%0AGitHub%20URL%3A%0APrivacy%20model%20(local%20%2F%20self-hosted%20%2F%20API)%3A%0AShort%20description%3A"
-          className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-xl font-semibold hover:opacity-90 transition-opacity text-sm"
-        >
-          <Mail className="w-4 h-4" /> Submit a server — support@toolora.dev
-        </a>
-        <p className="text-xs text-muted-foreground">No backlink required. We list servers on merit.</p>
-      </section>
+      <div className="max-w-4xl mx-auto px-4 py-16">
+        <section className="text-center space-y-5">
+          <h2 className="text-2xl font-display font-bold">Submit your server</h2>
+          <p className="text-muted-foreground max-w-lg mx-auto text-sm leading-relaxed">
+            Built an MCP server that's local-first, self-hostable, or privacy-respecting? Send us a link
+            and a short description. If it meets the criteria above, we'll add it to the directory.
+          </p>
+          <a
+            href="mailto:support@toolora.dev?subject=MCP%20Server%20Submission&body=Server%20name%3A%0AGitHub%20URL%3A%0APrivacy%20model%20(local%20%2F%20self-hosted%20%2F%20API)%3A%0AShort%20description%3A"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-xl font-semibold hover:opacity-90 transition-opacity text-sm"
+          >
+            <Mail className="w-4 h-4" /> Submit a server — support@toolora.dev
+          </a>
+          <p className="text-xs text-muted-foreground">No backlink required. We list servers on merit.</p>
+        </section>
+      </div>
 
     </div>
   );
