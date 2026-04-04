@@ -159,36 +159,46 @@ export default function McpPage() {
   });
 
   return (
-    <div className="container mx-auto px-4 py-12 max-w-4xl">
-      {/* Hero */}
-      <div className="text-center mb-12">
-        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-primary/30 bg-primary/5 text-primary text-sm font-medium mb-5">
-          <Zap className="h-3.5 w-3.5" />
-          Model Context Protocol
+    <div className="w-full">
+
+      {/* ── Full-bleed hero ──────────────────────────────────────────────── */}
+      <section className="relative h-[500px] overflow-hidden">
+        <img
+          src={`${import.meta.env.BASE_URL}images/mcp-visual.png`}
+          alt="MCP server network visualization"
+          className="absolute inset-0 w-full h-full object-cover object-center"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/40 to-background/90" />
+        <div className="relative z-10 h-full flex flex-col items-center justify-center text-center px-4 space-y-4 max-w-3xl mx-auto">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-primary/30 bg-primary/10 text-primary text-sm font-medium backdrop-blur-sm">
+            <Zap className="h-3.5 w-3.5" />
+            Model Context Protocol
+          </div>
+          <h1 className="text-4xl md:text-5xl font-display font-bold tracking-tight drop-shadow-lg">
+            Free MCP Server
+          </h1>
+          <p className="text-lg text-muted-foreground max-w-2xl">
+            Not a prompt wrapper.{" "}
+            <strong className="text-foreground">A real server</strong>{" "}
+            that processes files, generates PDFs, runs OCR, and returns structured results — used in Claude workflows across 15 countries.{" "}
+            <strong className="text-foreground">No API key. No auth. Nothing stored.</strong>
+          </p>
+          <div className="flex items-center justify-center gap-2">
+            <code className="text-sm bg-muted/80 backdrop-blur-sm border border-border rounded-lg px-4 py-2 font-mono text-primary">
+              {MCP_ENDPOINT}
+            </code>
+            <CopyButton text={MCP_ENDPOINT} />
+          </div>
+          <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-muted-foreground">
+            <span className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-green-500" /> Listed in Anthropic MCP Registry</span>
+            <span className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-green-500" /> Smithery verified</span>
+            <span className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-green-500" /> 15 countries</span>
+            <span className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-green-500" /> 17 tools, no rate limits</span>
+          </div>
         </div>
-        <h1 className="text-4xl md:text-5xl font-display font-bold mb-4 tracking-tight">
-          Free MCP Server
-        </h1>
-        <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-          Not a prompt wrapper.{" "}
-          <strong className="text-foreground">A real server</strong>{" "}
-          that processes files, generates PDFs, runs OCR, and returns structured results — used in Claude workflows across 15 countries.{" "}
-          <strong className="text-foreground">No API key. No auth. Nothing stored.</strong>
-        </p>
-        <div className="mt-5 flex items-center justify-center gap-2">
-          <code className="text-sm bg-muted border border-border rounded-lg px-4 py-2 font-mono text-primary">
-            {MCP_ENDPOINT}
-          </code>
-          <CopyButton text={MCP_ENDPOINT} />
-        </div>
-        {/* Social proof strip */}
-        <div className="mt-5 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-muted-foreground">
-          <span className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-green-500" /> Listed in Anthropic MCP Registry</span>
-          <span className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-green-500" /> Smithery verified</span>
-          <span className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-green-500" /> 15 countries</span>
-          <span className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-green-500" /> 17 tools, no rate limits</span>
-        </div>
-      </div>
+      </section>
+
+      <div className="container mx-auto px-4 py-12 max-w-4xl">
 
       {/* Cinematic tools visual */}
       <div className="relative rounded-2xl overflow-hidden mb-12 border border-border/50">
@@ -303,6 +313,8 @@ export default function McpPage() {
           </a>
         </div>
       </section>
+
+      </div>
     </div>
   );
 }

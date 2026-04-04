@@ -178,22 +178,36 @@ print(r.json())
 # → {"title": "...", "content": "...", "wordCount": 1200, "fetchedAt": "..."}`;
 
   return (
-    <div className="container mx-auto px-4 py-12 max-w-3xl">
+    <div className="w-full">
+
+      {/* ── Full-bleed hero ──────────────────────────────────────────────── */}
+      <section className="relative h-[340px] overflow-hidden">
+        <img
+          src={`${import.meta.env.BASE_URL}images/hero-bg-new.png`}
+          alt="Toolora Agent API — pay-per-request AI tool infrastructure"
+          className="absolute inset-0 w-full h-full object-cover object-center"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/40 to-background/95" />
+        <div className="relative z-10 h-full flex flex-col items-center justify-center text-center px-4 space-y-4 max-w-3xl mx-auto">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-yellow-500/30 bg-yellow-500/10 text-yellow-400 text-sm font-medium backdrop-blur-sm">
+            <Zap className="w-3.5 h-3.5" />
+            x402 · Stellar · Solana
+          </div>
+          <h1 className="text-4xl md:text-5xl font-display font-bold tracking-tight drop-shadow-lg">
+            Agent API
+          </h1>
+          <p className="text-muted-foreground text-lg max-w-xl">
+            Pay-per-request tool infrastructure for AI agents. No subscription, no API key — payment is the credential.
+          </p>
+        </div>
+      </section>
+
+      <div className="container mx-auto px-4 py-12 max-w-3xl">
       <nav className="flex items-center text-sm text-muted-foreground mb-8">
         <Link href="/" className="hover:text-foreground transition-colors flex items-center"><Home className="w-4 h-4 mr-1" /> Home</Link>
         <ChevronRight className="w-4 h-4 mx-2" />
         <span className="text-foreground font-medium">API Docs</span>
       </nav>
-
-      <div className="flex items-center gap-3 mb-8">
-        <div className="bg-primary/10 p-3 rounded-xl text-primary">
-          <Code2 className="w-6 h-6" />
-        </div>
-        <div>
-          <h1 className="text-3xl font-display font-bold">API Docs</h1>
-          <p className="text-muted-foreground text-sm mt-1">Free endpoints for humans · Paid agent endpoints via x402 on Stellar & Solana</p>
-        </div>
-      </div>
 
       <div className="space-y-12">
 
@@ -365,6 +379,7 @@ print(r.json())
           </div>
         </section>
 
+      </div>
       </div>
     </div>
   );

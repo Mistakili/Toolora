@@ -184,7 +184,7 @@ export default function Enterprise() {
   }
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-16 space-y-24">
+    <div className="w-full">
 
       {/* ── Success / canceled banners ────────────────────────────────────── */}
       {justSucceeded && (
@@ -198,63 +198,52 @@ export default function Enterprise() {
         </div>
       )}
 
-      {/* ── Hero ──────────────────────────────────────────────────────────── */}
-      <section className="text-center space-y-6">
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-sm font-medium mb-2">
-          <ShieldCheck className="w-4 h-4" />
-          Private by Architecture, Not Policy
-        </div>
-        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-display font-bold leading-tight tracking-tight">
-          Document tools your compliance team<br className="hidden sm:block" />
-          <span className="text-primary"> will actually approve</span>
-        </h1>
-        <p className="text-muted-foreground text-lg sm:text-xl max-w-2xl mx-auto leading-relaxed">
-          Toolora processes every file in your browser. Nothing is uploaded.
-          Nothing hits our servers. There's no data to breach, audit, or regulate on our side.
-        </p>
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
-          <button
-            onClick={() => handleCheckout(ENTERPRISE_PRICE_ID, "enterprise-hero")}
-            disabled={!!loading}
-            className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-xl font-semibold hover:opacity-90 transition-opacity text-sm disabled:opacity-60"
-          >
-            {loading === "enterprise-hero" ? <Loader2 className="w-4 h-4 animate-spin" /> : <CreditCard className="w-4 h-4" />}
-            Start Enterprise — $199/month
-          </button>
-          <a
-            href="mailto:support@toolora.dev?subject=Enterprise%20Inquiry&body=Hi%2C%20I%27m%20interested%20in%20Toolora%20for%20my%20organization.%0A%0AOrganization%3A%0ATeam%20size%3A%0AUse%20case%3A"
-            className="inline-flex items-center gap-2 px-6 py-3 border border-border rounded-xl text-sm font-medium hover:bg-muted transition-colors"
-          >
-            <Mail className="w-4 h-4" /> Questions? Email us
-          </a>
-        </div>
-        <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
-          <RotateCcw className="w-3.5 h-3.5 text-green-500" />
-          <span>✓ 30-day money-back guarantee &bull; Cancel anytime &bull; No hidden fees</span>
-        </div>
-        {errMsg && <p className="text-sm text-red-400">{errMsg}</p>}
-        <p className="text-xs text-muted-foreground">
-          Need to make the compliance case internally?{" "}
-          <Link href="/hipaa-checklist" className="text-primary underline underline-offset-2 hover:no-underline">
-            Download the free HIPAA Audit Checklist →
-          </Link>
-        </p>
-      </section>
-
-      {/* ── Enterprise hero visual ───────────────────────────────────────── */}
-      <div className="relative rounded-2xl overflow-hidden border border-border/50 -mt-8">
+      {/* ── Full-bleed hero ──────────────────────────────────────────────── */}
+      <section className="relative h-[560px] overflow-hidden">
         <img
           src={`${import.meta.env.BASE_URL}images/enterprise-hero.png`}
           alt="Enterprise boardroom with holographic compliance visualization"
-          className="w-full object-cover max-h-80 object-center"
+          className="absolute inset-0 w-full h-full object-cover object-center"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-background/85 via-background/30 to-transparent flex items-center">
-          <div className="px-8 max-w-sm">
-            <p className="text-xs font-mono text-green-400 uppercase tracking-widest mb-2">Private by Architecture</p>
-            <p className="text-xl font-display font-bold leading-snug">Compliance your legal team can verify in 30 seconds.</p>
+        <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/50 to-background/90" />
+        <div className="relative z-10 h-full flex flex-col items-center justify-center text-center px-4 space-y-5 max-w-4xl mx-auto">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-sm font-medium backdrop-blur-sm">
+            <ShieldCheck className="w-4 h-4" />
+            Private by Architecture, Not Policy
           </div>
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-display font-bold leading-tight tracking-tight drop-shadow-lg">
+            Document tools your compliance team<br className="hidden sm:block" />
+            <span className="text-primary"> will actually approve</span>
+          </h1>
+          <p className="text-muted-foreground text-lg sm:text-xl max-w-2xl leading-relaxed">
+            Toolora processes every file in your browser. Nothing is uploaded.
+            Nothing hits our servers. There's no data to breach, audit, or regulate on our side.
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <button
+              onClick={() => handleCheckout(ENTERPRISE_PRICE_ID, "enterprise-hero")}
+              disabled={!!loading}
+              className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-xl font-semibold hover:opacity-90 transition-opacity text-sm disabled:opacity-60"
+            >
+              {loading === "enterprise-hero" ? <Loader2 className="w-4 h-4 animate-spin" /> : <CreditCard className="w-4 h-4" />}
+              Start Enterprise — $199/month
+            </button>
+            <a
+              href="mailto:support@toolora.dev?subject=Enterprise%20Inquiry&body=Hi%2C%20I%27m%20interested%20in%20Toolora%20for%20my%20organization.%0A%0AOrganization%3A%0ATeam%20size%3A%0AUse%20case%3A"
+              className="inline-flex items-center gap-2 px-6 py-3 border border-border bg-background/50 backdrop-blur-sm rounded-xl text-sm font-medium hover:bg-muted transition-colors"
+            >
+              <Mail className="w-4 h-4" /> Questions? Email us
+            </a>
+          </div>
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <RotateCcw className="w-3.5 h-3.5 text-green-500" />
+            <span>✓ 30-day money-back guarantee &bull; Cancel anytime &bull; No hidden fees</span>
+          </div>
+          {errMsg && <p className="text-sm text-red-400">{errMsg}</p>}
         </div>
-      </div>
+      </section>
+
+      <div className="max-w-5xl mx-auto px-4 py-16 space-y-20">
 
       {/* ── The core difference ──────────────────────────────────────────── */}
       <section className="grid md:grid-cols-2 gap-6">
@@ -516,6 +505,7 @@ export default function Enterprise() {
         </p>
       </section>
 
+      </div>
     </div>
   );
 }

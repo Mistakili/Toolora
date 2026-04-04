@@ -12,6 +12,11 @@
     <loc>https://toolora.dev/enterprise</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://toolora.dev/images/enterprise-hero.png</image:loc>
+      <image:title>Toolora Enterprise — Privacy-First Document Processing at Scale</image:title>
+      <image:caption>Enterprise document security with HIPAA-ready workflows and dedicated support.</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://toolora.dev/blog/hipaa-compliant-online-document-tools</loc>
@@ -22,6 +27,11 @@
     <loc>https://toolora.dev/mcp-hub</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://toolora.dev/images/mcp-hub-hero.png</image:loc>
+      <image:title>Toolora MCP Hub — Privacy-First MCP Server Directory</image:title>
+      <image:caption>Curated directory of MCP servers with privacy ratings, verification guides, and open-source badges.</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://toolora.dev/</loc>
@@ -30,7 +40,7 @@
     <image:image>
       <image:loc>https://toolora.dev/opengraph.jpg</image:loc>
       <image:title>Toolora — Free Online Tools. No Uploads. 100% Private.</image:title>
-      <image:caption>20+ free browser-side tools for PDF, images, text, and developers. No file uploads. 100% private.</image:caption>
+      <image:caption>28 free browser-side tools for PDF, images, text, and developers. No file uploads. 100% private.</image:caption>
     </image:image>
   </url>
   <url>
@@ -593,6 +603,41 @@
     <lastmod>2026-04-03</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+  </url>
+
+  <!-- New blog posts (Apr 4–6 2026) -->
+  <url>
+    <loc>https://toolora.dev/blog/what-is-x402-payments-for-ai-apis</loc>
+    <lastmod>2026-04-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://toolora.dev/opengraph.jpg</image:loc>
+      <image:title>What Is x402? The New Standard for AI Agent Payments — Toolora Blog</image:title>
+      <image:caption>x402 is an HTTP status code that lets AI agents pay for API calls on the fly. No subscriptions, no API keys.</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://toolora.dev/blog/local-mcp-servers-vs-hosted-mcp-servers</loc>
+    <lastmod>2026-04-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://toolora.dev/opengraph.jpg</image:loc>
+      <image:title>Local MCP Servers vs Hosted MCP Servers: What's the Difference? — Toolora Blog</image:title>
+      <image:caption>Compare local MCP servers (run on your machine) vs hosted MCP APIs. Privacy, performance, and use cases explained.</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://toolora.dev/blog/law-firm-secure-document-workflow-no-cloud-uploads</loc>
+    <lastmod>2026-04-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://toolora.dev/opengraph.jpg</image:loc>
+      <image:title>How a Small Law Firm Can Use AI Document Tools Without Uploading Files — Toolora Blog</image:title>
+      <image:caption>A practical guide for law firms to use AI document processing tools while keeping client files completely private.</image:caption>
+    </image:image>
   </url>
 
 </urlset>
