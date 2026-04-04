@@ -166,13 +166,40 @@ export default function McpPage() {
         </div>
       </div>
 
+      {/* Cinematic tools visual */}
+      <div className="relative rounded-2xl overflow-hidden mb-12 border border-border/50">
+        <img
+          src={`${import.meta.env.BASE_URL}images/mcp-tools-visual.png`}
+          alt="AI agent accessing 17 Toolora MCP tools"
+          className="w-full object-cover max-h-72 object-center"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-background/80 via-transparent to-transparent flex items-center">
+          <div className="px-8 max-w-xs">
+            <p className="text-xs font-mono text-primary uppercase tracking-widest mb-2">17 tools. One config line.</p>
+            <p className="text-lg font-display font-bold leading-snug">Your agent gets real capabilities — not prompt wrappers.</p>
+          </div>
+        </div>
+      </div>
+
       {/* Quick-start tabs */}
       <QuickStart />
 
       {/* Tool list */}
       <section className="mt-12">
-        <h2 className="text-2xl font-display font-bold mb-2">Available Tools</h2>
-        <p className="text-muted-foreground mb-6">All 17 tools are free with no rate limits for MCP usage.</p>
+        <div className="grid md:grid-cols-2 gap-8 items-center mb-8">
+          <div>
+            <h2 className="text-2xl font-display font-bold mb-2">Available Tools</h2>
+            <p className="text-muted-foreground">All 17 tools are free with no rate limits for MCP usage. Two of them — <code className="text-primary text-sm">save_memory</code> and <code className="text-primary text-sm">recall_memory</code> — give Claude persistent key-value memory across sessions.</p>
+          </div>
+          <div className="relative">
+            <div className="absolute inset-0 bg-primary/10 blur-2xl rounded-full" />
+            <img
+              src={`${import.meta.env.BASE_URL}images/mcp-memory-visual.png`}
+              alt="Persistent memory nodes visualization"
+              className="relative z-10 w-full rounded-2xl border border-primary/20 drop-shadow-[0_0_30px_rgba(139,92,246,0.3)]"
+            />
+          </div>
+        </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {MCP_TOOLS.map((t) => (
             <div key={t.name} className="flex items-start gap-3 p-4 rounded-xl border border-border bg-card hover:border-primary/30 transition-colors">

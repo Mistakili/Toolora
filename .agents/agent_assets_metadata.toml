@@ -72,6 +72,36 @@ uri = "file://artifacts/toolbox/public/images/mcp-visual.png"
 type = "image"
 title = "MCP agent network visual"
 
+[[generated]]
+id = "P-EWvkgrc8FWK82DCxbJb"
+uri = "file://artifacts/toolbox/public/images/footer-bg.png"
+type = "image"
+title = "footer ambient background"
+
+[[generated]]
+id = "6g7L7rr8xI0SD0jgnf8FF"
+uri = "file://artifacts/toolbox/public/images/mcp-tools-visual.png"
+type = "image"
+title = "MCP tools constellation"
+
+[[generated]]
+id = "2FZqYNs_FKSujmoG78EBb"
+uri = "file://artifacts/toolbox/public/images/mcp-memory-visual.png"
+type = "image"
+title = "MCP memory persistence visual"
+
+[[generated]]
+id = "82ZkDwyGFCg3nbrv1DPTT"
+uri = "file://artifacts/toolbox/public/images/pricing-tiers-visual.png"
+type = "image"
+title = "pricing tiers visual"
+
+[[generated]]
+id = "8_tKrtl7xFWPz9qL0WlhJ"
+uri = "file://artifacts/toolbox/public/images/about-privacy-visual.png"
+type = "image"
+title = "privacy shield about visual"
+
 [[outputs]]
 id = "W91hp3ihLhEvWTT51EilJ"
 uri = "file://artifacts/toolbox/public/og-image.png"

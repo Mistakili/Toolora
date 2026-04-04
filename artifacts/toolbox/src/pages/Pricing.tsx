@@ -152,7 +152,7 @@ export default function Pricing() {
   return (
     <div className="min-h-screen bg-zinc-950 text-white">
       <div className="max-w-5xl mx-auto px-4 py-16">
-        <div className="text-center mb-12">
+        <div className="text-center mb-8">
           <h1 className="text-4xl font-bold mb-3">Simple, transparent pricing</h1>
           <p className="text-zinc-400 text-lg">
             Start free. Upgrade when you need more calls or heavier tools.
@@ -160,6 +160,20 @@ export default function Pricing() {
           <p className="text-zinc-500 text-sm mt-2">
             All plans include the free MCP server for Claude Desktop and Cursor.
           </p>
+        </div>
+
+        {/* Tiers visual */}
+        <div className="relative rounded-2xl overflow-hidden mb-10 border border-zinc-800">
+          <img
+            src={`${import.meta.env.BASE_URL}images/pricing-tiers-visual.png`}
+            alt="Toolora pricing tiers — Free to Enterprise"
+            className="w-full object-cover max-h-60 object-center"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/90 via-zinc-950/30 to-transparent flex items-end">
+            <div className="px-8 pb-6">
+              <p className="text-zinc-400 text-sm">Start at $0. Scale as your agents grow.</p>
+            </div>
+          </div>
         </div>
 
         {justSucceeded && (

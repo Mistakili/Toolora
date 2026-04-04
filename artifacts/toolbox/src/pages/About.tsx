@@ -80,7 +80,20 @@ export default function About() {
 
       {/* Values */}
       <section className="mb-14">
-        <h2 className="text-2xl font-display font-bold mb-6">How we think about this</h2>
+        <div className="grid md:grid-cols-2 gap-10 items-center mb-10">
+          <div>
+            <h2 className="text-2xl font-display font-bold mb-3">How we think about this</h2>
+            <p className="text-muted-foreground leading-relaxed">Privacy isn't a setting you toggle or a policy you write — it's an architectural decision. Every browser tool on Toolora runs in WebAssembly inside your tab. There is no server receiving your files. You can verify this in DevTools: open the Network tab and watch nothing upload while you process a PDF.</p>
+          </div>
+          <div className="relative flex items-center justify-center">
+            <div className="absolute inset-0 bg-primary/10 blur-3xl rounded-full scale-75" />
+            <img
+              src={`${import.meta.env.BASE_URL}images/about-privacy-visual.png`}
+              alt="Privacy shield — data contained and protected"
+              className="relative z-10 w-full max-w-xs rounded-2xl drop-shadow-[0_0_40px_rgba(139,92,246,0.35)]"
+            />
+          </div>
+        </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
           {VALUES.map((v) => (
             <div key={v.title} className="p-5 rounded-xl border border-border bg-card">
