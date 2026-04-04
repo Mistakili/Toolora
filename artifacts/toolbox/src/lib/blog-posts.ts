@@ -1726,6 +1726,264 @@ console.log(wordCount, charCount, charNoSpaces); // 9 44 36</code></pre>
 <p><a href="/mcp">Toolora MCP — free, 15 tools, no account required →</a></p>
     `.trim(),
   },
+  {
+    slug: "what-is-x402-payments-for-ai-apis",
+    title: "What Is x402? HTTP Payments for AI APIs, Explained Without the Crypto Jargon",
+    description: "x402 is an emerging standard that lets APIs charge per-call using HTTP — no subscriptions, no API key management, no invoices. Here's how it works for regular developers who don't follow crypto.",
+    date: "2026-04-04",
+    readTime: "7 min read",
+    category: "Developer",
+    content: `
+<p>If you've spent any time around AI developer tooling in the last year, you've probably seen "x402" mentioned somewhere — in a GitHub README, a Coinbase developer blog, or a Discord for AI builders. And if you're not deeply invested in crypto infrastructure, you probably skimmed past it.</p>
+
+<p>That's a mistake worth correcting. x402 is one of the more practically useful ideas to come out of blockchain adjacent tooling in a long time, and it doesn't require you to care about crypto at all to benefit from it.</p>
+
+<h2>What problem does x402 solve?</h2>
+
+<p>Think about how you currently pay for API access. You sign up, enter a credit card, choose a plan, get an API key, embed that key in your code, and then hope your usage stays inside your tier. If you go over, you get an invoice. If someone steals your key, you get a surprise bill. If you want to let a third-party app call an API on your behalf, you have to share credentials or build OAuth flows.</p>
+
+<p>This works fine for B2B SaaS. It's a bad fit for machine-to-machine calls — especially autonomous AI agents that need to use tools on demand, pay for only what they use, and do all of this without a human in the loop.</p>
+
+<p>x402 proposes something different: make payment part of the HTTP protocol itself. When an API needs money to fulfill a request, it responds with HTTP status <code>402 Payment Required</code> — a status code that's been in the HTTP spec since 1991 but was reserved as "for future use." The client, seeing a 402, attaches a payment (a tiny amount of stablecoin), resends the request, and gets its response. No account. No API key. No subscription.</p>
+
+<h2>How does the payment actually work?</h2>
+
+<p>The current x402 spec uses USDC on Base (Coinbase's Ethereum L2) because transaction fees are low enough to make small payments practical. A call that costs $0.01 can settle on-chain for a fraction of a cent in gas fees.</p>
+
+<p>Here's the flow in plain terms:</p>
+
+<ol>
+  <li>Your agent makes a GET or POST request to an x402-enabled API</li>
+  <li>The API responds: <code>402 Payment Required</code> with a header describing the price, the wallet address to pay, and the accepted token</li>
+  <li>Your agent signs a payment transaction from its own wallet (a private key it controls locally)</li>
+  <li>Your agent re-sends the request with the payment proof in a header: <code>X-Payment: ...</code></li>
+  <li>The API verifies the payment on-chain and returns the actual response</li>
+</ol>
+
+<p>The entire round-trip adds maybe 200–400ms depending on network conditions. The API doesn't need to know who you are. Your agent doesn't need an account. The payment is the credential.</p>
+
+<h2>Why does this matter for AI agents specifically?</h2>
+
+<p>Consider what happens when you give Claude or GPT-4 access to a tool via MCP. The agent decides autonomously when to call that tool, how many times, and in what sequence. A subscription model breaks down here — you can't predict usage in advance. A per-call API key model has security problems — you're embedding a credential with potentially large scope into an autonomous system.</p>
+
+<p>x402 fits the shape of agent tool calls naturally:</p>
+
+<ul>
+  <li><strong>Pay only for what you actually use</strong> — no idle subscription cost</li>
+  <li><strong>No credentials to leak</strong> — the wallet key stays on your machine, and each payment is for a single call</li>
+  <li><strong>Composable by default</strong> — any agent with a funded wallet can call any x402-enabled tool, without per-tool registration</li>
+  <li><strong>Auditable</strong> — every payment is a verifiable on-chain transaction; you can see exactly what was called and when</li>
+</ul>
+
+<h2>Do I need to run a blockchain node?</h2>
+
+<p>No. You need a wallet (a private key), a small balance of USDC on Base, and a library that handles the payment signing. The <a href="https://github.com/coinbase/x402" target="_blank" rel="noopener noreferrer">x402 reference implementation</a> from Coinbase handles this in about 10 lines of JavaScript. The Base network is an L2 with fast, cheap finality — you don't interact with Ethereum mainnet at all.</p>
+
+<p>The mental model that helps: think of your agent's wallet like a pre-paid transit card. You load it with USDC, and it taps to pay each time it uses a service. No signup required at each turnstile.</p>
+
+<h2>What does this look like in production today?</h2>
+
+<p>x402 is early — most tools don't support it yet — but the places where it's being used are exactly the places doing interesting agent work. Toolora's Agent API supports both x402 and traditional Stripe subscriptions, letting you choose the payment model that fits your use case. If you're building a single agent that calls the OCR or PDF extraction tool occasionally, x402 pay-per-call makes more financial sense than a $19/month subscription.</p>
+
+<p>The <a href="https://github.com/modelcontextprotocol/servers" target="_blank" rel="noopener noreferrer">MCP ecosystem</a> is another place to watch — as more MCP servers expose paid capabilities, x402 is the most natural way to gate them without requiring users to manage per-tool API keys.</p>
+
+<h2>Should you build with x402 today?</h2>
+
+<p>If you're building developer tooling or AI infrastructure: yes, it's worth understanding now. The pattern is sound, the tooling is functional, and being early means your API doesn't have to retrofit payment later.</p>
+
+<p>If you're building a product for non-technical end users: x402 is infrastructure you might use under the hood, but you wouldn't expose it to users directly. Traditional Stripe checkout still wins for consumer-facing flows.</p>
+
+<p>If you're an agent developer: the most useful thing you can do right now is fund a test wallet with $5 of USDC on Base and make one x402 call. The mechanics become completely obvious the moment you see it work.</p>
+
+<p>The HTTP 402 status code has waited 30 years to be useful. It's finally useful.</p>
+
+<p><a href="/api">Toolora Agent API — supports x402 and Stripe →</a></p>
+    `.trim(),
+  },
+  {
+    slug: "local-mcp-servers-vs-hosted-mcp-servers",
+    title: "Local MCP Servers vs Hosted MCP Servers: Which Should You Use?",
+    description: "Not all MCP servers are equal on privacy. Local servers run entirely on your machine. Hosted servers send your data to someone else's infrastructure. Here's how to choose — and what questions to ask before you install anything.",
+    date: "2026-04-05",
+    readTime: "6 min read",
+    category: "Privacy",
+    content: `
+<p>When people first discover MCP (Model Context Protocol), they install a few servers, get Claude working with their filesystem or database, and move on. The privacy question comes later — usually after they've been using a hosted MCP server for a while and wonder: where exactly did that PDF go?</p>
+
+<p>It's worth asking before you install, not after. Here's how local and hosted MCP servers actually differ, and how to make the right call for your situation.</p>
+
+<h2>What local MCP servers do</h2>
+
+<p>A local MCP server runs as a process on your machine. When Claude (or Cursor, or Cline) calls a tool through it, the computation happens locally. Your data — files, text, images, database contents — never leaves your device.</p>
+
+<p>The Filesystem MCP server is the clearest example. When you ask Claude to read a file, Claude sends a tool call to the Filesystem server running locally, which reads the file from your disk and returns the content to Claude. The file content travels: local disk → local MCP process → Claude API. It does reach Anthropic's servers as part of the context, but it doesn't go through any third-party infrastructure in between.</p>
+
+<p>Other examples of genuinely local MCP servers:</p>
+<ul>
+  <li><strong>SQLite</strong> — queries run against a database file on your machine</li>
+  <li><strong>Git</strong> — reads your local git history and repository state</li>
+  <li><strong>Memory</strong> — stores and retrieves notes in a local JSON file</li>
+  <li><strong>Puppeteer</strong> — runs a real Chrome browser on your computer</li>
+</ul>
+
+<p>These servers have zero network dependency for their core function. They install via npx, run as a subprocess, and stop when your AI client closes.</p>
+
+<h2>What hosted MCP servers do</h2>
+
+<p>A hosted MCP server runs on someone else's infrastructure. Your AI client sends tool calls to a remote URL, the remote server does the computation, and sends back results.</p>
+
+<p>This isn't automatically bad. But it means your data — the content you're processing — travels to a third-party server. Depending on what you're processing, that matters a lot.</p>
+
+<p>Hosted servers that are privacy-respecting handle this honestly: they're transparent about what data they receive, they don't log content, and they have clear data retention policies. Hosted servers that aren't privacy-respecting do the opposite — and they're often the ones offering the flashiest capabilities.</p>
+
+<p>The tell is usually in the terms of service, not the marketing copy.</p>
+
+<h2>How to evaluate any MCP server before installing it</h2>
+
+<p>Four questions worth asking:</p>
+
+<p><strong>1. Where does the computation happen?</strong></p>
+<p>Look at the installation config. Does it say <code>command: "npx"</code> with local arguments? That's a local process. Does it say <code>url: "https://some-service.com/mcp"</code>? That's a remote server. The config doesn't lie.</p>
+
+<p><strong>2. What data does each tool call transmit?</strong></p>
+<p>Read the tool descriptions. An OCR tool that receives a PDF as base64 is transmitting your full PDF content to wherever it processes. A word count tool that receives your text is transmitting your text. Most hosted servers are upfront about this in their tool descriptions if you read carefully.</p>
+
+<p><strong>3. Who operates the server and what's their privacy policy?</strong></p>
+<p>Open source servers you can self-host are inherently more auditable than closed-source SaaS services. For any server that handles real content, check: do they log requests? For how long? Under what legal jurisdiction?</p>
+
+<p><strong>4. What happens if the server goes down?</strong></p>
+<p>Local servers fail gracefully — Claude just can't use that tool. Hosted servers create a dependency on uptime, rate limits, and API keys. If you're building workflows that need to be reliable, local-first is more resilient.</p>
+
+<h2>When hosted is the right choice</h2>
+
+<p>Some capabilities genuinely can't run locally. Audio transcription at quality requires a GPU. Real-time web search requires actual web access. OCR at scale requires server-side infrastructure.</p>
+
+<p>Hosted MCP servers are the right choice when:</p>
+<ul>
+  <li>The capability requires resources your local machine doesn't have</li>
+  <li>The data you're processing isn't sensitive (public URLs, non-confidential text)</li>
+  <li>The server operator is transparent and the privacy model is documented</li>
+  <li>You've accepted the trade-off consciously, not by default</li>
+</ul>
+
+<p>The key word is <em>consciously</em>. Installing a hosted MCP server without knowing it's hosted is how people accidentally send confidential documents to unknown infrastructure.</p>
+
+<h2>The hybrid approach that works best</h2>
+
+<p>Most productive setups use both. Local servers for anything involving sensitive or personal data — files, databases, git history, notes. Hosted servers for public-data tasks — web search, URL reading, audio from public sources.</p>
+
+<p>Claude Desktop makes this easy because you can run multiple MCP servers simultaneously. Your config can have the local Filesystem server alongside a privacy-respecting hosted server for URL reading, and Claude will use whichever is appropriate for the task.</p>
+
+<p>The MCP Hub at <a href="/mcp-hub">toolora.dev/mcp-hub</a> lists servers that have been vetted for this kind of hybrid setup — local-first where possible, privacy-respecting API where local isn't viable. Every server in the directory is there because it passes a clear bar, not because someone paid for placement.</p>
+
+<h2>The short version</h2>
+
+<p>Local MCP server: your data stays on your machine. Hosted MCP server: your data travels to someone's infrastructure. Neither is automatically right or wrong — but the choice should be intentional, and most people aren't making it intentionally right now.</p>
+
+<p>Check your Claude Desktop config. If you see a <code>url:</code> pointing to a third-party domain for a server that processes your documents, it's worth knowing what that server does with what it receives.</p>
+
+<p><a href="/mcp-hub">Privacy-first MCP server directory →</a></p>
+    `.trim(),
+  },
+  {
+    slug: "law-firm-secure-document-workflow-no-cloud-uploads",
+    title: "How a Small Law Firm Can Use AI Document Tools Without Uploading Client Files",
+    description: "Attorney-client privilege creates real constraints on cloud document tools. Browser-side processing offers a practical path to AI-assisted document work without the compliance exposure. A workflow walkthrough.",
+    date: "2026-04-06",
+    readTime: "8 min read",
+    category: "Security",
+    content: `
+<p>Law firms are caught in an uncomfortable position with AI document tools. The productivity gains are real and visible — associates at peer firms are drafting, summarizing, and extracting faster. But the standard tools (upload to SmallPDF, run through Adobe, paste into ChatGPT) create privilege and confidentiality exposure that most ethics partners won't sign off on.</p>
+
+<p>The tension is real: your clients didn't consent to their merger documents going to a PDF processor's servers in Dublin.</p>
+
+<p>Browser-side document processing offers a path through this. Here's a practical walkthrough of what it looks like for common law firm workflows.</p>
+
+<h2>The actual legal risk with cloud document tools</h2>
+
+<p>The risk isn't theoretical. Most state bar ethics opinions on cloud computing require lawyers to take "reasonable precautions" to prevent unauthorized disclosure of client information. When you upload a document to a third-party service — even momentarily, even for processing — that document exists on infrastructure you don't control, under terms of service you've probably never read, potentially logged for quality assurance or ML training purposes.</p>
+
+<p>For most documents this is tolerable. For M&A due diligence materials, litigation documents under protective order, or anything containing PHI, it's not.</p>
+
+<p>Browser-side tools don't upload. The document is read by your browser's file system API, processed in WebAssembly running in the browser tab, and the result is generated locally. Nothing is transmitted to any server. There is no third party receiving your client's files — not even momentarily.</p>
+
+<p>From an ethics standpoint, this is structurally equivalent to running processing software on your own machine.</p>
+
+<h2>Common workflows, made compliant</h2>
+
+<p><strong>PDF assembly from multiple sources</strong></p>
+
+<p>Scenario: You need to compile exhibits for a filing — combining PDF excerpts from discovery, scanned court orders, and your own drafted sections into one numbered exhibit packet.</p>
+
+<p>Cloud tool risk: Every PDF goes to the processor's servers. For discovery materials subject to a protective order, this can be a problem.</p>
+
+<p>Browser approach: Use a browser-side PDF merge tool. Select all source PDFs from your local drive. The browser combines them in memory using pdf-lib (a WebAssembly library) and offers the merged file as a local download. No upload, no server, no third-party infrastructure anywhere in the chain.</p>
+
+<p><strong>Extracting text from scanned documents for search</strong></p>
+
+<p>Scenario: You have 200 pages of scanned depositions in PDF form and need to make them text-searchable to run keyword searches before a hearing.</p>
+
+<p>Cloud tool risk: Sending OCR work to cloud services means scanned depositions — potentially containing very sensitive witness statements — leaving your control.</p>
+
+<p>Browser approach: Browser-side OCR has improved dramatically with WebAssembly ports of Tesseract. You can run OCR on PDFs locally and get searchable text output without the document leaving your machine. The process is slower than cloud OCR but adequate for most legal work where you're not processing thousands of pages simultaneously.</p>
+
+<p><strong>Converting document formats for e-filing</strong></p>
+
+<p>Scenario: Court requires PDF/A format for e-filing; your documents are in DOCX.</p>
+
+<p>Cloud tool risk: Your draft pleadings going to a cloud converter before submission.</p>
+
+<p>Browser approach: Browser-side DOCX-to-PDF conversion handles most formatting cases correctly. Verify the output against the original before submission — as you should with any conversion — but for standard legal documents the fidelity is typically sufficient.</p>
+
+<p><strong>Summarizing long documents with AI assistance</strong></p>
+
+<p>This one is more nuanced. If you want Claude or another LLM to summarize a confidential document, the document content will reach Anthropic's servers as part of the context. That's unavoidable with current LLM architecture.</p>
+
+<p>The practical solution is extraction first, then selective summarization. Use browser-side tools to extract only the specific sections relevant to your question — a particular clause, a specific exhibit, a single page range. Then submit only that extract to the AI. You're not sending the whole contract; you're sending the three paragraphs you need analyzed.</p>
+
+<p>This also produces better AI output, since focused context tends to yield more precise summaries.</p>
+
+<h2>What this workflow looks like day-to-day</h2>
+
+<p>In practice, the setup for a small firm (5–20 attorneys) looks like this:</p>
+
+<ol>
+  <li><strong>Bookmark browser-side tools</strong> that cover your common document tasks. Keep them in a shared browser bookmark folder so all staff use the same vetted tools.</li>
+  <li><strong>Train staff on the distinction</strong> between browser-side and upload-based tools. The visual difference is usually that browser-side tools have a "Select file" button but no "Upload" button — the processing starts immediately and locally after selection.</li>
+  <li><strong>Verify with DevTools when in doubt.</strong> Open F12, go to the Network tab, and use the tool. If no file upload request fires, no data left your machine. This is auditable and demonstrable to clients or ethics reviewers.</li>
+  <li><strong>Use AI assistance on extracts, not originals.</strong> Build the habit of extracting relevant sections locally before pasting into any AI tool.</li>
+</ol>
+
+<h2>The BAA question</h2>
+
+<p>For firms handling medical-legal work — personal injury, workers' compensation, disability — HIPAA adds another layer. The standard cloud document processing services require a Business Associate Agreement before you use them with PHI-containing documents. Most won't sign one, or charge enterprise rates for the privilege.</p>
+
+<p>Browser-side tools sidestep this entirely. Because the tool never receives PHI — it runs in the browser, on your machine — the vendor is not a business associate and no BAA is required. This is the same structural argument that makes locally-installed software exempt from HIPAA's business associate requirements.</p>
+
+<p>This doesn't eliminate your HIPAA obligations. It means one significant compliance burden — vetting and contracting with cloud processors — disappears from the equation.</p>
+
+<h2>Limitations to be honest about</h2>
+
+<p>Browser-side processing isn't magic. There are real constraints:</p>
+
+<ul>
+  <li><strong>Speed.</strong> WebAssembly OCR on a 500-page document takes longer than cloud OCR. For high-volume document processing, this is a real limitation.</li>
+  <li><strong>Memory.</strong> Very large files can exhaust browser memory. If you're merging a 2GB PDF, you may need to split the task.</li>
+  <li><strong>Complex conversions.</strong> Heavily formatted documents with tracked changes, embedded charts, or custom fonts may not convert perfectly. Check the output.</li>
+  <li><strong>No collaboration.</strong> Browser-side tools are single-user. For collaborative document workflows, you need different solutions.</li>
+</ul>
+
+<p>For the common cases — assembling exhibits, extracting text, merging files, compressing for email — browser-side handling is entirely adequate and the privacy trade-off is clearly worth it.</p>
+
+<h2>A starting point</h2>
+
+<p>The browser-based tools at <a href="/tools">toolora.dev/tools</a> cover PDF merge, PDF split, OCR, image compression, and format conversion — all running in the browser with no server involvement. You can verify this with the DevTools network test described above. For firms that want to extend this to AI agents and automation, the same privacy-first approach extends to the MCP server and Agent API.</p>
+
+<p>The ethics landscape around AI and legal practice is still forming. Firms that build good habits now — understanding what data goes where, why, and under what terms — will be better positioned when bar guidance catches up to the technology.</p>
+
+<p><a href="/enterprise">Toolora for legal and regulated industries →</a></p>
+    `.trim(),
+  },
 ];
 
 export function getBlogPost(slug: string): BlogPost | undefined {
