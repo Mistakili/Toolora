@@ -1,5 +1,9 @@
 # See https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
 
+# Token files
+.mcpregistry_github_token
+*_token
+
 # compiled output
 dist
 tmp
