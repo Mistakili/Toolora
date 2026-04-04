@@ -1,7 +1,7 @@
-import { useEffect } from "react";
 import { Link } from "wouter";
 import { ArrowRight, Clock, Tag, Lock, Code2, BookOpen, Shield, Wrench, Zap } from "lucide-react";
 import { BLOG_POSTS } from "@/lib/blog-posts";
+import { useSEO } from "@/hooks/useSEO";
 
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
@@ -27,9 +27,38 @@ function getCoverStyle(category: string): { gradient: string; Icon: React.Elemen
 }
 
 export default function Blog() {
-  useEffect(() => {
-    document.title = "Blog | Toolora";
-  }, []);
+  const sorted = [...BLOG_POSTS].reverse();
+  useSEO({
+    title: "Blog — Privacy, Security & Developer Tool Insights | Toolora",
+    description: "Guides, tutorials, and deep dives on browser-based privacy tools, MCP servers, developer utilities, and secure document processing — from the Toolora team.",
+    canonical: "https://toolora.dev/blog",
+    jsonLd: {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "CollectionPage",
+          "@id": "https://toolora.dev/blog",
+          name: "Toolora Blog",
+          url: "https://toolora.dev/blog",
+          description: "Privacy, security, and developer tool articles from the Toolora team.",
+          publisher: { "@type": "Organization", name: "Toolora", url: "https://toolora.dev" },
+          hasPart: sorted.map(p => ({
+            "@type": "Article",
+            headline: p.title,
+            url: `https://toolora.dev/blog/${p.slug}`,
+            datePublished: p.date,
+          })),
+        },
+        {
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            { "@type": "ListItem", position: 1, name: "Home", item: "https://toolora.dev" },
+            { "@type": "ListItem", position: 2, name: "Blog", item: "https://toolora.dev/blog" },
+          ],
+        },
+      ],
+    },
+  });
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-16">

@@ -132,6 +132,30 @@ export default function McpPage() {
     title: "Free MCP Server — 17 Tools for Claude, Cursor & AI Agents",
     description: "Toolora's free MCP server gives Claude, Cursor, Cline, and any MCP-compatible AI agent 17 real server-side tools: PDF, OCR, QR codes, memory, markdown, pastes, and more. No API key. Listed in the Anthropic MCP Registry.",
     canonical: "https://toolora.dev/mcp",
+    jsonLd: {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "SoftwareApplication",
+          "@id": "https://toolora.dev/mcp#app",
+          name: "Toolora MCP Server",
+          url: "https://toolora.dev/mcp",
+          applicationCategory: "DeveloperApplication",
+          operatingSystem: "Web",
+          description: "Free Model Context Protocol (MCP) server with 17 tools: PDF extraction, OCR, QR codes, audio transcription, web reading, CSV/JSON conversion, persistent memory, and more. No API key required.",
+          offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+          provider: { "@type": "Organization", name: "Toolora", url: "https://toolora.dev" },
+          featureList: MCP_TOOLS.map(t => t.name),
+        },
+        {
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            { "@type": "ListItem", position: 1, name: "Home", item: "https://toolora.dev" },
+            { "@type": "ListItem", position: 2, name: "MCP Server", item: "https://toolora.dev/mcp" },
+          ],
+        },
+      ],
+    },
   });
 
   return (

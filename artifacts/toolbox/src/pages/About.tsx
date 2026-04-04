@@ -37,6 +37,26 @@ export default function About() {
     title: "About Toolora — Privacy-First Tools for Developers & AI Agents",
     description: "Toolora is a privacy-first utility platform — 28 browser tools that run on your device and a free MCP server with 17 tools for Claude, Cursor, and AI agents. No API key required.",
     canonical: "https://toolora.dev/about",
+    jsonLd: {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "AboutPage",
+          "@id": "https://toolora.dev/about",
+          name: "About Toolora",
+          url: "https://toolora.dev/about",
+          description: "Toolora is a privacy-first utility platform — 28 browser tools that run on your device and a free MCP server with 17 tools for Claude, Cursor, and AI agents.",
+          publisher: { "@type": "Organization", name: "Toolora", url: "https://toolora.dev" },
+        },
+        {
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            { "@type": "ListItem", position: 1, name: "Home", item: "https://toolora.dev" },
+            { "@type": "ListItem", position: 2, name: "About", item: "https://toolora.dev/about" },
+          ],
+        },
+      ],
+    },
   });
 
   return (

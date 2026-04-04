@@ -78,6 +78,84 @@ export default function Pricing() {
   useSEO({
     title: "Pricing — Toolora API",
     description: "Free tier with 200 calls/month. Pro at $19/month for 5,000 calls. OCR, DOCX, Excel, audio transcription, and more.",
+    canonical: "https://toolora.dev/pricing",
+    jsonLd: {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebPage",
+          "@id": "https://toolora.dev/pricing",
+          name: "Toolora API Pricing",
+          url: "https://toolora.dev/pricing",
+          description: "API access pricing: Free (200 calls/mo), Pro $19/mo (5,000 calls), Team $79/mo (50,000 calls), Enterprise $199/mo (unlimited).",
+          publisher: { "@type": "Organization", name: "Toolora", url: "https://toolora.dev" },
+        },
+        {
+          "@type": "ItemList",
+          name: "Toolora API Pricing Plans",
+          itemListElement: [
+            {
+              "@type": "ListItem",
+              position: 1,
+              item: {
+                "@type": "Offer",
+                name: "Free",
+                description: "200 API calls per month — no credit card required.",
+                price: "0",
+                priceCurrency: "USD",
+                seller: { "@type": "Organization", name: "Toolora" },
+              },
+            },
+            {
+              "@type": "ListItem",
+              position: 2,
+              item: {
+                "@type": "Offer",
+                name: "Pro",
+                description: "5,000 API calls per month.",
+                price: "19",
+                priceCurrency: "USD",
+                priceSpecification: { "@type": "UnitPriceSpecification", price: "19", priceCurrency: "USD", billingDuration: "P1M" },
+                seller: { "@type": "Organization", name: "Toolora" },
+              },
+            },
+            {
+              "@type": "ListItem",
+              position: 3,
+              item: {
+                "@type": "Offer",
+                name: "Team",
+                description: "50,000 API calls per month.",
+                price: "79",
+                priceCurrency: "USD",
+                priceSpecification: { "@type": "UnitPriceSpecification", price: "79", priceCurrency: "USD", billingDuration: "P1M" },
+                seller: { "@type": "Organization", name: "Toolora" },
+              },
+            },
+            {
+              "@type": "ListItem",
+              position: 4,
+              item: {
+                "@type": "Offer",
+                name: "Enterprise",
+                description: "Unlimited API calls, priority support, invoice billing.",
+                price: "199",
+                priceCurrency: "USD",
+                priceSpecification: { "@type": "UnitPriceSpecification", price: "199", priceCurrency: "USD", billingDuration: "P1M" },
+                seller: { "@type": "Organization", name: "Toolora" },
+              },
+            },
+          ],
+        },
+        {
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            { "@type": "ListItem", position: 1, name: "Home", item: "https://toolora.dev" },
+            { "@type": "ListItem", position: 2, name: "Pricing", item: "https://toolora.dev/pricing" },
+          ],
+        },
+      ],
+    },
   });
 
   const BASE = import.meta.env.BASE_URL.replace(/\/$/, "");

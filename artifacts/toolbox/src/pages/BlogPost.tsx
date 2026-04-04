@@ -1,7 +1,7 @@
-import { useEffect } from "react";
 import { Link, useParams } from "wouter";
 import { ArrowLeft, Clock, Tag, Calendar, Lock, Code2, BookOpen, Shield, Wrench, Zap } from "lucide-react";
 import { getBlogPost, BLOG_POSTS } from "@/lib/blog-posts";
+import { useSEO } from "@/hooks/useSEO";
 
 function getCoverStyle(category: string): { gradient: string; Icon: React.ElementType; iconColor: string } {
   switch (category.toLowerCase()) {
@@ -26,17 +26,47 @@ function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
 }
 
+const BASE = "https://toolora.dev";
+
+function BlogPostSEO({ post }: { post: NonNullable<ReturnType<typeof getBlogPost>> }) {
+  useSEO({
+    title: post.title,
+    description: post.description,
+    canonical: `${BASE}/blog/${post.slug}`,
+    type: "article",
+    jsonLd: {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      headline: post.title,
+      description: post.description,
+      datePublished: post.date,
+      dateModified: post.date,
+      url: `${BASE}/blog/${post.slug}`,
+      mainEntityOfPage: { "@type": "WebPage", "@id": `${BASE}/blog/${post.slug}` },
+      image: `${BASE}/opengraph.jpg`,
+      author: { "@type": "Organization", name: "Toolora", url: BASE },
+      publisher: {
+        "@type": "Organization",
+        name: "Toolora",
+        url: BASE,
+        logo: { "@type": "ImageObject", url: `${BASE}/favicon.svg` },
+      },
+      breadcrumb: {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Home", item: BASE },
+          { "@type": "ListItem", position: 2, name: "Blog", item: `${BASE}/blog` },
+          { "@type": "ListItem", position: 3, name: post.title, item: `${BASE}/blog/${post.slug}` },
+        ],
+      },
+    },
+  });
+  return null;
+}
+
 export default function BlogPost() {
   const { slug } = useParams<{ slug: string }>();
   const post = getBlogPost(slug);
-
-  useEffect(() => {
-    if (post) {
-      document.title = `${post.title} | Toolora Blog`;
-      const desc = document.querySelector('meta[name="description"]');
-      if (desc) desc.setAttribute("content", post.description);
-    }
-  }, [post]);
 
   if (!post) {
     return (
@@ -52,6 +82,7 @@ export default function BlogPost() {
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-12">
+      <BlogPostSEO post={post} />
       {/* Back */}
       <Link href="/blog" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground mb-8 transition-colors">
         <ArrowLeft className="w-4 h-4" />

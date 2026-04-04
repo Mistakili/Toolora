@@ -117,6 +117,41 @@ export default function Enterprise() {
   useSEO({
     title: "Toolora for Enterprise — Private-by-Default Tools for Regulated Industries",
     description: "Browser-side document tools for law firms, healthcare, financial services, and government. No uploads. No HIPAA risk. No BAA required. 30-day money-back guarantee.",
+    canonical: "https://toolora.dev/enterprise",
+    jsonLd: {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "FAQPage",
+          mainEntity: FAQS.map(({ q, a }) => ({
+            "@type": "Question",
+            name: q,
+            acceptedAnswer: { "@type": "Answer", text: a },
+          })),
+        },
+        {
+          "@type": "Service",
+          name: "Toolora Enterprise",
+          url: "https://toolora.dev/enterprise",
+          provider: { "@type": "Organization", name: "Toolora", url: "https://toolora.dev" },
+          description: "Privacy-first browser-based document processing platform for law firms, healthcare, financial services, and government. Zero data exposure — all processing runs on-device.",
+          serviceType: "Software as a Service",
+          areaServed: "US",
+          offers: [
+            { "@type": "Offer", name: "Pro", price: "19", priceCurrency: "USD", description: "5,000 API credits/mo" },
+            { "@type": "Offer", name: "Team", price: "79", priceCurrency: "USD", description: "50,000 API credits/mo" },
+            { "@type": "Offer", name: "Enterprise", price: "199", priceCurrency: "USD", description: "Unlimited API credits, priority support" },
+          ],
+        },
+        {
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            { "@type": "ListItem", position: 1, name: "Home", item: "https://toolora.dev" },
+            { "@type": "ListItem", position: 2, name: "Enterprise", item: "https://toolora.dev/enterprise" },
+          ],
+        },
+      ],
+    },
   });
 
   const BASE = import.meta.env.BASE_URL.replace(/\/$/, "");

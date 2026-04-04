@@ -398,6 +398,38 @@ export default function McpHub() {
   useSEO({
     title: "Privacy-First MCP Servers — Curated Local & Self-Hosted Directory",
     description: "A curated directory of MCP servers that don't upload your data to third-party services. Local-first and self-hostable servers for Claude Desktop, Cursor, and Cline.",
+    canonical: "https://toolora.dev/mcp-hub",
+    jsonLd: {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "CollectionPage",
+          "@id": "https://toolora.dev/mcp-hub",
+          name: "Privacy-First MCP Server Directory",
+          url: "https://toolora.dev/mcp-hub",
+          description: "A curated directory of MCP servers that don't upload your data. Local-first and self-hostable servers for Claude Desktop, Cursor, and Cline.",
+          publisher: { "@type": "Organization", name: "Toolora", url: "https://toolora.dev" },
+        },
+        {
+          "@type": "ItemList",
+          name: "Privacy-First MCP Servers",
+          numberOfItems: SERVERS.length,
+          itemListElement: SERVERS.map((s, i) => ({
+            "@type": "ListItem",
+            position: i + 1,
+            name: s.name,
+            description: s.tagline,
+          })),
+        },
+        {
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            { "@type": "ListItem", position: 1, name: "Home", item: "https://toolora.dev" },
+            { "@type": "ListItem", position: 2, name: "MCP Hub", item: "https://toolora.dev/mcp-hub" },
+          ],
+        },
+      ],
+    },
   });
 
   return (
