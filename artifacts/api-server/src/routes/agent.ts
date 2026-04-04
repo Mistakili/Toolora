@@ -4,7 +4,7 @@ import { PDFDocument } from "pdf-lib";
 import QRCode from "qrcode";
 import { createWorker } from "tesseract.js";
 import mammoth from "mammoth";
-import XLSX from "xlsx";
+import ExcelJS from "exceljs";
 import { db } from "@workspace/db";
 import { agentPaymentsTable } from "@workspace/db/schema";
 import { desc, sum, count } from "drizzle-orm";
@@ -833,19 +833,44 @@ router.post("/excel/to-json", requirePaymentOrApiKey, upload.single("file"), asy
   }
 
   try {
-    const workbook = XLSX.read(req.file.buffer, { type: "buffer" });
+    const workbook = new ExcelJS.Workbook();
+    if (filename.endsWith(".csv")) {
+      const { Readable } = await import("stream");
+      const readable = Readable.from(req.file.buffer.toString("utf-8"));
+      await workbook.csv.read(readable);
+    } else {
+      await workbook.xlsx.load(Buffer.from(req.file.buffer));
+    }
+
     const sheets: Record<string, unknown[]> = {};
+    const sheetNames: string[] = [];
     let totalRows = 0;
 
-    for (const sheetName of workbook.SheetNames) {
-      const rows = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
-      sheets[sheetName] = rows;
+    workbook.eachSheet((worksheet) => {
+      const rows: Record<string, unknown>[] = [];
+      let headers: (string | null)[] = [];
+
+      worksheet.eachRow((row, rowNumber) => {
+        const values = row.values as (ExcelJS.CellValue | undefined)[];
+        if (rowNumber === 1) {
+          headers = values.slice(1).map((v) => (v != null ? String(v) : null));
+        } else {
+          const rowData: Record<string, unknown> = {};
+          headers.forEach((header, idx) => {
+            if (header != null) rowData[header] = values[idx + 1] ?? null;
+          });
+          rows.push(rowData);
+        }
+      });
+
+      sheets[worksheet.name] = rows;
+      sheetNames.push(worksheet.name);
       totalRows += rows.length;
-    }
+    });
 
     await logPayment("/api/agent/excel/to-json", req);
     await logApiKeyUsage(req, "/api/agent/excel/to-json");
-    res.json({ sheets, sheetNames: workbook.SheetNames, totalRows });
+    res.json({ sheets, sheetNames, totalRows });
   } catch (err: unknown) {
     req.log.error({ err }, "Excel parsing error");
     res.status(422).json({ error: "Failed to parse Excel file." });

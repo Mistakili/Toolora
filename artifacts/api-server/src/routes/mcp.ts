@@ -3,7 +3,7 @@ import { PDFDocument } from "pdf-lib";
 import QRCode from "qrcode";
 import { createWorker } from "tesseract.js";
 import mammoth from "mammoth";
-import XLSX from "xlsx";
+import ExcelJS from "exceljs";
 import OpenAI from "openai";
 import { db } from "@workspace/db";
 import { mcpCallsTable, pastesTable, memoriesTable } from "@workspace/db/schema";
@@ -542,22 +542,50 @@ async function handleExtractDocx(args: Record<string, unknown>): Promise<string>
   return JSON.stringify({ text, paragraphs, words, chars: text.length });
 }
 
-function handleExcelToJson(args: Record<string, unknown>): string {
+async function handleExcelToJson(args: Record<string, unknown>): Promise<string> {
   const { fileBase64, filename } = args as { fileBase64?: string; filename?: string };
   if (!fileBase64 || typeof fileBase64 !== "string") throw new McpToolError("Missing 'fileBase64' field.");
   if (!filename || typeof filename !== "string") throw new McpToolError("Missing 'filename' field — needed for format detection.");
 
   const buffer = Buffer.from(fileBase64, "base64");
-  const workbook = XLSX.read(buffer, { type: "buffer" });
+  const workbook = new ExcelJS.Workbook();
+  const lower = filename.toLowerCase();
+
+  if (lower.endsWith(".csv")) {
+    const { Readable } = await import("stream");
+    const readable = Readable.from(buffer.toString("utf-8"));
+    await workbook.csv.read(readable);
+  } else {
+    await workbook.xlsx.load(Buffer.from(buffer));
+  }
+
   const sheets: Record<string, unknown[]> = {};
+  const sheetNames: string[] = [];
   let totalRows = 0;
 
-  for (const sheetName of workbook.SheetNames) {
-    const rows = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
-    sheets[sheetName] = rows;
+  workbook.eachSheet((worksheet) => {
+    const rows: Record<string, unknown>[] = [];
+    let headers: (string | null)[] = [];
+
+    worksheet.eachRow((row, rowNumber) => {
+      const values = row.values as (ExcelJS.CellValue | undefined)[];
+      if (rowNumber === 1) {
+        headers = values.slice(1).map((v) => (v != null ? String(v) : null));
+      } else {
+        const rowData: Record<string, unknown> = {};
+        headers.forEach((header, idx) => {
+          if (header != null) rowData[header] = values[idx + 1] ?? null;
+        });
+        rows.push(rowData);
+      }
+    });
+
+    sheets[worksheet.name] = rows;
+    sheetNames.push(worksheet.name);
     totalRows += rows.length;
-  }
-  return JSON.stringify({ sheets, sheetNames: workbook.SheetNames, totalRows });
+  });
+
+  return JSON.stringify({ sheets, sheetNames, totalRows });
 }
 
 async function handleTranscribeAudio(args: Record<string, unknown>): Promise<string> {
@@ -1086,7 +1114,7 @@ Tools process files in memory only. Nothing is stored, logged, or retained beyon
               text = await handleExtractDocx(args);
               break;
             case "excel_to_json":
-              text = handleExcelToJson(args);
+              text = await handleExcelToJson(args);
               break;
             case "transcribe_audio":
               text = await handleTranscribeAudio(args);
