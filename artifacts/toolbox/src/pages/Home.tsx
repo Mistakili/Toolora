@@ -47,7 +47,7 @@ export default function Home() {
   return (
     <div className="flex flex-col w-full">
       {/* Hero Section */}
-      <section className="relative pt-24 pb-32 overflow-hidden border-b border-border/50">
+      <section className="relative pt-16 pb-24 overflow-hidden border-b border-border/50">
         <div className="absolute inset-0 z-0">
           <img 
             src={`${import.meta.env.BASE_URL}images/hero-bg.png`} 
@@ -57,12 +57,31 @@ export default function Home() {
           <div className="absolute inset-0 bg-gradient-to-b from-background/50 via-background/80 to-background" />
         </div>
 
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="max-w-3xl mx-auto text-center">
+        <div className="container mx-auto px-4 relative z-10 max-w-6xl">
+          <div className="grid lg:grid-cols-2 gap-10 items-center">
+            {/* Orb image — appears above text on mobile for drama */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.92 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.7, ease: "easeOut" }}
+              className="flex items-center justify-center order-first lg:order-last"
+            >
+              <div className="relative w-72 h-72 sm:w-96 sm:h-96 lg:w-[480px] lg:h-[480px]">
+                <div className="absolute inset-0 rounded-full bg-primary/20 blur-3xl scale-90 animate-pulse" />
+                <img
+                  src={`${import.meta.env.BASE_URL}images/hero-visual.png`}
+                  alt="Your data stays in your browser — contained, never uploaded"
+                  className="relative z-10 w-full h-full object-cover rounded-full drop-shadow-[0_0_60px_rgba(139,92,246,0.4)]"
+                />
+              </div>
+            </motion.div>
+
+            {/* Text column */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
+              className="text-center lg:text-left order-last lg:order-first"
             >
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-8 border border-primary/20">
                 <Sparkles className="w-4 h-4" /> MCP-ready &middot; Claude Desktop &middot; Cursor &middot; Windsurf
@@ -74,7 +93,7 @@ export default function Home() {
                 28 browser tools + a free MCP server for Claude Desktop and Cursor. Format JSON, convert PDFs, transcribe audio, read URLs — processed in your browser. Files never leave your device. No uploads, no accounts, no tracking.
               </p>
               
-                    <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                    <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
                 <button
                   onClick={() => document.getElementById("categories")?.scrollIntoView({ behavior: "smooth" })}
                   className="px-8 py-4 bg-primary text-primary-foreground font-semibold rounded-full shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/40 hover:-translate-y-0.5 transition-all duration-300 cursor-pointer border-0"
@@ -98,33 +117,34 @@ export default function Home() {
                 </Link>
               </div>
 
-              {/* Stats bar */}
-              <div className="flex flex-wrap items-center justify-center gap-8 mt-12 pt-8 border-t border-border/40">
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-foreground">{TOOLS.length}+</div>
-                  <div className="text-xs text-muted-foreground uppercase tracking-wider mt-0.5">Free Tools</div>
-                </div>
-                <div className="w-px h-8 bg-border hidden sm:block" />
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-foreground">
-                    {popularData?.tools
-                      ? (popularData.tools.reduce((sum: number, t: any) => sum + (t.usageCount ?? 0), 0)).toLocaleString()
-                      : "—"}
-                  </div>
-                  <div className="text-xs text-muted-foreground uppercase tracking-wider mt-0.5">Tools Used</div>
-                </div>
-                <div className="w-px h-8 bg-border hidden sm:block" />
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-foreground">0kb</div>
-                  <div className="text-xs text-muted-foreground uppercase tracking-wider mt-0.5">Data Uploaded</div>
-                </div>
-                <div className="w-px h-8 bg-border hidden sm:block" />
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-foreground">Free</div>
-                  <div className="text-xs text-muted-foreground uppercase tracking-wider mt-0.5">Forever</div>
-                </div>
-              </div>
             </motion.div>
+          </div>
+
+          {/* Stats bar — full width below grid */}
+          <div className="flex flex-wrap items-center justify-center gap-8 mt-14 pt-8 border-t border-border/40">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-foreground">{TOOLS.length}+</div>
+              <div className="text-xs text-muted-foreground uppercase tracking-wider mt-0.5">Free Tools</div>
+            </div>
+            <div className="w-px h-8 bg-border hidden sm:block" />
+            <div className="text-center">
+              <div className="text-2xl font-bold text-foreground">
+                {popularData?.tools
+                  ? (popularData.tools.reduce((sum: number, t: any) => sum + (t.usageCount ?? 0), 0)).toLocaleString()
+                  : "—"}
+              </div>
+              <div className="text-xs text-muted-foreground uppercase tracking-wider mt-0.5">Tools Used</div>
+            </div>
+            <div className="w-px h-8 bg-border hidden sm:block" />
+            <div className="text-center">
+              <div className="text-2xl font-bold text-foreground">0kb</div>
+              <div className="text-xs text-muted-foreground uppercase tracking-wider mt-0.5">Data Uploaded</div>
+            </div>
+            <div className="w-px h-8 bg-border hidden sm:block" />
+            <div className="text-center">
+              <div className="text-2xl font-bold text-foreground">Free</div>
+              <div className="text-xs text-muted-foreground uppercase tracking-wider mt-0.5">Forever</div>
+            </div>
           </div>
         </div>
       </section>
@@ -135,6 +155,30 @@ export default function Home() {
           <div className="text-center mb-14">
             <p className="text-xs font-mono text-muted-foreground uppercase tracking-widest mb-3">How it works</p>
             <h2 className="text-3xl md:text-4xl font-display font-bold">One privacy guarantee.<br className="hidden sm:block" /> Three ways to use it.</h2>
+          </div>
+
+          {/* MCP visual — cinematic split */}
+          <div className="grid md:grid-cols-2 gap-10 items-center mb-20 rounded-2xl border border-border/50 bg-gradient-to-br from-primary/5 to-transparent p-8 overflow-hidden">
+            <div className="relative flex items-center justify-center">
+              <div className="absolute inset-0 bg-primary/10 blur-3xl rounded-full scale-75" />
+              <img
+                src={`${import.meta.env.BASE_URL}images/mcp-visual.png`}
+                alt="AI agents connecting to Toolora's MCP server — a network of tools"
+                className="relative z-10 w-full max-w-sm rounded-2xl drop-shadow-[0_0_40px_rgba(139,92,246,0.35)]"
+              />
+            </div>
+            <div>
+              <p className="text-xs font-mono text-primary uppercase tracking-widest mb-3">MCP Server</p>
+              <h3 className="text-2xl md:text-3xl font-display font-bold mb-4 leading-snug">
+                Your AI agent.<br/>Our tools.
+              </h3>
+              <p className="text-muted-foreground leading-relaxed mb-6">
+                One config block connects Claude Desktop, Cursor, or Windsurf to 17 real server-side tools. PDF extraction, OCR, audio transcription, web reading, QR generation, and persistent memory — all callable by your AI in a single session.
+              </p>
+              <Link href="/mcp" className="inline-flex items-center gap-2 text-primary font-medium hover:underline">
+                Set it up in 60 seconds <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
           </div>
 
           <div className="grid md:grid-cols-3 gap-0 relative">

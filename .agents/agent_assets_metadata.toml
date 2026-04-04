@@ -60,6 +60,18 @@ uri = "file://attached_assets/generated_images/generated_image.png"
 type = "image"
 title = "generated_image"
 
+[[generated]]
+id = "SznKBUBGAaQn620ngLdMv"
+uri = "file://artifacts/toolbox/public/images/hero-visual.png"
+type = "image"
+title = "privacy orb hero visual"
+
+[[generated]]
+id = "XHSkUXjDi1xxxK8gTRoMD"
+uri = "file://artifacts/toolbox/public/images/mcp-visual.png"
+type = "image"
+title = "MCP agent network visual"
+
 [[outputs]]
 id = "W91hp3ihLhEvWTT51EilJ"
 uri = "file://artifacts/toolbox/public/og-image.png"
