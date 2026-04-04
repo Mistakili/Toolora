@@ -273,16 +273,16 @@ export function AppLayout({ children }: { children: ReactNode }) {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-border/50 mt-auto py-12 relative overflow-hidden">
-        <div className="absolute inset-0 z-0">
-          <img
-            src={`${import.meta.env.BASE_URL}images/footer-bg.png`}
-            alt=""
-            className="w-full h-full object-cover object-top opacity-10 dark:opacity-15 select-none pointer-events-none"
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-background/60 to-background/95" />
-        </div>
-        <div className="relative z-10 h-full">
+      <footer
+        className="border-t border-border/50 mt-auto py-12 relative overflow-hidden"
+        style={{
+          backgroundImage: `url(${import.meta.env.BASE_URL}images/footer-bg.png)`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        }}
+      >
+        <div className="absolute inset-0 bg-background/60" />
+        <div className="relative z-10">
         <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="md:col-span-2">
             <Link href="/" className="flex items-center gap-2 mb-4">
