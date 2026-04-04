@@ -18,6 +18,13 @@
     "stripe-replit-sync": "^1.0.0"
   },
   "pnpm": {
-    "onlyBuiltDependencies": ["sharp", "tesseract.js", "canvas", "@canvas/image"]
+    "onlyBuiltDependencies": ["sharp", "tesseract.js", "canvas", "@canvas/image"],
+    "overrides": {
+      "@xmldom/xmldom": "0.8.12",
+      "lodash": "4.18.0",
+      "path-to-regexp": "8.4.0",
+      "picomatch@^2": "2.3.2",
+      "picomatch@^4": "4.0.4"
+    }
   }
 }
