@@ -6,7 +6,7 @@ import mammoth from "mammoth";
 import XLSX from "xlsx";
 import OpenAI from "openai";
 import { db } from "@workspace/db";
-import { mcpCallsTable, pastesTable } from "@workspace/db/schema";
+import { mcpCallsTable, pastesTable, memoriesTable } from "@workspace/db/schema";
 
 const router: IRouter = Router();
 
@@ -233,6 +233,32 @@ const TOOLS = [
         expiresInHours: { type: "number", description: "How many hours until the paste expires (default: 168 = 7 days, max: 720 = 30 days)." },
       },
       required: ["content"],
+    },
+  },
+  {
+    name: "save_memory",
+    description:
+      "Save any text under a named key so you can recall it later — across sessions and conversations. Works like a persistent notepad: give it a key (e.g. 'project-spec', 'user-prefs', 'meeting-notes') and it's retrievable any time with recall_memory. Keys are global and upserted — saving to the same key overwrites previous content. Expires in 30 days by default.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        key: { type: "string", description: "A short, memorable name for this memory (e.g. 'project-spec', 'todo-list'). Saving to the same key again overwrites it." },
+        content: { type: "string", description: "The text to remember. Any format — prose, JSON, code, lists. Max 500KB." },
+        expiresInDays: { type: "number", description: "How many days until this memory expires (default: 30, max: 90)." },
+      },
+      required: ["key", "content"],
+    },
+  },
+  {
+    name: "recall_memory",
+    description:
+      "Retrieve text you previously saved with save_memory. Pass the same key you used when saving. Returns the stored content plus when it was saved and when it expires. Returns an error if the key doesn't exist or has expired.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        key: { type: "string", description: "The key you used when calling save_memory." },
+      },
+      required: ["key"],
     },
   },
 ];
@@ -835,6 +861,53 @@ async function handleCreateShareablePaste(args: Record<string, unknown>): Promis
   });
 }
 
+async function handleSaveMemory(args: Record<string, unknown>): Promise<string> {
+  const { key, content, expiresInDays } = args as { key?: string; content?: string; expiresInDays?: number };
+  if (!key || typeof key !== "string" || key.trim().length === 0) throw new McpToolError("Missing required argument: key");
+  if (!content || typeof content !== "string" || content.trim().length === 0) throw new McpToolError("Missing required argument: content");
+  if (key.trim().length > 255) throw new McpToolError("key must be 255 characters or fewer.");
+  if (content.length > 500_000) throw new McpToolError("content too large. Maximum 500KB.");
+
+  const days = typeof expiresInDays === "number" && expiresInDays > 0 ? Math.min(expiresInDays, 90) : 30;
+  const expiresAt = new Date(Date.now() + days * 24 * 60 * 60 * 1000);
+
+  await db.insert(memoriesTable).values({
+    key: key.trim(),
+    content: content.trim(),
+    expiresAt,
+  }).onConflictDoUpdate({ target: memoriesTable.key, set: { content: content.trim(), expiresAt, createdAt: new Date() } });
+
+  return JSON.stringify({
+    key: key.trim(),
+    saved: true,
+    expiresAt: expiresAt.toISOString(),
+    expiresInDays: days,
+    tip: `Recall this later with: recall_memory({ key: "${key.trim()}" })`,
+  });
+}
+
+async function handleRecallMemory(args: Record<string, unknown>): Promise<string> {
+  const { key } = args as { key?: string };
+  if (!key || typeof key !== "string" || key.trim().length === 0) throw new McpToolError("Missing required argument: key");
+
+  const { eq, and, gt } = await import("drizzle-orm");
+  const rows = await db
+    .select()
+    .from(memoriesTable)
+    .where(and(eq(memoriesTable.key, key.trim()), gt(memoriesTable.expiresAt, new Date())))
+    .limit(1);
+
+  if (rows.length === 0) throw new McpToolError(`No memory found for key "${key.trim()}". It may not exist or may have expired.`);
+
+  const row = rows[0];
+  return JSON.stringify({
+    key: row.key,
+    content: row.content,
+    savedAt: row.createdAt?.toISOString(),
+    expiresAt: row.expiresAt.toISOString(),
+  });
+}
+
 // ─── JSON-RPC helpers ─────────────────────────────────────────────────────────
 
 function rpcOk(id: string | number | null, result: unknown) {
@@ -941,6 +1014,12 @@ router.post("/", async (req: Request, res: Response) => {
               break;
             case "create_shareable_paste":
               text = await handleCreateShareablePaste(args);
+              break;
+            case "save_memory":
+              text = await handleSaveMemory(args);
+              break;
+            case "recall_memory":
+              text = await handleRecallMemory(args);
               break;
             default:
               res.json(rpcErr(id, -32602, `Unknown tool: ${name}`));

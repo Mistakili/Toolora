@@ -38,11 +38,11 @@
 
 ### Claude Code (this file)
 
-Place this file at `.claude/skills/toolora.md` in your project root. Claude Code will automatically load it and know how to use all 15 tools.
+Place this file at `.claude/skills/toolora.md` in your project root. Claude Code will automatically load it and know how to use all 17 tools.
 
 ---
 
-## Available Tools (15)
+## Available Tools (17)
 
 ### PDF
 
@@ -78,6 +78,11 @@ Place this file at `.claude/skills/toolora.md` in your project root. Claude Code
 
 - **`count_words`** — Count words, characters, sentences, paragraphs, and estimated reading time for any text.
 - **`markdown_to_html`** — Convert markdown to a complete styled HTML document. Supports all common markdown syntax.
+
+### Memory (Cross-Session Persistence)
+
+- **`save_memory`** — Persist any text under a named key across Claude sessions. Works like a notepad: `save_memory({ key: "project-spec", content: "..." })`. Overwrites if key exists. Expires in 30 days (max 90).
+- **`recall_memory`** — Retrieve text saved with save_memory. `recall_memory({ key: "project-spec" })`. Returns content, savedAt, and expiresAt. No login, no setup.
 
 ### Utilities
 

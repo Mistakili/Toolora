@@ -7,7 +7,7 @@
 Toolora (https://toolora.dev) provides three things:
 
 1. **Free browser tools** — 28 utilities that run entirely in the browser. No uploads, no accounts, no data stored.
-2. **Free MCP server** — 15 tools for Claude Desktop, Cursor, Windsurf, and any MCP-compatible AI agent. No API key required.
+2. **Free MCP server** — 17 tools for Claude Desktop, Cursor, Windsurf, and any MCP-compatible AI agent. No API key required.
 3. **Paid Agent API** — Server-side endpoints for document and web content processing, gated by the x402 micropayment protocol. Agents pay per request using Stellar XLM or Solana USDC.
 
 ## Free Browser Tools
@@ -54,7 +54,7 @@ Toolora exposes an MCP (Model Context Protocol) server for direct integration wi
 **Registry:** io.github.Mistakili/toolora-mcp (Anthropic MCP Registry)
 **Smithery:** smithery.ai/servers/mistakili/toolora-mcp
 
-### MCP Tools Available (15 total)
+### MCP Tools Available (17 total)
 
 - `extract_pdf_text` — Extract plain text from a PDF (pass base64-encoded file content). Returns text, pages, word count, character count.
 - `merge_pdfs` — Merge 2–20 PDF files into a single PDF. Each file as base64. Returns merged PDF as base64.
@@ -71,6 +71,8 @@ Toolora exposes an MCP (Model Context Protocol) server for direct integration wi
 - `generate_pdf_from_text` — Generate a formatted PDF from plain text or markdown content. Supports headings, bullet lists, paragraphs. Returns base64 PDF.
 - `markdown_to_html` — Convert markdown to a complete styled HTML document. Supports all common markdown syntax.
 - `create_shareable_paste` — Store text content and return a public URL (toolora.dev/p/[id]) that anyone can visit. Expires in 7 days.
+- `save_memory` — Persist any text under a named key (e.g. "project-spec", "meeting-notes"). Retrievable across Claude sessions with recall_memory. Expires in 30 days by default (max 90).
+- `recall_memory` — Retrieve text previously saved with save_memory. Pass the same key. Returns content, savedAt, and expiresAt.
 
 ### Adding to Claude Desktop
 

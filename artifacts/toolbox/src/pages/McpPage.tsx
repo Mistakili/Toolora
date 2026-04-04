@@ -50,6 +50,8 @@ const MCP_TOOLS = [
   { icon: FileCode2, name: "generate_pdf_from_text", desc: "Render plain text or markdown into a formatted, downloadable PDF. Returns base64." },
   { icon: Hash,      name: "markdown_to_html",       desc: "Convert markdown to a complete styled HTML document with all standard syntax supported." },
   { icon: Link2,     name: "create_shareable_paste", desc: "Store text and get a public link (toolora.dev/p/[id]). Expires in 7 days." },
+  { icon: Bot,       name: "save_memory",            desc: "Persist any text under a named key across sessions. Claude's notepad — no setup, 30-day expiry." },
+  { icon: Bot,       name: "recall_memory",          desc: "Retrieve text saved with save_memory. Pass the same key to get your content back." },
 ];
 
 const MCP_ENDPOINT = "https://toolora.replit.app/api/mcp";
@@ -127,8 +129,8 @@ console.log(result.content[0].text);
 
 export default function McpPage() {
   useSEO({
-    title: "Free MCP Server — 15 Tools for Claude, Cursor & AI Agents",
-    description: "Toolora's free MCP server gives Claude, Cursor, Cline, and any MCP-compatible AI agent 15 real server-side tools: PDF, OCR, QR codes, markdown, pastes, and more. No API key. Listed in the Anthropic MCP Registry.",
+    title: "Free MCP Server — 17 Tools for Claude, Cursor & AI Agents",
+    description: "Toolora's free MCP server gives Claude, Cursor, Cline, and any MCP-compatible AI agent 17 real server-side tools: PDF, OCR, QR codes, memory, markdown, pastes, and more. No API key. Listed in the Anthropic MCP Registry.",
     canonical: "https://toolora.dev/mcp",
   });
 
@@ -160,7 +162,7 @@ export default function McpPage() {
           <span className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-green-500" /> Listed in Anthropic MCP Registry</span>
           <span className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-green-500" /> Smithery verified</span>
           <span className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-green-500" /> 15 countries</span>
-          <span className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-green-500" /> 15 tools, no rate limits</span>
+          <span className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-green-500" /> 17 tools, no rate limits</span>
         </div>
       </div>
 
@@ -170,7 +172,7 @@ export default function McpPage() {
       {/* Tool list */}
       <section className="mt-12">
         <h2 className="text-2xl font-display font-bold mb-2">Available Tools</h2>
-        <p className="text-muted-foreground mb-6">All 15 tools are free with no rate limits for MCP usage.</p>
+        <p className="text-muted-foreground mb-6">All 17 tools are free with no rate limits for MCP usage.</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {MCP_TOOLS.map((t) => (
             <div key={t.name} className="flex items-start gap-3 p-4 rounded-xl border border-border bg-card hover:border-primary/30 transition-colors">
