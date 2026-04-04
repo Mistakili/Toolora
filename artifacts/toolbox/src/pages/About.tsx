@@ -78,6 +78,19 @@ export default function About() {
         ))}
       </div>
 
+      {/* Developer human visual */}
+      <div className="relative rounded-2xl overflow-hidden border border-border/50 mb-14">
+        <img
+          src={`${import.meta.env.BASE_URL}images/about-human.png`}
+          alt="Developer at work — the humans behind Toolora"
+          className="w-full object-cover max-h-64 object-center"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />
+        <div className="absolute bottom-0 left-0 px-8 pb-6">
+          <p className="text-sm text-muted-foreground italic">"We build the tools we wished existed."</p>
+        </div>
+      </div>
+
       {/* Values */}
       <section className="mb-14">
         <div className="grid md:grid-cols-2 gap-10 items-center mb-10">

@@ -206,6 +206,21 @@ export default function Enterprise() {
         </p>
       </section>
 
+      {/* ── Enterprise hero visual ───────────────────────────────────────── */}
+      <div className="relative rounded-2xl overflow-hidden border border-border/50 -mt-8">
+        <img
+          src={`${import.meta.env.BASE_URL}images/enterprise-hero.png`}
+          alt="Enterprise boardroom with holographic compliance visualization"
+          className="w-full object-cover max-h-80 object-center"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-background/85 via-background/30 to-transparent flex items-center">
+          <div className="px-8 max-w-sm">
+            <p className="text-xs font-mono text-green-400 uppercase tracking-widest mb-2">Private by Architecture</p>
+            <p className="text-xl font-display font-bold leading-snug">Compliance your legal team can verify in 30 seconds.</p>
+          </div>
+        </div>
+      </div>
+
       {/* ── The core difference ──────────────────────────────────────────── */}
       <section className="grid md:grid-cols-2 gap-6">
         <div className="rounded-2xl border border-red-500/20 bg-red-500/5 p-6 space-y-4">
@@ -385,6 +400,16 @@ export default function Enterprise() {
         </div>
         {errMsg && <p className="text-sm text-red-400 text-center">{errMsg}</p>}
       </section>
+
+      {/* ── Trust visual ─────────────────────────────────────────────────── */}
+      <div className="relative rounded-2xl overflow-hidden border border-border/50">
+        <img
+          src={`${import.meta.env.BASE_URL}images/enterprise-trust.png`}
+          alt="The difference: data breach risk vs zero-upload protection"
+          className="w-full object-cover max-h-64 object-center"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-transparent" />
+      </div>
 
       {/* ── Verification block ───────────────────────────────────────────── */}
       <section className="rounded-2xl border border-border bg-muted/20 p-8 space-y-4">

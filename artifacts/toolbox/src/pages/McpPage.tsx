@@ -169,14 +169,14 @@ export default function McpPage() {
       {/* Cinematic tools visual */}
       <div className="relative rounded-2xl overflow-hidden mb-12 border border-border/50">
         <img
-          src={`${import.meta.env.BASE_URL}images/mcp-tools-visual.png`}
-          alt="AI agent accessing 17 Toolora MCP tools"
+          src={`${import.meta.env.BASE_URL}images/mcp-server-room.png`}
+          alt="Professional data center — the infrastructure powering Toolora MCP"
           className="w-full object-cover max-h-72 object-center"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-background/80 via-transparent to-transparent flex items-center">
+        <div className="absolute inset-0 bg-gradient-to-r from-background/85 via-background/40 to-transparent flex items-center">
           <div className="px-8 max-w-xs">
             <p className="text-xs font-mono text-primary uppercase tracking-widest mb-2">17 tools. One config line.</p>
-            <p className="text-lg font-display font-bold leading-snug">Your agent gets real capabilities — not prompt wrappers.</p>
+            <p className="text-lg font-display font-bold leading-snug">Real server infrastructure. Not a prompt wrapper.</p>
           </div>
         </div>
       </div>

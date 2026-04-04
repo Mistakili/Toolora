@@ -425,6 +425,21 @@ export default function McpHub() {
         </div>
       </section>
 
+      {/* ── Hub network visual ───────────────────────────────────────────── */}
+      <div className="relative rounded-2xl overflow-hidden border border-border/50">
+        <img
+          src={`${import.meta.env.BASE_URL}images/mcp-hub-hero.png`}
+          alt="MCP server hub — privacy-first directory of local and self-hosted servers"
+          className="w-full object-cover max-h-72 object-center"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-background/85 via-background/30 to-transparent flex items-center">
+          <div className="px-8 max-w-xs">
+            <p className="text-xs font-mono text-primary uppercase tracking-widest mb-2">Curated. Vetted. Local-first.</p>
+            <p className="text-lg font-display font-bold leading-snug">9 servers. Every one keeps your data on your machine.</p>
+          </div>
+        </div>
+      </div>
+
       {/* ── Quick Install ─────────────────────────────────────────────────── */}
       <QuickInstall />
 

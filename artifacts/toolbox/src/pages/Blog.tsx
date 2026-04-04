@@ -33,9 +33,24 @@ export default function Blog() {
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-16">
-      <div className="mb-12">
+      <div className="mb-8">
         <h1 className="text-4xl font-display font-bold mb-3">Blog</h1>
         <p className="text-muted-foreground text-lg">Privacy, tools, and the indie web.</p>
+      </div>
+
+      {/* Blog hero visual */}
+      <div className="relative rounded-2xl overflow-hidden border border-border/50 mb-12">
+        <img
+          src="/images/blog-hero.png"
+          alt="Creative editorial workspace"
+          className="w-full object-cover max-h-56 object-center"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-background/80 via-background/30 to-transparent flex items-center">
+          <div className="px-8 max-w-xs">
+            <p className="text-xs font-mono text-primary uppercase tracking-widest mb-1">Toolora Blog</p>
+            <p className="text-base font-display font-bold leading-snug">Writing about privacy, AI tools, and the open web.</p>
+          </div>
+        </div>
       </div>
 
       <div className="space-y-6">

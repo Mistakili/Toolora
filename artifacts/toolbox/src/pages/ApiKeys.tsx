@@ -113,6 +113,21 @@ export default function ApiKeys() {
   return (
     <div className="min-h-screen bg-zinc-950 text-white">
       <div className="max-w-3xl mx-auto px-4 py-12">
+        {/* Hero visual */}
+        <div className="relative rounded-2xl overflow-hidden border border-zinc-800 mb-8">
+          <img
+            src="/images/api-keys-hero.png"
+            alt="API key vault visualization"
+            className="w-full object-cover max-h-52 object-center"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-zinc-950/90 via-zinc-950/40 to-transparent flex items-center">
+            <div className="px-8 max-w-xs">
+              <p className="text-xs font-mono text-violet-400 uppercase tracking-widest mb-1">Secure Access</p>
+              <p className="text-lg font-bold leading-snug">Your keys. Your calls. Full control.</p>
+            </div>
+          </div>
+        </div>
+
         <h1 className="text-3xl font-bold mb-1">API Keys</h1>
         <p className="text-zinc-400 mb-8">Generate keys to authenticate requests to the Toolora API.</p>
 

@@ -102,6 +102,48 @@ uri = "file://artifacts/toolbox/public/images/about-privacy-visual.png"
 type = "image"
 title = "privacy shield about visual"
 
+[[generated]]
+id = "ujfNu7hN6Y-QZPl4L9G1p"
+uri = "file://artifacts/toolbox/public/images/enterprise-hero.png"
+type = "image"
+title = "enterprise boardroom holographic security"
+
+[[generated]]
+id = "Cuf42VUQ0vMUbbl71lNj3"
+uri = "file://artifacts/toolbox/public/images/mcp-server-room.png"
+type = "image"
+title = "professional data center server racks blue LED"
+
+[[generated]]
+id = "hiuEYG85i51-vujm_9I8N"
+uri = "file://artifacts/toolbox/public/images/mcp-hub-hero.png"
+type = "image"
+title = "MCP hub network nexus nodes glowing"
+
+[[generated]]
+id = "CW9JaNtBldXtMLh1qd36k"
+uri = "file://artifacts/toolbox/public/images/about-human.png"
+type = "image"
+title = "developer at night coding monitors glow"
+
+[[generated]]
+id = "NA-xJ9Sv9lTvYkLVyJZd4"
+uri = "file://artifacts/toolbox/public/images/blog-hero.png"
+type = "image"
+title = "editorial dark desk blog workspace overhead"
+
+[[generated]]
+id = "cIJU-ndk_Cwlgu9rgUCEy"
+uri = "file://artifacts/toolbox/public/images/api-keys-hero.png"
+type = "image"
+title = "digital key vault API encryption glowing"
+
+[[generated]]
+id = "W8XINskZokbjAWMxEzqEO"
+uri = "file://artifacts/toolbox/public/images/enterprise-trust.png"
+type = "image"
+title = "enterprise privacy breach vs protection diptych"
+
 [[outputs]]
 id = "W91hp3ihLhEvWTT51EilJ"
 uri = "file://artifacts/toolbox/public/og-image.png"
