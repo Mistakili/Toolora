@@ -61,6 +61,8 @@ type ServerEntry = {
   privacyLevel: "local" | "self-hosted" | "api";
   stars?: string;
   github?: string;
+  openSource?: boolean;
+  verifyNote: string;
   installNote?: string;
   featured?: boolean;
   claudeConfig: string;
@@ -77,6 +79,7 @@ const SERVERS: ServerEntry[] = [
     privacyLevel: "api",
     featured: true,
     installNote: "Free, no auth required. Works instantly with Claude Desktop and Cursor.",
+    verifyNote: "Tool calls are processed by toolora.dev servers. Content is not logged or retained beyond the request. To verify: open DevTools → Network tab → trigger a tool call → inspect the request payload to see exactly what is sent.",
     claudeConfig: JSON.stringify({
       mcpServers: {
         toolora: {
@@ -100,6 +103,7 @@ const SERVERS: ServerEntry[] = [
     privacyLevel: "api",
     github: "https://www.npmjs.com/package/soliris-mcp",
     installNote: "Private key never leaves your machine. Runs via npx — no server-side custody.",
+    verifyNote: "Your private key is read locally by the npx process and never transmitted — only signed transactions reach the RPC endpoint. To verify: monitor your network traffic and confirm no key material appears in outbound requests.",
     claudeConfig: JSON.stringify({
       mcpServers: {
         soliris: {
@@ -121,8 +125,10 @@ const SERVERS: ServerEntry[] = [
     tagline: "Read, write, and search files on your local machine. Restrict access to specific directories. The most commonly used MCP server.",
     icon: FolderOpen,
     privacyLevel: "local",
+    openSource: true,
     stars: "28k",
     github: "https://github.com/modelcontextprotocol/servers/tree/main/src/filesystem",
+    verifyNote: "Runs as a local subprocess via npx — no remote server involved. To verify: open DevTools → Network tab → trigger a file read call → confirm zero outbound requests fire. Everything stays on your machine.",
     claudeConfig: JSON.stringify({
       mcpServers: {
         filesystem: {
@@ -139,8 +145,10 @@ const SERVERS: ServerEntry[] = [
     tagline: "Query and modify a local SQLite database. Runs entirely on your machine — your data never leaves.",
     icon: Database,
     privacyLevel: "local",
+    openSource: true,
     stars: "28k",
     github: "https://github.com/modelcontextprotocol/servers/tree/main/src/sqlite",
+    verifyNote: "Runs locally via uvx against a .db file on your machine. No network access of any kind. To verify: open DevTools → Network tab → run a query → confirm zero outbound requests.",
     claudeConfig: JSON.stringify({
       mcpServers: {
         sqlite: {
@@ -157,8 +165,10 @@ const SERVERS: ServerEntry[] = [
     tagline: "Inspect git history, commits, branches, diffs, and blame output from your local repositories. No remote access needed.",
     icon: GitBranch,
     privacyLevel: "local",
+    openSource: true,
     stars: "28k",
     github: "https://github.com/modelcontextprotocol/servers/tree/main/src/git",
+    verifyNote: "Reads your local git repository directly via uvx. Makes no outbound network requests. To verify: open DevTools → Network tab → inspect a commit or diff → confirm zero requests fire.",
     claudeConfig: JSON.stringify({
       mcpServers: {
         git: {
@@ -175,8 +185,10 @@ const SERVERS: ServerEntry[] = [
     tagline: "Persistent knowledge graph that lives on your machine. Lets Claude remember entities, relations, and observations across sessions.",
     icon: Brain,
     privacyLevel: "local",
+    openSource: true,
     stars: "28k",
     github: "https://github.com/modelcontextprotocol/servers/tree/main/src/memory",
+    verifyNote: "Stores all data as a local JSON file on your machine — typically at ~/.claude/memory.json. No network requests made. To verify: find the file and confirm all your stored memories are there in plain text.",
     claudeConfig: JSON.stringify({
       mcpServers: {
         memory: {
@@ -193,7 +205,9 @@ const SERVERS: ServerEntry[] = [
     tagline: "Query a local or self-hosted Postgres database. Read-only by default — no writes unless you explicitly enable them.",
     icon: Database,
     privacyLevel: "self-hosted",
+    openSource: true,
     github: "https://github.com/modelcontextprotocol/servers/tree/main/src/postgres",
+    verifyNote: "Connects to whatever PostgreSQL instance you specify in the connection string. Ensure that string points to your own host (localhost or a server you control) — not a third-party database provider.",
     claudeConfig: JSON.stringify({
       mcpServers: {
         postgres: {
@@ -210,8 +224,10 @@ const SERVERS: ServerEntry[] = [
     tagline: "Browser automation running locally via Puppeteer. Navigate pages, take screenshots, extract content — all on your machine.",
     icon: Globe,
     privacyLevel: "local",
+    openSource: true,
     stars: "28k",
     github: "https://github.com/modelcontextprotocol/servers/tree/main/src/puppeteer",
+    verifyNote: "Launches a real Chrome browser on your machine. All browsing activity is local — the server makes no separate requests to any third party. To verify: watch the Chrome window that opens; everything visible there is what's being processed.",
     claudeConfig: JSON.stringify({
       mcpServers: {
         puppeteer: {
@@ -228,7 +244,9 @@ const SERVERS: ServerEntry[] = [
     tagline: "Structured multi-step reasoning tool. Helps Claude break down complex problems into thought chains. Runs fully in-process.",
     icon: Brain,
     privacyLevel: "local",
+    openSource: true,
     github: "https://github.com/modelcontextprotocol/servers/tree/main/src/sequentialthinking",
+    verifyNote: "Runs entirely in-process as a local subprocess — no network calls of any kind. Your reasoning steps and data never leave your machine. Fully auditable open source code on GitHub.",
     claudeConfig: JSON.stringify({
       mcpServers: {
         sequentialthinking: {
@@ -240,6 +258,16 @@ const SERVERS: ServerEntry[] = [
     tags: ["reasoning", "thinking", "planning", "local"],
   },
 ];
+
+function OpenSourceBadge({ href }: { href: string }) {
+  return (
+    <a href={href} target="_blank" rel="noopener noreferrer"
+      className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full border border-blue-500/20 bg-blue-500/10 text-blue-400 font-medium hover:bg-blue-500/20 transition-colors">
+      <GitBranch className="w-3 h-3" />
+      Open source
+    </a>
+  );
+}
 
 function ServerCard({ server }: { server: ServerEntry }) {
   const [expanded, setExpanded] = useState(false);
@@ -258,6 +286,9 @@ function ServerCard({ server }: { server: ServerEntry }) {
               <span className="text-xs px-2 py-0.5 rounded-full bg-primary/20 text-primary border border-primary/30 font-medium">Featured</span>
             )}
             <PrivacyBadge level={server.privacyLevel} />
+            {server.openSource && server.github && (
+              <OpenSourceBadge href={server.github} />
+            )}
           </div>
           <p className="text-sm text-muted-foreground leading-relaxed">{server.tagline}</p>
           {server.installNote && (
@@ -295,6 +326,12 @@ function ServerCard({ server }: { server: ServerEntry }) {
 
       {expanded && (
         <div className="space-y-3 pt-1">
+          <div className="rounded-lg border border-green-500/20 bg-green-500/5 p-3">
+            <p className="text-xs font-medium text-green-400 flex items-center gap-1.5 mb-1">
+              <ShieldCheck className="w-3.5 h-3.5" /> How to verify
+            </p>
+            <p className="text-xs text-muted-foreground leading-relaxed">{server.verifyNote}</p>
+          </div>
           <div>
             <p className="text-xs text-muted-foreground mb-1.5 font-medium">Claude Desktop (claude_desktop_config.json)</p>
             <CodeBlock code={server.claudeConfig} lang="json" />
