@@ -3,7 +3,7 @@
   "name": "Toolora — Free Online Tools",
   "version": "1.0.0",
   "description": "Quick access to all 20+ Toolora tools. Select text on any page to send it directly to a tool.",
-  "permissions": ["contextMenus", "tabs", "activeTab"],
+  "permissions": ["contextMenus", "activeTab"],
   "action": {
     "default_popup": "popup.html",
     "default_title": "Toolora Tools",
