@@ -87,7 +87,7 @@ export default function Home() {
                 <Sparkles className="w-4 h-4" /> MCP-ready &middot; Claude Desktop &middot; Cursor &middot; Windsurf
               </div>
               <h1 className="text-5xl md:text-7xl font-display font-bold tracking-tight mb-6">
-                Free tools for <span className="gradient-text">AI builders.</span>
+                Free tools for AI builders.
               </h1>
               <p className="text-xl text-muted-foreground mb-10 leading-relaxed">
                 28 browser tools + a free MCP server for Claude Desktop and Cursor. Format JSON, convert PDFs, transcribe audio, read URLs — processed in your browser. Files never leave your device. No uploads, no accounts, no tracking.
