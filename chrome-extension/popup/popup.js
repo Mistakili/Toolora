@@ -1,5 +1,14 @@
 const BASE = "https://toolora.dev";
 
+function escapeHtml(str) {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 const TOOLS = [
   // Text
   { name: "Word Counter",           desc: "Count words, chars & reading time",  icon: "📝", cat: "text",        path: "/tools/text/word-counter" },
@@ -47,7 +56,7 @@ function render() {
   });
 
   if (filtered.length === 0) {
-    list.innerHTML = `<div class="no-results">No tools found for "<strong>${searchQuery}</strong>"</div>`;
+    list.innerHTML = `<div class="no-results">No tools found for "<strong>${escapeHtml(searchQuery)}</strong>"</div>`;
     return;
   }
 

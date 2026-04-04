@@ -1,0 +1,105 @@
+JWT token detected in source code. Avoid hardcoding tokens directly in your code, even if they are public or anonymous keys. Instead, use environment variables to store and access tokens at runtime. If you need the actual token values to make this work properly, ask me to provide them through Replit's secret system.
+.mcpregistry_registry_token
+{"token":"eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJtY3AtcmVnaXN0cnkiLCJleHAiOjE3NzUyMjUzNDAsIm5iZiI6MTc3NTIyNTA0MCwiaWF0IjoxNzc1MjI1MDQwLCJhdXRoX21ldGhvZCI6ImdpdGh1Yi1hdCIsImF1dGhfbWV0aG9kX3N1YiI6Ik1pc3Rha2lsaSIsInBlcm1pc3Npb25zIjpbeyJhY3Rpb24iOiJwdWJsaXNoIiwicmVzb3VyY2UiOiJpby5naXRodWIuTWlzdGFraWxpLyoifV19.9b1q20sLzRzZ2uaDzNE7bI87JmSY1BstDEfKpRWqj6nvwbjN-_xIJbjaXlWx6TBQaDQHV7U8vQO9m1X_qiAgCA","expires_at":1775225340}
+
+Hide
+
+Fix with Agent
+Security
+A gitleaks JWT credential detected. Avoid hardcoding credentials directly in connection strings as this creates security risks. Instead, use environment variables to store and access credentials at runtime. If you need the actual credential values to make this work properly, ask me to provide them through Replit's secret system.
+
+A gitleaks JWT credential detected. Avoid hardcoding credentials directly in connection strings as this creates security risks. Instead, use environment variables to store and access credentials at runtime. If you need the actual credential values to make this work properly, ask me to provide them through Replit's secret system.
+.mcpregistry_registry_token
+{"token":"eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJtY3AtcmVnaXN0cnkiLCJleHAiOjE3NzUyMjUzNDAsIm5iZiI6MTc3NTIyNTA0MCwiaWF0IjoxNzc1MjI1MDQwLCJhdXRoX21ldGhvZCI6ImdpdGh1Yi1hdCIsImF1dGhfbWV0aG9kX3N1YiI6Ik1pc3Rha2lsaSIsInBlcm1pc3Npb25zIjpbeyJhY3Rpb24iOiJwdWJsaXNoIiwicmVzb3VyY2UiOiJpby5naXRodWIuTWlzdGFraWxpLyoifV19.9b1q20sLzRzZ2uaDzNE7bI87JmSY1BstDEfKpRWqj6nvwbjN-_xIJbjaXlWx6TBQaDQHV7U8vQO9m1X_qiAgCA","expires_at":1775225340}
+
+Hide
+
+Fix with Agent
+Security
+XSS Vulnerability: Unsafe DOM Manipulation. User controlled data in methods like `innerHTML`, `outerHTML` or `document.write` is an anti-pattern that can lead to XSS vulnerabilities. Replace with safe DOM methods: Use createElement() + appendChild() + textContent for dynamic content. Avoid use innerHTML with user data: Even escaped data can be risky. If HTML injection is absolutely necessary: Sanitize with DOMPurify library first.
+
+XSS Vulnerability: Unsafe DOM Manipulation. User controlled data in methods like `innerHTML`, `outerHTML` or `document.write` is an anti-pattern that can lead to XSS vulnerabilities. Replace with safe DOM methods: Use createElement() + appendChild() + textContent for dynamic content. Avoid use innerHTML with user data: Even escaped data can be risky. If HTML injection is absolutely necessary: Sanitize with DOMPurify library first.
+artifacts/extension/popup.js
+    section.innerHTML = `<div class="section-title">${cat}</div>`;
+
+Hide
+
+Fix with Agent
+Security
+XSS Vulnerability: Unsafe DOM Manipulation. User controlled data in methods like `innerHTML`, `outerHTML` or `document.write` is an anti-pattern that can lead to XSS vulnerabilities. Replace with safe DOM methods: Use createElement() + appendChild() + textContent for dynamic content. Avoid use innerHTML with user data: Even escaped data can be risky. If HTML injection is absolutely necessary: Sanitize with DOMPurify library first.
+
+XSS Vulnerability: Unsafe DOM Manipulation. User controlled data in methods like `innerHTML`, `outerHTML` or `document.write` is an anti-pattern that can lead to XSS vulnerabilities. Replace with safe DOM methods: Use createElement() + appendChild() + textContent for dynamic content. Avoid use innerHTML with user data: Even escaped data can be risky. If HTML injection is absolutely necessary: Sanitize with DOMPurify library first.
+artifacts/extension/popup.js
+      a.innerHTML = `
+        <div class="tool-icon">${tool.icon}</div>
+        <div class="tool-info">
+          <div class="name">${tool.name}</div>
+          <div class="cat">${tool.category}</div>
+        </div>`;
+
+Hide
+
+Fix with Agent
+Security
+JWT token detected in source code. Avoid hardcoding tokens directly in your code, even if they are public or anonymous keys. Instead, use environment variables to store and access tokens at runtime. If you need the actual token values to make this work properly, ask me to provide them through Replit's secret system.
+
+JWT token detected in source code. Avoid hardcoding tokens directly in your code, even if they are public or anonymous keys. Instead, use environment variables to store and access tokens at runtime. If you need the actual token values to make this work properly, ask me to provide them through Replit's secret system.
+artifacts/toolbox/src/lib/blog-posts.ts
+<pre><code>eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyXzEyMyIsImVtYWlsIjoiYWxpY2VAZXhhbXBsZS5jb20iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MDAwMDAwMDAsImV4cCI6MTcwMDAwMzYwMH0.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c</code></pre>
+
+Hide
+
+Fix with Agent
+Security
+JWT token detected in source code. Avoid hardcoding tokens directly in your code, even if they are public or anonymous keys. Instead, use environment variables to store and access tokens at runtime. If you need the actual token values to make this work properly, ask me to provide them through Replit's secret system.
+
+JWT token detected in source code. Avoid hardcoding tokens directly in your code, even if they are public or anonymous keys. Instead, use environment variables to store and access tokens at runtime. If you need the actual token values to make this work properly, ask me to provide them through Replit's secret system.
+artifacts/toolbox/src/lib/blog-posts.ts
+decodeJwtPayload('eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyXzEyMyJ9.signature')
+
+Hide
+
+Fix with Agent
+Security
+JWT token detected in source code. Avoid hardcoding tokens directly in your code, even if they are public or anonymous keys. Instead, use environment variables to store and access tokens at runtime. If you need the actual token values to make this work properly, ask me to provide them through Replit's secret system.
+
+JWT token detected in source code. Avoid hardcoding tokens directly in your code, even if they are public or anonymous keys. Instead, use environment variables to store and access tokens at runtime. If you need the actual token values to make this work properly, ask me to provide them through Replit's secret system.
+artifacts/toolbox/src/pages/GlossaryPage.tsx
+eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyXzEyMyJ9.signature`,
+
+Hide
+
+Fix with Agent
+Security
+XSS Vulnerability: Unsafe DOM Manipulation. User controlled data in methods like `innerHTML`, `outerHTML` or `document.write` is an anti-pattern that can lead to XSS vulnerabilities. Replace with safe DOM methods: Use createElement() + appendChild() + textContent for dynamic content. Avoid use innerHTML with user data: Even escaped data can be risky. If HTML injection is absolutely necessary: Sanitize with DOMPurify library first.
+
+XSS Vulnerability: Unsafe DOM Manipulation. User controlled data in methods like `innerHTML`, `outerHTML` or `document.write` is an anti-pattern that can lead to XSS vulnerabilities. Replace with safe DOM methods: Use createElement() + appendChild() + textContent for dynamic content. Avoid use innerHTML with user data: Even escaped data can be risky. If HTML injection is absolutely necessary: Sanitize with DOMPurify library first.
+chrome-extension/popup/popup.js
+    list.innerHTML = `<div class="no-results">No tools found for "<strong>${searchQuery}</strong>"</div>`;
+
+Hide
+
+Fix with Agent
+Security
+XSS Vulnerability: Unsafe DOM Manipulation. User controlled data in methods like `innerHTML`, `outerHTML` or `document.write` is an anti-pattern that can lead to XSS vulnerabilities. Replace with safe DOM methods: Use createElement() + appendChild() + textContent for dynamic content. Avoid use innerHTML with user data: Even escaped data can be risky. If HTML injection is absolutely necessary: Sanitize with DOMPurify library first.
+
+XSS Vulnerability: Unsafe DOM Manipulation. User controlled data in methods like `innerHTML`, `outerHTML` or `document.write` is an anti-pattern that can lead to XSS vulnerabilities. Replace with safe DOM methods: Use createElement() + appendChild() + textContent for dynamic content. Avoid use innerHTML with user data: Even escaped data can be risky. If HTML injection is absolutely necessary: Sanitize with DOMPurify library first.
+chrome-extension/popup/popup.js
+    list.innerHTML = cats.map((c) => {
+      const tools = filtered.filter((t) => t.cat === c.id);
+      if (!tools.length) return "";
+      return `
+        <div class="cat-label">${c.label}</div>
+        ${tools.map(toolHtml).join("")}
+      `;
+    }).join("");
+
+Hide
+
+Fix with Agent
+Security
+XSS Vulnerability: Unsafe DOM Manipulation. User controlled data in methods like `innerHTML`, `outerHTML` or `document.write` is an anti-pattern that can lead to XSS vulnerabilities. Replace with safe DOM methods: Use createElement() + appendChild() + textContent for dynamic content. Avoid use innerHTML with user data: Even escaped data can be risky. If HTML injection is absolutely necessary: Sanitize with DOMPurify library first.
+
+XSS Vulnerability: Unsafe DOM Manipulation. User controlled data in methods like `innerHTML`, `outerHTML` or `document.write` is an anti-pattern that can lead to XSS vulnerabilities. Replace with safe DOM methods: Use createElement() + appendChild() + textContent for dynamic content. Avoid use innerHTML with user data: Even escaped data can be risky. If HTML injection is absolutely necessary: Sanitize with DOMPurify library first.
+chrome-extension/popup/popup.js
+    list.innerHTML = filtered.map(toolHtml).join("");
