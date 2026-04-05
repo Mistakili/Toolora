@@ -49,7 +49,7 @@ const TOOLS = [
   { icon: Hash,      label: "Hash Generator",     desc: "MD5, SHA-256, SHA-512 hashes",           href: "/tools/developer/hash-generator",    cat: "Security" },
   { icon: Key,       label: "Password Generator", desc: "Cryptographically random passwords",      href: "/tools/developer/password-generator",cat: "Security" },
   { icon: QrCode,    label: "QR Code Generator",  desc: "Clean QR codes, no watermarks ever",     href: "/tools/productivity/qr-generator",   cat: "Productivity" },
-  { icon: Type,      label: "Word Counter",        desc: "Words, chars, reading time instant",     href: "/tools/text/word-counter",           cat: "Text" },
+  { icon: Type,      label: "Word Counter",        desc: "Words, chars, readability score & keywords", href: "/tools/text/word-counter",           cat: "Text" },
   { icon: Lock,      label: "Base64 Encoder",      desc: "Encode & decode without a server",       href: "/tools/developer/base64",            cat: "Developer" },
 ];
 

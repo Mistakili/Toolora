@@ -32,9 +32,9 @@ export const TOOLS: ToolDef[] = [
   // Text Tools
   {
     id: "word-counter", name: "Word Counter", slug: "word-counter", category: "text", isPopular: true, icon: Type,
-    description: "Count words, characters, sentences, and paragraphs in real-time.",
-    seoTitle: "Free Word Counter — Count Words, Characters & Sentences Online | Toolora",
-    seoDescription: "Instantly count words, characters, sentences, paragraphs and reading time. Free, private, 100% browser-based. No signup needed.",
+    description: "Count words, characters, sentences, readability score, speaking time, and top keywords in real-time.",
+    seoTitle: "Free Word Counter — Words, Characters, Readability Score & Keywords | Toolora",
+    seoDescription: "Instantly count words, characters, sentences, paragraphs, unique words, reading time, speaking time, Flesch readability score, and top keyword density. Free, private, 100% browser-based.",
   },
   {
     id: "case-converter", name: "Case Converter", slug: "case-converter", category: "text", icon: ArrowLeftRight,
