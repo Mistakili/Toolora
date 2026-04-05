@@ -172,7 +172,7 @@ const TOOLS = [
   {
     name: "count_words",
     description:
-      "Count words, characters, sentences, and paragraphs in a block of text. Also returns estimated reading time. Useful for checking document stats, validating content length, or summarising text metrics.",
+      "Count words, characters, sentences, paragraphs, and unique words in a block of text. Returns reading time (200 wpm), speaking time (130 wpm), Flesch readability score with label (Very Easy → Very Difficult), and top keyword frequency excluding common stop words. Use when you need document stats, content length validation, readability checks, or keyword density analysis.",
     inputSchema: {
       type: "object",
       properties: {

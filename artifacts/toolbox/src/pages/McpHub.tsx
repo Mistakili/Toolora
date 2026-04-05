@@ -3,7 +3,8 @@ import { Link } from "wouter";
 import {
   ShieldCheck, Copy, Check, ExternalLink,
   Zap, Database, FolderOpen, GitBranch, Brain,
-  Globe, Terminal, FileText, Search, ChevronDown, ChevronUp, Mail, Monitor, Coins
+  Globe, Terminal, FileText, Search, ChevronDown, ChevronUp, Mail, Monitor, Coins,
+  MessageSquare
 } from "lucide-react";
 import { useSEO } from "@/hooks/useSEO";
 
@@ -396,6 +397,98 @@ const INSTALL_TABS = [
   },
 ];
 
+const EXAMPLE_PROMPTS = [
+  {
+    label: "Read an article",
+    prompt: "Use the toolora read_url tool to fetch and summarise this article for me: https://example.com/article",
+    icon: Globe,
+  },
+  {
+    label: "Extract PDF text",
+    prompt: "Use toolora to extract all the text from this PDF file so I can read it [attach your PDF]",
+    icon: FileText,
+  },
+  {
+    label: "Transcribe audio",
+    prompt: "Use the toolora transcribe_audio tool to transcribe this voice note / recording for me [attach audio file]",
+    icon: Terminal,
+  },
+  {
+    label: "Share output as a link",
+    prompt: "Use toolora create_shareable_paste to turn your response into a public link I can share",
+    icon: Globe,
+  },
+  {
+    label: "Readability check",
+    prompt: "Use the toolora count_words tool to check the readability score and top keywords of this text: [paste your text]",
+    icon: FileText,
+  },
+  {
+    label: "CSV → JSON",
+    prompt: "Use toolora csv_to_json to convert this CSV data into JSON: [paste CSV]",
+    icon: Terminal,
+  },
+  {
+    label: "Generate a PDF",
+    prompt: "Use toolora generate_pdf_from_text to turn your summary into a downloadable PDF",
+    icon: FileText,
+  },
+  {
+    label: "Remember something",
+    prompt: "Use toolora save_memory with key 'project-brief' to remember the following for our future sessions: [paste content]",
+    icon: Brain,
+  },
+];
+
+function PromptCard({ label, prompt, icon: Icon }: { label: string; prompt: string; icon: React.ElementType }) {
+  const [copied, setCopied] = useState(false);
+  const copy = async () => {
+    await navigator.clipboard.writeText(prompt);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+  return (
+    <div className="rounded-xl border border-border bg-muted/10 hover:border-border/80 hover:bg-muted/20 transition-colors p-4 space-y-2.5">
+      <div className="flex items-center gap-2">
+        <Icon className="w-3.5 h-3.5 text-primary shrink-0" />
+        <span className="text-xs font-semibold text-foreground uppercase tracking-wider">{label}</span>
+      </div>
+      <p className="text-sm text-muted-foreground leading-relaxed font-mono">{prompt}</p>
+      <button
+        onClick={copy}
+        className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors px-2.5 py-1 bg-muted rounded-md border border-border"
+      >
+        {copied ? <Check className="w-3 h-3 text-green-500" /> : <Copy className="w-3 h-3" />}
+        {copied ? "Copied" : "Copy prompt"}
+      </button>
+    </div>
+  );
+}
+
+function TryThese() {
+  return (
+    <div className="space-y-5">
+      <div className="flex items-start gap-3">
+        <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center shrink-0 mt-0.5">
+          <MessageSquare className="w-4 h-4 text-primary" />
+        </div>
+        <div>
+          <h2 className="font-semibold text-sm">What to say to your AI after installing</h2>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            Copy any of these into Claude, Cursor, or Windsurf to make your first tool call.
+            Your AI will pick up the toolora tools automatically.
+          </p>
+        </div>
+      </div>
+      <div className="grid sm:grid-cols-2 gap-3">
+        {EXAMPLE_PROMPTS.map(p => (
+          <PromptCard key={p.label} {...p} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function QuickInstall() {
   const [tab, setTab] = useState("claude");
   const active = INSTALL_TABS.find(t => t.id === tab)!;
@@ -506,6 +599,8 @@ export default function McpHub() {
       {/* ── Quick Install + Criteria ──────────────────────────────────────── */}
       <div className="max-w-4xl mx-auto px-4 py-16 space-y-20">
         <QuickInstall />
+
+        <TryThese />
 
         <section className="space-y-6">
           <div className="text-center space-y-1">

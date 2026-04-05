@@ -54,7 +54,7 @@ const MCP_TOOLS = [
   { icon: Bot,       name: "recall_memory",          desc: "Retrieve text saved with save_memory. Pass the same key to get your content back." },
 ];
 
-const MCP_ENDPOINT = "https://toolora.replit.app/api/mcp";
+const MCP_ENDPOINT = "https://toolora.dev/api/mcp";
 
 const CLAUDE_CONFIG = JSON.stringify({
   mcpServers: {
@@ -87,7 +87,7 @@ const CLINE_CONFIG = JSON.stringify({
 
 const PYTHON_EXAMPLE = `import httpx, json
 
-MCP = "https://toolora.replit.app/api/mcp"
+MCP = "https://toolora.dev/api/mcp"
 session = httpx.Client()
 
 # Initialize the MCP session
@@ -106,7 +106,7 @@ data = result.json()
 
 const NODE_EXAMPLE = `import fetch from "node-fetch";
 
-const MCP = "https://toolora.replit.app/api/mcp";
+const MCP = "https://toolora.dev/api/mcp";
 
 // Call the count_words tool
 const res = await fetch(MCP, {
