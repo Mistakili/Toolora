@@ -44,6 +44,158 @@ export function getPostImage(slug: string, category: string): string {
 
 export const BLOG_POSTS: BlogPost[] = [
   {
+    slug: "flesch-readability-score-checker",
+    title: "Flesch Readability Score: What It Means and How to Check Yours Free",
+    description: "The Flesch Reading Ease score tells you how hard your text is to read — in seconds. Here's how it works, what the numbers mean, and how to check any text for free without uploading it anywhere.",
+    date: "2026-04-05",
+    readTime: "7 min read",
+    category: "Tools",
+    content: `
+<p>You've written something. Now the question is: will people actually read it?</p>
+
+<p>Clear writing gets read. Dense writing gets skimmed, abandoned, or misunderstood. The Flesch Reading Ease score is the fastest, most widely-used way to measure which side your text falls on — and you can check yours in seconds using the <a href="/tools/text/word-counter">Toolora Word Counter</a>. No account, no upload, runs entirely in your browser.</p>
+
+<h2>What is the Flesch Reading Ease score?</h2>
+
+<p>The Flesch Reading Ease score is a readability formula developed by Rudolf Flesch in 1948 and published in his book <em>The Art of Plain Talk</em>. It produces a number between 0 and 100 based on two factors:</p>
+
+<ul>
+  <li><strong>Average sentence length</strong> — longer sentences are harder to parse</li>
+  <li><strong>Average number of syllables per word</strong> — longer words carry more cognitive load</li>
+</ul>
+
+<p>The formula is:</p>
+
+<p><code>Score = 206.835 − (1.015 × average sentence length) − (84.6 × average syllables per word)</code></p>
+
+<p>You don't need to calculate it yourself. Paste your text into the <a href="/tools/text/word-counter">Word Counter</a> and the score appears instantly alongside your word count, reading time, and keyword density.</p>
+
+<h2>What the numbers actually mean</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Score</th>
+      <th>Label</th>
+      <th>Reading level</th>
+      <th>Typical example</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>90–100</td><td>Very Easy</td><td>5th grade</td><td>Basic instructions, children's books</td></tr>
+    <tr><td>80–90</td><td>Easy</td><td>6th grade</td><td>Plain-language guides, casual blog posts</td></tr>
+    <tr><td>70–80</td><td>Fairly Easy</td><td>7th grade</td><td>Consumer product copy, how-to articles</td></tr>
+    <tr><td>60–70</td><td>Standard</td><td>8th–9th grade</td><td>News articles, general audience content</td></tr>
+    <tr><td>50–60</td><td>Fairly Difficult</td><td>10th–12th grade</td><td>In-depth editorial, professional blogs</td></tr>
+    <tr><td>30–50</td><td>Difficult</td><td>College level</td><td>Technical documentation, academic writing</td></tr>
+    <tr><td>0–30</td><td>Very Difficult</td><td>College graduate</td><td>Legal contracts, scientific papers</td></tr>
+  </tbody>
+</table>
+
+<p>A score of 60–70 is where most good general-audience writing lands. Below 50 you're writing for specialists. Below 30 you're writing like a lawyer.</p>
+
+<h2>Real examples from famous texts</h2>
+
+<p>Abstract scores make more sense with real reference points:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Text</th>
+      <th>Flesch Score</th>
+      <th>Why</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>Ernest Hemingway — <em>The Old Man and the Sea</em></td><td>~85</td><td>Short sentences, simple words — exactly the style he was famous for</td></tr>
+    <tr><td>J.K. Rowling — <em>Harry Potter and the Philosopher's Stone</em></td><td>~72</td><td>Accessible vocabulary, varied sentence rhythm</td></tr>
+    <tr><td>The New York Times (news articles)</td><td>~65</td><td>Clear and direct, aimed at general readers</td></tr>
+    <tr><td>Harvard Business Review</td><td>~45</td><td>Assumes a college-educated audience comfortable with business concepts</td></tr>
+    <tr><td>A standard insurance policy</td><td>~10–20</td><td>Legal language optimised for precision, not comprehension</td></tr>
+    <tr><td>The U.S. Constitution</td><td>~30</td><td>Formal 18th-century prose; surprisingly readable for its age</td></tr>
+  </tbody>
+</table>
+
+<p>Hemingway's score isn't an accident. He obsessively cut long sentences and replaced multisyllabic words with simpler alternatives. The result is prose that reads fast and hits hard — and a Flesch score to match.</p>
+
+<h2>What score should you be targeting?</h2>
+
+<p>It depends entirely on your audience and purpose. There's no universal ideal score — the right number is the one that matches your reader's expectations.</p>
+
+<ul>
+  <li><strong>Blog posts, marketing copy, landing pages:</strong> aim for 60–70. You want to be understood instantly, on a first pass, possibly on a phone screen.</li>
+  <li><strong>Email newsletters:</strong> aim for 70–80. People read email quickly, often on mobile. Short sentences win.</li>
+  <li><strong>Technical documentation:</strong> 40–55 is fine. Your audience is there to learn something specific and will read carefully.</li>
+  <li><strong>Academic papers:</strong> 20–40. Precision and terminology matter more than accessibility.</li>
+  <li><strong>Legal contracts:</strong> whatever score they come out at — though plain-English legal reform movements are actively pushing this above 50.</li>
+  <li><strong>UI copy (buttons, tooltips, error messages):</strong> 70–90. Every word of a button label should be instantly understood.</li>
+</ul>
+
+<p>The mistake most writers make is writing for the wrong audience. A SaaS landing page that scores 25 is losing conversions — not because the product is bad, but because visitors hit a wall of dense copy and bounce.</p>
+
+<h2>The two levers: sentences and syllables</h2>
+
+<p>Because the formula only has two inputs, improving your score means working on one or both:</p>
+
+<h3>Shorter sentences</h3>
+
+<p>The most powerful lever. A sentence that runs over 25 words almost always contains a clause that should be its own sentence. Read your text aloud — anywhere you run out of breath is probably where you need a full stop.</p>
+
+<p>Before: <em>"The platform supports real-time collaboration, meaning that multiple team members can work on the same document simultaneously without any risk of version conflicts or overwrites, which significantly reduces the time spent on reconciliation."</em> (41 words)</p>
+
+<p>After: <em>"The platform supports real-time collaboration. Multiple team members can work on the same document at once — no version conflicts, no overwrites. Reconciliation time drops to zero."</em> (3 sentences, maximum 18 words each)</p>
+
+<h3>Simpler words</h3>
+
+<p>The second lever. Every long word in your text is a small speed bump. Replace them where possible:</p>
+
+<table>
+  <thead>
+    <tr><th>Dense word</th><th>Simpler alternative</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>utilise</td><td>use</td></tr>
+    <tr><td>facilitate</td><td>help</td></tr>
+    <tr><td>demonstrate</td><td>show</td></tr>
+    <tr><td>approximately</td><td>about</td></tr>
+    <tr><td>implement</td><td>build / add / set up</td></tr>
+    <tr><td>comprehensive</td><td>full / complete</td></tr>
+    <tr><td>prioritise</td><td>focus on</td></tr>
+    <tr><td>endeavour</td><td>try</td></tr>
+  </tbody>
+</table>
+
+<p>This doesn't mean dumbing things down. It means choosing the word your reader will process in 0.1 seconds instead of 0.3 seconds. At scale, across a whole piece of writing, those fractions add up to the difference between content that gets read and content that gets abandoned.</p>
+
+<h2>Readability and SEO</h2>
+
+<p>Google has never confirmed that readability directly affects search rankings. But it affects everything that does:</p>
+
+<ul>
+  <li><strong>Time on page</strong> — readable content gets read; unreadable content gets bounced</li>
+  <li><strong>Pages per session</strong> — if they finished one article, they'll look for another</li>
+  <li><strong>Backlinks</strong> — people link to content they found useful and actually finished reading</li>
+  <li><strong>Social sharing</strong> — short, clear sentences are easier to quote and share</li>
+</ul>
+
+<p>Yoast SEO's readability checker is built around Flesch-Kincaid scores for exactly this reason. The SEO community has accepted that readable text performs better, even if the mechanism isn't a direct ranking signal.</p>
+
+<h2>Flesch-Kincaid Grade Level vs. Flesch Reading Ease</h2>
+
+<p>These are two different outputs from related formulas. The Flesch Reading Ease score gives you a number from 0–100 (higher = easier). The Flesch-Kincaid Grade Level converts the same inputs into a U.S. school grade equivalent.</p>
+
+<p>A Flesch Reading Ease score of 65 corresponds roughly to a Flesch-Kincaid Grade Level of 8, meaning an 8th grader should be able to read it comfortably. Both measures are valid — Reading Ease is more intuitive, Grade Level is more commonly used in academic and government contexts (the U.S. Department of Defense mandates Grade Level 8 or below for all public-facing documents).</p>
+
+<p>The <a href="/tools/text/word-counter">Toolora Word Counter</a> shows the Flesch Reading Ease score. Paste your text in and you'll see your score alongside your word count, sentence count, speaking time estimate, and keyword density — all in one place, all processed locally in your browser.</p>
+
+<h2>Check your readability score right now</h2>
+
+<p>Paste any text — a blog post draft, a product description, an email you're about to send — into the tool below. The Flesch score updates as you type. No account required, nothing leaves your browser.</p>
+
+<p><a href="/tools/text/word-counter">Check your Flesch readability score free — Toolora Word Counter →</a></p>
+    `.trim(),
+  },
+  {
     slug: "merge-pdfs-without-uploading",
     title: "How to Merge PDFs Without Uploading Files (100% Free, Works in Your Browser)",
     description: "Most PDF tools send your files to remote servers. Here's how to merge PDFs entirely in your browser — no uploads, no accounts, no risk.",
