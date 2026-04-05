@@ -9,6 +9,7 @@ export interface BlogPost {
 }
 
 const SLUG_IMAGE_MAP: Record<string, string> = {
+  "flesch-readability-score-checker":                   "blog-word-count-stats.png",
   "hipaa-compliant-online-document-tools":              "blog-hipaa-compliance.png",
   "law-firm-secure-document-workflow-no-cloud-uploads": "blog-hipaa-compliance.png",
   "stop-pasting-jwts-into-random-websites":             "blog-jwt-privacy.png",
