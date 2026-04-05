@@ -99,12 +99,12 @@ const SERVERS: ServerEntry[] = [
   {
     id: "soliris",
     name: "Soliris MCP",
-    tagline: "23 Solana tools for autonomous agents: explain any transaction in plain English, score wallet risk, decode any account, execute Jupiter swaps with MEV protection, and pay autonomously via x402 USDC micropayments. Read tools are free. Private key stays local. Mainnet-ready.",
+    tagline: "Eyes, hands, and wallet for AI agents on Solana. 23 tools across three tiers: 12 Eyes (read anything — explain transactions in plain English, score wallet risk, decode accounts, no key needed), 7 Hands (write on-chain — Jupiter swaps with MEV risk scoring, SOL/token transfers, session P&L), and 4 Wallet tools (autonomous x402 USDC micropayments — pay any 402-gated endpoint, track spend, check balance). Built for the Solana x402 Hackathon. Mainnet-ready.",
     icon: Coins,
     privacyLevel: "api",
     github: "https://www.npmjs.com/package/soliris-mcp",
-    installNote: "12 read (Eyes) tools work without a private key. Write (Hands) tools and x402 payments require a funded wallet. Key never leaves your machine.",
-    verifyNote: "Your private key is read locally by the npx process and never transmitted — only signed transactions reach the RPC endpoint. To verify: monitor your network traffic and confirm no key material appears in outbound requests.",
+    installNote: "Eyes tools are free and need no private key. Hands and Wallet tools require a funded wallet. Key never leaves your machine — only signed transactions hit the RPC.",
+    verifyNote: "Your private key is read locally by the npx process and never transmitted — only signed transactions reach the RPC endpoint. To verify: monitor your network traffic and confirm no key material appears in outbound requests. Set MAX_PAYMENT_USDC to cap autonomous x402 spend per call.",
     claudeConfig: JSON.stringify({
       mcpServers: {
         soliris: {
@@ -114,6 +114,7 @@ const SERVERS: ServerEntry[] = [
             RPC_URL: "https://mainnet.helius-rpc.com/?api-key=YOUR_KEY",
             SOLANA_PRIVATE_KEY: "your_base58_private_key",
             SOLANA_NETWORK: "mainnet-beta",
+            MAX_PAYMENT_USDC: "1.0",
             PLATFORM_FEE_BPS: "20",
             PLATFORM_FEE_ACCOUNT: "your_fee_ata",
             SOLIRIS_API_URL: "https://soliris.replit.app",
@@ -121,7 +122,7 @@ const SERVERS: ServerEntry[] = [
         },
       },
     }, null, 2),
-    tags: ["Solana", "DeFi", "x402", "payments", "swaps", "risk scoring"],
+    tags: ["Solana", "DeFi", "x402", "payments", "swaps", "risk scoring", "MEV"],
   },
   {
     id: "filesystem",
