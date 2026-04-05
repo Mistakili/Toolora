@@ -621,7 +621,31 @@
     </image:image>
   </url>
 
-  <!-- New blog posts (Apr 4–6 2026) -->
+  <!-- New blog posts (Apr 5 2026) -->
+  <url>
+    <loc>https://toolora.dev/blog/flesch-readability-score-checker</loc>
+    <lastmod>2026-04-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://toolora.dev/images/blog-word-count-stats.png</image:loc>
+      <image:title>Flesch Readability Score: What It Means and How to Check Yours Free — Toolora Blog</image:title>
+      <image:caption>The Flesch Reading Ease score tells you how hard your text is to read. Learn what the numbers mean and check any text free in your browser.</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://toolora.dev/blog/ai-agent-on-chain-decision-ledger-soliris</loc>
+    <lastmod>2026-04-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://toolora.dev/images/mcp-tools-visual.png</image:loc>
+      <image:title>The AI Trading Agent That Commits Its Reasoning On-Chain Before It Trades — Toolora Blog</image:title>
+      <image:caption>Soliris logs the agent's full reasoning to the Solana blockchain before the swap fires — timestamp-provable, publicly verifiable, impossible to retrofit.</image:caption>
+    </image:image>
+  </url>
+
+  <!-- Earlier blog posts (Apr 4–6 2026) -->
   <url>
     <loc>https://toolora.dev/blog/what-is-x402-payments-for-ai-apis</loc>
     <lastmod>2026-04-04</lastmod>

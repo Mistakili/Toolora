@@ -90,7 +90,7 @@ export default function Home() {
                 Free tools for AI builders.
               </h1>
               <p className="text-xl text-muted-foreground mb-10 leading-relaxed">
-                28 browser tools + a free MCP server for Claude Desktop and Cursor. Format JSON, convert PDFs, transcribe audio, read URLs — processed in your browser. Files never leave your device. No uploads, no accounts, no tracking.
+                28 tools for developers and AI workflows. Format JSON, convert PDFs, transcribe audio, read URLs — everything runs locally in your browser. No uploads, no accounts, nothing stored.
               </p>
               
                     <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
@@ -111,9 +111,9 @@ export default function Home() {
                 <Link href="/mcp-hub" className="group inline-flex items-center gap-2.5 px-4 py-2.5 rounded-xl border border-border bg-muted/30 hover:border-primary/40 hover:bg-primary/5 transition-all duration-200 text-sm">
                   <span className="flex items-center gap-1.5 text-muted-foreground">
                     <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                    Also an MCP server for Claude Desktop &amp; Cursor
+                    Free MCP server — 17 tools
                   </span>
-                  <span className="text-primary font-medium group-hover:underline">15 tools, no API key →</span>
+                  <span className="text-primary font-medium group-hover:underline">No API key needed →</span>
                 </Link>
               </div>
 
