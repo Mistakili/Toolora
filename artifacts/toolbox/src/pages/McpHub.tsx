@@ -4,7 +4,7 @@ import {
   ShieldCheck, Copy, Check, ExternalLink,
   Zap, Database, FolderOpen, GitBranch, Brain,
   Globe, Terminal, FileText, Search, ChevronDown, ChevronUp, Mail, Monitor, Coins,
-  MessageSquare
+  MessageSquare, Layers, ArrowRight, Eye, Hand, Wallet
 } from "lucide-react";
 import { useSEO } from "@/hooks/useSEO";
 
@@ -643,6 +643,104 @@ export default function McpHub() {
             </p>
           </div>
         </div>
+      </div>
+
+      {/* ── Agent Stack Feature ──────────────────────────────────────────── */}
+      <div className="max-w-4xl mx-auto px-4 py-16">
+        <section className="rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/5 via-background to-amber-500/5 p-8 space-y-6">
+          <div className="flex items-start gap-4">
+            <div className="p-2.5 rounded-xl bg-primary/10 border border-primary/20 shrink-0">
+              <Layers className="w-5 h-5 text-primary" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-xs font-mono text-primary uppercase tracking-widest">Featured stack</span>
+              </div>
+              <h2 className="text-2xl font-display font-bold">The Agent Stack</h2>
+              <p className="text-muted-foreground text-sm mt-1 leading-relaxed max-w-xl">
+                Toolora + Soliris in one config. Your AI agent gets complete information processing
+                and autonomous financial execution — 40+ tools, two revenue streams, zero server custody.
+              </p>
+            </div>
+          </div>
+
+          {/* Capability tiles */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="rounded-xl border border-border bg-background/60 p-4 space-y-2">
+              <div className="flex items-center gap-2">
+                <div className="p-1.5 rounded-lg bg-blue-500/10"><FileText className="w-4 h-4 text-blue-400" /></div>
+                <span className="text-sm font-semibold">Toolora — 17 tools</span>
+              </div>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Read PDFs, count words, check readability, generate QR codes, convert files, share pastes.
+                Runs on Toolora's hosted server — no local install needed.
+              </p>
+            </div>
+            <div className="rounded-xl border border-border bg-background/60 p-4 space-y-2">
+              <div className="flex items-center gap-2">
+                <div className="p-1.5 rounded-lg bg-amber-500/10"><Coins className="w-4 h-4 text-amber-400" /></div>
+                <span className="text-sm font-semibold">Soliris — 23 tools</span>
+              </div>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Explain any Solana transaction, score wallet risk, execute Jupiter swaps with MEV protection,
+                pay any x402 endpoint autonomously. 12 read tools need no wallet.
+              </p>
+            </div>
+            <div className="rounded-xl border border-border bg-background/60 p-4 space-y-2">
+              <div className="flex items-center gap-2">
+                <div className="p-1.5 rounded-lg bg-green-500/10"><Brain className="w-4 h-4 text-green-400" /></div>
+                <span className="text-sm font-semibold">Together — full autonomy</span>
+              </div>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Agent reads a whitepaper (Toolora), profiles the team wallets (Soliris), checks smart money overlap,
+                and executes — all in one session, no human in the loop.
+              </p>
+            </div>
+          </div>
+
+          {/* Combined config */}
+          <div className="space-y-2">
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+              Claude Desktop — combined config
+            </p>
+            <CodeBlock lang="json" code={JSON.stringify({
+              mcpServers: {
+                toolora: {
+                  command: "npx",
+                  args: ["-y", "mcp-remote", "https://toolora.dev/api/mcp"],
+                },
+                soliris: {
+                  command: "npx",
+                  args: ["-y", "soliris-mcp"],
+                  env: {
+                    RPC_URL: "https://mainnet.helius-rpc.com/?api-key=YOUR_KEY",
+                    SOLANA_PRIVATE_KEY: "your_base58_private_key",
+                    SOLANA_NETWORK: "mainnet-beta",
+                    MAX_PAYMENT_USDC: "1.0",
+                    SOLIRIS_API_URL: "https://soliris.replit.app",
+                  },
+                },
+              },
+            }, null, 2)} />
+            <p className="text-xs text-muted-foreground">
+              Read-only Soliris tools (wallet lookup, transaction explain, token price) work without a private key.
+              Add <code className="text-xs bg-muted px-1 py-0.5 rounded">SOLANA_PRIVATE_KEY</code> only when you want swap execution.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap gap-3 pt-1">
+            <Link href="/mcp" className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline">
+              <Zap className="w-3.5 h-3.5" /> Toolora MCP setup guide
+            </Link>
+            <a href="https://www.npmjs.com/package/soliris-mcp" target="_blank" rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 text-sm font-medium text-amber-400 hover:underline">
+              <ExternalLink className="w-3.5 h-3.5" /> Soliris on npm
+            </a>
+            <Link href="/blog/ai-agent-on-chain-decision-ledger-soliris" className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-foreground hover:underline">
+              <ArrowRight className="w-3.5 h-3.5" /> How Soliris logs decisions on-chain
+            </Link>
+          </div>
+        </section>
       </div>
 
       {/* ── Server list ──────────────────────────────────────────────────── */}
