@@ -22,6 +22,15 @@ export const pool = new Pool({
   connectionString,
   ssl: { rejectUnauthorized: false },
 });
+
+// Prevent unhandled 'error' events on idle pool clients from crashing the
+// process. This happens when the database server terminates a connection
+// mid-session (e.g. maintenance, idle timeout). The pool will automatically
+// create a new connection on the next request.
+pool.on("error", (err) => {
+  console.error("[db] Unexpected pool client error (connection will be replaced):", err.message);
+});
+
 export const db = drizzle(pool, { schema });
 
 export * from "./schema";
