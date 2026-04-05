@@ -99,11 +99,11 @@ const SERVERS: ServerEntry[] = [
   {
     id: "soliris",
     name: "Soliris MCP",
-    tagline: "19 Solana tools for autonomous agents: balance reads, Jupiter swaps with MEV risk scoring, SOL/token transfers, and native x402 USDC micropayments. Private key stays local. Mainnet-ready.",
+    tagline: "23 Solana tools for autonomous agents: explain any transaction in plain English, score wallet risk, decode any account, execute Jupiter swaps with MEV protection, and pay autonomously via x402 USDC micropayments. Read tools are free. Private key stays local. Mainnet-ready.",
     icon: Coins,
     privacyLevel: "api",
     github: "https://www.npmjs.com/package/soliris-mcp",
-    installNote: "Private key never leaves your machine. Runs via npx — no server-side custody.",
+    installNote: "12 read (Eyes) tools work without a private key. Write (Hands) tools and x402 payments require a funded wallet. Key never leaves your machine.",
     verifyNote: "Your private key is read locally by the npx process and never transmitted — only signed transactions reach the RPC endpoint. To verify: monitor your network traffic and confirm no key material appears in outbound requests.",
     claudeConfig: JSON.stringify({
       mcpServers: {
@@ -112,13 +112,16 @@ const SERVERS: ServerEntry[] = [
           args: ["-y", "soliris-mcp"],
           env: {
             RPC_URL: "https://mainnet.helius-rpc.com/?api-key=YOUR_KEY",
-            SOLANA_PRIVATE_KEY: "your_base58_key",
+            SOLANA_PRIVATE_KEY: "your_base58_private_key",
+            SOLANA_NETWORK: "mainnet-beta",
+            PLATFORM_FEE_BPS: "20",
+            PLATFORM_FEE_ACCOUNT: "your_fee_ata",
             SOLIRIS_API_URL: "https://soliris.replit.app",
           },
         },
       },
     }, null, 2),
-    tags: ["Solana", "DeFi", "x402", "payments", "swaps"],
+    tags: ["Solana", "DeFi", "x402", "payments", "swaps", "risk scoring"],
   },
   {
     id: "filesystem",
