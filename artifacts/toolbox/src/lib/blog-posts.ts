@@ -2267,6 +2267,1978 @@ console.log(wordCount, charCount, charNoSpaces); // 9 44 36</code></pre>
 <p><a href="/enterprise">Toolora for legal and regulated industries →</a></p>
     `.trim(),
   },
+
+  {
+    slug: "ocr-extract-text-from-image-free",
+    title: "How to Extract Text from an Image Free (OCR That Runs in Your Browser)",
+    description: "Turn any screenshot, photo, or scanned document into copyable text instantly — without uploading anything to a server.",
+    date: "2026-04-06",
+    readTime: "5 min read",
+    category: "Tools",
+    keywords: ["extract text from image", "ocr online free", "image to text", "photo to text online", "browser ocr"],
+    content: `
+<p>You've got a screenshot with text in it. Or a photo of a sign. Or a scanned receipt. You need the text out. Most tools will upload your image to a server, process it there, and hand you back results — meaning your file lived on someone else's machine, even briefly.</p>
+
+<p>This guide covers how OCR works, what to watch out for privacy-wise, and how to do it in a way where your image never leaves your device.</p>
+
+<h2>What OCR actually does</h2>
+
+<p>OCR stands for Optical Character Recognition. It's the process of identifying letter shapes in image pixels and converting them into a text string your computer can work with.</p>
+
+<p>Modern OCR (including Tesseract, which powers most free web tools) uses a neural network trained on millions of text samples. It works well on printed text, reasonable on handwriting in clean conditions, and poorly on stylized fonts or low-contrast images.</p>
+
+<h2>The problem with most free OCR tools</h2>
+
+<p>Google Docs, Adobe, iLovePDF, Smallpdf — they all perform OCR server-side. Your image is uploaded, processed, and (usually) deleted. The deletion part is where you have to trust their privacy policy. For a document containing medical info, legal text, financial data, or anything personal, "usually deleted" isn't good enough.</p>
+
+<p>You can verify this yourself: open DevTools → Network tab, drop your image into any of those tools, and watch for a POST or PUT request to an external server. You'll see it happen.</p>
+
+<h2>Browser-based OCR: how it actually works without uploading</h2>
+
+<p>WebAssembly (WASM) made it possible to run compiled C/C++ code in the browser at near-native speed. Tesseract, the most widely used OCR engine, has been compiled to WASM. That means the entire recognition process runs inside your browser tab, using your CPU — no server involved.</p>
+
+<p>The tradeoff: it's slower than server-side OCR (a few seconds vs instant), and language support depends on which language packs the tool loads. English works well. Complex scripts need extra packs.</p>
+
+<h2>Tips for better OCR results</h2>
+
+<ul>
+  <li><strong>Higher contrast</strong> — Black text on white background gives the best results. Dark text on a colored background is harder.</li>
+  <li><strong>Straight alignment</strong> — Text at an angle reduces accuracy. Most tools have a deskew option; use it.</li>
+  <li><strong>No compression artifacts</strong> — Screenshots are better than photos of screens. JPEG compression blurs character edges.</li>
+  <li><strong>Larger text</strong> — Minimum 12pt equivalent at screen resolution. Tiny text or footnotes often extract incorrectly.</li>
+</ul>
+
+<h2>When to use which tool</h2>
+
+<table>
+  <thead>
+    <tr><th>Situation</th><th>Recommended approach</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Sensitive document (medical, legal, financial)</td><td>Browser-based OCR only — no upload</td></tr>
+    <tr><td>High-volume batch processing</td><td>Server-side API (Textract, Google Vision) is faster</td></tr>
+    <tr><td>Non-English or multi-language</td><td>Check language support — Tesseract WASM supports 100+ languages with the right pack</td></tr>
+    <tr><td>Handwriting</td><td>Google Vision or Azure Vision — server-side but better accuracy</td></tr>
+  </tbody>
+</table>
+
+<p>For most everyday use cases — extracting text from a screenshot, copying a quote from a photo, getting text out of a scanned PDF — browser OCR is more than accurate enough and is meaningfully safer.</p>
+
+<p>Try the browser-based OCR tool at <a href="/tools">Toolora → Image → OCR</a>. Your image stays in your tab.</p>
+    `.trim(),
+  },
+
+  {
+    slug: "compress-pdf-free-no-upload",
+    title: "How to Compress a PDF for Email (Free, Nothing Uploaded)",
+    description: "Reduce PDF file size without uploading to any server. Runs entirely in your browser using WebAssembly.",
+    date: "2026-04-06",
+    readTime: "4 min read",
+    category: "Privacy",
+    keywords: ["compress pdf free", "reduce pdf file size", "pdf compressor online", "pdf too large email"],
+    content: `
+<p>Gmail's attachment limit is 25MB. Most email systems cap at 10MB. Your PDF is 40MB. You need to make it smaller, and you need to do it now.</p>
+
+<p>Here's the quickest way that doesn't involve uploading your document to Smallpdf, ILovePDF, or Adobe's servers.</p>
+
+<h2>Why PDFs get large</h2>
+
+<p>PDF size is almost always driven by one thing: images. A document with embedded high-resolution photos or scans can easily run 50–100MB. The underlying text, fonts, and layout take up almost nothing by comparison.</p>
+
+<p>Compression works by recompressing those images at a lower quality setting, reducing resolution, or both. The text content is not affected — it remains perfectly sharp and searchable.</p>
+
+<h2>What compression levels actually do</h2>
+
+<table>
+  <thead>
+    <tr><th>Level</th><th>Typical size reduction</th><th>Visual quality</th><th>Best for</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Low (screen)</td><td>60–80%</td><td>Noticeable on photos</td><td>Email, preview sharing</td></tr>
+    <tr><td>Medium (ebook)</td><td>30–50%</td><td>Good for documents</td><td>Most everyday use</td></tr>
+    <tr><td>High (prepress)</td><td>5–15%</td><td>Near-original</td><td>Documents going to print</td></tr>
+  </tbody>
+</table>
+
+<p>For most email scenarios, medium compression cuts the file by 40–60% with no visible quality loss on text-heavy documents.</p>
+
+<h2>The privacy issue with online PDF compressors</h2>
+
+<p>The popular tools — Smallpdf, ILovePDF, PDF2Go — all compress server-side. Your PDF is transmitted to their servers, processed, and you download the result. They claim to delete it after an hour. You're trusting that claim.</p>
+
+<p>For a lease agreement, a medical report, a financial statement, or any document with personal data, transmitting it to a third-party server is a real risk — even if accidental and brief.</p>
+
+<h2>Browser-based PDF compression</h2>
+
+<p>PDF.js and pdf-lib running in WebAssembly can handle compression entirely in your browser. The compressed PDF never leaves your machine. You can verify this in DevTools → Network: there's no outbound file upload.</p>
+
+<p>The tradeoff is speed — compressing a large PDF takes a few seconds in the browser vs. milliseconds on a server. For most files under 50MB it's entirely practical.</p>
+
+<h2>Other ways to reduce PDF size</h2>
+
+<ul>
+  <li><strong>Print to PDF</strong> — Open the PDF, print it with "Save as PDF," and many systems will re-render it at a lower resolution.</li>
+  <li><strong>Export from the source</strong> — If you created the PDF in Word, Pages, or InDesign, re-export at "web" or "screen" quality settings.</li>
+  <li><strong>Remove pages</strong> — If only part of the document is needed, split the PDF and send only the relevant pages.</li>
+  <li><strong>Convert images before embedding</strong> — Compress images in the source document before creating the PDF.</li>
+</ul>
+
+<p>Compress your PDF in the browser at <a href="/tools">Toolora → Documents → PDF Compress</a>. No upload, no account.</p>
+    `.trim(),
+  },
+
+  {
+    slug: "reading-time-calculator-formula",
+    title: "Reading Time Calculator: The Formula Behind Every Article's 'X Min Read'",
+    description: "How reading time estimates work, what the average reading speed actually is, and why it matters for content strategy.",
+    date: "2026-04-07",
+    readTime: "4 min read",
+    category: "Tools",
+    keywords: ["reading time calculator", "average reading speed wpm", "how long to read", "minutes to read formula"],
+    content: `
+<p>Medium, Substack, every news site — they all show "5 min read" at the top of the article. That number comes from a simple formula. Here's how it works, why it matters, and what it tells you about your content.</p>
+
+<h2>The formula</h2>
+
+<p>Reading time = word count ÷ average reading speed (words per minute)</p>
+
+<p>Most tools use 200–238 WPM as the average. Medium uses 275 WPM. Hemingway Editor uses 300 WPM. The variation reflects whether you're estimating silent reading speed for casual readers or educated adults.</p>
+
+<p>Research places adult silent reading speed at 200–400 WPM depending on text complexity and reader skill. For web content, 238 WPM is the most widely cited figure from Brysbaert et al. (2019), a study of 190 studies across 17 languages.</p>
+
+<h2>What changes the estimate</h2>
+
+<table>
+  <thead>
+    <tr><th>Factor</th><th>Effect on reading time</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Technical or dense content</td><td>Slower — readers re-read and pause</td></tr>
+    <tr><td>Lists and headers</td><td>Faster — easier to scan</td></tr>
+    <tr><td>Images</td><td>Some tools add 10–12 seconds per image</td></tr>
+    <tr><td>Code blocks</td><td>Usually excluded or counted separately</td></tr>
+    <tr><td>Audience expertise</td><td>Expert readers are faster; novices slower</td></tr>
+  </tbody>
+</table>
+
+<h2>Why showing reading time reduces bounce rate</h2>
+
+<p>Displaying reading time sets expectations. A reader who sees "12 min read" can decide if they want to commit now or come back later. Without it, they start reading, hit the length at paragraph 3, and leave — registering as a bounce in your analytics. Showing the time upfront lets engaged readers self-select in, and disengaged readers self-select out — which is actually better for both you and them.</p>
+
+<h2>When the estimate is misleading</h2>
+
+<p>Pure word count misses a lot. A post with 12 code samples might have 2,000 words but take 20 minutes to read because you need to understand and execute each snippet. A 1,500-word narrative article takes closer to 6 minutes.</p>
+
+<p>Some tools handle this by detecting code blocks and adding extra time per block. If you're writing developer content heavily, this matters.</p>
+
+<h2>Practical benchmarks</h2>
+
+<ul>
+  <li><strong>Blog post sweet spot</strong>: 1,500–2,500 words (6–10 min read) — long enough for SEO, short enough to complete</li>
+  <li><strong>Newsletter</strong>: 300–800 words (1–3 min read) — readers skim in email</li>
+  <li><strong>Long-form / pillar page</strong>: 3,000–6,000 words (12–25 min read) — strong for competitive keywords</li>
+  <li><strong>Product documentation</strong>: No maximum — completeness matters more than time</li>
+</ul>
+
+<p>Check your word count and reading time at <a href="/tools">Toolora → Text → Word Counter</a>. Paste your content and get an instant breakdown.</p>
+    `.trim(),
+  },
+
+  {
+    slug: "split-pdf-free-browser-based",
+    title: "How to Split a PDF Without Adobe Acrobat (Free, Works in Your Browser)",
+    description: "Extract specific pages from a PDF, split by range, or separate every page — without installing software or uploading to a server.",
+    date: "2026-04-07",
+    readTime: "4 min read",
+    category: "Privacy",
+    keywords: ["split pdf online free", "pdf splitter", "extract pages from pdf", "pdf page extractor"],
+    content: `
+<p>You have a 40-page report. You need to send pages 12–18 to a client. Adobe Acrobat wants $15/month. Smallpdf wants your file on their server. Here's what to do instead.</p>
+
+<h2>What "splitting a PDF" actually means</h2>
+
+<p>PDF splitting covers a few different operations:</p>
+
+<ul>
+  <li><strong>Extract a page range</strong> — pages 5 to 12 → new PDF</li>
+  <li><strong>Split at a specific point</strong> — first 10 pages → PDF A, remaining pages → PDF B</li>
+  <li><strong>Burst to individual pages</strong> — every page becomes its own PDF file</li>
+  <li><strong>Extract specific pages</strong> — pages 1, 4, 7, 15 → one new PDF</li>
+</ul>
+
+<p>Most browser-based tools support all of these. Some only support simple range extraction.</p>
+
+<h2>Privacy: what's at stake when you upload a PDF</h2>
+
+<p>A PDF going through a free online splitter might contain:</p>
+
+<ul>
+  <li>Client contracts with PII</li>
+  <li>Financial statements</li>
+  <li>Internal company documents</li>
+  <li>Medical records</li>
+</ul>
+
+<p>Most free PDF tools process server-side. The file is uploaded, processed, and you download the result. GDPR and HIPAA have things to say about transmitting files containing personal data to third-party processors — even briefly.</p>
+
+<h2>Free methods that don't upload your file</h2>
+
+<p><strong>Browser-based PDF tools (WebAssembly)</strong> — Tools using pdf-lib or PDF.js compiled to WASM can split your PDF entirely in the browser. No upload. Verifiable in DevTools → Network.</p>
+
+<p><strong>Google Chrome print to PDF</strong> — Open your PDF in Chrome, hit Print, select "Save as PDF," and under "Pages" enter a custom range like "5-12." Slow for multiple operations but requires nothing additional.</p>
+
+<p><strong>macOS Preview</strong> — Drag pages from the sidebar into a new window, then export as PDF. Works natively, nothing leaves your machine.</p>
+
+<p><strong>PDF24 (offline app)</strong> — Free, open-source, runs locally. Good option if you need to do this repeatedly and want a proper UI.</p>
+
+<h2>File size after splitting</h2>
+
+<p>A split PDF won't be proportionally smaller than the original. PDFs embed shared resources (fonts, color profiles) in each file. A 10-page extract from a 100-page PDF might still be 40% of the original size rather than 10%, because the font data and color profiles get duplicated into the new file.</p>
+
+<p>If file size matters after splitting, run the split PDF through a compressor as a second step.</p>
+
+<p>Split PDFs in the browser at <a href="/tools">Toolora → Documents → PDF Split</a>. Your document stays on your device.</p>
+    `.trim(),
+  },
+
+  {
+    slug: "markdown-to-html-converter-guide",
+    title: "Markdown to HTML: Convert and Preview Markdown Instantly",
+    description: "Paste Markdown and get clean HTML output. Everything you need to know about the conversion, supported syntax, and when to use it.",
+    date: "2026-04-08",
+    readTime: "5 min read",
+    category: "Developer Tools",
+    keywords: ["markdown to html", "markdown converter online", "markdown preview", "convert markdown to html"],
+    content: `
+<p>Markdown is for writing. HTML is for displaying. Converting between them is a constant task for developers, writers, and content teams. Here's how it works and the fastest way to do it.</p>
+
+<h2>How Markdown-to-HTML conversion works</h2>
+
+<p>A Markdown parser reads your text and converts syntax patterns to HTML tags. The most widely used spec is CommonMark, which standardized the behavior across previously inconsistent parsers (Marked, Pandoc, Showdown, etc. all interpreted edge cases differently).</p>
+
+<p>Most tools today support CommonMark + GitHub Flavored Markdown (GFM), which adds tables, strikethrough, task lists, and fenced code blocks with language hints.</p>
+
+<h2>Standard Markdown → HTML mapping</h2>
+
+<table>
+  <thead>
+    <tr><th>Markdown</th><th>HTML output</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code># Heading</code></td><td><code>&lt;h1&gt;Heading&lt;/h1&gt;</code></td></tr>
+    <tr><td><code>**bold**</code></td><td><code>&lt;strong&gt;bold&lt;/strong&gt;</code></td></tr>
+    <tr><td><code>*italic*</code></td><td><code>&lt;em&gt;italic&lt;/em&gt;</code></td></tr>
+    <tr><td><code>[text](url)</code></td><td><code>&lt;a href="url"&gt;text&lt;/a&gt;</code></td></tr>
+    <tr><td><code>![alt](src)</code></td><td><code>&lt;img alt="alt" src="src"&gt;</code></td></tr>
+    <tr><td><code>\`code\`</code></td><td><code>&lt;code&gt;code&lt;/code&gt;</code></td></tr>
+    <tr><td><code>---</code></td><td><code>&lt;hr&gt;</code></td></tr>
+    <tr><td><code>&gt; blockquote</code></td><td><code>&lt;blockquote&gt;</code></td></tr>
+  </tbody>
+</table>
+
+<h2>GFM extensions (GitHub Flavored Markdown)</h2>
+
+<ul>
+  <li><strong>Tables</strong> — pipe syntax creates <code>&lt;table&gt;</code> elements</li>
+  <li><strong>Fenced code blocks</strong> — triple backticks with language hints: <code>&#96;&#96;&#96;javascript</code></li>
+  <li><strong>Task lists</strong> — <code>- [x] done</code> becomes a checked checkbox</li>
+  <li><strong>Strikethrough</strong> — <code>~~text~~</code> becomes <code>&lt;del&gt;text&lt;/del&gt;</code></li>
+  <li><strong>Autolinks</strong> — bare URLs become clickable links</li>
+</ul>
+
+<h2>Common use cases</h2>
+
+<p><strong>Blog/CMS content</strong> — You write in Markdown, your CMS stores HTML. Converting lets you preview exactly what will render.</p>
+
+<p><strong>Emails</strong> — Most email clients don't render Markdown. Convert to HTML first, then paste into your email editor's code view.</p>
+
+<p><strong>API documentation</strong> — README files on GitHub render Markdown, but some API docs platforms need HTML. Convert then paste.</p>
+
+<p><strong>Slide decks</strong> — Tools like Reveal.js accept HTML sections. Write in Markdown, convert, structure into slides.</p>
+
+<h2>Watch out for: sanitization</h2>
+
+<p>Raw Markdown-to-HTML conversion doesn't sanitize the output. If you're rendering user-supplied Markdown on a web page, you need to sanitize the HTML output with a library like DOMPurify — otherwise you're vulnerable to XSS attacks through malicious Markdown like <code>[text](javascript:alert(1))</code>.</p>
+
+<p>This matters if you're building something where users submit Markdown that renders to other users. It doesn't matter if you're converting your own Markdown for your own content.</p>
+
+<p>Convert Markdown to HTML instantly at <a href="/tools">Toolora → Developer → Markdown to HTML</a>. Live preview, copy output in one click.</p>
+    `.trim(),
+  },
+
+  {
+    slug: "text-case-converter-guide",
+    title: "Text Case Converter: Title Case, UPPERCASE, camelCase, snake_case in One Click",
+    description: "Change text case instantly online — every format covered, including the tricky ones like Title Case, PascalCase, and kebab-case.",
+    date: "2026-04-08",
+    readTime: "4 min read",
+    category: "Tools",
+    keywords: ["text case converter", "title case online", "camelcase converter", "snake case converter", "uppercase lowercase"],
+    content: `
+<p>Renaming a variable. Writing a headline. Formatting an API key. Each task demands a different case convention, and manually retyping things is the kind of work that shouldn't exist.</p>
+
+<h2>The case formats explained</h2>
+
+<table>
+  <thead>
+    <tr><th>Format</th><th>Example</th><th>Common use</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>UPPERCASE</td><td>HELLO WORLD</td><td>Constants, emphasis, env vars</td></tr>
+    <tr><td>lowercase</td><td>hello world</td><td>URLs, email addresses, filenames</td></tr>
+    <tr><td>Title Case</td><td>Hello World</td><td>Headlines, book titles, UI labels</td></tr>
+    <tr><td>Sentence case</td><td>Hello world</td><td>Body copy, descriptions, subtitles</td></tr>
+    <tr><td>camelCase</td><td>helloWorld</td><td>JavaScript variables and functions</td></tr>
+    <tr><td>PascalCase</td><td>HelloWorld</td><td>Class names, React components</td></tr>
+    <tr><td>snake_case</td><td>hello_world</td><td>Python, Ruby, database columns</td></tr>
+    <tr><td>SCREAMING_SNAKE</td><td>HELLO_WORLD</td><td>Constants in Python, environment variables</td></tr>
+    <tr><td>kebab-case</td><td>hello-world</td><td>CSS classes, URLs, HTML attributes</td></tr>
+    <tr><td>dot.case</td><td>hello.world</td><td>Config file keys, namespace paths</td></tr>
+  </tbody>
+</table>
+
+<h2>Title Case: the rules are more complicated than you think</h2>
+
+<p>Simple Title Case capitalizes every word. But proper Title Case (AP style, Chicago style) doesn't capitalize short prepositions, articles, and conjunctions unless they're the first or last word:</p>
+
+<ul>
+  <li><strong>Capitalize</strong>: nouns, verbs, adjectives, adverbs, pronouns, first word, last word</li>
+  <li><strong>Don't capitalize</strong>: a, an, the, and, but, or, for, nor, as, at, by, for, in, of, on, to, up, yet</li>
+</ul>
+
+<p>So "The Quick Brown Fox Jumps Over the Lazy Dog" is correct AP Title Case. "The Quick Brown Fox Jumps Over The Lazy Dog" is wrong (The isn't capitalized mid-title).</p>
+
+<p>Most online converters do simple word-capitalization. The better ones follow AP/Chicago rules. Check which one you're using before applying it to anything editorial.</p>
+
+<h2>Converting code identifiers</h2>
+
+<p>Moving between camelCase and snake_case comes up constantly when:</p>
+<ul>
+  <li>Bridging JavaScript (camelCase) and Python (snake_case) in an API</li>
+  <li>Converting a database column name (<code>user_created_at</code>) to a JavaScript property (<code>userCreatedAt</code>)</li>
+  <li>Renaming CSS classes to component props</li>
+</ul>
+
+<p>The logic: split on spaces, underscores, hyphens, and camelCase boundaries → array of words → join with the target format's separator and capitalization rule.</p>
+
+<h2>Sentence case vs. lowercase</h2>
+
+<p>Sentence case capitalizes only the first letter of the first word (and proper nouns). Lowercase makes everything lowercase with no exceptions. They look similar but mean different things — sentence case preserves proper nouns, lowercase doesn't.</p>
+
+<p>Convert text case instantly at <a href="/tools">Toolora → Text → Case Converter</a>. Every format, one click.</p>
+    `.trim(),
+  },
+
+  {
+    slug: "what-is-cors-explained",
+    title: "What Is CORS? A Developer's Plain-English Guide",
+    description: "CORS confuses every developer at least once. Here's what it actually is, why browsers enforce it, and how to fix CORS errors properly.",
+    date: "2026-04-09",
+    readTime: "6 min read",
+    category: "Developer Tools",
+    keywords: ["what is cors", "cors error", "cors explained", "access-control-allow-origin", "fix cors error"],
+    content: `
+<p>You're building a frontend. You make a fetch request. The console shows: <code>Access to fetch at 'https://api.example.com' from origin 'http://localhost:3000' has been blocked by CORS policy</code>. Welcome to everyone's first encounter with CORS.</p>
+
+<h2>What CORS is protecting against</h2>
+
+<p>CORS exists because of the Same-Origin Policy — a browser security rule that prevents a web page from making requests to a different domain than the one that served it.</p>
+
+<p>The reason this rule exists: if you're logged into your bank at <code>bank.com</code>, and you visit a malicious site at <code>evil.com</code>, the malicious site's JavaScript shouldn't be able to make requests to <code>bank.com/transfer</code> using your browser's stored session cookie.</p>
+
+<p>Without Same-Origin Policy, every site you visit could silently act as you on every other site you're logged into.</p>
+
+<h2>What CORS actually is</h2>
+
+<p>CORS (Cross-Origin Resource Sharing) is the mechanism that lets servers <em>opt in</em> to allowing requests from other origins. It's not a restriction — it's a controlled relaxation of the Same-Origin Policy.</p>
+
+<p>When your browser makes a cross-origin request, it checks the response headers from the server. If the server includes <code>Access-Control-Allow-Origin: *</code> (or a specific origin), the browser allows your JavaScript to see the response. If not, the browser blocks it — even though the request went through.</p>
+
+<p>The request happens. CORS just controls whether your JavaScript code gets to see the response.</p>
+
+<h2>Simple vs. preflighted requests</h2>
+
+<p><strong>Simple requests</strong> (GET, POST with standard content types) go directly to the server. The browser checks the response headers and decides whether to let your code see the result.</p>
+
+<p><strong>Preflighted requests</strong> — for methods like PUT, DELETE, or requests with custom headers — first send an OPTIONS request to check permissions. If the server approves (via <code>Access-Control-Allow-Methods</code> and <code>Access-Control-Allow-Headers</code>), the real request follows.</p>
+
+<h2>The CORS headers</h2>
+
+<table>
+  <thead>
+    <tr><th>Header</th><th>What it does</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>Access-Control-Allow-Origin</code></td><td>Which origins can read the response (<code>*</code> = all)</td></tr>
+    <tr><td><code>Access-Control-Allow-Methods</code></td><td>Which HTTP methods are allowed</td></tr>
+    <tr><td><code>Access-Control-Allow-Headers</code></td><td>Which request headers are allowed</td></tr>
+    <tr><td><code>Access-Control-Allow-Credentials</code></td><td>Whether cookies can be included (<code>true</code>/<code>false</code>)</td></tr>
+    <tr><td><code>Access-Control-Max-Age</code></td><td>How long to cache preflight results (seconds)</td></tr>
+  </tbody>
+</table>
+
+<h2>How to fix a CORS error</h2>
+
+<p>The fix is always on the <strong>server</strong>, not the client. Your frontend cannot fix CORS errors — only the server sending the correct response headers can.</p>
+
+<ul>
+  <li><strong>Express.js</strong>: Use the <code>cors</code> package. <code>app.use(cors())</code> allows all origins. Pass an options object to restrict.</li>
+  <li><strong>FastAPI</strong>: Use <code>CORSMiddleware</code>.</li>
+  <li><strong>nginx</strong>: Add <code>add_header 'Access-Control-Allow-Origin' '*';</code> to your location block.</li>
+  <li><strong>In development</strong>: Proxy requests through your dev server (Vite's <code>server.proxy</code> config).</li>
+</ul>
+
+<h2>When not to use <code>Access-Control-Allow-Origin: *</code></h2>
+
+<p>The wildcard origin (<code>*</code>) cannot be combined with <code>Access-Control-Allow-Credentials: true</code>. If you need to allow cookies or authentication headers in cross-origin requests, you must specify the exact origin(s) rather than using <code>*</code>.</p>
+
+<p>For public APIs that don't use cookies, <code>*</code> is fine. For APIs that use session cookies or Authorization headers, explicitly list the allowed origins.</p>
+    `.trim(),
+  },
+
+  {
+    slug: "csv-to-json-convert-online",
+    title: "CSV to JSON: Convert Spreadsheet Data Instantly (Free)",
+    description: "Paste CSV data and get structured JSON — arrays, objects, custom keys. Everything you need to know about the conversion.",
+    date: "2026-04-09",
+    readTime: "4 min read",
+    category: "Developer Tools",
+    keywords: ["csv to json", "convert csv to json online", "csv converter", "parse csv javascript", "json array from csv"],
+    content: `
+<p>You have data in a spreadsheet. You need it in JSON. This happens constantly — exporting from CRMs, transforming analytics exports, feeding data to APIs.</p>
+
+<h2>What CSV-to-JSON conversion produces</h2>
+
+<p>Standard CSV-to-JSON gives you an array of objects, where each row becomes an object and each column header becomes a key:</p>
+
+<pre><code>name,age,city
+Alice,30,London
+Bob,25,Paris</code></pre>
+
+<p>Becomes:</p>
+
+<pre><code>[
+  { "name": "Alice", "age": "30", "city": "London" },
+  { "name": "Bob", "age": "25", "city": "Paris" }
+]</code></pre>
+
+<h2>Type inference: the important catch</h2>
+
+<p>Notice that <code>age</code> is <code>"30"</code> (a string), not <code>30</code> (a number). CSV has no type information — everything is a string. A converter that doesn't do type inference will give you all strings.</p>
+
+<p>Converters with type inference try to detect numbers, booleans, and nulls automatically. <code>"30"</code> becomes <code>30</code>, <code>"true"</code> becomes <code>true</code>, <code>""</code> becomes <code>null</code>. This is usually what you want, but it can cause issues if you have numeric strings that should stay as strings (e.g., ZIP codes like <code>"08002"</code> that would become <code>8002</code>).</p>
+
+<h2>Other output formats</h2>
+
+<table>
+  <thead>
+    <tr><th>Format</th><th>Use case</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Array of arrays</td><td>When you want raw rows, no key names — faster for large data processing</td></tr>
+    <tr><td>Keyed by first column</td><td>Dictionary lookup — <code>{ "Alice": { age: 30, city: "London" } }</code></td></tr>
+    <tr><td>NDJSON (newline-delimited)</td><td>Streaming pipelines — each row on its own line, not wrapped in an array</td></tr>
+    <tr><td>Flat list of values</td><td>Single-column CSV → plain JSON array of strings</td></tr>
+  </tbody>
+</table>
+
+<h2>Handling edge cases in CSV</h2>
+
+<p><strong>Quoted fields</strong> — Values containing commas must be wrapped in double quotes: <code>"Smith, John"</code>. A proper parser handles this. A naive split-on-commas approach breaks.</p>
+
+<p><strong>Multiline fields</strong> — Values can contain newlines if they're quoted. <code>"First line\nSecond line"</code> is valid CSV.</p>
+
+<p><strong>Different delimiters</strong> — TSV uses tabs. European CSV often uses semicolons (because commas are decimal separators). Check what delimiter your export actually uses before parsing.</p>
+
+<p><strong>BOM character</strong> — Excel-exported CSVs often start with a UTF-8 BOM (<code>\uFEFF</code>). This makes the first column key look like <code>"\uFEFFname"</code> instead of <code>"name"</code>. A good parser strips this automatically.</p>
+
+<h2>Reverse: JSON to CSV</h2>
+
+<p>Flattening JSON to CSV is harder because JSON is hierarchical and CSV is flat. Nested objects need a decision: flatten to dot notation (<code>address.city</code>), stringify to JSON string, or reject non-flat input. Most converters stringify nested values.</p>
+
+<p>Convert CSV to JSON (and back) at <a href="/tools">Toolora → Developer → CSV to JSON</a>. Handles headers, type inference, and custom delimiters.</p>
+    `.trim(),
+  },
+
+  {
+    slug: "http-status-codes-developer-guide",
+    title: "HTTP Status Codes Every Developer Should Actually Know",
+    description: "The status codes you encounter every day — what they mean, when to use them, and the common mistakes developers make.",
+    date: "2026-04-10",
+    readTime: "6 min read",
+    category: "Developer Tools",
+    keywords: ["http status codes", "rest api status codes", "404 vs 410", "http 429", "http 200 vs 201"],
+    content: `
+<p>There are 60+ defined HTTP status codes. You need to deeply understand about 15 of them. Here's the practical guide — not the spec dump.</p>
+
+<h2>The categories</h2>
+
+<ul>
+  <li><strong>2xx</strong> — Success</li>
+  <li><strong>3xx</strong> — Redirect</li>
+  <li><strong>4xx</strong> — Client error (your request was wrong)</li>
+  <li><strong>5xx</strong> — Server error (the server failed)</li>
+</ul>
+
+<h2>The ones that actually matter</h2>
+
+<table>
+  <thead>
+    <tr><th>Code</th><th>Name</th><th>When to use it</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>200</td><td>OK</td><td>Request succeeded, response body has the result</td></tr>
+    <tr><td>201</td><td>Created</td><td>POST created a new resource — include Location header pointing to it</td></tr>
+    <tr><td>204</td><td>No Content</td><td>Success, nothing to return — DELETE, or PUT that returns nothing</td></tr>
+    <tr><td>301</td><td>Moved Permanently</td><td>URL has moved forever — browsers and search engines update their records</td></tr>
+    <tr><td>302</td><td>Found (Temporary Redirect)</td><td>Temporary redirect — search engines keep the original URL</td></tr>
+    <tr><td>304</td><td>Not Modified</td><td>Cached version is still valid — browser can use its cache</td></tr>
+    <tr><td>400</td><td>Bad Request</td><td>Malformed request — missing field, invalid format, validation failure</td></tr>
+    <tr><td>401</td><td>Unauthorized</td><td>No credentials / credentials not provided (confusingly named — it means unauthenticated)</td></tr>
+    <tr><td>403</td><td>Forbidden</td><td>Credentials are valid but you don't have permission</td></tr>
+    <tr><td>404</td><td>Not Found</td><td>Resource doesn't exist</td></tr>
+    <tr><td>409</td><td>Conflict</td><td>Request conflicts with current state — duplicate email, version mismatch</td></tr>
+    <tr><td>410</td><td>Gone</td><td>Resource permanently deleted — unlike 404, this tells search engines to deindex it</td></tr>
+    <tr><td>422</td><td>Unprocessable Entity</td><td>Syntactically valid but semantically invalid — good for form validation errors</td></tr>
+    <tr><td>429</td><td>Too Many Requests</td><td>Rate limit exceeded — include Retry-After header</td></tr>
+    <tr><td>500</td><td>Internal Server Error</td><td>Unhandled server exception — don't leak error details in the body</td></tr>
+    <tr><td>502</td><td>Bad Gateway</td><td>Proxy received an invalid response from upstream</td></tr>
+    <tr><td>503</td><td>Service Unavailable</td><td>Server down for maintenance or overloaded — include Retry-After</td></tr>
+  </tbody>
+</table>
+
+<h2>Common mistakes</h2>
+
+<p><strong>Returning 200 for errors</strong> — APIs that return <code>{ "status": "error", "message": "..." }</code> with a 200 status code break every standard HTTP client, logging system, and monitoring tool that checks status codes. Return the appropriate 4xx or 5xx.</p>
+
+<p><strong>401 vs 403</strong> — 401 means "you haven't told me who you are." 403 means "I know who you are and you can't do this." A missing Authorization header is 401. A valid token for a user without admin access is 403.</p>
+
+<p><strong>404 vs 410</strong> — Use 410 when content has been permanently removed and you want search engines to deindex it. 404 tells crawlers to try again later.</p>
+
+<p><strong>200 vs 201 for POST</strong> — When a POST creates a resource, return 201 with a Location header pointing to the new resource. 200 works but loses the semantic signal.</p>
+
+<p><strong>Missing Retry-After on 429</strong> — If you return 429 without a Retry-After header, clients have no idea how long to wait. Include it: <code>Retry-After: 60</code> (seconds) or <code>Retry-After: Wed, 09 Apr 2026 10:00:00 GMT</code>.</p>
+
+<h2>Idempotency and status codes</h2>
+
+<p>GET, HEAD, PUT, and DELETE should be idempotent — calling them multiple times produces the same result. PUT to create-or-update an existing resource returns 200 (updated) or 201 (created). DELETE on an already-deleted resource should return 204 or 404, not 500.</p>
+    `.trim(),
+  },
+
+  {
+    slug: "localstorage-vs-sessionstorage-vs-cookies",
+    title: "localStorage vs sessionStorage vs Cookies: A Developer's Guide",
+    description: "Three ways to store data in the browser — when to use each, storage limits, and the privacy implications of each.",
+    date: "2026-04-10",
+    readTime: "5 min read",
+    category: "Developer Tools",
+    keywords: ["localstorage vs sessionstorage", "cookies vs localstorage", "web storage api", "browser storage", "indexeddb"],
+    content: `
+<p>Browser storage is one of those topics where everyone knows the surface level but the details matter for security, performance, and user experience. Here's the full picture.</p>
+
+<h2>Quick comparison</h2>
+
+<table>
+  <thead>
+    <tr><th>Property</th><th>localStorage</th><th>sessionStorage</th><th>Cookies</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Capacity</td><td>5–10MB per origin</td><td>5–10MB per origin</td><td>4KB per cookie</td></tr>
+    <tr><td>Lifetime</td><td>Until explicitly cleared</td><td>Until tab/browser closes</td><td>Session or set expiry</td></tr>
+    <tr><td>Sent with requests</td><td>No</td><td>No</td><td>Yes (automatically)</td></tr>
+    <tr><td>Accessible from JS</td><td>Yes</td><td>Yes</td><td>Yes (unless HttpOnly)</td></tr>
+    <tr><td>Accessible from server</td><td>No</td><td>No</td><td>Yes (via HTTP headers)</td></tr>
+    <tr><td>Shared across tabs</td><td>Yes (same origin)</td><td>No</td><td>Yes</td></tr>
+    <tr><td>Works offline</td><td>Yes</td><td>Yes</td><td>Depends</td></tr>
+  </tbody>
+</table>
+
+<h2>When to use each</h2>
+
+<p><strong>localStorage</strong> — User preferences that should persist across sessions: theme (dark/light), language preference, UI state like collapsed sidebars. Not for sensitive data — it has no expiry and any JavaScript on the page can read it.</p>
+
+<p><strong>sessionStorage</strong> — Data that should die with the tab: multi-step form state, shopping cart for unauthenticated users, temporary UI state. Cleared automatically when the tab closes.</p>
+
+<p><strong>Cookies</strong> — Authentication sessions. This is the only right place for session tokens and auth data, because cookies can be:</p>
+<ul>
+  <li><code>HttpOnly</code> — invisible to JavaScript, blocking XSS attacks from stealing tokens</li>
+  <li><code>Secure</code> — only sent over HTTPS</li>
+  <li><code>SameSite=Strict</code> or <code>SameSite=Lax</code> — protecting against CSRF</li>
+</ul>
+
+<h2>The security mistake: storing tokens in localStorage</h2>
+
+<p>Many tutorials and starter kits store JWT access tokens in localStorage. This is a mistake. Any injected JavaScript on your page — from a compromised npm package, an XSS vulnerability, a browser extension — can read <code>localStorage.getItem('token')</code> and steal the token.</p>
+
+<p>Auth tokens belong in <code>HttpOnly</code> cookies. The server sets them, the browser sends them automatically, and JavaScript can never read them.</p>
+
+<h2>IndexedDB: the other option</h2>
+
+<p>For larger amounts of structured data — offline-first apps, caching large datasets, storing files — IndexedDB is the right choice. It's a full transactional database in the browser with no size limit (quota varies by browser, typically 50–80% of available disk space). The API is async and more complex than Web Storage, but libraries like Dexie.js make it manageable.</p>
+
+<h2>Storage limits in practice</h2>
+
+<p>The 5–10MB limit for localStorage is per origin. Running up against it is rare for typical use. When you hit the limit, <code>setItem()</code> throws a <code>QuotaExceededError</code> — which most code doesn't catch, causing silent failures. If you're storing anything large, wrap your writes in try/catch.</p>
+
+<p>For truly large data: use the Cache API (part of Service Workers) or IndexedDB.</p>
+    `.trim(),
+  },
+
+  {
+    slug: "keyword-density-seo-guide",
+    title: "Keyword Density: What It Is, What It Should Be, and How to Check Yours",
+    description: "Keyword stuffing kills rankings. Too sparse and you're invisible. Here's the sweet spot and how to check your density instantly.",
+    date: "2026-04-11",
+    readTime: "4 min read",
+    category: "Productivity",
+    keywords: ["keyword density", "keyword density checker", "keyword stuffing", "seo keyword frequency", "optimal keyword density"],
+    content: `
+<p>Keyword density is the percentage of times your target keyword appears in your content relative to the total word count. It sounds like a precise metric — and SEOs treated it as one for years. The reality is more nuanced.</p>
+
+<h2>The formula</h2>
+
+<p>Keyword density = (keyword occurrences ÷ total words) × 100</p>
+
+<p>Example: your target keyword appears 12 times in a 1,000-word article → 1.2% density.</p>
+
+<h2>What density actually matters</h2>
+
+<p>Google has repeatedly said keyword density is not a ranking factor in any direct sense. What matters is whether the content comprehensively covers the topic. That said, keyword density is a useful proxy for something real: if your density is 0.1%, you're probably not writing about the topic enough. If it's 5%+, you're probably stuffing.</p>
+
+<p>The practical guideline used by most SEOs: 0.5–2% for the primary keyword, with natural variation rather than exact repetition. Use semantic variations, synonyms, and related terms — not just the same phrase repeated mechanically.</p>
+
+<h2>TF-IDF: the more sophisticated version</h2>
+
+<p>Modern search engines use TF-IDF (Term Frequency-Inverse Document Frequency) rather than raw keyword density. TF-IDF measures how significant a term is in a document relative to how common it is across all documents on the web. A term that appears 10 times in your article but appears on every web page has low TF-IDF significance. A term that appears 10 times in your article but is rare across the web has high significance.</p>
+
+<p>This is why writing about uncommon, specific terms matters more than keyword density alone.</p>
+
+<h2>What keyword stuffing looks like vs. natural writing</h2>
+
+<p><strong>Stuffed</strong>: "Our keyword density checker checks your keyword density. Use our keyword density tool to check keyword density for your keyword density needs."</p>
+
+<p><strong>Natural</strong>: "Our text analysis tool measures how frequently your target term appears relative to your total word count — giving you a clear signal if you've over- or under-indexed on the topic."</p>
+
+<p>Both cover the same topic. The stuffed version would be flagged by modern parsers. The natural version reads normally and uses semantic variation.</p>
+
+<h2>How to check your density</h2>
+
+<ol>
+  <li>Paste your content into a word counter tool</li>
+  <li>Note the total word count</li>
+  <li>Use Find (Ctrl+F) to count your keyword occurrences</li>
+  <li>Divide occurrences by total words and multiply by 100</li>
+</ol>
+
+<p>Or: paste your text into <a href="/tools">Toolora → Text → Word Counter</a> which shows total word count instantly. Then count your keyword hits manually or use the browser's Find feature.</p>
+
+<h2>LSI keywords: don't just repeat the same phrase</h2>
+
+<p>Latent Semantic Indexing (LSI) keywords are terms that naturally co-occur with your main keyword. For "keyword density," LSI terms include: keyword stuffing, TF-IDF, keyword frequency, content optimization, search engine ranking. Including these signals topical depth, not just keyword repetition.</p>
+    `.trim(),
+  },
+
+  {
+    slug: "install-mcp-server-claude-desktop",
+    title: "How to Install an MCP Server in Claude Desktop: Step-by-Step Guide",
+    description: "A complete beginner's guide to adding MCP servers to Claude Desktop — covering the config file, common errors, and how to verify it worked.",
+    date: "2026-04-11",
+    readTime: "5 min read",
+    category: "AI Builders",
+    keywords: ["install mcp server claude desktop", "claude mcp config", "mcp tutorial", "claude desktop mcp setup", "add mcp server"],
+    content: `
+<p>MCP (Model Context Protocol) lets Claude use external tools — file access, web browsing, APIs, databases. Setting it up takes about 5 minutes once you know where the config file lives.</p>
+
+<h2>What you need before starting</h2>
+
+<ul>
+  <li>Claude Desktop installed (download from claude.ai)</li>
+  <li>The MCP server's endpoint URL or local command</li>
+  <li>A text editor (VS Code, Notepad, anything)</li>
+</ul>
+
+<h2>Where the config file is</h2>
+
+<table>
+  <thead>
+    <tr><th>OS</th><th>Config file location</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>macOS</td><td><code>~/Library/Application Support/Claude/claude_desktop_config.json</code></td></tr>
+    <tr><td>Windows</td><td><code>%APPDATA%\Claude\claude_desktop_config.json</code></td></tr>
+    <tr><td>Linux</td><td><code>~/.config/Claude/claude_desktop_config.json</code></td></tr>
+  </tbody>
+</table>
+
+<h2>The config format</h2>
+
+<p>The config file is JSON. The <code>mcpServers</code> key holds all your servers, each with a name you choose and either a <code>command</code> (for local servers) or <code>url</code> (for hosted servers):</p>
+
+<pre><code>{
+  "mcpServers": {
+    "toolora": {
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "https://toolora.dev/api/mcp"]
+    }
+  }
+}</code></pre>
+
+<p>For servers that communicate over HTTP/SSE (hosted servers like Toolora), you pass the URL to <code>mcp-remote</code>, which handles the bridge. For local servers that run as a process, you'd specify the command directly.</p>
+
+<h2>Adding Toolora's MCP server</h2>
+
+<ol>
+  <li>Open the config file in a text editor. If it doesn't exist yet, create it at the path above.</li>
+  <li>Add the <code>mcpServers</code> block with the Toolora entry shown above.</li>
+  <li>Save the file.</li>
+  <li>Quit Claude Desktop completely (not just close the window — right-click the tray icon and quit).</li>
+  <li>Reopen Claude Desktop.</li>
+  <li>In any conversation, click the hammer icon (🔨) near the message input. You should see Toolora's tools listed.</li>
+</ol>
+
+<h2>Common errors and fixes</h2>
+
+<table>
+  <thead>
+    <tr><th>Error</th><th>Cause</th><th>Fix</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Tools don't appear</td><td>Config file not saved, or Claude not fully restarted</td><td>Quit fully (not just close window) and reopen</td></tr>
+    <tr><td>"Failed to connect to MCP server"</td><td>Wrong URL or server is down</td><td>Test the URL in your browser — <code>/api/mcp</code> should respond to POST requests</td></tr>
+    <tr><td>JSON parse error</td><td>Syntax error in config file</td><td>Validate your JSON at a JSON formatter — trailing commas and missing quotes are the usual culprits</td></tr>
+    <tr><td>npx not found</td><td>Node.js not installed</td><td>Install Node.js from nodejs.org and retry</td></tr>
+  </tbody>
+</table>
+
+<h2>Verifying it worked</h2>
+
+<p>Ask Claude: "What tools do you have available?" It should list the MCP tools. Then test one: "Count the words in this text: [paste some text]" — if it calls the <code>count_words</code> tool and returns a result, everything is working.</p>
+
+<p>Explore all available MCP servers and the combined Toolora + Soliris config at <a href="/mcp-hub">toolora.dev/mcp-hub</a>.</p>
+    `.trim(),
+  },
+
+  {
+    slug: "words-per-page-reference",
+    title: "How Many Words Per Page? A Quick Reference for Writers",
+    description: "Word-to-page counts at different fonts, spacings, and formats. Stop guessing how long your content is.",
+    date: "2026-04-12",
+    readTime: "3 min read",
+    category: "Tools",
+    keywords: ["how many words per page", "words per page double spaced", "500 words how many pages", "college essay word count", "word count per page"],
+    content: `
+<p>Word count doesn't translate to pages consistently — it depends on font size, spacing, margins, and whether you're in a word processor or on a web page. Here are the real numbers.</p>
+
+<h2>Standard word processor (12pt, double-spaced)</h2>
+
+<table>
+  <thead>
+    <tr><th>Words</th><th>Pages (approx.)</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>250</td><td>0.5 pages</td></tr>
+    <tr><td>500</td><td>1 page</td></tr>
+    <tr><td>750</td><td>1.5 pages</td></tr>
+    <tr><td>1,000</td><td>2 pages</td></tr>
+    <tr><td>1,500</td><td>3 pages</td></tr>
+    <tr><td>2,000</td><td>4 pages</td></tr>
+    <tr><td>2,500</td><td>5 pages</td></tr>
+    <tr><td>5,000</td><td>10 pages</td></tr>
+  </tbody>
+</table>
+
+<h2>Single-spaced (12pt)</h2>
+
+<table>
+  <thead>
+    <tr><th>Words</th><th>Pages (approx.)</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>500</td><td>1 page</td></tr>
+    <tr><td>1,000</td><td>2 pages</td></tr>
+    <tr><td>2,000</td><td>4 pages</td></tr>
+    <tr><td>5,000</td><td>10 pages</td></tr>
+  </tbody>
+</table>
+
+<p>Wait — single-spaced also gives 1 page per 500 words? Yes, because 12pt double-spaced and single-spaced produce approximately the same word-per-page count. The spacing doubles the line height but the font size stays constant, so roughly the same number of words fit per physical line — just the vertical space between lines changes. The actual difference is subtle and varies by font.</p>
+
+<h2>Common essay lengths</h2>
+
+<table>
+  <thead>
+    <tr><th>Assignment</th><th>Typical word count</th><th>Pages (double-spaced)</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Short answer</td><td>250–500 words</td><td>0.5–1 page</td></tr>
+    <tr><td>1-page essay</td><td>250–500 words</td><td>1 page</td></tr>
+    <tr><td>5-page paper</td><td>1,250–1,500 words</td><td>5 pages</td></tr>
+    <tr><td>10-page paper</td><td>2,500–3,000 words</td><td>10 pages</td></tr>
+    <tr><td>Senior thesis</td><td>8,000–15,000 words</td><td>30–60 pages</td></tr>
+    <tr><td>Common App essay</td><td>650 words max</td><td>~1.5 pages</td></tr>
+  </tbody>
+</table>
+
+<h2>Web and digital content</h2>
+
+<p>On a web page, none of the above applies. Web content has variable line length, responsive layouts, and font sizes that change based on screen size. A 1,000-word blog post might scroll through 10 screenfuls on mobile and 5 on desktop. The concept of "pages" doesn't translate.</p>
+
+<p>For digital content, the useful metric isn't pages — it's reading time. A 1,000-word article takes about 4–5 minutes at average reading speed.</p>
+
+<h2>Academic citation formats</h2>
+
+<p>APA and MLA both default to 12pt Times New Roman, 1-inch margins, double spacing — giving roughly 250–275 words per page. Chicago style is similar. If your assignment specifies a format, use that format's defaults for the most accurate page estimate.</p>
+
+<p>Count your words instantly at <a href="/tools">Toolora → Text → Word Counter</a>. Get word count, character count, reading time, and average sentence length in one paste.</p>
+    `.trim(),
+  },
+
+  {
+    slug: "what-is-webassembly-wasm-browser-privacy",
+    title: "What Is WebAssembly? The Technology Making Browser Tools Actually Private",
+    description: "WebAssembly lets browsers run near-native code. Here's what that means for privacy, performance, and why it matters for online tools.",
+    date: "2026-04-12",
+    readTime: "5 min read",
+    category: "Developer Tools",
+    keywords: ["what is webassembly", "wasm browser", "webassembly privacy", "wasm performance", "client side processing"],
+    content: `
+<p>Most browser tools work by sending your file to a server, processing it there, and returning the result. WebAssembly (WASM) changes that fundamentally — it enables the processing to happen inside your browser, at near-native speed, without a server involved at all.</p>
+
+<h2>What WebAssembly actually is</h2>
+
+<p>WebAssembly is a binary instruction format — a compilation target for languages like C, C++, Rust, and Go. Code written in those languages can be compiled to a <code>.wasm</code> file, which the browser's JavaScript engine executes directly.</p>
+
+<p>The key properties:</p>
+<ul>
+  <li><strong>Near-native speed</strong> — runs at 80–90% of native binary performance in benchmarks</li>
+  <li><strong>Sandboxed</strong> — runs in the same security sandbox as JavaScript, with no file system or network access by default</li>
+  <li><strong>Language-agnostic</strong> — any language that compiles to WASM can run in the browser</li>
+  <li><strong>Portable</strong> — same WASM binary runs on Windows, Mac, Linux, Android, iOS</li>
+</ul>
+
+<h2>What was impossible in the browser before WASM</h2>
+
+<p>Before WebAssembly, JavaScript was the only execution option in the browser. JavaScript is fast for UI and business logic, but slow for:</p>
+<ul>
+  <li>Image processing (pixel-by-pixel operations)</li>
+  <li>Video encoding and transcoding</li>
+  <li>PDF rendering and manipulation</li>
+  <li>OCR (character recognition on images)</li>
+  <li>Audio processing and speech recognition</li>
+  <li>Cryptography at scale</li>
+  <li>Scientific computing</li>
+</ul>
+
+<p>All of these required a server round-trip. Now they can run in your browser tab.</p>
+
+<h2>Real examples</h2>
+
+<table>
+  <thead>
+    <tr><th>Tool</th><th>WASM library used</th><th>What it enables</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Browser PDF compression</td><td>GhostScript / pdf-lib compiled to WASM</td><td>Compress PDFs without uploading them</td></tr>
+    <tr><td>Browser OCR</td><td>Tesseract.js (Tesseract compiled to WASM)</td><td>Extract text from images locally</td></tr>
+    <tr><td>Browser image compression</td><td>libvips, squoosh</td><td>JPEG/PNG/WebP optimization without upload</td></tr>
+    <tr><td>Browser video trimming</td><td>FFmpeg compiled to WASM</td><td>Cut/encode video without a server</td></tr>
+    <tr><td>Browser SQLite</td><td>sql.js</td><td>Run SQL queries on a local .db file</td></tr>
+  </tbody>
+</table>
+
+<h2>The privacy implication</h2>
+
+<p>If processing happens in WASM in your browser, your file never touches a server. There's nothing to log, nothing to store, no third-party privacy policy to trust, and no regulatory exposure for GDPR or HIPAA purposes (for the tool provider).</p>
+
+<p>You can verify this: open DevTools → Network tab, use a WASM-based tool, and check for outbound file upload requests. If there aren't any, the processing is local.</p>
+
+<h2>The tradeoffs</h2>
+
+<p><strong>Initial load</strong> — WASM binaries for complex tools can be large (Tesseract with English language data is ~30MB). First use is slow; subsequent uses use cached binaries.</p>
+
+<p><strong>Memory limits</strong> — Browser tabs have memory constraints. Very large files (multi-gigabyte video) still require server-side processing.</p>
+
+<p><strong>Single-threaded (mostly)</strong> — WASM runs on the main thread by default. Complex processing can block the UI. The fix is Web Workers, which most well-built tools use to offload the WASM work.</p>
+
+<p>All tools at <a href="/tools">toolora.dev/tools</a> are built on this approach — your files stay in your browser, verifiable with DevTools.</p>
+    `.trim(),
+  },
+
+  {
+    slug: "excel-to-json-converter",
+    title: "Excel to JSON: Convert Spreadsheet Data Without Writing Code",
+    description: "Turn .xlsx files into structured JSON arrays online — handles multiple sheets, headers, and type detection. Free, no upload.",
+    date: "2026-04-13",
+    readTime: "4 min read",
+    category: "Developer Tools",
+    keywords: ["excel to json", "xlsx to json", "convert excel to json online", "spreadsheet to json", "excel data to api"],
+    content: `
+<p>You have data in Excel. You need it in JSON to feed an API, import into a database, or process with code. You don't need to write a script for this — it can be done in the browser in seconds.</p>
+
+<h2>What the output looks like</h2>
+
+<p>Excel to JSON typically produces an array of objects, one per row, with the header row becoming object keys:</p>
+
+<pre><code>[
+  { "product": "Widget A", "price": 9.99, "stock": 42 },
+  { "product": "Widget B", "price": 14.99, "stock": 8 }
+]</code></pre>
+
+<h2>Handling multiple sheets</h2>
+
+<p>Excel files can have multiple sheets. A converter can handle this as:</p>
+<ul>
+  <li><strong>Single sheet selection</strong> — convert only the active or chosen sheet</li>
+  <li><strong>All sheets as object</strong> — <code>{ "Sheet1": [...], "Sheet2": [...] }</code></li>
+  <li><strong>All sheets merged</strong> — rows from all sheets concatenated into one array (risky if columns differ)</li>
+</ul>
+
+<h2>Type detection</h2>
+
+<p>Excel cells have types: numbers, dates, strings, booleans, formulas. A good converter reads these native Excel types and produces correctly-typed JSON (numbers as numbers, not strings). Poor converters stringify everything.</p>
+
+<p>Excel dates are stored internally as days since January 1, 1900. A converter needs to detect this and convert to ISO 8601 (<code>2026-04-13</code>) or Unix timestamp, depending on what you need.</p>
+
+<h2>Common issues</h2>
+
+<table>
+  <thead>
+    <tr><th>Issue</th><th>Cause</th><th>Solution</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Numbers come out as strings</td><td>Converter not reading cell types</td><td>Use a converter that reads native xlsx types (SheetJS handles this well)</td></tr>
+    <tr><td>Dates show as large numbers</td><td>Excel serial date not converted</td><td>Enable date conversion option if available</td></tr>
+    <tr><td>Merged cells cause blank rows</td><td>Merged cells have value only in top-left</td><td>Unmerge cells in Excel before converting</td></tr>
+    <tr><td>Formula cells show as blank</td><td>Formulas not evaluated — converters read stored values</td><td>In Excel: copy → paste special → values only, then convert</td></tr>
+    <tr><td>Hidden rows included</td><td>Most converters include all rows, visible or not</td><td>Delete hidden rows in Excel before converting</td></tr>
+  </tbody>
+</table>
+
+<h2>The library behind it</h2>
+
+<p>Most browser-based Excel-to-JSON tools use <a href="https://sheetjs.com">SheetJS (xlsx)</a>, an open-source library that reads and writes Excel files in JavaScript. It works with .xlsx, .xls, .ods, and .csv files. It's compiled to WASM for browser use, so your file is processed locally.</p>
+
+<h2>From JSON to API-ready format</h2>
+
+<p>Once you have JSON, you often need to clean it up:</p>
+<ul>
+  <li>Rename keys to snake_case or camelCase to match your API schema</li>
+  <li>Filter out columns you don't need</li>
+  <li>Transform date formats</li>
+  <li>Handle nulls (empty cells) consistently</li>
+</ul>
+
+<p>A quick array transform in JavaScript handles all of this. The hard part — getting the Excel data into JSON — is done.</p>
+
+<p>Convert Excel to JSON at <a href="/tools">Toolora → Developer → Excel to JSON</a>. Drop in your .xlsx, get clean JSON out.</p>
+    `.trim(),
+  },
+
+  {
+    slug: "share-text-online-pastebin-alternatives",
+    title: "How to Share Text Online Without Creating an Account",
+    description: "Pastebin, GitHub Gist, and browser-based alternatives — when to use each, and how to share code or text instantly.",
+    date: "2026-04-13",
+    readTime: "4 min read",
+    category: "Privacy",
+    keywords: ["pastebin alternative", "share text online free", "code snippet sharing", "online clipboard", "create shareable text link"],
+    content: `
+<p>You need to share a block of text, a config file, or a code snippet with someone. Email is clunky, Slack wraps long code in weird ways, and you don't want to spin up a GitHub repo for 20 lines. Here are the best options.</p>
+
+<h2>The quick comparison</h2>
+
+<table>
+  <thead>
+    <tr><th>Tool</th><th>Account required</th><th>Expiry</th><th>Syntax highlighting</th><th>Privacy</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Pastebin</td><td>No (anonymous)</td><td>Optional</td><td>Yes</td><td>Public by default</td></tr>
+    <tr><td>GitHub Gist</td><td>Yes</td><td>Never (unless deleted)</td><td>Yes</td><td>Secret or public</td></tr>
+    <tr><td>Hastebin</td><td>No</td><td>30 days inactive</td><td>Limited</td><td>Public</td></tr>
+    <tr><td>paste.rs</td><td>No</td><td>Never</td><td>No</td><td>Public</td></tr>
+    <tr><td>Toolora Paste</td><td>No</td><td>Configurable</td><td>No</td><td>Link-based access</td></tr>
+  </tbody>
+</table>
+
+<h2>When to use each</h2>
+
+<p><strong>GitHub Gist</strong> — Best for code you're comfortable making public or semi-public. Secret gists aren't indexed by Google but anyone with the link can see them. Great for sharing with a specific person.</p>
+
+<p><strong>Pastebin</strong> — Quick and anonymous. Public pastes are indexed by search engines unless you mark them unlisted. If you're pasting sensitive content, use unlisted mode and set an expiry.</p>
+
+<p><strong>Hastebin and paste.rs</strong> — Minimal, fast, no account. Good for very short-lived sharing where you don't care about the URL structure.</p>
+
+<p><strong>Toolora Paste</strong> — Browser-based paste that generates a shareable link. No account needed. Good for text, configs, or log output. Accessible from the MCP server as the <code>create_shareable_paste</code> tool — so Claude or any AI agent can create pastes programmatically.</p>
+
+<h2>What not to paste publicly</h2>
+
+<ul>
+  <li>API keys, access tokens, or secrets — even in "unlisted" mode</li>
+  <li>Personal data (emails, phone numbers, addresses)</li>
+  <li>Database credentials, connection strings</li>
+  <li>Private keys or certificates</li>
+</ul>
+
+<p>Public paste tools are regularly scraped. GitHub Gist "secret" links circulate. Treat any paste as potentially public even if you set it to unlisted.</p>
+
+<h2>For sensitive content</h2>
+
+<p>If you need to share sensitive text, use an end-to-end encrypted option: <a href="https://privatebin.net">PrivateBin</a> encrypts in the browser before sending — the server never sees the plaintext. The decryption key is part of the URL fragment (which isn't sent to the server). Share the full URL to share the content securely.</p>
+
+<p>Create a shareable paste instantly at <a href="/tools">Toolora → Productivity → Paste</a>. No login, no friction.</p>
+    `.trim(),
+  },
+
+  {
+    slug: "regex-basics-patterns-guide",
+    title: "Regex Basics: The 15 Patterns That Cover 90% of Real-World Use",
+    description: "You don't need to memorize all of regex. Here are the patterns you'll actually use — for email, URL, phone, date, and more.",
+    date: "2026-04-14",
+    readTime: "6 min read",
+    category: "Developer Tools",
+    keywords: ["regex basics", "regular expressions tutorial", "regex patterns", "regex cheat sheet", "regex for email validation"],
+    content: `
+<p>Regular expressions have a reputation for being cryptic and hard. Most of that reputation comes from seeing complex patterns without understanding the small set of building blocks they're made from. Here's the fast path.</p>
+
+<h2>The core building blocks</h2>
+
+<table>
+  <thead>
+    <tr><th>Symbol</th><th>Meaning</th><th>Example</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>.</code></td><td>Any single character (except newline)</td><td><code>c.t</code> matches cat, cut, cot</td></tr>
+    <tr><td><code>*</code></td><td>0 or more of the preceding</td><td><code>ca*t</code> matches ct, cat, caat</td></tr>
+    <tr><td><code>+</code></td><td>1 or more of the preceding</td><td><code>ca+t</code> matches cat, caat (not ct)</td></tr>
+    <tr><td><code>?</code></td><td>0 or 1 of the preceding (optional)</td><td><code>colou?r</code> matches color, colour</td></tr>
+    <tr><td><code>^</code></td><td>Start of string</td><td><code>^Hello</code> matches strings starting with Hello</td></tr>
+    <tr><td><code>$</code></td><td>End of string</td><td><code>world$</code> matches strings ending with world</td></tr>
+    <tr><td><code>[abc]</code></td><td>Character class — any of a, b, c</td><td><code>[aeiou]</code> matches any vowel</td></tr>
+    <tr><td><code>[^abc]</code></td><td>Negated class — anything except a, b, c</td><td><code>[^0-9]</code> matches non-digits</td></tr>
+    <tr><td><code>\d</code></td><td>Any digit (0-9)</td><td><code>\d{4}</code> matches any 4-digit number</td></tr>
+    <tr><td><code>\w</code></td><td>Word character (a-z, A-Z, 0-9, _)</td><td><code>\w+</code> matches a word</td></tr>
+    <tr><td><code>\s</code></td><td>Whitespace (space, tab, newline)</td><td><code>\s+</code> matches whitespace runs</td></tr>
+    <tr><td><code>{n,m}</code></td><td>Between n and m repetitions</td><td><code>\d{2,4}</code> matches 2–4 digits</td></tr>
+    <tr><td><code>(abc)</code></td><td>Capturing group</td><td><code>(\d{4})-(\d{2})</code> captures year and month</td></tr>
+    <tr><td><code>a|b</code></td><td>Either a or b</td><td><code>cat|dog</code> matches cat or dog</td></tr>
+    <tr><td><code>\b</code></td><td>Word boundary</td><td><code>\bword\b</code> matches "word" not "keyword"</td></tr>
+  </tbody>
+</table>
+
+<h2>The 15 patterns you'll actually use</h2>
+
+<p><strong>Email (basic validation):</strong><br><code>/^[^\s@]+@[^\s@]+\.[^\s@]+$/</code></p>
+
+<p><strong>URL:</strong><br><code>/https?:\/\/[^\s/$.?#].[^\s]*/i</code></p>
+
+<p><strong>US phone (flexible format):</strong><br><code>/^\+?1?\s*\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/</code></p>
+
+<p><strong>ISO date (YYYY-MM-DD):</strong><br><code>/^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/</code></p>
+
+<p><strong>IPv4 address:</strong><br><code>/^(\d{1,3}\.){3}\d{1,3}$/</code></p>
+
+<p><strong>Hex color code:</strong><br><code>/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/</code></p>
+
+<p><strong>Slug (URL-safe string):</strong><br><code>/^[a-z0-9]+(?:-[a-z0-9]+)*$/</code></p>
+
+<p><strong>Strong password (min 8, at least 1 uppercase, 1 lowercase, 1 digit):</strong><br><code>/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/</code></p>
+
+<p><strong>Credit card (4 groups of 4 digits, any separator):</strong><br><code>/^\d{4}[\s-]?\d{4}[\s-]?\d{4}[\s-]?\d{4}$/</code></p>
+
+<p><strong>ZIP code (US 5-digit or ZIP+4):</strong><br><code>/^\d{5}(-\d{4})?$/</code></p>
+
+<p><strong>Remove HTML tags:</strong><br><code>/&lt;[^&gt;]+&gt;/g</code></p>
+
+<p><strong>Trim multiple spaces to one:</strong><br><code>/\s+/g</code> → replace with <code>' '</code></p>
+
+<p><strong>Extract numbers from string:</strong><br><code>/-?\d+\.?\d*/g</code></p>
+
+<p><strong>Match lines starting with #  (comments):</strong><br><code>/^#.*/gm</code></p>
+
+<p><strong>Markdown links [text](url):</strong><br><code>/\[([^\]]+)\]\(([^)]+)\)/g</code></p>
+
+<h2>Common mistakes</h2>
+
+<p>Don't use regex for HTML parsing — HTML nesting breaks regex. Use a proper DOM parser. Don't use regex as your only email validation — the only real validation is sending a confirmation email. And don't over-engineer — if a simple string method works (<code>includes()</code>, <code>startsWith()</code>), use that instead.</p>
+    `.trim(),
+  },
+
+  {
+    slug: "ai-agent-memory-systems-explained",
+    title: "AI Agent Memory: How AI Systems Remember Things Between Conversations",
+    description: "AI models are stateless by default. Memory requires external storage. Here's how AI memory systems actually work — from simple key-value to vector stores.",
+    date: "2026-04-14",
+    readTime: "5 min read",
+    category: "AI Builders",
+    keywords: ["ai agent memory", "claude memory", "llm memory systems", "ai persistent memory", "vector store for ai"],
+    content: `
+<p>Every time you start a new conversation with Claude or ChatGPT, it has no memory of previous conversations. This isn't a bug — it's how transformer models work. The model processes a context window and produces a response. No state is persisted between calls.</p>
+
+<p>Giving AI agents meaningful memory requires building it externally. Here are the main approaches.</p>
+
+<h2>Types of AI memory</h2>
+
+<p><strong>In-context memory (the simplest kind)</strong> — Paste previous conversation or user facts directly into the prompt. Works fine for single sessions. Doesn't scale — context windows are finite, and stuffing them with memory reduces space for the actual task.</p>
+
+<p><strong>External storage with retrieval</strong> — Store information in a database. On each new conversation, retrieve relevant information and inject it into the context. This can be a simple key-value store for structured facts, or a vector database for semantic retrieval.</p>
+
+<p><strong>Episodic memory</strong> — Storing summaries of previous conversations that can be retrieved and replayed. "Last week you were working on X." The AI didn't experience that — a summary was retrieved from storage and included in the context.</p>
+
+<p><strong>Procedural memory</strong> — Stored instructions or workflows the agent has learned. "The user prefers concise answers" or "always format code with line numbers." These are retrieved as system-prompt additions.</p>
+
+<h2>Vector databases: semantic memory</h2>
+
+<p>A vector database stores embeddings — mathematical representations of meaning. When you search semantically ("find things similar to this concept"), the database computes similarity between your query embedding and stored embeddings and returns the closest matches.</p>
+
+<p>This enables memory that works like human association: asking about "my project deadline" retrieves stored facts about your project even if the exact word "deadline" never appeared in the stored text.</p>
+
+<table>
+  <thead>
+    <tr><th>Vector DB</th><th>Hosting</th><th>Best for</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Pinecone</td><td>Cloud</td><td>Production-grade semantic search</td></tr>
+    <tr><td>Weaviate</td><td>Cloud / self-hosted</td><td>Complex data types with semantic search</td></tr>
+    <tr><td>Chroma</td><td>Local / cloud</td><td>Developer prototyping</td></tr>
+    <tr><td>pgvector</td><td>PostgreSQL extension</td><td>If you already use Postgres</td></tr>
+    <tr><td>Qdrant</td><td>Self-hosted / cloud</td><td>High-performance with Rust backend</td></tr>
+  </tbody>
+</table>
+
+<h2>The MCP approach: tool-based memory</h2>
+
+<p>MCP servers can expose <code>save_memory</code> and <code>recall_memory</code> tools that agents call explicitly. Rather than automatic retrieval, the agent decides what to save and when to look things up — more transparent but requires the agent to be instructed to use memory tools.</p>
+
+<p>The Toolora MCP server includes both tools: Claude can call <code>save_memory</code> with a key and value, and retrieve it later with <code>recall_memory</code>. Simple key-value, but useful for persistent facts across conversations.</p>
+
+<h2>What works in practice</h2>
+
+<p>For most use cases, simple key-value memory is enough: user preferences, project names, relevant background facts. Vector search is useful when you're building a personal AI that needs to recall information from a large history of conversations or documents.</p>
+
+<p>The limiting factor isn't the memory storage — it's the context window. Even with good retrieval, you can only inject so much retrieved context before it crowds out the current task. Most production systems retrieve 3–10 relevant memory items per conversation turn.</p>
+
+<p>Try the <code>save_memory</code> and <code>recall_memory</code> tools on the <a href="/mcp-hub">Toolora MCP server</a>. Add it to Claude Desktop and tell it to remember things about your projects.</p>
+    `.trim(),
+  },
+
+  {
+    slug: "read-pdf-without-google-drive",
+    title: "How to Read a PDF Without Google Drive (Privacy-First Methods)",
+    description: "Google Drive reads your PDFs to train models. Here's how to extract PDF text without uploading to any cloud service.",
+    date: "2026-04-15",
+    readTime: "4 min read",
+    category: "Privacy",
+    keywords: ["read pdf without google drive", "extract pdf text free", "pdf reader no upload", "pdf privacy"],
+    content: `
+<p>When you open a PDF in Google Drive, Google processes it — for indexing, for features like search, and per their terms, as training data for certain AI systems. For most documents that's fine. For client contracts, medical records, financial documents, or anything confidential, it's worth thinking about.</p>
+
+<h2>What Google Drive does with your PDFs</h2>
+
+<p>Google Drive's privacy policy indicates they process file content to improve their services. Workspace documents stored in Drive are not used to train ad-serving models, but the boundaries around AI training have shifted multiple times. The Terms of Service grant Google a license to process your uploaded content.</p>
+
+<p>If your organization has Google Workspace with enhanced data controls, this works differently. But personal Gmail accounts with standard Drive? Your documents are processed.</p>
+
+<h2>Method 1: Browser-based PDF text extraction (best for privacy)</h2>
+
+<p>PDF.js (Mozilla's library) can parse and render PDFs entirely in the browser. Tools built on pdf-lib can extract the text layer from a digital PDF (not a scanned one) without uploading anything.</p>
+
+<p>How to verify it's local: open DevTools → Network tab before uploading your PDF. If no files are sent to an external server, the extraction is happening in your browser.</p>
+
+<p>Extract PDF text in-browser at <a href="/tools">Toolora → Documents → PDF Extract</a>. Paste your PDF, get the text layer — nothing uploaded.</p>
+
+<h2>Method 2: macOS Preview or Windows Edge (built-in)</h2>
+
+<p>macOS Preview lets you select and copy text directly from PDFs if they have a text layer. Windows Edge can open PDFs and has a text selection mode. Neither uploads your file anywhere — it's processed by the OS PDF renderer.</p>
+
+<p>Limitation: this requires manual copying, doesn't work on scanned PDFs, and doesn't extract the full document programmatically.</p>
+
+<h2>Method 3: Local OCR for scanned PDFs</h2>
+
+<p>If your PDF is a scan (essentially an image), it has no text layer — only pixels. Extracting text requires OCR. Local OCR options:</p>
+
+<ul>
+  <li><strong>Tesseract</strong> — open-source, runs locally, command-line: <code>tesseract input.pdf output txt</code></li>
+  <li><strong>ABBYY FineReader</strong> — commercial, excellent accuracy, fully local</li>
+  <li><strong>Browser-based Tesseract</strong> — WASM build, runs in your browser tab without uploading</li>
+</ul>
+
+<h2>Method 4: Adobe Acrobat (local, not cloud)</h2>
+
+<p>The desktop version of Adobe Acrobat processes PDFs locally. Acrobat Reader (the free version) lets you copy text; Acrobat Pro can run OCR locally. The cloud features (Adobe Document Cloud, AI Assistant) do upload — only use the local processing features.</p>
+
+<h2>When cloud upload is fine</h2>
+
+<p>If the PDF is non-confidential — a public report, product documentation, a textbook — cloud processing via Google Drive, Adobe AI, or any service is perfectly reasonable and often more powerful. Save the local-only approach for documents that genuinely warrant it.</p>
+    `.trim(),
+  },
+
+  {
+    slug: "url-encoding-percent-encoding-explained",
+    title: "URL Encoding Explained: What %20 and %3A Actually Mean",
+    description: "Every URL you've ever seen with %20 in it — here's why that happens, what it means, and when you need to encode or decode URLs.",
+    date: "2026-04-15",
+    readTime: "4 min read",
+    category: "Developer Tools",
+    keywords: ["url encoding", "percent encoding", "urlencode", "what does %20 mean", "url encode decode"],
+    content: `
+<p>URLs can only contain a specific set of characters. When data contains characters outside that set — spaces, special characters, non-ASCII text — those characters must be encoded. That encoding produces the <code>%20</code>s, <code>%3A</code>s, and <code>%2F</code>s you see everywhere.</p>
+
+<h2>Why URLs have character restrictions</h2>
+
+<p>The URL specification (RFC 3986) defines a set of allowed characters: letters (a-z, A-Z), digits (0-9), and a small set of special characters (<code>-</code>, <code>_</code>, <code>.</code>, <code>~</code>). Characters with special meaning in URLs — like <code>/</code> (path separator), <code>?</code> (query start), <code>&amp;</code> (parameter separator), <code>#</code> (fragment) — can only appear in their literal form when serving their structural role.</p>
+
+<p>Everything else must be percent-encoded.</p>
+
+<h2>How percent encoding works</h2>
+
+<p>Each character is converted to its UTF-8 byte value, then expressed as <code>%</code> followed by two hexadecimal digits.</p>
+
+<table>
+  <thead>
+    <tr><th>Character</th><th>Encoding</th><th>Reason</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Space</td><td><code>%20</code></td><td>Space = byte 0x20 in ASCII</td></tr>
+    <tr><td>:</td><td><code>%3A</code></td><td>Colon is a reserved character</td></tr>
+    <tr><td>/</td><td><code>%2F</code></td><td>Slash is a path separator</td></tr>
+    <tr><td>?</td><td><code>%3F</code></td><td>Question mark starts the query string</td></tr>
+    <tr><td>&amp;</td><td><code>%26</code></td><td>Ampersand separates query params</td></tr>
+    <tr><td>=</td><td><code>%3D</code></td><td>Equals assigns query param values</td></tr>
+    <tr><td>#</td><td><code>%23</code></td><td>Hash starts the fragment identifier</td></tr>
+    <tr><td>@</td><td><code>%40</code></td><td>At sign in URLs can confuse parsers</td></tr>
+    <tr><td>+</td><td><code>%2B</code></td><td>Plus sign (or encodes space in form data)</td></tr>
+  </tbody>
+</table>
+
+<h2>The + vs %20 distinction</h2>
+
+<p>In query strings (the part after <code>?</code>), HTML form submission traditionally encodes spaces as <code>+</code> (application/x-www-form-urlencoded). In path components, spaces must be <code>%20</code>.</p>
+
+<p>This causes bugs: decoding <code>first+name</code> as a URL path gives you "first+name" (literal plus), but decoding it as form data gives you "first name." Use the right decode function for the context.</p>
+
+<h2>JavaScript functions</h2>
+
+<ul>
+  <li><code>encodeURIComponent(str)</code> — encodes a value to be used as a query param value or path segment. Encodes everything except <code>A-Z a-z 0-9 - _ . ! ~ * ' ( )</code>.</li>
+  <li><code>encodeURI(str)</code> — encodes a full URL. Doesn't encode characters that are structurally significant in URLs (<code>: / ? # @ ! $ &amp; ' ( ) * + , ; =</code>). Use when encoding a complete URL.</li>
+  <li><code>decodeURIComponent(str)</code> — reverses <code>encodeURIComponent</code>.</li>
+</ul>
+
+<p>The common mistake: using <code>encodeURI</code> on a query parameter value. It won't encode <code>&amp;</code> and <code>=</code>, which breaks your query string. Always use <code>encodeURIComponent</code> for individual values.</p>
+
+<h2>International characters</h2>
+
+<p>Non-ASCII characters (Chinese, Arabic, emoji) are first encoded to UTF-8 bytes, then percent-encoded. The emoji 🔑 (U+1F511) encodes to <code>%F0%9F%94%91</code> — its four UTF-8 bytes in hex.</p>
+
+<p>Modern browsers handle this transparently in the address bar, displaying the decoded form for readability. The actual HTTP request still uses the encoded form.</p>
+    `.trim(),
+  },
+
+  {
+    slug: "check-if-website-uploads-your-files",
+    title: "How to Check if a Website Actually Uploads Your Files",
+    description: "Use your browser's Network tab to see exactly what data any online tool sends to its servers. Step-by-step instructions.",
+    date: "2026-04-16",
+    readTime: "4 min read",
+    category: "Privacy",
+    keywords: ["check if website uploads files", "devtools network tab", "privacy check online tool", "is my file safe online"],
+    content: `
+<p>Every online tool that processes your files claims to be private. Most are lying — or at least not telling the full truth. Here's how to verify yourself, in under two minutes, using tools already in your browser.</p>
+
+<h2>Open DevTools → Network tab</h2>
+
+<ol>
+  <li>Open the online tool in Chrome, Firefox, or Edge</li>
+  <li>Press <strong>F12</strong> (or right-click → Inspect)</li>
+  <li>Click the <strong>Network</strong> tab</li>
+  <li>Make sure recording is on — the circle in the top-left should be red</li>
+  <li>Check the <strong>Preserve log</strong> checkbox so requests don't clear on navigation</li>
+</ol>
+
+<h2>Now use the tool</h2>
+
+<p>Upload your file, convert your PDF, compress your image — whatever the tool does. Watch the Network tab as you do it.</p>
+
+<h2>What to look for</h2>
+
+<p><strong>If the tool uploads your file:</strong> You'll see a POST or PUT request appear in the list, often to the tool's domain or a CDN. Click on the request. Under the Payload tab, you'll see your file data (often as binary or base64). Under the Response tab, you'll see the server's response with the processed file.</p>
+
+<p><strong>If the tool is truly client-side:</strong> You'll see no outbound requests matching your file. The only network traffic will be the initial page load (HTML, CSS, JS, WASM files). Processing that happens locally produces no network requests — it's all computation in your browser tab.</p>
+
+<h2>What counts as uploading</h2>
+
+<table>
+  <thead>
+    <tr><th>Request type</th><th>What it means</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>POST to tool's domain with file payload</td><td>Your file went to their server</td></tr>
+    <tr><td>PUT to an S3 or CDN URL</td><td>Your file went to cloud storage</td></tr>
+    <tr><td>XHR/fetch with multipart/form-data</td><td>File upload in progress</td></tr>
+    <tr><td>No outbound data requests during processing</td><td>Processing is local</td></tr>
+    <tr><td>Request to load a WASM file (.wasm)</td><td>Good sign — processing engine loading locally</td></tr>
+  </tbody>
+</table>
+
+<h2>Filter to find relevant requests</h2>
+
+<p>In the Network tab filter bar, type the tool's domain name, or filter by "Fetch/XHR" to see only API calls (filtering out static assets like images and scripts). This makes it easier to spot file upload requests among the noise.</p>
+
+<h2>What the response time tells you</h2>
+
+<p>A tool that processes client-side has no server round-trip. Processing happens at the speed of your CPU. Response times for client-side tools are typically 0.5–5 seconds depending on file size and operation complexity.</p>
+
+<p>A tool that uploads will show a network request with a duration proportional to your upload speed. If you see a request taking 3–30 seconds and it's going to an external server, your file went there.</p>
+
+<p>All tools at <a href="/tools">Toolora</a> are verifiable with this method. No outbound file requests. The WASM files load once and cache.</p>
+    `.trim(),
+  },
+
+  {
+    slug: "mime-types-content-type-explained",
+    title: "MIME Types Explained: What Content-Type Headers Actually Do",
+    description: "Every file has a MIME type. Every API response needs a Content-Type. Here's what they are, why they matter, and the common types you'll encounter.",
+    date: "2026-04-16",
+    readTime: "4 min read",
+    category: "Developer Tools",
+    keywords: ["mime type", "content-type header", "what is mime type", "application/json", "file mime types"],
+    content: `
+<p>MIME types tell the browser (or any HTTP client) what kind of data is being sent. Without them, the receiver has to guess — which leads to files being rendered incorrectly, downloads failing, or security vulnerabilities.</p>
+
+<h2>What MIME stands for</h2>
+
+<p>Multipurpose Internet Mail Extensions. Originally designed for email attachments in the early 1990s. Adopted by the web for HTTP content negotiation. The format is: <code>type/subtype</code>, optionally with parameters: <code>text/html; charset=UTF-8</code>.</p>
+
+<h2>The common ones</h2>
+
+<table>
+  <thead>
+    <tr><th>MIME type</th><th>What it is</th><th>File extension</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>text/html</code></td><td>HTML document</td><td>.html, .htm</td></tr>
+    <tr><td><code>text/css</code></td><td>CSS stylesheet</td><td>.css</td></tr>
+    <tr><td><code>text/javascript</code></td><td>JavaScript</td><td>.js, .mjs</td></tr>
+    <tr><td><code>application/json</code></td><td>JSON data</td><td>.json</td></tr>
+    <tr><td><code>application/xml</code></td><td>XML data</td><td>.xml</td></tr>
+    <tr><td><code>application/pdf</code></td><td>PDF document</td><td>.pdf</td></tr>
+    <tr><td><code>application/zip</code></td><td>ZIP archive</td><td>.zip</td></tr>
+    <tr><td><code>image/jpeg</code></td><td>JPEG image</td><td>.jpg, .jpeg</td></tr>
+    <tr><td><code>image/png</code></td><td>PNG image</td><td>.png</td></tr>
+    <tr><td><code>image/webp</code></td><td>WebP image</td><td>.webp</td></tr>
+    <tr><td><code>image/svg+xml</code></td><td>SVG vector image</td><td>.svg</td></tr>
+    <tr><td><code>audio/mpeg</code></td><td>MP3 audio</td><td>.mp3</td></tr>
+    <tr><td><code>video/mp4</code></td><td>MP4 video</td><td>.mp4</td></tr>
+    <tr><td><code>multipart/form-data</code></td><td>File upload form</td><td>—</td></tr>
+    <tr><td><code>application/octet-stream</code></td><td>Unknown binary</td><td>—</td></tr>
+  </tbody>
+</table>
+
+<h2>In API development</h2>
+
+<p>Always set <code>Content-Type: application/json</code> when returning JSON. Without it, some clients treat the response as plain text. Always check the request's <code>Content-Type</code> before parsing — a client sending <code>application/x-www-form-urlencoded</code> instead of <code>application/json</code> will break a JSON parser.</p>
+
+<p>For file uploads: clients must send <code>Content-Type: multipart/form-data</code> with a boundary parameter. The boundary is a randomly generated string that separates file parts in the request body. Don't set this header manually — your HTTP client sets it automatically with the correct boundary when you attach files.</p>
+
+<h2>Security: MIME sniffing and X-Content-Type-Options</h2>
+
+<p>Browsers used to "sniff" MIME types — ignoring the Content-Type header and guessing from the file's actual bytes. This led to security vulnerabilities where an attacker could upload an HTML file labeled as an image, and the browser would execute it as HTML.</p>
+
+<p>The fix: set <code>X-Content-Type-Options: nosniff</code> header on your server. This tells browsers to trust the Content-Type header and never sniff. All modern web apps should set this.</p>
+
+<h2>application/octet-stream: the fallback</h2>
+
+<p><code>application/octet-stream</code> means "raw binary data, unknown type." Browsers treat this as a file download. If you're serving a file and set this type, the browser will download it instead of rendering it — useful for forcing downloads even of displayable file types like PDFs or images.</p>
+    `.trim(),
+  },
+
+  {
+    slug: "what-is-an-ai-agent",
+    title: "What Is an AI Agent? A Plain-English Explanation",
+    description: "AI agents are everywhere now. Here's what they actually are, how they differ from chatbots, and what makes them capable of doing real work.",
+    date: "2026-04-17",
+    readTime: "5 min read",
+    category: "AI Builders",
+    keywords: ["what is an ai agent", "ai agent explained", "autonomous ai", "ai agent vs chatbot", "llm agent"],
+    content: `
+<p>The term "AI agent" is being applied to everything from a simple chatbot with a system prompt to fully autonomous systems that browse the web, write code, and deploy software. Here's a clear-eyed explanation of what the term actually means and why the distinction matters.</p>
+
+<h2>Chatbot vs. AI agent</h2>
+
+<p>A chatbot takes input and produces a response. One turn, one response, done. It doesn't take actions — it produces text.</p>
+
+<p>An AI agent takes input, decides what actions to take to accomplish a goal, takes those actions, observes the results, and continues until the goal is met. It can use tools, make decisions, and run multiple steps without asking you to intervene at each one.</p>
+
+<table>
+  <thead>
+    <tr><th>Property</th><th>Chatbot</th><th>AI Agent</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Actions</td><td>Text output only</td><td>Can use tools, call APIs, run code</td></tr>
+    <tr><td>Memory</td><td>In-context only</td><td>Can write to / read from external storage</td></tr>
+    <tr><td>Multi-step</td><td>One response per prompt</td><td>Chains multiple steps autonomously</td></tr>
+    <tr><td>Goal-seeking</td><td>Responds to each message</td><td>Works toward a declared objective</td></tr>
+    <tr><td>Interrupts user</td><td>Every turn</td><td>Only when blocked or uncertain</td></tr>
+  </tbody>
+</table>
+
+<h2>The core components of an AI agent</h2>
+
+<p><strong>The model</strong> — A large language model (Claude, GPT-4, Gemini) that handles reasoning, planning, and decision-making.</p>
+
+<p><strong>Tools</strong> — Functions the model can call: web search, code execution, file reading, API calls, database queries. The model decides which tools to use and when.</p>
+
+<p><strong>Memory</strong> — Persistent state between steps and sessions. Can be simple key-value storage, a vector database for semantic retrieval, or a full relational database.</p>
+
+<p><strong>A goal or task</strong> — What the agent is trying to accomplish. This might be a one-line instruction ("research competitors and write a report") or a complex structured objective.</p>
+
+<p><strong>An orchestrator</strong> — The loop that sends the model's tool calls to the actual tools, returns results to the model, and continues until the task is done or the model signals completion.</p>
+
+<h2>What makes a good tool set</h2>
+
+<p>An agent is only as capable as its tools. Common tools that significantly expand what an agent can do:</p>
+
+<ul>
+  <li><strong>Web search</strong> — access to current information</li>
+  <li><strong>Browser control</strong> — logging into sites, filling forms, extracting structured data</li>
+  <li><strong>Code execution</strong> — running Python, processing data, generating files</li>
+  <li><strong>File reading/writing</strong> — working with documents, spreadsheets, CSVs</li>
+  <li><strong>API calls</strong> — interacting with external services</li>
+  <li><strong>Memory tools</strong> — saving and retrieving facts across sessions</li>
+</ul>
+
+<h2>The MCP standard</h2>
+
+<p>Model Context Protocol (MCP) is Anthropic's open standard for connecting AI agents to external tools and data sources. Instead of every developer building custom integrations for every model, MCP provides a standardized interface: any MCP-compatible tool works with any MCP-compatible model.</p>
+
+<p>This is why MCP servers like Toolora's let Claude use file processing, web reading, and memory tools out of the box — without Anthropic writing any of that code.</p>
+
+<p>Explore MCP-ready tools for AI agents at <a href="/mcp-hub">toolora.dev/mcp-hub</a>.</p>
+    `.trim(),
+  },
+
+  {
+    slug: "markdown-cheat-sheet-2026",
+    title: "Markdown Cheat Sheet: Every Syntax You Actually Need",
+    description: "Headers, bold, italic, code, tables, links, images — the complete quick reference for writing Markdown fast.",
+    date: "2026-04-17",
+    readTime: "4 min read",
+    category: "Developer Tools",
+    keywords: ["markdown cheat sheet", "markdown syntax", "markdown reference", "github markdown", "markdown guide"],
+    content: `
+<p>Markdown is designed to be readable as plain text and convertible to HTML. The syntax is minimal by design — here's everything, organized by how often you'll use it.</p>
+
+<h2>The ones you'll use every day</h2>
+
+<pre><code># Heading 1
+## Heading 2
+### Heading 3
+
+**bold text**
+*italic text*
+***bold and italic***
+~~strikethrough~~
+
+[Link text](https://example.com)
+![Alt text](image.png)
+
+- Unordered list item
+- Another item
+  - Nested item
+
+1. Ordered list item
+2. Second item
+
+\`inline code\`
+
+\`\`\`javascript
+// fenced code block
+const x = 1;
+\`\`\`
+
+> Blockquote text
+
+---  (horizontal rule)
+</code></pre>
+
+<h2>Tables (GitHub Flavored Markdown)</h2>
+
+<pre><code>| Column 1 | Column 2 | Column 3 |
+|----------|----------|----------|
+| Cell     | Cell     | Cell     |
+| Cell     | Cell     | Cell     |
+
+Alignment:
+| Left     | Center   | Right    |
+|:---------|:--------:|---------:|
+| text     | text     | text     |
+</code></pre>
+
+<h2>Task lists</h2>
+
+<pre><code>- [x] Completed task
+- [ ] Incomplete task
+- [x] Another done
+</code></pre>
+
+<h2>Links with titles</h2>
+
+<pre><code>[Link text](https://example.com "Optional title")
+
+Reference-style links:
+[Link text][ref-id]
+
+[ref-id]: https://example.com "Optional title"
+</code></pre>
+
+<h2>Images</h2>
+
+<pre><code>![Alt text](image.png)
+![Alt text](image.png "Optional title")
+
+Linked image:
+[![Alt text](image.png)](https://example.com)
+</code></pre>
+
+<h2>Escaping special characters</h2>
+
+<p>Prefix with backslash to treat special characters as literal:</p>
+
+<pre><code>\*not italic\*
+\`not code\`
+\# not a heading
+</code></pre>
+
+<h2>Extended syntax (not all parsers support)</h2>
+
+<table>
+  <thead>
+    <tr><th>Syntax</th><th>Output</th><th>Support</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>~~text~~</code></td><td>Strikethrough</td><td>GFM, most modern parsers</td></tr>
+    <tr><td><code>==highlight==</code></td><td>Highlighted text</td><td>Some extended parsers</td></tr>
+    <tr><td><code>H~2~O</code></td><td>Subscript</td><td>Extended Markdown only</td></tr>
+    <tr><td><code>x^2^</code></td><td>Superscript</td><td>Extended Markdown only</td></tr>
+    <tr><td><code>:emoji:</code></td><td>Emoji shortcode</td><td>GitHub, Discord, Slack</td></tr>
+    <tr><td><code>[^1]</code></td><td>Footnote reference</td><td>Extended Markdown, Pandoc</td></tr>
+  </tbody>
+</table>
+
+<h2>The spec situation</h2>
+
+<p>CommonMark is the standardized Markdown spec that resolves ambiguities in the original spec. GitHub Flavored Markdown (GFM) extends CommonMark with tables, task lists, strikethrough, and autolinks. When in doubt about what will work in your context, check which spec your platform uses — GitHub uses GFM, Notion uses its own variant, and static site generators vary widely.</p>
+
+<p>Convert Markdown to HTML instantly at <a href="/tools">Toolora → Developer → Markdown to HTML</a>.</p>
+    `.trim(),
+  },
+
+  {
+    slug: "generate-uuid-guid-online",
+    title: "How to Generate a UUID Online for Free (And What UUIDs Actually Are)",
+    description: "Generate random UUIDs, understand the different versions, and learn when to use UUID vs ULID vs CUID for your IDs.",
+    date: "2026-04-18",
+    readTime: "4 min read",
+    category: "Developer Tools",
+    keywords: ["uuid generator online", "guid generator", "generate uuid free", "uuid v4", "uuid vs ulid"],
+    content: `
+<p>UUID stands for Universally Unique Identifier. It's a 128-bit value formatted as 32 hexadecimal digits in a specific pattern: <code>xxxxxxxx-xxxx-Mxxx-Nxxx-xxxxxxxxxxxx</code>. The M indicates version, N indicates variant.</p>
+
+<h2>UUID versions</h2>
+
+<table>
+  <thead>
+    <tr><th>Version</th><th>Based on</th><th>Use case</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>v1</td><td>Timestamp + MAC address</td><td>Time-ordered, but leaks network info — mostly deprecated</td></tr>
+    <tr><td>v3</td><td>MD5 hash of namespace + name</td><td>Deterministic from input — same input always gives same UUID</td></tr>
+    <tr><td>v4</td><td>Random (122 random bits)</td><td>The most common — use when you just need a unique ID</td></tr>
+    <tr><td>v5</td><td>SHA-1 hash of namespace + name</td><td>Deterministic, like v3 but with stronger hash</td></tr>
+    <tr><td>v6</td><td>Timestamp + random (reordered v1)</td><td>Sortable, database-friendly — gaining adoption</td></tr>
+    <tr><td>v7</td><td>Unix timestamp + random</td><td>Sortable by creation time — use for database PKs</td></tr>
+  </tbody>
+</table>
+
+<h2>UUID v4 is the default choice</h2>
+
+<p>v4 is 122 bits of randomness. The probability of a collision across 2.71 quintillion UUIDs is one in a billion — for practical purposes, they never collide. Use v4 when you need a unique identifier and don't care about ordering.</p>
+
+<h2>UUID in databases: the index problem</h2>
+
+<p>UUIDs as primary keys in databases cause a performance issue: random v4 UUIDs insert in random positions in the index B-tree, causing fragmentation. Sequential IDs (like auto-increment integers) insert at the end, keeping the index compact.</p>
+
+<p>Solutions:</p>
+<ul>
+  <li><strong>UUID v7</strong> — starts with a Unix timestamp prefix, so they sort chronologically and insert near the end of the index</li>
+  <li><strong>ULID</strong> — Universally Unique Lexicographically Sortable Identifier. 26-character base32, timestamp-prefixed, case-insensitive. Good database performance.</li>
+  <li><strong>CUID2</strong> — Collision-resistant, URL-safe, sortable. Designed as a modern replacement for v4 UUIDs in database contexts.</li>
+</ul>
+
+<h2>When to use integer IDs instead</h2>
+
+<p>If you have a single-server database with no distribution requirements, auto-increment integer IDs are faster, smaller (8 bytes vs 16 for UUID), and index better. The case for UUIDs is strongest when:</p>
+<ul>
+  <li>You're merging data from multiple sources</li>
+  <li>IDs are generated client-side before hitting the database</li>
+  <li>You're distributing across multiple database servers</li>
+  <li>You don't want sequential IDs that reveal how many records you have</li>
+</ul>
+
+<h2>Generate one</h2>
+
+<p>In JavaScript: <code>crypto.randomUUID()</code> — built into modern browsers and Node.js 14.17+. No library needed.</p>
+
+<p>In Python: <code>import uuid; str(uuid.uuid4())</code></p>
+
+<p>In the terminal: <code>uuidgen</code> (macOS/Linux)</p>
+
+<p>Or generate instantly at <a href="/tools">Toolora → Developer → UUID Generator</a>. One click, copy to clipboard.</p>
+    `.trim(),
+  },
+
+  {
+    slug: "character-count-social-media-limits",
+    title: "Character Count for Every Social Media Platform in 2026",
+    description: "Twitter/X, Instagram, LinkedIn, TikTok, YouTube, Threads — every character limit in one table, with tips for each.",
+    date: "2026-04-18",
+    readTime: "4 min read",
+    category: "Tools",
+    keywords: ["character count", "twitter character limit", "instagram caption length", "linkedin post character limit", "social media character limits"],
+    content: `
+<p>Every platform has different limits, and they change more often than you'd think. Here's the current state, with notes on the details that catch people out.</p>
+
+<h2>The limits</h2>
+
+<table>
+  <thead>
+    <tr><th>Platform</th><th>Post / caption</th><th>Comment</th><th>Bio</th><th>Headline / display name</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>X (Twitter)</td><td>280 (25,000 for Premium)</td><td>280</td><td>160</td><td>50</td></tr>
+    <tr><td>Instagram</td><td>2,200</td><td>2,200</td><td>150</td><td>30</td></tr>
+    <tr><td>LinkedIn</td><td>3,000</td><td>1,250</td><td>2,600 (About)</td><td>220</td></tr>
+    <tr><td>Facebook</td><td>63,206</td><td>8,000</td><td>101</td><td>170 (Page name: 75)</td></tr>
+    <tr><td>TikTok</td><td>2,200</td><td>150</td><td>80</td><td>30</td></tr>
+    <tr><td>YouTube</td><td>5,000 (description)</td><td>10,000</td><td>1,000</td><td>100</td></tr>
+    <tr><td>Threads</td><td>500</td><td>500</td><td>150</td><td>30</td></tr>
+    <tr><td>Pinterest</td><td>500 (description)</td><td>500</td><td>160</td><td>30</td></tr>
+    <tr><td>Reddit</td><td>40,000</td><td>10,000</td><td>200</td><td>30</td></tr>
+    <tr><td>Bluesky</td><td>300</td><td>300</td><td>256</td><td>64</td></tr>
+  </tbody>
+</table>
+
+<h2>What counts as a character</h2>
+
+<p><strong>X/Twitter</strong>: URLs always count as 23 characters regardless of actual length (t.co shortener). Emoji count as 1-2 characters depending on the emoji (most modern emoji are 2 code points). CJK (Chinese, Japanese, Korean) characters also count as 2.</p>
+
+<p><strong>Instagram</strong>: The 2,200 character limit isn't the real limit you should care about — text is truncated at ~125 characters in the feed with a "more" tap. Your hook needs to land in those first 125 characters.</p>
+
+<p><strong>LinkedIn</strong>: Posts show a "see more" after 210 characters in the feed. Engagement drops significantly for posts that require expansion. First 210 characters do the work.</p>
+
+<p><strong>YouTube descriptions</strong>: The first 157 characters appear in search results. Stuff your primary keywords before that cutoff.</p>
+
+<h2>Character count matters for SEO too</h2>
+
+<p>Meta descriptions in search results are truncated at around 155–160 characters. Title tags display up to 60 characters in Google. Going over doesn't hurt you — the rest is just cut off — but it's wasted space.</p>
+
+<h2>Checking your count</h2>
+
+<p>Most platforms show a live counter as you type. If you're drafting content outside the platform (in a doc or CMS), you need an external counter.</p>
+
+<p>Count characters at <a href="/tools">Toolora → Text → Word Counter</a> — shows word count, character count with and without spaces, reading time, and average sentence length.</p>
+    `.trim(),
+  },
+
+  {
+    slug: "what-is-a-webhook",
+    title: "What Is a Webhook? How It Differs from a Regular API Call",
+    description: "Webhooks and APIs solve different problems. Here's when to use each, how webhooks actually work, and how to handle them in your server.",
+    date: "2026-04-19",
+    readTime: "5 min read",
+    category: "Developer Tools",
+    keywords: ["what is a webhook", "webhook vs api", "webhook explained", "rest api vs webhook", "webhook tutorial"],
+    content: `
+<p>A regular API call is you asking a question. A webhook is the other party texting you when something happens. They're both HTTP requests — the direction and trigger are what differ.</p>
+
+<h2>The core difference</h2>
+
+<p><strong>API call (polling)</strong>: You → request → Their server → response → You<br>You initiate. You get data when you ask.</p>
+
+<p><strong>Webhook (push)</strong>: Their server → POST to your URL → Your server processes it<br>They initiate. You get data when something happens.</p>
+
+<h2>Why webhooks exist</h2>
+
+<p>Imagine you want to know when a payment succeeds on Stripe. Without webhooks, you'd need to call the Stripe API every few seconds to check payment status. That's polling — wasteful, delayed, and burns API quota.</p>
+
+<p>With webhooks, Stripe calls your server the moment the payment completes. You get notified in real time without continuously asking.</p>
+
+<h2>How webhooks work</h2>
+
+<ol>
+  <li>You provide a URL on your server to the third-party service (e.g., Stripe Dashboard → Webhooks → Add endpoint)</li>
+  <li>When an event occurs on their side, they make an HTTP POST request to your URL</li>
+  <li>The POST body contains a JSON payload describing what happened</li>
+  <li>Your server processes the payload and responds with HTTP 200</li>
+  <li>If your server returns an error or times out, they retry (usually with exponential backoff)</li>
+</ol>
+
+<h2>Webhook security: signature verification</h2>
+
+<p>Anyone can POST to your webhook URL. You need to verify that requests actually came from the service you think sent them.</p>
+
+<p>The standard method: the sender signs the payload with a shared secret (HMAC-SHA256). They include the signature in a header (like <code>Stripe-Signature</code>). Your server computes the expected signature using the same secret and compares — if they match, the request is legitimate.</p>
+
+<pre><code>// Express.js example for Stripe webhooks
+import Stripe from 'stripe';
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+
+app.post('/webhook', express.raw({ type: 'application/json' }), (req, res) => {
+  const sig = req.headers['stripe-signature'];
+  let event;
+  try {
+    event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
+  } catch (err) {
+    return res.status(400).send('Webhook signature verification failed');
+  }
+  // Handle the event
+  if (event.type === 'payment_intent.succeeded') {
+    const paymentIntent = event.data.object;
+    // process payment
+  }
+  res.json({ received: true });
+});</code></pre>
+
+<h2>Important: respond fast, process async</h2>
+
+<p>Webhook senders typically timeout after 5–30 seconds. Your endpoint must respond with 200 quickly — before doing any heavy processing. Queue the payload to a job system and process it asynchronously. If your endpoint times out, the sender will retry — causing duplicate processing if you're not idempotent.</p>
+
+<h2>Idempotency in webhooks</h2>
+
+<p>Retries are normal. The same event might be delivered 2–3 times. Your handler must be idempotent — processing the same event twice produces the same result as processing it once. Track which event IDs you've already processed and skip duplicates.</p>
+
+<h2>Testing webhooks locally</h2>
+
+<p>Your local development server isn't publicly reachable. Use a tunnel tool (ngrok, Cloudflare Tunnel, or the Stripe CLI) to expose your local port to the internet so services can deliver webhooks to it during development.</p>
+    `.trim(),
+  },
+
+  {
+    slug: "seo-writing-tips-2026",
+    title: "How to Write for SEO in 2026: What Actually Works",
+    description: "Keyword stuffing is dead. AI slop is being filtered. Here's what drives organic traffic now — and the writing habits that compound over time.",
+    date: "2026-04-19",
+    readTime: "5 min read",
+    category: "Productivity",
+    keywords: ["seo writing tips 2026", "how to write for seo", "seo blog post", "content seo strategy", "google seo 2026"],
+    content: `
+<p>The SEO that worked in 2019 actively hurts you in 2026. Google's Helpful Content system has changed the calculus. Here's what drives rankings now.</p>
+
+<h2>The shift: E-E-A-T</h2>
+
+<p>Google evaluates content on Experience, Expertise, Authoritativeness, and Trustworthiness. The addition of "Experience" (the first E) in 2022 was significant: first-hand experience with the topic is now a ranking signal. A review written by someone who actually used the product ranks above one clearly written without it.</p>
+
+<p>What this means for writers: personal perspective and specific detail outperform generic coverage. "After using this daily for six months" is more credible than "users report that."</p>
+
+<h2>Search intent alignment</h2>
+
+<p>Every query has an intent. Writing a transactional page for an informational query — or an informational post for a transactional query — will not rank regardless of keyword density. Before writing, determine: what does someone searching this actually want?</p>
+
+<table>
+  <thead>
+    <tr><th>Intent type</th><th>Example query</th><th>Content that ranks</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Informational</td><td>"how does JWT work"</td><td>Explanation post with examples</td></tr>
+    <tr><td>Navigational</td><td>"Stripe dashboard"</td><td>They're looking for Stripe — not your site</td></tr>
+    <tr><td>Commercial</td><td>"best pdf compressor"</td><td>Comparison with clear recommendations</td></tr>
+    <tr><td>Transactional</td><td>"compress pdf free"</td><td>The actual tool, immediately</td></tr>
+  </tbody>
+</table>
+
+<h2>Content structure that earns featured snippets</h2>
+
+<p>Featured snippets (the box at position zero) are extracted from structured content. Format information as:</p>
+<ul>
+  <li>Step-by-step numbered lists for how-to queries</li>
+  <li>Tables for comparison queries ("X vs Y")</li>
+  <li>Short definitional paragraphs for "what is" queries (40–60 words, directly answering the question)</li>
+</ul>
+
+<h2>What Google is filtering in 2026</h2>
+
+<p><strong>AI-generated content at scale</strong>: Mass-produced generic content — even technically written by humans — is being filtered. The signal Google uses is a combination of topical depth, original data, and engagement signals.</p>
+
+<p><strong>Thin affiliate pages</strong>: Pages that exist only to capture a query and send traffic to Amazon get demoted. Pages that actually help users make decisions don't.</p>
+
+<p><strong>Keyword-stuffed headings</strong>: Heading tags were already not a direct ranking signal. Stuffing keywords into every H2 now actively signals low-quality content.</p>
+
+<h2>What actually compounds</h2>
+
+<ul>
+  <li><strong>Original data</strong> — proprietary stats, research, or analysis that can't be found elsewhere. These attract links naturally.</li>
+  <li><strong>Tool pages</strong> — interactive tools that solve a real problem have very low bounce rates and high return visit rates, which Google reads as quality signals.</li>
+  <li><strong>Topic clusters</strong> — a pillar page on a broad topic with supporting posts on subtopics creates internal link structures that tell Google you're authoritative on the topic.</li>
+  <li><strong>Updated content</strong> — refreshing existing posts with current information often outperforms writing new posts, because you're improving content that already has links and history.</li>
+</ul>
+
+<h2>The honest advice</h2>
+
+<p>Write for one reader. A specific person with a specific problem. If your content helps that person more than anything else they found when searching, it will eventually rank. The algorithm is imperfect, but its goal is to surface what's genuinely useful. Everything else is tactics that shift with every update.</p>
+
+<p>Check your content's readability and length at <a href="/tools">Toolora → Text → Word Counter</a>.</p>
+    `.trim(),
+  },
+
+  {
+    slug: "ai-function-calling-mcp-explained",
+    title: "How AI Agents Call Tools: Function Calling and MCP Explained",
+    description: "When Claude uses a tool, what actually happens? Here's the mechanics of AI tool calling, how MCP standardizes it, and what it means for developers.",
+    date: "2026-04-20",
+    readTime: "5 min read",
+    category: "AI Builders",
+    keywords: ["ai function calling", "tool use ai", "mcp tool calling", "how claude uses tools", "llm tool use"],
+    content: `
+<p>When you ask Claude to "search the web" or "read this URL," it doesn't have a built-in internet connection. What's happening is function calling — the model outputs a structured request for a tool, code intercepts it, runs the actual tool, and returns the result to the model. Here's how that works mechanically.</p>
+
+<h2>Function calling basics</h2>
+
+<p>When a model is configured with tools, the API call includes tool definitions — structured JSON schemas describing available functions, their parameters, and their expected inputs. The model can then respond with a tool call instead of a text response:</p>
+
+<pre><code>{
+  "type": "tool_use",
+  "name": "read_url",
+  "input": {
+    "url": "https://example.com/article"
+  }
+}</code></pre>
+
+<p>Your code receives this, executes <code>read_url("https://example.com/article")</code> (actually fetching the page), then sends the result back to the model as a "tool result" message. The model continues reasoning with that information.</p>
+
+<h2>The tool definition</h2>
+
+<p>Tools are described as JSON Schema. The model uses this schema to know what parameters to pass and what types they should be:</p>
+
+<pre><code>{
+  "name": "read_url",
+  "description": "Fetch the content of a URL and return the text. Use when you need to read a web page.",
+  "input_schema": {
+    "type": "object",
+    "properties": {
+      "url": {
+        "type": "string",
+        "description": "The URL to fetch"
+      }
+    },
+    "required": ["url"]
+  }
+}</code></pre>
+
+<p>The description matters enormously. The model decides whether and when to use a tool based on the description. A vague description leads to incorrect or missed tool calls.</p>
+
+<h2>Multi-step tool use</h2>
+
+<p>A single task can require multiple sequential tool calls. "Research this company and summarize their recent news" might involve:</p>
+<ol>
+  <li>Search for the company name → returns URLs</li>
+  <li>Read each URL → returns article content</li>
+  <li>Model synthesizes content → writes summary</li>
+</ol>
+
+<p>This chain happens automatically if the model is in an agentic loop — a system that keeps running tool calls until the model returns a final text response instead of a tool call.</p>
+
+<h2>Where MCP fits in</h2>
+
+<p>Before MCP, every developer building an AI tool integration had to write the same plumbing: handle tool call parsing, execute the function, format the response, handle errors. And every integration was specific to one model and one application.</p>
+
+<p>MCP standardizes this at the protocol level. An MCP server exposes tools over a standard protocol. Any MCP-compatible client (Claude Desktop, Cursor, custom apps) can discover and use those tools without custom integration code on either side.</p>
+
+<table>
+  <thead>
+    <tr><th>Without MCP</th><th>With MCP</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Custom tool format per model</td><td>Standard protocol, any client</td></tr>
+    <tr><td>Tight coupling to specific app</td><td>Tools work across any compatible client</td></tr>
+    <tr><td>Manual schema maintenance</td><td>Server advertises its own schema</td></tr>
+    <tr><td>Local function calls only</td><td>Remote HTTP or local stdio</td></tr>
+  </tbody>
+</table>
+
+<h2>The Toolora MCP server</h2>
+
+<p>Toolora exposes 17 tools over MCP — PDF processing, OCR, QR codes, web scraping, format conversion, and memory. Claude (or any MCP-compatible client) can call these tools directly. The server handles authentication, rate limiting, and execution. You configure it once and the tools appear in your AI client's tool picker.</p>
+
+<p>Get started at <a href="/mcp-hub">toolora.dev/mcp-hub</a>.</p>
+    `.trim(),
+  },
+
+  {
+    slug: "url-slug-seo-best-practices",
+    title: "URL Slug Best Practices: Clean URLs That Rank Better",
+    description: "The URL structure of your pages affects both SEO and usability. Here's what Google recommends, what to avoid, and how to structure slugs properly.",
+    date: "2026-04-20",
+    readTime: "4 min read",
+    category: "Developer Tools",
+    keywords: ["url slug", "seo url structure", "clean urls", "url slug best practices", "url optimization seo"],
+    content: `
+<p>A URL slug is the part of the URL that identifies a specific page. In <code>toolora.dev/blog/url-slug-seo-best-practices</code>, the slug is <code>url-slug-seo-best-practices</code>. Getting this right is a low-effort, high-impact SEO task.</p>
+
+<h2>The Google guidelines (simplified)</h2>
+
+<ul>
+  <li>Use words that describe the content — not IDs or parameters</li>
+  <li>Use hyphens to separate words, not underscores or spaces</li>
+  <li>Keep URLs short — shorter correlates with better rankings and link sharing</li>
+  <li>Avoid unnecessary subdirectories</li>
+  <li>Use lowercase only</li>
+  <li>Don't repeat words — <code>/blog/seo-seo-tips</code> is wrong</li>
+</ul>
+
+<h2>Hyphen vs underscore</h2>
+
+<p>Google's John Mueller has confirmed multiple times: use hyphens. Underscores don't separate words in Google's URL parser — <code>seo_tips</code> is treated as one word "seotips" rather than two words "seo" and "tips." Hyphens create word boundaries that the crawler respects.</p>
+
+<h2>URL length</h2>
+
+<p>Studies consistently find that shorter URLs outperform longer ones. Aim for under 75 characters for the full URL. For slugs, 3–5 words is the sweet spot. You don't need to include every word from the title — just the core keyword phrase.</p>
+
+<table>
+  <thead>
+    <tr><th>Long (avoid)</th><th>Short (better)</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>/blog/how-to-write-for-search-engine-optimization-in-2026-the-complete-guide</td><td>/blog/seo-writing-guide</td></tr>
+    <tr><td>/tools/documents/pdf-compression-tool-free-online</td><td>/tools/pdf-compress</td></tr>
+    <tr><td>/articles/what-is-javascript-function-calling-and-how-does-mcp-protocol-work</td><td>/blog/ai-function-calling</td></tr>
+  </tbody>
+</table>
+
+<h2>Parameters vs clean slugs</h2>
+
+<p>Dynamic URLs with parameters (<code>/product?id=12345&ref=category</code>) don't rank well and are harder to share and remember. Static slug-based URLs (<code>/product/blue-running-shoes</code>) are better for SEO, caching, and usability.</p>
+
+<p>If you must use parameters (e-commerce faceted navigation, for example), use canonical tags to tell Google which URL is the authoritative version.</p>
+
+<h2>Changing a slug: handle carefully</h2>
+
+<p>If a page already ranks and has backlinks, changing its URL will break those links and temporarily lose ranking position. Always:</p>
+<ol>
+  <li>Set up a 301 permanent redirect from the old URL to the new one</li>
+  <li>Update internal links on your site</li>
+  <li>Notify any high-value external sites that link to the old URL</li>
+  <li>Update your sitemap</li>
+</ol>
+
+<p>A 301 passes most (not all) of the link equity to the new URL. Rankings typically recover within a few weeks to a couple of months.</p>
+
+<h2>Folder depth</h2>
+
+<p>Deep nesting (<code>/category/subcategory/article/page-slug</code>) signals less importance than shallower nesting (<code>/blog/page-slug</code>). Google doesn't have a strict limit, but pages more than 3 levels deep from the root are crawled less frequently. For most content, two levels is plenty.</p>
+
+<p>The ideal structure for a blog or tools site: <code>domain.com/blog/slug</code> or <code>domain.com/tools/tool-name</code>. Simple, flat, descriptive.</p>
+    `.trim(),
+  },
 ];
 
 export function getBlogPost(slug: string): BlogPost | undefined {

@@ -58,7 +58,8 @@ export default function BlogPost() {
   const { slug } = useParams<{ slug: string }>();
   const post = getBlogPost(slug);
 
-  if (!post) {
+  const today = new Date(); today.setHours(23, 59, 59, 999);
+  if (!post || new Date(post.date) > today) {
     return (
       <div className="max-w-3xl mx-auto px-4 py-24 text-center">
         <h1 className="text-2xl font-bold mb-4">Post not found</h1>
@@ -67,7 +68,7 @@ export default function BlogPost() {
     );
   }
 
-  const others = BLOG_POSTS.filter((p) => p.slug !== slug).slice(0, 3);
+  const others = BLOG_POSTS.filter((p) => p.slug !== slug && new Date(p.date) <= today).slice(0, 3);
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-12">
