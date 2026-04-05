@@ -10,8 +10,16 @@ if (!process.env.DATABASE_URL) {
   );
 }
 
+// Strip `sslmode` from the connection string so pg-connection-string does not
+// emit a deprecation warning about it. SSL is handled explicitly via the `ssl`
+// option below, which is the recommended approach going forward.
+const connectionString = process.env.DATABASE_URL.replace(
+  /([?&])sslmode=[^&]*/,
+  (_, sep) => (sep === "?" ? "?" : ""),
+).replace(/\?$/, "");
+
 export const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
+  connectionString,
   ssl: { rejectUnauthorized: false },
 });
 export const db = drizzle(pool, { schema });
