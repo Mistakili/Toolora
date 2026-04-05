@@ -88,7 +88,7 @@ function CategoryBadge({ category }: { category: string }) {
 }
 
 export default function Blog() {
-  const sorted = [...BLOG_POSTS].reverse();
+  const sorted = [...BLOG_POSTS].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   const categories = ["All", ...Array.from(new Set(sorted.map(p => p.category)))];
   const [active, setActive] = useState("All");
 
