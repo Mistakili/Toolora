@@ -1,9 +1,12 @@
 import { useParams, Link } from "wouter";
 import { useEffect } from "react";
-import { ChevronRight, CheckCircle2, ArrowRight, ShieldCheck, Zap, Globe } from "lucide-react";
+import { ChevronRight, CheckCircle2, ArrowRight, ShieldCheck, Zap, Globe, BookOpen, BarChart2 } from "lucide-react";
 import { useSEO } from "@/hooks/useSEO";
 import { getHowToGuide } from "@/lib/tool-how-to";
 import { getToolBySlug } from "@/lib/tools-config";
+import { getToolGlossary, getToolComparisons } from "@/lib/cross-links";
+import { getGlossaryEntry } from "@/lib/glossary";
+import { getComparison } from "@/lib/comparisons";
 import NotFound from "./not-found";
 
 export default function ToolHowToPage() {
@@ -59,6 +62,12 @@ export default function ToolHowToPage() {
   if (!guide || !tool) return <NotFound />;
 
   const toolUrl = `/tools/${tool.category}/${tool.slug}`;
+
+  const glossarySlugs = getToolGlossary(guide.toolSlug);
+  const glossaryEntries = glossarySlugs.map(s => getGlossaryEntry(s)).filter(Boolean);
+
+  const comparisonSlugs = getToolComparisons(guide.toolSlug);
+  const comparisonEntries = comparisonSlugs.map(s => getComparison(s)).filter(Boolean);
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-12">
@@ -183,6 +192,46 @@ export default function ToolHowToPage() {
                 </Link>
               );
             })}
+          </div>
+        </section>
+      )}
+
+      {/* Key concepts — Glossary */}
+      {glossaryEntries.length > 0 && (
+        <section className="mb-8">
+          <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+            <BookOpen className="w-4 h-4 text-muted-foreground" /> Key Concepts
+          </h2>
+          <div className="flex flex-wrap gap-2">
+            {glossaryEntries.map((g) => (
+              <Link
+                key={g!.slug}
+                href={`/glossary/${g!.slug}`}
+                className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1 text-sm hover:border-primary/50 hover:bg-muted transition-colors"
+              >
+                {g!.term}
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Comparison links */}
+      {comparisonEntries.length > 0 && (
+        <section className="mb-8">
+          <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+            <BarChart2 className="w-4 h-4 text-muted-foreground" /> See How We Compare
+          </h2>
+          <div className="flex flex-wrap gap-2">
+            {comparisonEntries.map((c) => (
+              <Link
+                key={c!.slug}
+                href={`/compare/${c!.slug}`}
+                className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1 text-sm hover:border-primary/50 hover:bg-muted transition-colors"
+              >
+                {c!.headline}
+              </Link>
+            ))}
           </div>
         </section>
       )}

@@ -121,6 +121,13 @@ React + Vite frontend for **Toolora** — a free online tools platform with 20 f
 - **Key packages**: qrcode, crypto-js, marked, react-dropzone, uuid, date-fns, pdf-lib, framer-motion
 - **Monetization pages**: `/pricing` (3-tier: Free/Pro/Team, Stripe checkout), `/api-keys` (create/revoke keys, usage bar)
 - **Agent API tools (Pro+)**: OCR via tesseract.js, DOCX via mammoth, Excel via xlsx — all in `routes/agent.ts` and MCP
+- **SEO content architecture (~501 indexable pages)**:
+  - 36 tools (including `og-preview` in developer category)
+  - 36 how-to guides at `/how-to/:slug` with FAQ+HowTo JSON-LD schema (`ToolHowToPage.tsx`, `tool-how-to.ts`)
+  - 106 blog posts at `/blog/:slug` (`blog-posts.ts`)
+  - 283 glossary entries at `/glossary/:slug` (`glossary.ts`, `GlossaryPage.tsx`)
+  - 20 comparison/alternative pages at `/compare/:slug` (`comparisons.ts`, `ComparisonPage.tsx`)
+  - **Cross-linking system** (`cross-links.ts`): maps tool→comparisons, tool→glossary terms, comparison→how-tos; auto-renders "Key Concepts", "See How We Compare", and "Step-by-Step Guides" sections on every page
 
 ## Packages
 

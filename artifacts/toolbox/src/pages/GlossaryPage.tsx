@@ -1,7 +1,9 @@
 import { useEffect } from "react";
 import { Link } from "wouter";
-import { ArrowRight, BookOpen } from "lucide-react";
+import { ArrowRight, BookOpen, FileText, BarChart2 } from "lucide-react";
 import { getGlossaryEntry } from "../lib/glossary";
+import { getToolComparisons } from "../lib/cross-links";
+import { getComparison } from "../lib/comparisons";
 
 interface GlossaryPageProps {
   params: { slug: string };
@@ -28,6 +30,10 @@ export default function GlossaryPage({ params }: GlossaryPageProps) {
   }
 
   const toolHref = entry.toolSlug ? `/tools/${entry.toolCategory}/${entry.toolSlug}` : null;
+  const howToHref = entry.toolSlug ? `/how-to/${entry.toolSlug}` : null;
+  const comparisons = entry.toolSlug
+    ? getToolComparisons(entry.toolSlug).map(s => getComparison(s)).filter(Boolean)
+    : [];
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-12 space-y-10">
@@ -87,6 +93,32 @@ export default function GlossaryPage({ params }: GlossaryPageProps) {
               Open Tool <ArrowRight className="w-4 h-4" />
             </button>
           </Link>
+        </div>
+      )}
+
+      {howToHref && (
+        <div className="flex items-center gap-3">
+          <FileText className="w-4 h-4 text-blue-400 shrink-0" />
+          <Link href={howToHref} className="text-blue-400 hover:underline text-sm font-medium">
+            Step-by-step guide: How to use {entry.toolName} →
+          </Link>
+        </div>
+      )}
+
+      {comparisons.length > 0 && (
+        <div className="space-y-3">
+          <h2 className="text-lg font-semibold text-white flex items-center gap-2">
+            <BarChart2 className="w-4 h-4 text-zinc-400" /> See How We Compare
+          </h2>
+          <div className="flex flex-wrap gap-2">
+            {comparisons.map((c) => (
+              <Link key={c!.slug} href={`/compare/${c!.slug}`}>
+                <span className="inline-block bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs px-3 py-1.5 rounded-lg border border-zinc-700 transition-colors cursor-pointer">
+                  {c!.headline}
+                </span>
+              </Link>
+            ))}
+          </div>
         </div>
       )}
 

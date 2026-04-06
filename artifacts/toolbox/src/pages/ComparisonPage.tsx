@@ -1,7 +1,9 @@
 import { useParams, Link } from "wouter";
-import { ChevronRight, CheckCircle2, XCircle, Shield, ArrowRight, Minus } from "lucide-react";
+import { ChevronRight, CheckCircle2, XCircle, Shield, ArrowRight, Minus, BookOpen } from "lucide-react";
 import { useSEO } from "@/hooks/useSEO";
 import { getComparison } from "@/lib/comparisons";
+import { getComparisonHowTos } from "@/lib/cross-links";
+import { getHowToGuide } from "@/lib/tool-how-to";
 import NotFound from "./not-found";
 import { TOOLS } from "@/lib/tools-config";
 
@@ -17,6 +19,9 @@ export default function ComparisonPage() {
   });
 
   if (!entry) return <NotFound />;
+
+  const howToSlugs = getComparisonHowTos(entry.slug);
+  const howToGuides = howToSlugs.map(s => getHowToGuide(s)).filter(Boolean);
 
   const typeLabel =
     entry.type === "vs"
@@ -178,6 +183,27 @@ export default function ComparisonPage() {
                 </Link>
               );
             })}
+          </div>
+        </section>
+      )}
+
+      {/* How-to guides */}
+      {howToGuides.length > 0 && (
+        <section className="mb-8">
+          <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+            <BookOpen className="w-4 h-4 text-muted-foreground" /> Step-by-Step How-To Guides
+          </h2>
+          <div className="space-y-2">
+            {howToGuides.map((g) => (
+              <Link
+                key={g!.slug}
+                href={`/how-to/${g!.slug}`}
+                className="flex items-center gap-2 rounded-lg border border-border px-4 py-3 text-sm hover:border-primary/50 hover:bg-muted transition-colors"
+              >
+                <ArrowRight className="w-3.5 h-3.5 text-primary shrink-0" />
+                {g!.headline}
+              </Link>
+            ))}
           </div>
         </section>
       )}
