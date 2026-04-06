@@ -978,6 +978,35 @@ export const HOW_TO_GUIDES: ToolHowTo[] = [
     ],
     relatedSlugs: ["markdown-preview", "html-entities", "html-minifier"],
   },
+  {
+    slug: "og-preview",
+    toolSlug: "og-preview",
+    toolName: "OG / Social Preview",
+    metaTitle: "How to Preview Open Graph Cards Before Publishing | Toolora",
+    metaDescription: "Check how your page will look when shared on Twitter, LinkedIn, Slack, and Facebook before you publish. Enter og:title, og:description, and og:image — see live card previews instantly.",
+    headline: "How to Preview Your Open Graph Cards Before You Publish",
+    intro: "You spend hours on a blog post or landing page, then share it on Twitter — and the card looks wrong. Truncated title, broken image, missing description. Toolora's OG Preview tool shows you exactly how your page will appear on every major social network before you hit publish, so you can fix it first.",
+    steps: [
+      { title: "Enter your page URL", description: "Type or paste your page URL. This is used for display in the preview — the tool doesn't fetch your page, so no CORS issues." },
+      { title: "Fill in og:title and og:description", description: "Enter the title and description that match your og:title and og:description meta tags. Watch the character counters — Twitter truncates titles over 60 characters." },
+      { title: "Add your og:image URL", description: "Enter the full URL of your social card image (1200×630px recommended). The preview renders the image exactly as social networks will display it." },
+      { title: "Switch between platform previews", description: "Click Twitter/X, LinkedIn, Slack, and Facebook tabs to see how your card looks on each platform. They each render differently." },
+      { title: "Copy the generated meta tags", description: "Click Copy HTML to get ready-to-paste Open Graph and Twitter Card meta tags for your page's <head> section." },
+    ],
+    useCases: [
+      { title: "Blog posts and articles", description: "Verify your blog posts will show the right thumbnail and title when shared on social media before publishing." },
+      { title: "Landing pages", description: "Ensure your landing page social card looks polished when shared in Slack channels or LinkedIn posts by colleagues and customers." },
+      { title: "Product launches", description: "Preview how your product announcement will look before sharing across all channels — fix truncation and broken images first." },
+      { title: "Link-in-bio pages", description: "Check how your links will render as unfurls when pasted into Slack, Teams, or Discord conversations." },
+    ],
+    faq: [
+      { q: "Does this tool fetch my URL to read the OG tags?", a: "No. You enter the OG tags manually. This makes the tool instant, private, and CORS-free — no server request is made to your URL." },
+      { q: "What image size should I use for social cards?", a: "1200×630px is the standard for most platforms. Twitter large cards need at least 300×157px. Images smaller than 200×200px may not display on some platforms." },
+      { q: "Why does my image look different on each platform?", a: "Twitter, LinkedIn, Slack, and Facebook each apply different cropping and sizing to og:image. This tool shows you each platform's actual rendering so you can see all differences at once." },
+      { q: "What is the difference between summary and summary_large_image on Twitter?", a: "summary shows a small square thumbnail alongside the title and description. summary_large_image shows a full-width banner image above the title — much more visually striking and better for content sharing." },
+    ],
+    relatedSlugs: ["html-minifier", "markdown-preview", "url-encoder"],
+  },
 ];
 
 export function getHowToGuide(slug: string): ToolHowTo | undefined {

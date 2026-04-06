@@ -33,6 +33,7 @@ import About from "@/pages/About";
 import Integrations from "@/pages/Integrations";
 import GdprCompliance from "@/pages/GdprCompliance";
 import ToolHowToPage from "@/pages/ToolHowToPage";
+import ComparisonPage from "@/pages/ComparisonPage";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -78,6 +79,7 @@ function Router() {
             <Route path="/glossary" component={GlossaryIndex} />
             <Route path="/glossary/:slug" component={GlossaryPage} />
             <Route path="/how-to/:slug" component={ToolHowToPage} />
+            <Route path="/compare/:slug" component={ComparisonPage} />
             <Route component={NotFound} />
           </Switch>
         </AppLayout>

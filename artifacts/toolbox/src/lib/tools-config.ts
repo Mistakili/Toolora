@@ -3,7 +3,7 @@ import {
   Palette, Image as ImageIcon, FileJson, Clock, Link as LinkIcon, 
   Scissors, Minimize, SplitSquareHorizontal, Layers, Fingerprint, RefreshCcw,
   BookOpen, ListOrdered, Code2, CodeXml, Coins, GitCompare, CalendarClock,
-  Binary, Braces, Zap, BarChart2, Sparkles
+  Binary, Braces, Zap, BarChart2, Sparkles, Globe
 } from "lucide-react";
 
 export type ToolCategory = "pdf" | "image" | "text" | "developer" | "productivity";
@@ -237,6 +237,13 @@ export const TOOLS: ToolDef[] = [
     description: "Convert Markdown text to clean HTML with live preview.",
     seoTitle: "Free Markdown to HTML Converter — Live Preview Online | Toolora",
     seoDescription: "Convert Markdown to HTML instantly with a live preview. Supports headings, bold, italic, code blocks, links, images, and blockquotes. Free, private, browser-based.",
+  },
+
+  {
+    id: "og-preview", name: "OG / Social Preview", slug: "og-preview", category: "developer", isPopular: false, icon: Globe,
+    description: "Preview how your page looks when shared on Twitter, LinkedIn, Slack, and Facebook.",
+    seoTitle: "Free Open Graph Preview Tool — Social Card Tester | Toolora",
+    seoDescription: "See exactly how your page will appear when shared on Twitter/X, LinkedIn, Slack, and Facebook. Enter your og:title, og:description, and og:image — get live card previews instantly. Free, browser-based.",
   },
 
   // PDF Tools

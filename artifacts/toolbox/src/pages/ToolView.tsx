@@ -44,6 +44,7 @@ import ReadabilityScore from "@/components/tools/ReadabilityScore";
 import HtmlMinifier from "@/components/tools/HtmlMinifier";
 import SvgOptimizer from "@/components/tools/SvgOptimizer";
 import MarkdownToHtml from "@/components/tools/MarkdownToHtml";
+import OgPreview from "@/components/tools/OgPreview";
 
 // ── Per-category SEO content blocks ─────────────────────────────────────────
 
@@ -182,6 +183,7 @@ const TOOL_COMPONENTS: Record<string, React.ComponentType<any>> = {
   "html-minifier": HtmlMinifier,
   "svg-optimizer": SvgOptimizer,
   "markdown-to-html": MarkdownToHtml,
+  "og-preview": OgPreview,
 };
 
 export default function ToolView() {

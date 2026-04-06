@@ -1,4 +1,5 @@
 import { useParams, Link } from "wouter";
+import { useEffect } from "react";
 import { ChevronRight, CheckCircle2, ArrowRight, ShieldCheck, Zap, Globe } from "lucide-react";
 import { useSEO } from "@/hooks/useSEO";
 import { getHowToGuide } from "@/lib/tool-how-to";
@@ -16,6 +17,44 @@ export default function ToolHowToPage() {
     canonical: guide ? `https://toolora.dev/how-to/${guide.slug}` : undefined,
     type: "article",
   });
+
+  useEffect(() => {
+    if (!guide) return;
+    const id = "how-to-jsonld";
+    const existing = document.getElementById(id);
+    if (existing) existing.remove();
+
+    const faqSchema = {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": guide.faq.map(item => ({
+        "@type": "Question",
+        "name": item.q,
+        "acceptedAnswer": { "@type": "Answer", "text": item.a },
+      })),
+    };
+
+    const howToSchema = {
+      "@context": "https://schema.org",
+      "@type": "HowTo",
+      "name": guide.headline,
+      "description": guide.intro,
+      "step": guide.steps.map((step, i) => ({
+        "@type": "HowToStep",
+        "position": i + 1,
+        "name": step.title,
+        "text": step.description,
+      })),
+    };
+
+    const el = document.createElement("script");
+    el.id = id;
+    el.type = "application/ld+json";
+    el.textContent = JSON.stringify([faqSchema, howToSchema]);
+    document.head.appendChild(el);
+
+    return () => { document.getElementById(id)?.remove(); };
+  }, [guide]);
 
   if (!guide || !tool) return <NotFound />;
 
