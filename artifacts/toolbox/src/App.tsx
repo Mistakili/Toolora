@@ -31,6 +31,7 @@ import NotFound from "@/pages/not-found";
 import Paste from "@/pages/Paste";
 import About from "@/pages/About";
 import Integrations from "@/pages/Integrations";
+import Welcome from "@/pages/Welcome";
 import GdprCompliance from "@/pages/GdprCompliance";
 import ToolHowToPage from "@/pages/ToolHowToPage";
 import ComparisonPage from "@/pages/ComparisonPage";
@@ -64,6 +65,7 @@ function Router() {
             <Route path="/admin" component={Admin} />
             <Route path="/pricing" component={Pricing} />
             <Route path="/api-keys" component={ApiKeys} />
+            <Route path="/welcome" component={Welcome} />
             <Route path="/blog" component={Blog} />
             <Route path="/blog/:slug" component={BlogPost} />
             <Route path="/mcp" component={McpPage} />

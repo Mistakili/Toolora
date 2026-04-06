@@ -201,7 +201,7 @@ export default function Pricing() {
 
   async function handleUpgrade(priceId: string | null, tierId: string) {
     if (!priceId) {
-      window.location.href = `${BASE}/api-keys`;
+      window.location.href = `${BASE}/welcome`;
       return;
     }
     setLoading(tierId);
