@@ -548,47 +548,19 @@ print(r.json()["text"])  # ← full PDF text`}
               <p className="text-muted-foreground">Privacy, security, and developer deep dives.</p>
             </div>
             <Link href="/blog" className="hidden sm:flex items-center text-sm font-medium text-primary hover:underline">
-              View all 16 posts <ArrowRight className="w-4 h-4 ml-1" />
+              View all {BLOG_POSTS.length} posts <ArrowRight className="w-4 h-4 ml-1" />
             </Link>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[
-              {
-                slug: "hipaa-compliant-online-document-tools",
-                category: "Privacy",
-                date: "Apr 3",
-                title: "Why Most Online Document Tools Are a HIPAA Liability",
-                desc: "Most 'free' tools upload your files to servers you don't control. Here's why that matters for regulated industries.",
-                color: "text-red-500",
-                bg: "bg-red-500/10",
-              },
-              {
-                slug: "stop-pasting-jwts-into-random-websites",
-                category: "Security",
-                date: "Apr 3",
-                title: "Stop Pasting JWT Tokens Into Random Websites",
-                desc: "JWT.io is great — but pasting tokens into any third-party site is a security risk. Here's the safer alternative.",
-                color: "text-orange-500",
-                bg: "bg-orange-500/10",
-              },
-              {
-                slug: "competitor-research-claude-mcp",
-                category: "Developer Tools",
-                date: "Apr 1",
-                title: "How to Research Any Competitor Using Claude and an MCP Server",
-                desc: "Use Claude Desktop + Toolora's free MCP server to automate competitor research without touching a spreadsheet.",
-                color: "text-purple-500",
-                bg: "bg-purple-500/10",
-              },
-            ].map((post) => (
+            {BLOG_POSTS.slice(0, 3).map((post) => (
               <Link key={post.slug} href={`/blog/${post.slug}`}>
                 <div className="group rounded-2xl border border-border bg-card hover:border-primary/40 hover:bg-muted/40 transition-all duration-300 p-6 h-full flex flex-col cursor-pointer">
                   <div className="flex items-center gap-2 mb-4">
-                    <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${post.bg} ${post.color}`}>{post.category}</span>
-                    <span className="text-xs text-muted-foreground">{post.date}</span>
+                    <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-primary/10 text-primary">{post.category}</span>
+                    <span className="text-xs text-muted-foreground">{post.readTime}</span>
                   </div>
                   <h3 className="font-bold text-base mb-2 leading-snug group-hover:text-primary transition-colors flex-1">{post.title}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed mb-4">{post.desc}</p>
+                  <p className="text-sm text-muted-foreground leading-relaxed mb-4 line-clamp-2">{post.description}</p>
                   <div className="flex items-center gap-1 text-sm font-semibold text-primary">
                     Read more <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                   </div>
