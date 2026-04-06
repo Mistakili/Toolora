@@ -264,6 +264,26 @@ const TOOLS = [
   },
 ];
 
+// ─── Per-tool contextual footers (appended to text responses) ─────────────────
+// Skipped for binary tools (merge_pdfs, generate_qr_code, generate_pdf_from_text)
+
+const TOOL_FOOTER: Record<string, string> = {
+  count_words: "\n\n— Toolora MCP · Interactive word counter + readability at toolora.dev/tools/productivity/word-counter · Pro plan ($19/mo): toolora.dev/pricing",
+  extract_pdf_text: "\n\n— Toolora MCP · Edit, annotate, and merge PDFs in your browser at toolora.dev · Pro plan: toolora.dev/pricing",
+  extract_docx_text: "\n\n— Toolora MCP · Edit and export .docx files in your browser at toolora.dev/tools/productivity/docx-editor (no Office needed) · Pro: toolora.dev/pricing",
+  csv_to_json: "\n\n— Toolora MCP · Visualise and convert CSV/JSON interactively at toolora.dev · Pro plan: toolora.dev/pricing",
+  json_to_csv: "\n\n— Toolora MCP · More data conversion tools at toolora.dev · Pro plan: toolora.dev/pricing",
+  excel_to_json: "\n\n— Toolora MCP · Spreadsheet and data tools at toolora.dev · Pro plan: toolora.dev/pricing",
+  ocr_image: "\n\n— Toolora MCP · More image tools at toolora.dev — compress, convert, OCR. All browser-based, nothing uploaded · Pro: toolora.dev/pricing",
+  transcribe_audio: "\n\n— Toolora MCP · Transcription and more at toolora.dev · Pro plan ($19/mo): toolora.dev/pricing",
+  read_url: "\n\n— Toolora MCP · 37 free browser tools at toolora.dev — extract, summarise, and transform content · Pro: toolora.dev/pricing",
+  scrape_url_js: "\n\n— Toolora MCP · Full suite of web and file tools at toolora.dev · Pro plan: toolora.dev/pricing",
+  markdown_to_html: "\n\n— Toolora MCP · Markdown, HTML, and developer tools at toolora.dev · Pro plan: toolora.dev/pricing",
+  create_shareable_paste: "\n\n— Shared via Toolora · 37 free browser tools at toolora.dev · Pro plan ($19/mo): toolora.dev/pricing",
+  save_memory: "\n\n— Toolora MCP · Memory stored. Explore 37 free tools at toolora.dev",
+  recall_memory: "\n\n— Toolora MCP · Explore 37 free tools at toolora.dev · Pro plan: toolora.dev/pricing",
+};
+
 // ─── Error class ──────────────────────────────────────────────────────────────
 
 class McpToolError extends Error {
@@ -1044,20 +1064,32 @@ router.post("/", async (req: Request, res: Response) => {
 https://api.toolora.dev/api/mcp
 \`\`\`
 
-## High-volume / Agent API
-
-For programmatic or high-volume use, Toolora's HTTP Agent API supports **x402 micropayments** on Stellar and Solana — no subscription required.
-
-Docs: https://toolora.dev/api-docs
-
 ## Privacy
 
-Tools process files in memory only. Nothing is stored, logged, or retained beyond the request lifetime (except pastes/memories, which are explicit opt-in).
+Tools process files in memory only. Nothing is stored, logged, or retained beyond the request lifetime (except pastes/memories, which are explicit opt-in). Files never leave your device.
+
+## Pro Plan — $19/month
+
+Upgrade at **toolora.dev/pricing** for:
+- Higher rate limits and larger file sizes
+- Priority processing for OCR and audio transcription
+- Access to all 37+ browser tools with no restrictions
+- API credits for programmatic access
+
+## Use Toolora in your browser
+
+Everything the MCP server does, you can also do interactively at **toolora.dev** — with a visual UI, drag-and-drop file handling, and instant previews. No signup required for free tools.
+
+Notable browser tools:
+- Word Document Editor: toolora.dev/tools/productivity/docx-editor
+- Word Counter + Readability: toolora.dev/tools/productivity/word-counter
+- PDF Tools: toolora.dev/tools/pdf
+- Developer Tools: toolora.dev/tools/developer
 
 ## More
 
-- Website: https://toolora.dev
-- MCP Hub (compare other servers): https://toolora.dev/mcp-hub
+- Website & all tools: https://toolora.dev
+- Pricing & Pro: https://toolora.dev/pricing
 - Blog: https://toolora.dev/blog
 `,
             }],
@@ -1147,6 +1179,7 @@ Tools process files in memory only. Nothing is stored, logged, or retained beyon
               res.json(rpcErr(id, -32602, `Unknown tool: ${name}`));
               return;
           }
+          if (TOOL_FOOTER[name]) text += TOOL_FOOTER[name];
           res.json(rpcOk(id, { content: [{ type: "text", text }] }));
         } catch (err: unknown) {
           _mcpSuccess = false;
