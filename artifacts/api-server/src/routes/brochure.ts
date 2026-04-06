@@ -1,7 +1,7 @@
 import { Router, type Request, type Response } from "express";
 import OpenAI from "openai";
 import { db } from "@workspace/db";
-import { brochureGenerationsTable } from "@workspace/db/schema";
+import { brochureGenerationsTable, tooloraUsersTable } from "@workspace/db/schema";
 import { eq, sql } from "drizzle-orm";
 import { logger } from "../lib/logger";
 
@@ -49,42 +49,63 @@ router.post("/brochure/generate", async (req: Request, res: Response) => {
     ? sessionToken.slice(0, 64)
     : null;
 
-  // ── Free tier check ────────────────────────────────────────────────────────
+  // ── Pro check: authenticated users with pro/team tier bypass free limit ────
+  let isPro = false;
+  const authedEmail: string | null =
+    (req as any).isAuthenticated?.() && (req as any).user?.email
+      ? (req as any).user.email as string
+      : null;
+
+  if (authedEmail) {
+    try {
+      const [userRow] = await db
+        .select({ tier: tooloraUsersTable.tier })
+        .from(tooloraUsersTable)
+        .where(eq(tooloraUsersTable.email, authedEmail));
+      const tier = userRow?.tier ?? "free";
+      if (tier === "pro" || tier === "team") isPro = true;
+    } catch (e) {
+      logger.warn({ err: e }, "[brochure] could not look up user tier");
+    }
+  }
+
+  // ── Free tier check (skipped for Pro/Team users) ───────────────────────────
   let isFree = false;
-  try {
-    if (token) {
-      const [alreadyUsed] = await db
-        .select({ c: sql<number>`count(*)::int` })
+  if (!isPro) {
+    try {
+      if (token) {
+        const [alreadyUsed] = await db
+          .select({ c: sql<number>`count(*)::int` })
+          .from(brochureGenerationsTable)
+          .where(eq(brochureGenerationsTable.sessionToken, token));
+        if ((alreadyUsed?.c ?? 0) > 0) {
+          res.status(402).json({
+            error: "free_used",
+            message: "You've already used your free AI brochure. Upgrade to Pro for unlimited generations.",
+          });
+          return;
+        }
+      }
+
+      const [{ freeCount }] = await db
+        .select({ freeCount: sql<number>`count(*)::int` })
         .from(brochureGenerationsTable)
-        .where(eq(brochureGenerationsTable.sessionToken, token));
-      if ((alreadyUsed?.c ?? 0) > 0) {
+        .where(eq(brochureGenerationsTable.isFree, true));
+
+      if ((freeCount ?? 0) < FREE_LIMIT) {
+        isFree = true;
+      } else {
         res.status(402).json({
-          error: "free_used",
-          message: "You've already used your free AI brochure. Upgrade to Pro for unlimited generations.",
+          error: "pro_required",
+          message: `The ${FREE_LIMIT} free AI brochures have been claimed. Upgrade to Pro for unlimited generations.`,
+          upgradeUrl: "https://toolora.dev/pricing",
         });
         return;
       }
-    }
-
-    const [{ freeCount }] = await db
-      .select({ freeCount: sql<number>`count(*)::int` })
-      .from(brochureGenerationsTable)
-      .where(eq(brochureGenerationsTable.isFree, true));
-
-    if ((freeCount ?? 0) < FREE_LIMIT) {
+    } catch (dbErr) {
+      logger.error({ err: dbErr }, "[brochure] DB check failed — falling through to generate");
       isFree = true;
-    } else {
-      // TODO: check Pro subscription when auth is added
-      res.status(402).json({
-        error: "pro_required",
-        message: `The ${FREE_LIMIT} free AI brochures have been claimed. Upgrade to Pro for unlimited generations.`,
-        upgradeUrl: "https://toolora.dev/pricing",
-      });
-      return;
     }
-  } catch (dbErr) {
-    logger.error({ err: dbErr }, "[brochure] DB check failed — falling through to generate");
-    isFree = true;
   }
 
   // ── Build GPT-4o prompt ────────────────────────────────────────────────────
