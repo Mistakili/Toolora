@@ -3,7 +3,7 @@ import {
   Palette, Image as ImageIcon, FileJson, Clock, Link as LinkIcon, 
   Scissors, Minimize, SplitSquareHorizontal, Layers, Fingerprint, RefreshCcw,
   BookOpen, ListOrdered, Code2, CodeXml, Coins, GitCompare, CalendarClock,
-  Binary, Braces, Zap, BarChart2, Sparkles, Globe, ScissorsLineDashed, FileCode, DatabaseZap
+  Binary, Braces, Zap, BarChart2, Sparkles, Globe, ScissorsLineDashed, FileCode, DatabaseZap, Brain
 } from "lucide-react";
 
 export type ToolCategory = "pdf" | "image" | "text" | "developer" | "productivity";
@@ -253,6 +253,12 @@ export const TOOLS: ToolDef[] = [
     seoDescription: "See exactly how your page will appear when shared on Twitter/X, LinkedIn, Slack, and Facebook. Enter your og:title, og:description, and og:image — get live card previews instantly. Free, browser-based.",
   },
 
+  {
+    id: "doc-memory-loader", name: "Document Memory Loader", slug: "doc-memory-loader", category: "developer", isPopular: true, icon: Brain,
+    description: "Load any PDF, DOCX, or TXT into Claude's memory in one click — ask it questions in future sessions.",
+    seoTitle: "Free Document Memory Loader — Load PDFs into Claude Memory | Toolora",
+    seoDescription: "Upload a PDF, DOCX, or text file and load it into persistent Claude-accessible memory via Toolora's MCP server. Ask Claude questions about your document in any future session — no re-uploading needed.",
+  },
   {
     id: "text-chunker", name: "Text Chunker", slug: "text-chunker", category: "developer", isPopular: true, icon: ScissorsLineDashed,
     description: "Split long text into overlapping chunks for RAG pipelines and vector embeddings.",

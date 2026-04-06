@@ -49,6 +49,7 @@ import DocxEditor from "@/components/tools/DocxEditor";
 import TextChunker from "@/components/tools/TextChunker";
 import HtmlToMarkdown from "@/components/tools/HtmlToMarkdown";
 import DataExtractor from "@/components/tools/DataExtractor";
+import DocMemoryLoader from "@/components/tools/DocMemoryLoader";
 
 // ── Per-category SEO content blocks ─────────────────────────────────────────
 
@@ -192,6 +193,7 @@ const TOOL_COMPONENTS: Record<string, React.ComponentType<any>> = {
   "text-chunker": TextChunker,
   "html-to-markdown": HtmlToMarkdown,
   "data-extractor": DataExtractor,
+  "doc-memory-loader": DocMemoryLoader,
 };
 
 export default function ToolView() {
@@ -282,6 +284,11 @@ export default function ToolView() {
                 <div className="hidden sm:flex items-center gap-2 bg-primary/10 px-4 py-2 rounded-xl text-sm border border-primary/20">
                   <Sparkles className="w-4 h-4 text-primary" />
                   <span>AI-Powered</span>
+                </div>
+              ) : tool.id === "doc-memory-loader" ? (
+                <div className="hidden sm:flex items-center gap-2 bg-primary/10 px-4 py-2 rounded-xl text-sm border border-primary/20">
+                  <Sparkles className="w-4 h-4 text-primary" />
+                  <span>Saves to Memory</span>
                 </div>
               ) : (
                 <div className="hidden sm:flex items-center gap-2 bg-muted/50 px-4 py-2 rounded-xl text-sm border border-border">
