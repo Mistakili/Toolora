@@ -56,6 +56,57 @@ const SLUG_IMAGE_MAP: Record<string, string> = {
   "seo-writing-tips-2026":                             "blog-seo-content.png",
   "ai-function-calling-mcp-explained":                 "blog-ai-agent.png",
   "url-slug-seo-best-practices":                       "blog-seo-content.png",
+  // April 21 – May 15 batch
+  "json-vs-yaml-comparison":                           "blog-data-convert.png",
+  "sha256-vs-md5-hash-comparison":                     "blog-jwt-anatomy.png",
+  "how-to-decode-base64-online":                       "blog-developer-web.png",
+  "pdf-metadata-removal-guide":                        "blog-pdf-tools.png",
+  "css-units-px-em-rem-explained":                     "blog-developer-web.png",
+  "what-is-jwt-how-it-works":                          "blog-jwt-anatomy.png",
+  "how-to-validate-email-address":                     "blog-developer-web.png",
+  "yaml-to-json-converter-guide":                      "blog-data-convert.png",
+  "chrome-extensions-privacy-risks":                   "blog-privacy-audit.png",
+  "how-to-compress-images-web":                        "privacy-shield-new.png",
+  "base64-images-css-tradeoffs":                       "blog-developer-web.png",
+  "what-is-rate-limiting-api":                         "blog-developer-web.png",
+  "how-to-read-http-headers":                          "blog-developer-web.png",
+  "robots-txt-guide-seo":                              "blog-seo-content.png",
+  "sitemap-xml-guide-seo":                             "blog-seo-content.png",
+  "how-to-minify-javascript-css":                      "blog-developer-web.png",
+  "what-is-oauth-explained":                           "blog-jwt-anatomy.png",
+  "color-hex-rgb-hsl-converter-guide":                 "blog-data-convert.png",
+  "how-to-read-cron-jobs":                             "blog-developer-web.png",
+  "what-is-a-cdn-explained":                           "blog-developer-web.png",
+  "json-schema-validation-guide":                      "blog-data-convert.png",
+  "how-to-use-browser-devtools-network-tab":           "blog-developer-web.png",
+  "password-strength-entropy-explained":               "blog-jwt-anatomy.png",
+  "what-is-indexeddb-browser-storage":                 "blog-developer-web.png",
+  "html-entities-special-characters-guide":            "blog-developer-web.png",
+  "how-to-convert-csv-to-excel":                       "blog-data-convert.png",
+  "api-authentication-api-key-vs-oauth":               "blog-jwt-anatomy.png",
+  "what-is-websocket-vs-http":                         "blog-developer-web.png",
+  "how-to-encode-url-parameters":                      "blog-developer-web.png",
+  "json-data-types-reference":                         "blog-data-convert.png",
+  "what-is-ssl-tls-https-explained":                   "blog-jwt-anatomy.png",
+  "image-formats-webp-vs-jpg-vs-png":                  "privacy-shield-new.png",
+  "how-to-use-curl-for-api-testing":                   "blog-developer-web.png",
+  "what-is-content-security-policy":                   "blog-privacy-audit.png",
+  "privacy-by-design-explained":                       "blog-hipaa-compliance.png",
+  "read-pdf-browser-without-upload":                   "blog-pdf-tools.png",
+  "markdown-front-matter-guide":                       "blog-data-convert.png",
+  "how-to-create-favicon-for-website":                 "blog-developer-web.png",
+  "jwt-claims-explained":                              "blog-jwt-anatomy.png",
+  "how-to-diff-two-files-online":                      "blog-text-tools.png",
+  "what-is-a-proxy-server-explained":                  "blog-developer-web.png",
+  "online-tools-privacy-checklist":                    "blog-privacy-audit.png",
+  "html-meta-tags-seo-complete-guide":                 "blog-seo-content.png",
+  "how-to-generate-random-passwords-securely":         "blog-jwt-anatomy.png",
+  "what-is-gzip-compression-explained":                "blog-developer-web.png",
+  "csv-best-practices-data-import-export":             "blog-data-convert.png",
+  "how-ai-reads-tool-descriptions-mcp":                "mcp-tools-visual.png",
+  "understanding-color-spaces-web":                    "blog-data-convert.png",
+  "qr-code-error-correction-explained":                "blog-developer-web.png",
+  "what-is-a-hash-function-explained":                 "blog-jwt-anatomy.png",
 };
 
 const CATEGORY_IMAGE_MAP: Record<string, string> = {
@@ -4268,6 +4319,3622 @@ app.post('/webhook', express.raw({ type: 'application/json' }), (req, res) => {
 <p>Deep nesting (<code>/category/subcategory/article/page-slug</code>) signals less importance than shallower nesting (<code>/blog/page-slug</code>). Google doesn't have a strict limit, but pages more than 3 levels deep from the root are crawled less frequently. For most content, two levels is plenty.</p>
 
 <p>The ideal structure for a blog or tools site: <code>domain.com/blog/slug</code> or <code>domain.com/tools/tool-name</code>. Simple, flat, descriptive.</p>
+    `.trim(),
+  },
+
+  // ─── April 21 – May 15 batch ────────────────────────────────────────────────
+
+  {
+    slug: "json-vs-yaml-comparison",
+    title: "JSON vs YAML: When to Use Each (And When to Convert)",
+    description: "JSON and YAML store structured data but feel very different to read and write. Here's how they compare and when you'd choose one over the other.",
+    date: "2026-04-21",
+    readTime: "5 min read",
+    category: "Developer Tools",
+    content: `
+<p>JSON and YAML store the same types of structured data — strings, numbers, booleans, arrays, and objects. But they look almost nothing alike, and they're used in very different contexts. Understanding the trade-offs helps you choose the right one and convert between them without surprises.</p>
+
+<h2>The core difference: syntax philosophy</h2>
+
+<p>JSON was designed to be machine-readable first. It's explicit, verbose, and unambiguous. Every string has quotes. Every object has braces. Every array has brackets. There's no room for misinterpretation.</p>
+
+<p>YAML was designed to be human-readable first. It uses indentation to represent structure, quotes are optional for most strings, and it strips out a lot of the punctuation JSON requires. The result is cleaner to look at but trickier to parse correctly.</p>
+
+<table>
+  <thead>
+    <tr><th>Feature</th><th>JSON</th><th>YAML</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Comments</td><td>Not supported</td><td>Supported (<code>#</code>)</td></tr>
+    <tr><td>String quotes</td><td>Required</td><td>Optional (usually)</td></tr>
+    <tr><td>Multiline strings</td><td>Clunky (<code>\n</code>)</td><td>Clean (block scalars)</td></tr>
+    <tr><td>Trailing commas</td><td>Not allowed</td><td>Not applicable</td></tr>
+    <tr><td>Anchors / aliases</td><td>Not supported</td><td>Supported (<code>&amp;</code>, <code>*</code>)</td></tr>
+    <tr><td>File size</td><td>Slightly larger</td><td>Slightly smaller</td></tr>
+    <tr><td>Parse complexity</td><td>Simple</td><td>Complex (many edge cases)</td></tr>
+  </tbody>
+</table>
+
+<h2>When JSON wins</h2>
+
+<p><strong>APIs and web services.</strong> Every language has a JSON parser. JSON is the lingua franca of HTTP APIs. If you're sending data between services, use JSON.</p>
+
+<p><strong>Configuration that machines write.</strong> If a program generates config (not a human), JSON's verbosity is irrelevant. Its lack of ambiguity matters more.</p>
+
+<p><strong>When you need strict validation.</strong> JSON Schema is a mature ecosystem for validating JSON structure. YAML validation tooling is thinner.</p>
+
+<h2>When YAML wins</h2>
+
+<p><strong>Human-maintained configuration files.</strong> Kubernetes manifests, GitHub Actions workflows, Docker Compose files, and Ansible playbooks are all YAML. When humans write and edit config daily, YAML's readability pays off.</p>
+
+<p><strong>When comments matter.</strong> JSON has no comments. If your config file needs explanatory notes inline, YAML is your only structured option (unless you use JSONC or JSON with Comments, which isn't standard).</p>
+
+<p><strong>Multiline strings.</strong> YAML block scalars (<code>|</code> for literal, <code>&gt;</code> for folded) make long strings legible. In JSON, newlines require <code>\n</code> escape sequences embedded in a quoted string.</p>
+
+<h2>The gotchas that catch people out</h2>
+
+<p><strong>YAML's "Norway problem"</strong>: In older YAML specs (1.1), unquoted <code>NO</code> is parsed as the boolean <code>false</code>. So a country code like <code>NO</code> becomes <code>false</code> in your data. YAML 1.2 fixed this, but many parsers still use 1.1 rules. Always quote strings that could be misread as booleans.</p>
+
+<p><strong>Tabs vs spaces</strong>: YAML forbids tabs for indentation. JSON doesn't care about whitespace at all. YAML indentation errors are silent on many parsers — the file just parses as something unexpected.</p>
+
+<p><strong>Numbers that look like strings</strong>: <code>port: 8080</code> in YAML gives you the integer 8080. <code>version: 1.10</code> gives you the float 1.1 (trailing zero dropped). If you need a string, quote it: <code>version: "1.10"</code>.</p>
+
+<h2>Converting between them</h2>
+
+<p>Converting JSON to YAML or back is straightforward in principle — the data structures map 1:1. The edge cases are string types that look like other types, and the loss of comments when going YAML → JSON.</p>
+
+<p>The <a href="/tools">Toolora CSV/JSON converter</a> handles format conversion in your browser. For YAML ↔ JSON specifically, any conversion runs client-side — your config data never leaves your machine.</p>
+
+<h2>Which one should you default to?</h2>
+
+<p>If you're building an API: JSON. If you're writing config that humans will maintain: YAML. If you're unsure: JSON, because it's harder to get wrong.</p>
+    `.trim(),
+  },
+
+  {
+    slug: "sha256-vs-md5-hash-comparison",
+    title: "SHA-256 vs MD5: Which Hash Function Should You Use?",
+    description: "MD5 is everywhere but broken for security. SHA-256 is the modern standard. Here's the difference, what each is still good for, and when you need something else entirely.",
+    date: "2026-04-21",
+    readTime: "5 min read",
+    category: "Security",
+    content: `
+<p>Both MD5 and SHA-256 are hash functions — they take any input and produce a fixed-length fingerprint. But they were designed in different eras for different purposes, and treating them as interchangeable is a common mistake that has real security consequences.</p>
+
+<h2>The quick answer</h2>
+
+<table>
+  <thead>
+    <tr><th>Use case</th><th>Use this</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Password hashing</td><td>bcrypt, Argon2, or scrypt — NOT MD5 or SHA-256</td></tr>
+    <tr><td>Data integrity (checksums)</td><td>SHA-256 (or SHA-512)</td></tr>
+    <tr><td>Digital signatures</td><td>SHA-256 (part of RSA-SHA256 or ECDSA)</td></tr>
+    <tr><td>File deduplication</td><td>SHA-256 (MD5 acceptable if not adversarial)</td></tr>
+    <tr><td>Non-security checksums</td><td>MD5 is fine (fast, widely supported)</td></tr>
+    <tr><td>Anything security-critical</td><td>SHA-256 minimum, never MD5</td></tr>
+  </tbody>
+</table>
+
+<h2>Why MD5 is broken for security</h2>
+
+<p>MD5 produces a 128-bit hash. In 1996, researchers found weaknesses. By 2004, full collision attacks were demonstrated — meaning two different inputs can produce the same MD5 hash. By 2008, researchers created a rogue CA certificate using MD5 collisions. MD5 is now considered cryptographically broken for any security application.</p>
+
+<p>This doesn't mean MD5 is useless. It's still fast and collision-resistant enough for non-adversarial checksums — like verifying a file download wasn't corrupted. But if an attacker could craft a malicious file with the same MD5 as a trusted file, MD5 gives you no protection.</p>
+
+<h2>SHA-256: the current standard</h2>
+
+<p>SHA-256 is part of the SHA-2 family, standardized by NIST in 2001. It produces a 256-bit hash. No practical collision attacks exist against SHA-256. It's used in:</p>
+
+<ul>
+  <li>TLS/HTTPS certificates (replacing SHA-1 in 2016)</li>
+  <li>Bitcoin's proof-of-work algorithm</li>
+  <li>Code signing and software distribution</li>
+  <li>HMAC authentication (HMAC-SHA256)</li>
+  <li>JWT signatures (RS256, HS256)</li>
+</ul>
+
+<h2>Why you still shouldn't use SHA-256 for passwords</h2>
+
+<p>SHA-256 is fast. That's a problem for passwords. A modern GPU can compute billions of SHA-256 hashes per second. If an attacker gets your password database, they can brute-force common passwords in seconds.</p>
+
+<p>Password hashing algorithms like bcrypt, Argon2, and scrypt are designed to be deliberately slow. They take configurable amounts of time and memory, making brute-force attacks expensive. The "right" choice for passwords is not SHA-256 — it's one of these purpose-built algorithms.</p>
+
+<h2>SHA-1: the one in the middle</h2>
+
+<p>SHA-1 (160-bit) was deprecated after the first practical collision was demonstrated in 2017 (Google's SHAttered attack). Browser vendors and certificate authorities stopped accepting SHA-1 certificates years ago. If you see SHA-1 in use anywhere, it should be replaced with SHA-256.</p>
+
+<h2>SHA-3: the newer option</h2>
+
+<p>SHA-3 (standardized 2015) uses a completely different internal design (Keccak sponge construction vs. Merkle-Damgård for SHA-2). It was created as a hedge against future weaknesses in SHA-2's design. SHA-2 hasn't been broken, so SHA-3 adoption is slow — but it's available and standardized if you need it.</p>
+
+<h2>Hashing in the browser</h2>
+
+<p>The Web Crypto API has built-in support for SHA-256: <code>crypto.subtle.digest('SHA-256', data)</code>. It's available in all modern browsers, runs fast, and produces the standard 256-bit output. No library needed for basic hashing.</p>
+
+<p>Generate and verify SHA-256, SHA-1, MD5, and other hashes instantly at <a href="/tools">Toolora → Security → Hash Generator</a> — everything runs locally, nothing is sent to a server.</p>
+    `.trim(),
+  },
+
+  {
+    slug: "how-to-decode-base64-online",
+    title: "How to Decode Base64 Online (And Why It's Not Encryption)",
+    description: "Base64 is encoding, not encryption. Anyone can decode it instantly. Here's what Base64 actually does, when it's used, and how to decode it.",
+    date: "2026-04-22",
+    readTime: "4 min read",
+    category: "Developer Tools",
+    content: `
+<p>Base64 looks like scrambled text — long strings of letters, numbers, plus signs, and slashes ending in equals signs. It's easy to mistake for encrypted data. It isn't. Base64 is a reversible encoding scheme that any tool can decode in milliseconds. If you need to keep data secret, Base64 is not the answer.</p>
+
+<h2>What Base64 actually does</h2>
+
+<p>Base64 converts binary data into a string of 64 printable ASCII characters (A–Z, a–z, 0–9, +, /). It exists to solve a practical problem: many systems that were designed for text (email, HTTP headers, URLs, XML attributes) can't handle arbitrary binary bytes. Base64 lets you embed binary data in text-safe contexts.</p>
+
+<p>The conversion is simple math: every 3 bytes of input become 4 Base64 characters. This is why Base64-encoded data is about 33% larger than the original.</p>
+
+<p>Example:</p>
+<ul>
+  <li>Input: <code>Hello</code> (5 bytes)</li>
+  <li>Base64: <code>SGVsbG8=</code></li>
+  <li>The trailing <code>=</code> is padding to make the length a multiple of 4</li>
+</ul>
+
+<h2>Common places you'll see Base64</h2>
+
+<ul>
+  <li><strong>Email attachments</strong> — MIME encoding converts binary attachments to Base64 so they can travel through email servers that only handle text</li>
+  <li><strong>Data URIs</strong> — <code>&lt;img src="data:image/png;base64,..."&gt;</code> embeds images directly in HTML</li>
+  <li><strong>JWTs</strong> — the header and payload sections of a JWT are Base64URL encoded (a variant using <code>-</code> and <code>_</code> instead of <code>+</code> and <code>/</code>)</li>
+  <li><strong>API tokens and credentials</strong> — Basic Auth sends <code>username:password</code> as Base64 in the Authorization header</li>
+  <li><strong>Cryptographic keys</strong> — PEM files (the <code>-----BEGIN CERTIFICATE-----</code> format) wrap Base64-encoded DER data</li>
+</ul>
+
+<h2>How to decode Base64</h2>
+
+<p>In JavaScript (browser or Node): <code>atob('SGVsbG8=')</code> returns <code>'Hello'</code>. To encode: <code>btoa('Hello')</code> returns <code>'SGVsbG8='</code>.</p>
+
+<p>In Python: <code>import base64; base64.b64decode('SGVsbG8=')</code></p>
+
+<p>In bash: <code>echo 'SGVsbG8=' | base64 --decode</code></p>
+
+<p>Or paste it into <a href="/tools">Toolora → Encoding → Base64 Encoder/Decoder</a>. No server involved — the decode happens entirely in your browser.</p>
+
+<h2>Base64URL vs standard Base64</h2>
+
+<p>Standard Base64 uses <code>+</code> and <code>/</code>, which have special meanings in URLs. Base64URL replaces them with <code>-</code> and <code>_</code>, making the output safe to use directly in URLs and filenames without percent-encoding. JWTs use Base64URL. Many API tokens do too. The decoding process is the same, just with a character substitution.</p>
+
+<h2>The security mistake to avoid</h2>
+
+<p>Never use Base64 as a way to "hide" data. If you're sending Base64-encoded data over HTTP (not HTTPS), anyone intercepting the traffic can decode it instantly. If you're storing Base64-encoded passwords, they're just as readable as plain text.</p>
+
+<p>Base64 is for encoding, not security. Use encryption (AES, RSA) or hashing (bcrypt, Argon2) for anything that needs to be protected.</p>
+    `.trim(),
+  },
+
+  {
+    slug: "pdf-metadata-removal-guide",
+    title: "How to Remove Metadata From PDFs Before Sending",
+    description: "PDFs carry hidden metadata: author name, company, software version, creation date, and revision history. Here's how to strip it before sharing sensitive documents.",
+    date: "2026-04-22",
+    readTime: "5 min read",
+    category: "Privacy",
+    content: `
+<p>Every PDF you create carries invisible information. When you save a Word document as PDF, the resulting file often contains your name, your company name, your operating system, the version of Word you used, the creation date, the last-modified date, and sometimes a revision history that includes previous versions of the document's content.</p>
+
+<p>Before sending a PDF externally — to a client, a recruiter, a court, a journalist — it's worth knowing what metadata it contains and how to remove it.</p>
+
+<h2>What metadata a PDF can contain</h2>
+
+<ul>
+  <li><strong>Document properties:</strong> Title, Author, Subject, Keywords, Creator (application), Producer (PDF library)</li>
+  <li><strong>XMP metadata:</strong> An embedded XML block with creation date, modification date, and format details</li>
+  <li><strong>Revision history:</strong> Some PDFs embed the editing history from the source application</li>
+  <li><strong>Comments and annotations:</strong> Sticky notes, tracked changes, and highlights that may not be visible when printed</li>
+  <li><strong>Form field data:</strong> Partially filled-in forms that retain previous answers</li>
+  <li><strong>Hidden text:</strong> Text that's white on a white background, or positioned off-page</li>
+  <li><strong>Embedded fonts and file attachments:</strong> Original source files sometimes embedded in the PDF</li>
+</ul>
+
+<h2>How to check what metadata your PDF has</h2>
+
+<p>On macOS: open the PDF in Preview → File → Get Info. Basic metadata shows here. For deeper inspection, open Terminal and run: <code>exiftool your-file.pdf</code> (requires ExifTool). This shows every metadata field.</p>
+
+<p>On Windows: open the PDF in Acrobat Reader → File → Properties. The Description tab shows document properties.</p>
+
+<p>For a quick browser-based check: PDF.js-based tools can read document properties without uploading the file. Many metadata strippers also show you what they found before removing it.</p>
+
+<h2>How to remove PDF metadata</h2>
+
+<p><strong>Adobe Acrobat Pro:</strong> Tools → Redact → Sanitize Document. This is the most thorough option and also removes hidden content, embedded scripts, and form data.</p>
+
+<p><strong>ExifTool (command line):</strong> <code>exiftool -all= your-file.pdf</code> — removes all metadata fields. Free, works on macOS/Linux/Windows, handles batch processing.</p>
+
+<p><strong>Print to PDF:</strong> Open the PDF in any reader, print it to a new PDF using the built-in PDF printer. The resulting file loses most metadata because it's essentially a fresh render. Quick but not forensically thorough.</p>
+
+<p><strong>Browser-based tools:</strong> Tools that run in the browser process your PDF locally without uploading it. This is the privacy-correct approach for sensitive documents.</p>
+
+<h2>What to watch out for when using online tools</h2>
+
+<p>Many "free PDF tools" are cloud-based — they upload your document to a server to process it. For contracts, legal documents, medical records, or anything confidential, this is a serious privacy problem. Your document may be stored, scanned, indexed, or subject to data breaches on that third-party server.</p>
+
+<p>The safer alternative is client-side PDF processing — tools that run in your browser using WebAssembly or JavaScript, so your file never leaves your machine. Toolora's <a href="/tools">PDF tools</a> work this way. The metadata removal, compression, and merging all happen locally.</p>
+
+<h2>Before you send</h2>
+
+<p>A quick pre-send checklist:</p>
+<ol>
+  <li>Check metadata fields (author, company, application)</li>
+  <li>Check for tracked changes or hidden annotations</li>
+  <li>Check form fields aren't carrying over previous data</li>
+  <li>Check that hidden text isn't present (select all, see if unexpected text highlights)</li>
+  <li>Strip metadata and sanitize</li>
+  <li>Re-check after stripping to confirm it worked</li>
+</ol>
+
+<p>Two minutes of checking can prevent an embarrassing (or professionally damaging) metadata leak.</p>
+    `.trim(),
+  },
+
+  {
+    slug: "css-units-px-em-rem-explained",
+    title: "CSS Units Explained: px vs em vs rem (and When to Use Each)",
+    description: "Choosing the wrong CSS unit leads to layouts that break under zoom, accessibility issues, and font sizes that don't scale correctly. Here's the practical guide.",
+    date: "2026-04-23",
+    readTime: "6 min read",
+    category: "Developer Tools",
+    content: `
+<p>CSS has more than a dozen units for expressing sizes and distances. Most developers use three in practice — px, em, and rem — and struggle to remember when each one is appropriate. Here's a clear breakdown with rules you can actually apply.</p>
+
+<h2>px: absolute pixels</h2>
+
+<p>A CSS pixel (<code>px</code>) is not exactly one physical screen pixel — on a 2× Retina display, 1 CSS pixel = 2 physical pixels. But it behaves as an absolute unit: it doesn't scale with font size, zoom preferences, or parent elements.</p>
+
+<p><strong>Use px for:</strong></p>
+<ul>
+  <li>Borders and dividers (<code>border: 1px solid</code>)</li>
+  <li>Box shadows (<code>box-shadow: 0 2px 4px</code>)</li>
+  <li>Fixed-size decorative elements that shouldn't scale</li>
+  <li>Media query breakpoints (though this is debated)</li>
+</ul>
+
+<p><strong>Avoid px for:</strong> font sizes and spacing that should respect the user's browser font preferences. A user who has set their browser default font to 20px (common for accessibility) expects your font sizes to scale accordingly. Setting <code>font-size: 16px</code> in CSS overrides their preference.</p>
+
+<h2>em: relative to the parent element</h2>
+
+<p><code>1em</code> equals the computed font-size of the element's parent. If the parent is 16px, <code>1em = 16px</code>, <code>1.5em = 24px</code>, <code>0.75em = 12px</code>.</p>
+
+<p>The problem: em compounds. If a parent is <code>1.5em</code> and a child is also <code>1.5em</code>, the child ends up at 2.25× the base size. This cascading effect makes em unpredictable for font sizes in nested components.</p>
+
+<p><strong>Use em for:</strong></p>
+<ul>
+  <li>Padding and margin on elements where the spacing should scale with the element's own font size (<code>padding: 0.5em 1em</code> on a button that might be different sizes)</li>
+  <li>Media queries where you want them to respond to the user's base font size (use <code>em</code> in media queries, not <code>rem</code> — Safari has historically had bugs with <code>rem</code> in media queries)</li>
+</ul>
+
+<h2>rem: relative to the root element</h2>
+
+<p><code>1rem</code> always refers to the font-size of the <code>&lt;html&gt;</code> element. Browsers default this to 16px. Importantly, rem doesn't compound — no matter how deeply nested your element is, <code>1rem</code> is always the same size.</p>
+
+<p><strong>Use rem for:</strong></p>
+<ul>
+  <li>Font sizes throughout your site — rem respects the user's browser font preference without cascading surprises</li>
+  <li>Spacing at the layout level (section padding, gap in grid, margin between sections)</li>
+  <li>Anything that should scale uniformly with the root font size</li>
+</ul>
+
+<p>A common pattern: set <code>html { font-size: 62.5%; }</code> so that <code>1rem = 10px</code>. Then <code>1.6rem = 16px</code>, <code>2.4rem = 24px</code>, etc. This makes the math easy while preserving user font preferences. (Note: this approach has accessibility trade-offs — users who set their default to 20px won't get 200% of 10px = 20px, they get 62.5% of 20px = 12.5px. The reset is controversial.)</p>
+
+<h2>Other units worth knowing</h2>
+
+<p><code>%</code> — percentage of the parent's size. Useful for widths and heights in fluid layouts.</p>
+
+<p><code>vw / vh</code> — viewport width / viewport height. <code>100vw</code> is the full browser window width. Useful for full-screen sections.</p>
+
+<p><code>ch</code> — width of the "0" character in the current font. <code>max-width: 65ch</code> creates a readable line length regardless of font size — a better approach than <code>max-width: 680px</code>.</p>
+
+<p><code>clamp()</code> — fluid sizing between a minimum and maximum: <code>font-size: clamp(1rem, 2.5vw, 2rem)</code>. Scales smoothly between viewport sizes without media queries. The modern approach for responsive typography.</p>
+
+<h2>The practical ruleset</h2>
+
+<ul>
+  <li><code>font-size</code>: always rem (or clamp for fluid)</li>
+  <li><code>line-height</code>: unitless (e.g., <code>1.6</code>) — scales with font size automatically</li>
+  <li>Component padding/margin: em (scales with the component's font size)</li>
+  <li>Layout spacing: rem</li>
+  <li>Borders, shadows: px</li>
+  <li>Max-widths for text: ch</li>
+  <li>Full-screen elements: vw/vh</li>
+</ul>
+
+<p>Following this consistently makes your layout more accessible and easier to reason about as the codebase grows.</p>
+    `.trim(),
+  },
+
+  {
+    slug: "what-is-jwt-how-it-works",
+    title: "What Is a JWT? How JSON Web Tokens Work",
+    description: "JWTs are everywhere in authentication. Here's exactly how they're structured, what the three parts contain, and how verification actually works.",
+    date: "2026-04-23",
+    readTime: "6 min read",
+    category: "Security",
+    content: `
+<p>A JSON Web Token (JWT, pronounced "jot") is a compact, URL-safe way to transmit a signed set of claims between two parties. They're used in authentication and authorization — when you log in to a service and get a token back, there's a good chance it's a JWT.</p>
+
+<h2>The three-part structure</h2>
+
+<p>A JWT looks like this:</p>
+
+<pre><code>eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c</code></pre>
+
+<p>Three Base64URL-encoded strings separated by dots:</p>
+<ol>
+  <li><strong>Header</strong> — algorithm and token type</li>
+  <li><strong>Payload</strong> — the claims (data)</li>
+  <li><strong>Signature</strong> — cryptographic proof of authenticity</li>
+</ol>
+
+<h2>The header</h2>
+
+<p>Decoded, the header is typically: <code>{"alg": "HS256", "typ": "JWT"}</code></p>
+
+<p><code>alg</code> specifies the signing algorithm. Common values:</p>
+<ul>
+  <li><code>HS256</code> — HMAC with SHA-256 (symmetric — same key signs and verifies)</li>
+  <li><code>RS256</code> — RSA with SHA-256 (asymmetric — private key signs, public key verifies)</li>
+  <li><code>ES256</code> — ECDSA with SHA-256 (asymmetric, more compact than RSA)</li>
+</ul>
+
+<h2>The payload</h2>
+
+<p>Decoded, the payload contains claims — statements about the user or session. Standard claims:</p>
+
+<ul>
+  <li><code>sub</code> — subject (usually user ID)</li>
+  <li><code>iss</code> — issuer (who created the token)</li>
+  <li><code>aud</code> — audience (who should accept the token)</li>
+  <li><code>exp</code> — expiration time (Unix timestamp)</li>
+  <li><code>iat</code> — issued at (Unix timestamp)</li>
+  <li><code>nbf</code> — not before (token not valid before this time)</li>
+</ul>
+
+<p>You can add any custom claims: <code>{"role": "admin", "plan": "pro"}</code>. This is what makes JWTs useful — you can embed user information in the token so the server doesn't need to look it up from a database on every request.</p>
+
+<p><strong>Important:</strong> the payload is encoded, not encrypted. Anyone who has the token can decode and read the payload. Never put passwords, credit card numbers, or other secrets in a JWT payload.</p>
+
+<h2>The signature</h2>
+
+<p>The signature is calculated as:</p>
+
+<pre><code>HMAC-SHA256(
+  base64url(header) + "." + base64url(payload),
+  secret
+)</code></pre>
+
+<p>For HS256, the secret is a key that only the server knows. For RS256, the server signs with a private key and exposes a public key (usually at a <code>/.well-known/jwks.json</code> endpoint) that anyone can use to verify tokens.</p>
+
+<p>The signature guarantees that the header and payload haven't been tampered with. If you change one character of the payload, the signature no longer matches and the token is rejected.</p>
+
+<h2>How JWT authentication works</h2>
+
+<ol>
+  <li>User logs in with username and password</li>
+  <li>Server verifies credentials</li>
+  <li>Server creates a JWT with user claims, signs it, and returns it</li>
+  <li>Client stores the JWT (usually in memory or a cookie)</li>
+  <li>Client sends the JWT in the <code>Authorization: Bearer &lt;token&gt;</code> header on subsequent requests</li>
+  <li>Server verifies the signature, checks expiry, and processes the request</li>
+</ol>
+
+<p>No session storage needed on the server. Each token is self-contained and verifiable.</p>
+
+<h2>The security risks</h2>
+
+<p><strong>Algorithm confusion attacks:</strong> If your server accepts any algorithm specified in the header, an attacker can change the header to <code>alg: none</code> (no signature required) or switch from RS256 to HS256 using the public key as the HMAC secret. Always hardcode the expected algorithm in your verification code.</p>
+
+<p><strong>Storage:</strong> Storing JWTs in localStorage exposes them to XSS attacks. Cookies with <code>HttpOnly</code> and <code>Secure</code> flags are safer for long-lived tokens.</p>
+
+<p><strong>Revocation:</strong> JWTs are stateless — there's no built-in revocation mechanism. A token stays valid until it expires. If you need immediate revocation (on logout, on account suspension), you need a token blacklist or use short expiry times.</p>
+
+<h2>Inspect a JWT</h2>
+
+<p>Paste any JWT into <a href="/tools">Toolora → Security → JWT Decoder</a> to see the decoded header and payload. The decoding happens in your browser — unlike jwt.io, your token isn't sent to any server.</p>
+    `.trim(),
+  },
+
+  {
+    slug: "how-to-validate-email-address",
+    title: "How to Validate an Email Address (Without Sending an Email)",
+    description: "Regex alone gets email validation wrong. Here's what actually works, what the edge cases are, and why the only true validation is sending an email.",
+    date: "2026-04-24",
+    readTime: "5 min read",
+    category: "Developer Tools",
+    content: `
+<p>Email validation seems simple until you look at what a valid email address actually is. The specification (RFC 5321/5322) allows characters most developers would never expect. Writing a regex that correctly validates email addresses while rejecting invalid ones is harder than it looks — and even a perfect regex can't tell you whether the address actually exists.</p>
+
+<h2>What the spec actually allows</h2>
+
+<p>Technically valid email addresses include:</p>
+<ul>
+  <li><code>user+tag@example.com</code> — plus-addressing, commonly used</li>
+  <li><code>user.name@example.co.uk</code> — dots in local part and multi-part TLDs</li>
+  <li><code>"user name"@example.com</code> — quoted strings allow spaces in local part</li>
+  <li><code>user@[192.168.1.1]</code> — IP address literal as domain</li>
+  <li><code>user@xn--nxasmq6b.com</code> — internationalized domain (punycode)</li>
+  <li><code>あいう@example.com</code> — internationalized email (RFC 6530)</li>
+</ul>
+
+<p>And technically invalid but commonly accepted:</p>
+<ul>
+  <li><code>user@localhost</code> — no TLD, but valid per spec</li>
+  <li><code>user@example</code> — single-label domain</li>
+</ul>
+
+<h2>Why regex email validation is always wrong (in some direction)</h2>
+
+<p>Simple regex like <code>/^[^\s@]+@[^\s@]+\.[^\s@]+$/</code> is too permissive — it accepts <code>@@@.@</code>.</p>
+
+<p>Complex RFC-compliant regex runs to thousands of characters and still trips on edge cases. And both approaches have the same fundamental problem: they validate the format, not the existence.</p>
+
+<p><code>absolutely.fake@gmail.com</code> passes any regex. It's not a real account.</p>
+
+<h2>What you should actually do</h2>
+
+<p><strong>For basic format check:</strong> Use a simple regex that catches obvious mistakes without being overly restrictive.</p>
+
+<pre><code>/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/</code></pre>
+
+<p>This rejects strings with no @, multiple @s, spaces, and domains with no TLD. It passes almost all real email addresses and most invalid ones that users won't actually type. It's not RFC-complete but it's practically correct for 99.9% of cases.</p>
+
+<p><strong>HTML5 input validation:</strong> <code>&lt;input type="email"&gt;</code> provides browser-native validation that's more complete than simple regex and free. Use it.</p>
+
+<p><strong>For real validation:</strong> Send a confirmation email. This is the only method that verifies both format and existence. Require the user to click a link before granting full access. This is the industry standard for a reason.</p>
+
+<h2>Additional checks worth doing</h2>
+
+<p><strong>MX record lookup:</strong> Check that the domain has mail exchanger records — meaning it can receive email. No MX records usually means the address is fake. You can do this server-side with a DNS lookup. It doesn't guarantee deliverability but eliminates clearly invalid domains.</p>
+
+<p><strong>Disposable email detection:</strong> Services like Mailcheck or open-source blocklists of known disposable email providers (Mailinator, Guerrilla Mail, 10 Minute Mail, etc.) let you block throwaway addresses. Useful for registrations where you need persistent accounts.</p>
+
+<p><strong>Normalization before storing:</strong> Lowercase the domain part. Some providers (Gmail) also ignore dots in the local part and treat plus-addresses as the same account. Normalize consistently to avoid duplicate accounts.</p>
+
+<h2>One practical approach</h2>
+
+<ol>
+  <li>Client-side: HTML5 <code>type="email"</code> for immediate feedback</li>
+  <li>Server-side on submission: simple regex + MX record check</li>
+  <li>After registration: email confirmation link required to activate account</li>
+</ol>
+
+<p>Steps 1 and 2 catch typos and obvious fakes. Step 3 confirms the address actually works. Nothing more is needed for most applications.</p>
+    `.trim(),
+  },
+
+  {
+    slug: "yaml-to-json-converter-guide",
+    title: "YAML to JSON: How the Conversion Works and What to Watch Out For",
+    description: "Converting between YAML and JSON is mostly mechanical, but a few YAML features have no JSON equivalent. Here's what changes and what to watch out for.",
+    date: "2026-04-24",
+    readTime: "4 min read",
+    category: "Developer Tools",
+    content: `
+<p>YAML and JSON represent the same data model — strings, numbers, booleans, null, arrays, and objects. Converting between them is mostly straightforward, but a few YAML features don't map directly to JSON, and some YAML quirks produce surprising JSON output.</p>
+
+<h2>What converts cleanly</h2>
+
+<p>Most YAML converts to JSON without any information loss:</p>
+
+<pre><code># YAML
+name: Alice
+age: 30
+active: true
+tags:
+  - admin
+  - user</code></pre>
+
+<pre><code>// JSON
+{
+  "name": "Alice",
+  "age": 30,
+  "active": true,
+  "tags": ["admin", "user"]
+}</code></pre>
+
+<p>Nested objects, arrays of objects, null values, and multiline strings all convert cleanly. The structure is preserved exactly.</p>
+
+<h2>What gets lost in YAML → JSON</h2>
+
+<p><strong>Comments:</strong> YAML supports <code># comments</code>. JSON does not. All comments are stripped during conversion. If you need to preserve documentation alongside your data, you'll need to restructure (add a <code>_comment</code> field) or keep the YAML source.</p>
+
+<p><strong>YAML anchors and aliases:</strong> YAML lets you define a block once and reference it elsewhere:</p>
+
+<pre><code>defaults: &amp;defaults
+  timeout: 30
+  retries: 3
+
+production:
+  &lt;&lt;: *defaults
+  host: prod.example.com</code></pre>
+
+<p>When converted to JSON, anchors are resolved — the referenced content is inlined at each alias. The resulting JSON is larger and repetitive, but semantically equivalent.</p>
+
+<p><strong>Block scalars:</strong> YAML's multiline string syntax (<code>|</code> literal block, <code>&gt;</code> folded) converts to a regular JSON string with newlines. No information loss, but the readability difference is significant.</p>
+
+<h2>YAML quirks that affect the JSON output</h2>
+
+<p><strong>Implicit typing:</strong> YAML tries to infer types. Values that look like booleans, numbers, or null are interpreted as such unless quoted. This affects JSON output:</p>
+
+<table>
+  <thead>
+    <tr><th>YAML value</th><th>JSON output</th><th>Why</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>yes</code></td><td><code>true</code></td><td>YAML 1.1 treats yes/no/on/off as booleans</td></tr>
+    <tr><td><code>NO</code></td><td><code>false</code></td><td>Same (the "Norway problem")</td></tr>
+    <tr><td><code>1.0</code></td><td><code>1.0</code></td><td>Parsed as float</td></tr>
+    <tr><td><code>1_000</code></td><td><code>1000</code></td><td>YAML 1.1 allows underscores in numbers</td></tr>
+    <tr><td><code>0o17</code></td><td><code>15</code></td><td>Octal notation in YAML 1.1</td></tr>
+    <tr><td><code>~</code></td><td><code>null</code></td><td>Tilde means null in YAML</td></tr>
+  </tbody>
+</table>
+
+<p>If any of these unintended conversions could affect your data, quote the values in your YAML source.</p>
+
+<h2>Converting JSON to YAML</h2>
+
+<p>JSON → YAML is always lossless because JSON is a subset of valid YAML. Every valid JSON document is also valid YAML 1.2. The conversion just reformats: removes quotes where optional, converts braces to indentation, and converts bracket arrays to dash notation.</p>
+
+<h2>When to use the converter</h2>
+
+<ul>
+  <li>Converting Kubernetes YAML configs to test with JSON-only tools</li>
+  <li>Moving CI/CD pipeline definitions into a JSON-based API</li>
+  <li>Debugging YAML by seeing what it actually parses as in JSON</li>
+  <li>Generating JSON configs from human-readable YAML templates</li>
+</ul>
+
+<p>Convert YAML ↔ JSON instantly at <a href="/tools">Toolora → Converters</a>. The conversion runs in your browser — no server sees your config data.</p>
+    `.trim(),
+  },
+
+  {
+    slug: "chrome-extensions-privacy-risks",
+    title: "Chrome Extensions and Your Privacy: What They Can Actually See",
+    description: "Chrome extensions can read every page you visit, intercept your passwords, and modify web pages silently. Here's what the permissions actually mean.",
+    date: "2026-04-25",
+    readTime: "6 min read",
+    category: "Privacy",
+    content: `
+<p>Chrome extensions are useful enough that most people install several without thinking much about what they're granting access to. The permissions dialog exists, but it's vague — "read and change all your data on websites you visit" sounds alarming, but it's the standard permission for most extensions. Here's what that actually means.</p>
+
+<h2>The permission categories</h2>
+
+<p><strong>"Read and change all your data on websites you visit"</strong> (<code>tabs</code> + <code>&lt;all_urls&gt;</code>): This is the broadest permission. An extension with this permission can read the full HTML of every page you load, extract any text including passwords typed into forms (before they're submitted), read cookies, inject scripts, and modify page content silently.</p>
+
+<p><strong>"Read your browsing history"</strong> (<code>history</code>): Full access to your browser history, including URLs, timestamps, and visit counts.</p>
+
+<p><strong>"Manage your downloads"</strong> (<code>downloads</code>): Can initiate downloads and see your download history.</p>
+
+<p><strong>"Read and change your bookmarks"</strong> (<code>bookmarks</code>): Can read, create, modify, and delete bookmarks.</p>
+
+<p><strong>"Communicate with cooperating native applications"</strong> (<code>nativeMessaging</code>): Can communicate with installed software on your computer — extending the extension's reach beyond the browser entirely.</p>
+
+<h2>What an extension with broad permissions can do</h2>
+
+<ul>
+  <li>Read every email you open in Gmail</li>
+  <li>Capture everything you type into forms — including passwords (before submission)</li>
+  <li>See your online banking balance when you open the page</li>
+  <li>Modify what you see on a page (adding content, removing warnings)</li>
+  <li>Silently redirect links</li>
+  <li>Exfiltrate your session cookies (which can be used to impersonate you)</li>
+  <li>Read any data on pages gated behind login</li>
+</ul>
+
+<h2>The supply chain problem</h2>
+
+<p>Extensions can be sold. You install an extension from a legitimate developer, trust it for months, and then the developer sells it to a new owner who adds data-collection code in a silent update. Chrome auto-updates extensions — you may not notice the change until it's too late.</p>
+
+<p>This has happened repeatedly. Notable cases include extensions with millions of users that were sold and turned into adware or data harvesters after the original developers moved on.</p>
+
+<h2>How to audit your extensions</h2>
+
+<ol>
+  <li>Go to <code>chrome://extensions</code></li>
+  <li>Click "Details" on each extension</li>
+  <li>Check "Site access" — extensions should have the minimum access they need</li>
+  <li>Look at the permission list on the extension's Chrome Web Store page</li>
+  <li>Check the last updated date — an extension that hasn't updated in 2+ years may be abandoned (and potentially sold)</li>
+</ol>
+
+<p>You can switch most extensions from "On all sites" to "On click" or "On specific sites" in the Site Access dropdown. This limits the damage if an extension turns malicious.</p>
+
+<h2>The safer approach</h2>
+
+<ul>
+  <li><strong>Install fewer extensions.</strong> Every extension you install is a permanent browser-level trust decision.</li>
+  <li><strong>Check the developer.</strong> Is it a well-known company? An established developer? Or an anonymous publisher?</li>
+  <li><strong>Read the privacy policy.</strong> If it mentions "data collection," "analytics," or "sharing with partners," understand what that means.</li>
+  <li><strong>Use browser-based tools instead.</strong> Many tasks people install extensions for — JSON formatting, color picking, word counting — can be done in purpose-built browser tools that don't require persistent access to all your tabs.</li>
+</ul>
+
+<p><a href="/tools">Toolora</a> is built as a browser-based alternative to extension-based utilities for exactly this reason. Your data stays in your browser tab and is never sent anywhere.</p>
+    `.trim(),
+  },
+
+  {
+    slug: "how-to-compress-images-web",
+    title: "How to Compress Images for the Web Without Losing Quality",
+    description: "Large images are the single most common cause of slow page loads. Here's how to compress them effectively, which formats to use, and what tools do the job without uploading your files.",
+    date: "2026-04-25",
+    readTime: "5 min read",
+    category: "Tools",
+    content: `
+<p>Images account for the majority of bytes on most web pages. A photo uploaded at full resolution from a phone camera is typically 3–8MB. Properly compressed for the web, the same image can be 50–150KB without visible quality loss. That's a 20–50× reduction that directly improves load time, Core Web Vitals, and user experience.</p>
+
+<h2>Understanding compression types</h2>
+
+<p><strong>Lossy compression</strong> permanently discards information to reduce file size. JPEG and WebP both support lossy compression. Done correctly (quality 75–85 for JPEG, 75–80 for WebP), the difference is invisible to the human eye. Done aggressively (quality below 50), you get visible artifacts — blocky areas and color banding.</p>
+
+<p><strong>Lossless compression</strong> reduces file size without discarding any data. PNG uses lossless compression. WebP and AVIF also support lossless modes. Lossless is appropriate for screenshots, icons, logos, and any image with sharp lines or text — lossy compression creates visible artifacts around high-contrast edges.</p>
+
+<h2>Which format to use</h2>
+
+<table>
+  <thead>
+    <tr><th>Format</th><th>Best for</th><th>Browser support</th><th>Typical saving vs JPEG</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>JPEG</td><td>Photos (legacy/fallback)</td><td>Universal</td><td>—</td></tr>
+    <tr><td>PNG</td><td>Screenshots, transparency</td><td>Universal</td><td>—</td></tr>
+    <tr><td>WebP</td><td>Photos + graphics</td><td>All modern browsers</td><td>25–35% smaller</td></tr>
+    <tr><td>AVIF</td><td>Photos (highest compression)</td><td>Chrome, Firefox, Safari 16+</td><td>40–50% smaller</td></tr>
+    <tr><td>SVG</td><td>Icons, logos, illustrations</td><td>Universal</td><td>Not applicable (vector)</td></tr>
+  </tbody>
+</table>
+
+<p>For most new web projects: use WebP as the primary format with a JPEG fallback for older browsers. Use the <code>&lt;picture&gt;</code> element to serve AVIF to browsers that support it:</p>
+
+<pre><code>&lt;picture&gt;
+  &lt;source srcset="image.avif" type="image/avif"&gt;
+  &lt;source srcset="image.webp" type="image/webp"&gt;
+  &lt;img src="image.jpg" alt="..."&gt;
+&lt;/picture&gt;</code></pre>
+
+<h2>The right compression settings</h2>
+
+<p>For JPEG photos: quality 75–85 is the sweet spot. Below 70 and most people can see compression artifacts. Above 85 and file sizes grow significantly for minimal visible improvement.</p>
+
+<p>For WebP photos: quality 75–80 gives roughly equivalent visual quality to JPEG at 85, with smaller file size.</p>
+
+<p>For PNG: run through a lossless optimizer (pngquant, oxipng) before using. You can often reduce PNG file sizes 30–50% without any visual difference.</p>
+
+<h2>Resize before compressing</h2>
+
+<p>Compression only goes so far if the image is unnecessarily large. A 4000×3000px image displayed at 800×600px on screen is doing 5× more work than needed. Resize the image to the largest size it will actually be displayed before compressing.</p>
+
+<p>For responsive images, generate multiple sizes and use <code>srcset</code>:</p>
+
+<pre><code>&lt;img 
+  srcset="hero-400.webp 400w, hero-800.webp 800w, hero-1600.webp 1600w"
+  sizes="(max-width: 600px) 400px, (max-width: 1200px) 800px, 1600px"
+  src="hero-800.webp"
+  alt="..."&gt;</code></pre>
+
+<h2>Tools that don't upload your images</h2>
+
+<p>Most image compression sites upload your photos to their servers to process them. For personal, medical, legal, or confidential images, this is a privacy concern.</p>
+
+<p>Toolora's <a href="/tools">Image Compressor</a> runs entirely in your browser using WebAssembly. Your images are never uploaded — compression happens locally on your machine. The result is the same quality reduction without the privacy trade-off.</p>
+    `.trim(),
+  },
+
+  {
+    slug: "base64-images-css-tradeoffs",
+    title: "Base64 Images in CSS: When It Helps and When It Hurts",
+    description: "Embedding images as Base64 in CSS or HTML saves HTTP requests but increases file size and kills caching. Here's when the trade-off is worth it.",
+    date: "2026-04-26",
+    readTime: "4 min read",
+    category: "Developer Tools",
+    content: `
+<p>Inlining images as Base64-encoded strings in CSS or HTML is a technique that eliminates the HTTP request for the image file. Instead of the browser fetching <code>/images/icon.svg</code>, the image data is embedded directly in the stylesheet or markup. This sounds like a performance win, but it often isn't.</p>
+
+<h2>How it works</h2>
+
+<p>A Base64 data URI looks like this in CSS:</p>
+
+<pre><code>.icon {
+  background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciI...');
+}</code></pre>
+
+<p>Or in HTML:</p>
+
+<pre><code>&lt;img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA..." alt="icon"&gt;</code></pre>
+
+<p>The browser reads the data URI directly without making a network request.</p>
+
+<h2>When it helps</h2>
+
+<p><strong>Tiny icons used everywhere:</strong> A 200-byte SVG used on every page of a site is a legitimate candidate. The overhead of an HTTP request (TCP setup, headers, round-trip latency) can exceed the size of the icon itself on high-latency connections.</p>
+
+<p><strong>Critical above-the-fold images:</strong> An image required for the first paint can be inlined to eliminate the render-blocking request. The LCP (Largest Contentful Paint) improvement can be measurable.</p>
+
+<p><strong>Single-page tools and email templates:</strong> In self-contained HTML files or email HTML (which can't reference external resources reliably), inlining images is often the only practical option.</p>
+
+<h2>When it hurts</h2>
+
+<p><strong>Caching:</strong> External image files are cached by the browser separately from the CSS file. The image loads once and is reused. An inlined Base64 image is part of the CSS file — it can't be cached independently. Every time the CSS changes, users re-download all the inlined images too.</p>
+
+<p><strong>File size:</strong> Base64 encoding inflates binary data by ~33%. A 10KB PNG becomes ~13.3KB as Base64. For large images, this overhead is significant.</p>
+
+<p><strong>CSS file bloat:</strong> Inlining several images makes your CSS file large, which delays stylesheet parsing. The browser can't render the page until CSS is parsed — a large CSS file is a rendering bottleneck.</p>
+
+<p><strong>HTTP/2 and HTTP/3:</strong> The original motivation for request bundling was HTTP/1.1's limit of ~6 parallel connections per domain. HTTP/2 multiplexes unlimited requests over a single connection. The overhead of an extra request is much lower now, weakening the argument for inlining.</p>
+
+<h2>The practical rule</h2>
+
+<p>Inline Base64 images only when:</p>
+<ul>
+  <li>The image is under 1KB</li>
+  <li>The image is used on nearly every page</li>
+  <li>The image changes infrequently</li>
+  <li>The self-contained file requirement exists (email, offline HTML)</li>
+</ul>
+
+<p>For everything else, serve images as separate files with appropriate caching headers (<code>Cache-Control: max-age=31536000, immutable</code> for versioned assets).</p>
+
+<p>Convert between image files and Base64 data URIs at <a href="/tools">Toolora → Encoding → Base64 Image Encoder</a> — useful when you do have a legitimate use case for inlining.</p>
+    `.trim(),
+  },
+
+  {
+    slug: "what-is-rate-limiting-api",
+    title: "What Is Rate Limiting? How APIs Protect Themselves",
+    description: "Rate limiting controls how many requests a client can make in a given time window. Here's how it works, what the common algorithms are, and how to handle 429 errors.",
+    date: "2026-04-26",
+    readTime: "5 min read",
+    category: "Developer Tools",
+    content: `
+<p>Every API you use has some form of rate limiting. Without it, a single badly-written script or a sudden traffic spike could overwhelm a service and make it unusable for everyone. Rate limiting protects the API provider, prevents abuse, and (with tiered limits) creates a monetization structure.</p>
+
+<h2>What rate limiting actually enforces</h2>
+
+<p>Rate limits define a maximum number of requests allowed within a time window, per some identifier. Common identifiers:</p>
+
+<ul>
+  <li><strong>IP address:</strong> Easy to implement, bypassed by rotating IPs or proxies</li>
+  <li><strong>API key:</strong> Standard for authenticated APIs — each key has its own quota</li>
+  <li><strong>User account:</strong> The limit follows the user across all their API keys or sessions</li>
+  <li><strong>Endpoint-specific:</strong> Some endpoints (expensive operations) have lower limits than others</li>
+</ul>
+
+<p>Common limit structures: "100 requests per minute," "10,000 requests per day," "5 concurrent connections," or combinations of these.</p>
+
+<h2>Rate limiting algorithms</h2>
+
+<p><strong>Fixed window:</strong> The simplest. Count requests in a fixed time bucket (e.g., "the current minute"). Reset the counter at the start of each window. Problem: a client can burst 100 requests at 00:59 and another 100 at 01:00, effectively getting 200 in 2 seconds.</p>
+
+<p><strong>Sliding window:</strong> Instead of a fixed reset time, look at the last N seconds/minutes continuously. More accurate, slightly more expensive to implement.</p>
+
+<p><strong>Token bucket:</strong> Each client gets a bucket of tokens. Each request consumes a token. Tokens are refilled at a steady rate. Clients can burst up to the bucket capacity, then are limited to the refill rate. This allows natural traffic bursts without abuse.</p>
+
+<p><strong>Leaky bucket:</strong> Requests enter a queue. The queue processes at a fixed rate. Excess requests overflow (are rejected). Produces very steady output regardless of input bursts — good for protecting backend services that can only handle constant throughput.</p>
+
+<h2>Reading rate limit headers</h2>
+
+<p>Most APIs return headers telling you the current state of your rate limit:</p>
+
+<pre><code>X-RateLimit-Limit: 1000
+X-RateLimit-Remaining: 943
+X-RateLimit-Reset: 1714608000
+Retry-After: 60</code></pre>
+
+<p><code>X-RateLimit-Reset</code> is a Unix timestamp when your window resets. <code>Retry-After</code> appears on 429 responses telling you how many seconds to wait. Not all APIs use these headers consistently — check the specific API's documentation.</p>
+
+<h2>Handling 429 Too Many Requests</h2>
+
+<p>When you hit a rate limit, the server returns HTTP 429. The correct response is exponential backoff with jitter:</p>
+
+<ol>
+  <li>Catch the 429 response</li>
+  <li>Read the <code>Retry-After</code> header if present and wait that long</li>
+  <li>If no header, wait: <code>baseDelay * 2^attempt + random(0, 1000ms)</code></li>
+  <li>Retry the request</li>
+  <li>Give up after a maximum number of attempts</li>
+</ol>
+
+<p>The jitter (random component) prevents thundering herd — if many clients all hit the limit simultaneously and all retry at the same time, they'll all hit the limit again simultaneously. Jitter staggers the retries.</p>
+
+<h2>Building rate-limit-aware code</h2>
+
+<ul>
+  <li>Track your remaining requests from the headers and slow down proactively — don't wait for a 429</li>
+  <li>Use request queuing libraries that handle rate limiting automatically</li>
+  <li>Cache responses wherever possible to reduce request volume</li>
+  <li>Use webhooks instead of polling where the API supports it</li>
+  <li>If you're consistently hitting limits, it's time to upgrade your API tier or optimize your request patterns</li>
+</ul>
+    `.trim(),
+  },
+
+  {
+    slug: "how-to-read-http-headers",
+    title: "How to Read HTTP Headers and What They Tell You",
+    description: "HTTP headers carry metadata about requests and responses that most developers only look at when something breaks. Here's what the important ones mean.",
+    date: "2026-04-27",
+    readTime: "6 min read",
+    category: "Developer Tools",
+    content: `
+<p>Every HTTP request and response carries a set of headers — key-value pairs that contain metadata about the message. Most developers glance at them in DevTools when debugging, but they contain a lot of actionable information about caching, security, content, and authentication that's worth understanding deeply.</p>
+
+<h2>Request headers (client → server)</h2>
+
+<p><strong>Authorization:</strong> Carries authentication credentials. Common formats:</p>
+<ul>
+  <li><code>Authorization: Bearer eyJhbGci...</code> — JWT or OAuth token</li>
+  <li><code>Authorization: Basic dXNlcjpwYXNz</code> — Base64-encoded username:password</li>
+  <li><code>Authorization: ApiKey sk-123...</code> — API key (format varies by provider)</li>
+</ul>
+
+<p><strong>Content-Type:</strong> Tells the server what format the request body is in:</p>
+<ul>
+  <li><code>application/json</code> — JSON body</li>
+  <li><code>application/x-www-form-urlencoded</code> — HTML form submission</li>
+  <li><code>multipart/form-data</code> — File upload with form data</li>
+  <li><code>text/plain</code> — Plain text body</li>
+</ul>
+
+<p><strong>Accept:</strong> Tells the server what response formats the client can handle: <code>Accept: application/json, text/html;q=0.9</code>. The <code>q=</code> value is a preference weight (0–1).</p>
+
+<p><strong>User-Agent:</strong> Identifies the client: browser version, OS, bot name. Sites use this for device detection, A/B testing, and bot blocking. Easily spoofed.</p>
+
+<p><strong>Cookie:</strong> Sends all cookies for the domain. Handled automatically by the browser, but relevant when debugging auth issues.</p>
+
+<p><strong>Origin / Referer:</strong> <code>Origin</code> is the scheme+host that made the request (used in CORS). <code>Referer</code> is the full URL of the page that initiated the request. Note: "Referer" is a misspelling of "Referrer" that has been in the spec since 1996.</p>
+
+<h2>Response headers (server → client)</h2>
+
+<p><strong>Content-Type:</strong> Same as request, but now telling the client how to interpret the response: <code>Content-Type: application/json; charset=utf-8</code>.</p>
+
+<p><strong>Cache-Control:</strong> Controls caching behavior:</p>
+<ul>
+  <li><code>no-cache</code> — can cache but must revalidate with server before using</li>
+  <li><code>no-store</code> — don't cache at all (for sensitive data)</li>
+  <li><code>max-age=3600</code> — cache for 1 hour</li>
+  <li><code>immutable</code> — content won't change; skip revalidation (for versioned assets)</li>
+  <li><code>public</code> — can be cached by CDNs; <code>private</code> — only the user's browser</li>
+</ul>
+
+<p><strong>ETag:</strong> A fingerprint of the response content. Clients send it back in <code>If-None-Match</code> headers. If the content hasn't changed, the server returns 304 Not Modified instead of resending the full response. Saves bandwidth.</p>
+
+<p><strong>Location:</strong> Used with 3xx redirects to tell the client where to go next.</p>
+
+<p><strong>Set-Cookie:</strong> Sets a cookie with options: <code>Set-Cookie: session=abc123; HttpOnly; Secure; SameSite=Strict; Max-Age=86400</code></p>
+<ul>
+  <li><code>HttpOnly</code> — JavaScript can't read this cookie (protects against XSS)</li>
+  <li><code>Secure</code> — only sent over HTTPS</li>
+  <li><code>SameSite=Strict</code> — never sent in cross-site requests (CSRF protection)</li>
+</ul>
+
+<h2>Security headers</h2>
+
+<p><strong>Strict-Transport-Security (HSTS):</strong> <code>max-age=31536000; includeSubDomains</code> — tells browsers to always use HTTPS for this domain for the specified period. Prevents SSL stripping attacks.</p>
+
+<p><strong>X-Content-Type-Options: nosniff</strong> — prevents browsers from MIME-sniffing the response type. Stops browsers from executing a JavaScript file served as <code>text/plain</code>.</p>
+
+<p><strong>X-Frame-Options: DENY</strong> — prevents the page from being embedded in an iframe. Protects against clickjacking. Superseded by CSP's <code>frame-ancestors</code> directive.</p>
+
+<p><strong>Content-Security-Policy:</strong> The most powerful security header. Specifies which sources are allowed for scripts, styles, images, and more. Worth a <a href="/blog/what-is-content-security-policy">dedicated article</a>.</p>
+
+<h2>How to inspect headers</h2>
+
+<p>In Chrome DevTools: Network tab → select any request → Headers tab. You'll see both request and response headers. The "Raw" view shows exactly what was sent.</p>
+
+<p>In curl: <code>curl -I https://example.com</code> for response headers only, or <code>curl -v</code> for full request + response headers.</p>
+    `.trim(),
+  },
+
+  {
+    slug: "robots-txt-guide-seo",
+    title: "robots.txt: What It Is, How It Works, and Common Mistakes",
+    description: "robots.txt tells search engine crawlers which pages to visit and which to skip. Here's the syntax, what it can and can't do, and mistakes that accidentally block indexing.",
+    date: "2026-04-27",
+    readTime: "5 min read",
+    category: "SEO",
+    content: `
+<p>robots.txt is a text file at the root of your website that tells web crawlers what they're allowed to fetch. Google, Bing, and other search engines check this file before crawling your site. Getting it wrong can accidentally block your entire site from being indexed — a mistake that's more common than you'd think.</p>
+
+<h2>The basic syntax</h2>
+
+<pre><code>User-agent: *
+Disallow: /admin/
+Disallow: /private/
+Allow: /
+
+User-agent: Googlebot
+Disallow: /staging/
+
+Sitemap: https://example.com/sitemap.xml</code></pre>
+
+<p><code>User-agent</code> specifies which crawler the rules apply to. <code>*</code> means all crawlers. <code>Disallow</code> blocks a path. <code>Allow</code> explicitly permits a path (useful for allowing a subdirectory within a blocked parent). <code>Sitemap</code> tells crawlers where to find your sitemap.</p>
+
+<h2>What robots.txt can do</h2>
+
+<ul>
+  <li>Prevent crawlers from fetching specific URLs or URL patterns</li>
+  <li>Reduce crawl budget waste on low-value pages (admin, search results, duplicate parameters)</li>
+  <li>Tell crawlers where your sitemap is</li>
+  <li>Apply different rules to different crawlers</li>
+</ul>
+
+<h2>What robots.txt cannot do</h2>
+
+<p><strong>It does not prevent indexing.</strong> This is the most important misunderstanding. If another site links to a page you've disallowed, Google may still index that page — it just won't crawl the page itself. It knows the URL exists from the link. To prevent a page from appearing in search results, use a <code>noindex</code> meta tag or <code>X-Robots-Tag</code> header.</p>
+
+<p><strong>It is not access control.</strong> Anyone can access robots.txt and see which URLs you're trying to hide. It's a courtesy to well-behaved crawlers, not a security measure. Sensitive pages need authentication, not robots.txt rules.</p>
+
+<p><strong>Malicious crawlers ignore it.</strong> robots.txt is a convention that legitimate crawlers follow. Scrapers and bad bots often don't.</p>
+
+<h2>Common mistakes</h2>
+
+<p><strong>Blocking everything accidentally:</strong></p>
+<pre><code>User-agent: *
+Disallow: /</code></pre>
+<p>This tells all crawlers to stay out of your entire site. If this is in your robots.txt, nothing will be indexed. Check for this immediately if your site has dropped from search results.</p>
+
+<p><strong>Blocking CSS and JavaScript files:</strong> Google needs to render your pages to understand their content. If your CSS and JS are in a directory that's disallowed, Google sees your site as an unstyled, non-functional page and may rank it poorly.</p>
+
+<p><strong>Forgetting the trailing slash:</strong> <code>Disallow: /admin</code> blocks <code>/admin</code>, <code>/admin-panel</code>, and <code>/administration</code>. <code>Disallow: /admin/</code> only blocks the directory. Be specific.</p>
+
+<p><strong>Using robots.txt for staging:</strong> If your staging site is at a different domain or subdomain, it needs its own robots.txt. If it's a path on your main domain, disallowing it in robots.txt only prevents crawling — it won't prevent indexing if the staging URL is linked from somewhere.</p>
+
+<h2>Testing your robots.txt</h2>
+
+<p>Google Search Console has a robots.txt tester that lets you check whether specific URLs would be blocked or allowed. It also shows the live robots.txt that Googlebot is seeing. This is the first tool to use when debugging crawl or indexing issues.</p>
+
+<p>Your robots.txt should always be at <code>https://yourdomain.com/robots.txt</code> — never in a subdirectory. The standard requires it at the root.</p>
+    `.trim(),
+  },
+
+  {
+    slug: "sitemap-xml-guide-seo",
+    title: "XML Sitemaps: How to Create One and Get Google to Read It",
+    description: "A sitemap tells search engines which pages exist on your site. Here's the format, what to include and exclude, and how to submit it to Google Search Console.",
+    date: "2026-04-28",
+    readTime: "5 min read",
+    category: "SEO",
+    content: `
+<p>A sitemap is a file that lists the URLs you want search engines to know about. It's not a guarantee of indexing — Google decides what to index, not you — but it helps crawlers discover pages that might not be easily reached through internal links, especially for new sites.</p>
+
+<h2>The XML format</h2>
+
+<pre><code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"&gt;
+  &lt;url&gt;
+    &lt;loc&gt;https://example.com/&lt;/loc&gt;
+    &lt;lastmod&gt;2026-04-01&lt;/lastmod&gt;
+    &lt;changefreq&gt;weekly&lt;/changefreq&gt;
+    &lt;priority&gt;1.0&lt;/priority&gt;
+  &lt;/url&gt;
+  &lt;url&gt;
+    &lt;loc&gt;https://example.com/blog/post-title&lt;/loc&gt;
+    &lt;lastmod&gt;2026-03-15&lt;/lastmod&gt;
+    &lt;changefreq&gt;monthly&lt;/changefreq&gt;
+    &lt;priority&gt;0.8&lt;/priority&gt;
+  &lt;/url&gt;
+&lt;/urlset&gt;</code></pre>
+
+<p>The only required field is <code>&lt;loc&gt;</code>. The others are optional hints:</p>
+
+<ul>
+  <li><code>&lt;lastmod&gt;</code> — date the page was last significantly changed (ISO 8601 format)</li>
+  <li><code>&lt;changefreq&gt;</code> — how often the page typically changes (ignored by Google in practice)</li>
+  <li><code>&lt;priority&gt;</code> — relative importance within your site (0.0–1.0; also largely ignored by Google)</li>
+</ul>
+
+<h2>What to include</h2>
+
+<ul>
+  <li>All canonical, indexable pages</li>
+  <li>Pages you actively want in search results</li>
+  <li>The canonical URL (if you have both www and non-www versions, pick one)</li>
+</ul>
+
+<h2>What to exclude</h2>
+
+<ul>
+  <li>Duplicate pages (paginated versions, URL parameter variants)</li>
+  <li>Pages with <code>noindex</code> tags — including a noindex page in your sitemap sends contradictory signals</li>
+  <li>Admin pages, login pages, thank-you pages</li>
+  <li>Redirected URLs — only include the final destination URL</li>
+  <li>Broken pages (404s)</li>
+</ul>
+
+<h2>Sitemap index files</h2>
+
+<p>Google supports a maximum of 50,000 URLs per sitemap file and 50MB uncompressed. For large sites, use a sitemap index file that references multiple sitemap files:</p>
+
+<pre><code>&lt;sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"&gt;
+  &lt;sitemap&gt;
+    &lt;loc&gt;https://example.com/sitemap-blog.xml&lt;/loc&gt;
+  &lt;/sitemap&gt;
+  &lt;sitemap&gt;
+    &lt;loc&gt;https://example.com/sitemap-tools.xml&lt;/loc&gt;
+  &lt;/sitemap&gt;
+&lt;/sitemapindex&gt;</code></pre>
+
+<h2>How to submit to Google</h2>
+
+<ol>
+  <li>Host your sitemap at a predictable URL: <code>https://yourdomain.com/sitemap.xml</code></li>
+  <li>Reference it in your robots.txt: <code>Sitemap: https://yourdomain.com/sitemap.xml</code></li>
+  <li>Submit it in Google Search Console: Sitemaps → Add sitemap → enter the URL → Submit</li>
+</ol>
+
+<p>Google Search Console shows you how many URLs were submitted vs. how many were indexed. A large discrepancy tells you something's wrong — either the pages have quality issues, are duplicates, or have other indexing signals that are causing Google to skip them.</p>
+
+<h2>Dynamic sitemaps</h2>
+
+<p>For sites with content that changes frequently (blogs, e-commerce, tool sites), generate your sitemap dynamically. In a React/Node app, a route that generates XML from your database or content array is more maintainable than a static file you update manually.</p>
+
+<p>For the Toolora blog: the sitemap is generated from the <code>BLOG_POSTS</code> array and the <code>GLOSSARY</code> terms, giving search engines a complete picture of all indexable content — currently over 360 pages and growing.</p>
+    `.trim(),
+  },
+
+  {
+    slug: "how-to-minify-javascript-css",
+    title: "How to Minify JavaScript and CSS (And Whether It's Worth It)",
+    description: "Minification removes whitespace, comments, and renames variables to reduce file size. Here's how much it saves, what tools to use, and when it matters.",
+    date: "2026-04-28",
+    readTime: "4 min read",
+    category: "Developer Tools",
+    content: `
+<p>Minification is the process of removing everything from source code that's not needed for execution: whitespace, comments, newlines, and in the case of JavaScript, shortening variable and function names. A 100KB unminified JavaScript file might compress to 30–40KB minified — a 60–70% reduction. When that file is also Gzip-compressed during transfer, the savings stack further.</p>
+
+<h2>What minification does to JavaScript</h2>
+
+<p>A simple example:</p>
+
+<pre><code>// Before minification
+function calculateTotal(price, quantity, taxRate) {
+  const subtotal = price * quantity;
+  const tax = subtotal * taxRate;
+  return subtotal + tax;
+}</code></pre>
+
+<pre><code>// After minification
+function calculateTotal(a,b,c){const d=a*b;return d+d*c;}</code></pre>
+
+<p>The minifier removes whitespace, comments, and renames local variables to single characters. The function works identically — the names only exist in the source code for human readability.</p>
+
+<p>Advanced minifiers (like Terser) also do tree-shaking (removing dead code), constant folding (<code>2 * 3</code> becomes <code>6</code>), and inlining small functions — further reducing output size.</p>
+
+<h2>What minification does to CSS</h2>
+
+<p>CSS minification removes comments, whitespace, and redundant rules:</p>
+
+<pre><code>/* Button styles */
+.button {
+  background-color: #3b82f6;
+  color: #ffffff;
+  padding: 8px 16px;
+  border-radius: 4px;
+}</code></pre>
+
+<pre><code>.button{background-color:#3b82f6;color:#fff;padding:8px 16px;border-radius:4px}</code></pre>
+
+<p>Note <code>#ffffff</code> → <code>#fff</code>. CSS minifiers also apply shorthand optimizations, merge duplicate selectors, and remove unnecessary units.</p>
+
+<h2>Is it worth doing manually?</h2>
+
+<p>No — any modern build tool handles it automatically. If you're using Vite, webpack, Rollup, or esbuild, minification is on by default in production builds. You configure it once and never think about it again.</p>
+
+<p>If you're not using a build tool (plain HTML/CSS/JS), you can use online tools or CLI tools to minify before deployment. But at that point, you'd probably benefit from a build tool overall.</p>
+
+<h2>Minification vs compression</h2>
+
+<p>Minification and Gzip/Brotli compression are different and complementary:</p>
+
+<ul>
+  <li><strong>Minification:</strong> reduces the source file size permanently. Applied at build time.</li>
+  <li><strong>Compression:</strong> reduces transfer size in transit. Applied by the web server at request time. The client decompresses before use.</li>
+</ul>
+
+<p>Both together give the best result. A 100KB JS file might become 35KB minified, then compress to 12KB over the wire with Brotli. That's a 12× reduction from source to transfer.</p>
+
+<h2>Source maps</h2>
+
+<p>Minified code is unreadable. Source maps are separate files that map minified code back to the original source — enabling readable stack traces and debugging in DevTools. Always generate source maps for production and serve them separately (or only in authenticated DevTools sessions). Never embed source maps in the production bundle itself.</p>
+
+<h2>Tools</h2>
+
+<ul>
+  <li><strong>Terser</strong> — the standard JS minifier, used by most bundlers</li>
+  <li><strong>esbuild</strong> — extremely fast, handles both JS and CSS</li>
+  <li><strong>LightningCSS</strong> — fast CSS minifier + transformer</li>
+  <li><strong>Vite / webpack / Rollup</strong> — all integrate the above automatically</li>
+</ul>
+    `.trim(),
+  },
+
+  {
+    slug: "what-is-oauth-explained",
+    title: "OAuth 2.0 Explained Without the Jargon",
+    description: "OAuth lets users grant limited access to their accounts without sharing passwords. Here's how the flow actually works, what the different grant types are, and where people get confused.",
+    date: "2026-04-29",
+    readTime: "6 min read",
+    category: "Security",
+    content: `
+<p>OAuth 2.0 is the authorization framework behind "Sign in with Google," "Connect with GitHub," and "Allow this app to access your account." It solves a specific problem: how do you let a third-party app access some of your account data without giving it your password?</p>
+
+<h2>The core idea</h2>
+
+<p>Before OAuth, the common pattern for integrations was: give the third-party app your username and password. This was terrible — the app had full access to everything, you couldn't revoke it without changing your password, and if the app was breached, your password leaked too.</p>
+
+<p>OAuth replaces this with limited, revocable tokens. Instead of your password, the third-party app gets a token that represents specific, constrained permissions ("read your email contacts" not "full account access"). You can revoke the token at any time without affecting your password.</p>
+
+<h2>The actors</h2>
+
+<ul>
+  <li><strong>Resource Owner:</strong> You — the user who owns the data</li>
+  <li><strong>Client:</strong> The third-party app that wants access to your data</li>
+  <li><strong>Authorization Server:</strong> The service that issues tokens (Google's auth server, GitHub's auth server)</li>
+  <li><strong>Resource Server:</strong> The API that holds your data (Gmail API, GitHub API)</li>
+</ul>
+
+<h2>The authorization code flow (the main one)</h2>
+
+<ol>
+  <li>You click "Sign in with Google" in the third-party app</li>
+  <li>The app redirects you to Google's authorization page with a request for specific permissions (scopes)</li>
+  <li>Google shows you a consent screen: "This app wants to read your contacts"</li>
+  <li>You approve (or deny)</li>
+  <li>Google redirects back to the app with a short-lived authorization code in the URL</li>
+  <li>The app's server exchanges the code for an access token (by calling Google's token endpoint with a client secret)</li>
+  <li>The app uses the access token to make API calls on your behalf</li>
+</ol>
+
+<p>The authorization code is short-lived and single-use. The exchange in step 6 happens server-to-server, so the client secret never appears in a browser URL or in client-side code. This is why this flow is the most secure for web applications.</p>
+
+<h2>PKCE: the extension for public clients</h2>
+
+<p>Mobile apps and single-page apps (SPAs) can't safely store a client secret — anyone can decompile the app or inspect JavaScript. PKCE (Proof Key for Code Exchange, pronounced "pixie") extends the authorization code flow to work without a client secret.</p>
+
+<p>The app generates a random string (code verifier), hashes it (code challenge), and sends the hash to the authorization server at the start of the flow. When exchanging the code for a token, the app sends the original verifier. The server verifies the hash matches. An intercepted authorization code is useless without the verifier.</p>
+
+<h2>Scopes</h2>
+
+<p>Scopes define what the token is allowed to do. When you see "This app wants to: read your email, view your contacts," those are scopes. Different API providers have different scope systems — Google's scopes are full URLs like <code>https://www.googleapis.com/auth/gmail.readonly</code>. GitHub uses simpler strings like <code>repo</code> or <code>user:email</code>.</p>
+
+<p>Apps should request the minimum scopes needed (principle of least privilege). Users are more likely to approve a narrow request than a broad one.</p>
+
+<h2>OAuth vs OpenID Connect</h2>
+
+<p>OAuth 2.0 is for <em>authorization</em> — "can this app access this data?" It doesn't define how to authenticate users or how to get user profile information.</p>
+
+<p>OpenID Connect (OIDC) is a layer on top of OAuth 2.0 that adds <em>authentication</em> — "who is this user?" OIDC adds an ID token (a JWT containing user identity claims) to the OAuth flow. When you "Sign in with Google," you're using OIDC to authenticate. When GitHub asks "allow this app to access your repos," you're using OAuth 2.0 for authorization.</p>
+
+<p>Most "Sign in with X" implementations use OIDC. Most API integrations use OAuth 2.0 directly.</p>
+    `.trim(),
+  },
+
+  {
+    slug: "color-hex-rgb-hsl-converter-guide",
+    title: "Hex, RGB, HSL: Color Formats Explained for Developers and Designers",
+    description: "Three formats, same color. Here's what each one is good for, how to convert between them, and why HSL is the most useful one to think in.",
+    date: "2026-04-29",
+    readTime: "5 min read",
+    category: "Developer Tools",
+    content: `
+<p>Every digital color can be expressed in multiple formats. Hex, RGB, and HSL all represent the same color — they're different notations for the same underlying values. Understanding what each one encodes helps you choose the right format for the job and convert between them without confusion.</p>
+
+<h2>RGB: the fundamental model</h2>
+
+<p>RGB (Red, Green, Blue) represents color as the intensity of three light sources. Each channel ranges from 0 to 255. All three at 0 is black; all three at 255 is white.</p>
+
+<p><code>rgb(59, 130, 246)</code> — this is a medium blue. Channel breakdown:</p>
+<ul>
+  <li>Red: 59 (low — not much red)</li>
+  <li>Green: 130 (moderate)</li>
+  <li>Blue: 246 (high — mostly blue)</li>
+</ul>
+
+<p>RGB is intuitive for thinking about additive light mixing, but it's hard to reason about perceptually. If you want a slightly lighter version of this blue, adjusting all three channels by the right amount requires math or guesswork.</p>
+
+<h2>Hex: RGB in base 16</h2>
+
+<p>Hex is just RGB written in hexadecimal. <code>#3b82f6</code> = <code>rgb(59, 130, 246)</code>:</p>
+<ul>
+  <li><code>3b</code> = 59 in decimal (R)</li>
+  <li><code>82</code> = 130 in decimal (G)</li>
+  <li><code>f6</code> = 246 in decimal (B)</li>
+</ul>
+
+<p>Hex became the standard for web colors because it's compact and design tools standardized on it. <code>#fff</code> as a 3-character shorthand (each character doubled: <code>#ffffff</code>) is a convenient abbreviation for simple colors.</p>
+
+<p>Hex is the right format when:</p>
+<ul>
+  <li>Copying colors from design tools (Figma, Sketch export hex by default)</li>
+  <li>Using colors in HTML attributes</li>
+  <li>Sharing specific color values between team members</li>
+</ul>
+
+<h2>HSL: the most human-readable format</h2>
+
+<p>HSL (Hue, Saturation, Lightness) describes color the way humans actually perceive it:</p>
+
+<p><code>hsl(217, 91%, 60%)</code> — the same medium blue:</p>
+<ul>
+  <li><strong>Hue:</strong> 217° — position on the color wheel (0° = red, 120° = green, 240° = blue)</li>
+  <li><strong>Saturation:</strong> 91% — how vivid vs. grey (0% = grey, 100% = fully saturated)</li>
+  <li><strong>Lightness:</strong> 60% — how light vs. dark (0% = black, 50% = normal, 100% = white)</li>
+</ul>
+
+<p>HSL makes color manipulation intuitive:</p>
+<ul>
+  <li>Want a lighter version? Increase lightness: <code>hsl(217, 91%, 75%)</code></li>
+  <li>Want a muted version? Decrease saturation: <code>hsl(217, 40%, 60%)</code></li>
+  <li>Want a complementary color? Add 180° to the hue: <code>hsl(37, 91%, 60%)</code></li>
+</ul>
+
+<p>In CSS, you can use HSL variables to build cohesive color systems:</p>
+
+<pre><code>:root {
+  --brand-hue: 217;
+  --brand: hsl(var(--brand-hue), 91%, 60%);
+  --brand-light: hsl(var(--brand-hue), 91%, 80%);
+  --brand-dark: hsl(var(--brand-hue), 91%, 40%);
+}</code></pre>
+
+<p>All three variants are guaranteed to be the same hue — they only differ in lightness. This is nearly impossible to achieve intuitively with RGB or hex.</p>
+
+<h2>Alpha channel: RGBA and HSLA</h2>
+
+<p>Add an alpha channel for transparency: <code>rgba(59, 130, 246, 0.5)</code> or <code>hsla(217, 91%, 60%, 0.5)</code>. Alpha is 0 (fully transparent) to 1 (fully opaque).</p>
+
+<p>Modern CSS also accepts: <code>rgb(59 130 246 / 50%)</code> — the slash syntax separates color values from the alpha in a cleaner format.</p>
+
+<h2>Converting between formats</h2>
+
+<p>Convert any color between hex, RGB, HSL, and other formats instantly at <a href="/tools">Toolora → Developer → Color Converter</a>. Paste in any format and get all equivalent representations — with a live color preview — entirely in your browser.</p>
+    `.trim(),
+  },
+
+  {
+    slug: "how-to-read-cron-jobs",
+    title: "How to Read (and Write) Cron Expressions",
+    description: "Cron expressions are five fields that define a schedule. Here's how to read them, write them, and avoid the common mistakes that run jobs at the wrong time.",
+    date: "2026-04-30",
+    readTime: "5 min read",
+    category: "Developer Tools",
+    content: `
+<p>Cron is the Unix task scheduler. A cron expression is a compact string that defines when a job should run. Once you understand the five (or six) fields, reading and writing cron expressions becomes straightforward — but the edge cases are where most mistakes happen.</p>
+
+<h2>The five fields</h2>
+
+<pre><code>┌───────── minute (0–59)
+│ ┌───────── hour (0–23)
+│ │ ┌───────── day of month (1–31)
+│ │ │ ┌───────── month (1–12)
+│ │ │ │ ┌───────── day of week (0–6, Sunday=0)
+│ │ │ │ │
+* * * * *</code></pre>
+
+<p>A <code>*</code> means "every value in this field." So <code>* * * * *</code> runs every minute, every hour, every day.</p>
+
+<h2>Common schedules</h2>
+
+<table>
+  <thead>
+    <tr><th>Expression</th><th>Meaning</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>0 * * * *</code></td><td>Every hour, on the hour</td></tr>
+    <tr><td><code>0 9 * * *</code></td><td>Every day at 9:00 AM</td></tr>
+    <tr><td><code>0 9 * * 1</code></td><td>Every Monday at 9:00 AM</td></tr>
+    <tr><td><code>0 9 * * 1-5</code></td><td>Weekdays at 9:00 AM</td></tr>
+    <tr><td><code>*/15 * * * *</code></td><td>Every 15 minutes</td></tr>
+    <tr><td><code>0 0 1 * *</code></td><td>First day of every month at midnight</td></tr>
+    <tr><td><code>0 0 * * 0</code></td><td>Every Sunday at midnight</td></tr>
+    <tr><td><code>30 23 * * 5</code></td><td>Fridays at 11:30 PM</td></tr>
+  </tbody>
+</table>
+
+<h2>Special characters</h2>
+
+<p><strong><code>*</code> — wildcard:</strong> matches all values in the field.</p>
+
+<p><strong><code>,</code> — list:</strong> <code>0 9,17 * * *</code> runs at 9:00 AM and 5:00 PM.</p>
+
+<p><strong><code>-</code> — range:</strong> <code>0 9-17 * * *</code> runs every hour from 9 AM to 5 PM.</p>
+
+<p><strong><code>/</code> — step:</strong> <code>*/5 * * * *</code> runs every 5 minutes. <code>0 */2 * * *</code> runs every 2 hours.</p>
+
+<p><strong><code>L</code> — last (some implementations):</strong> <code>0 0 L * *</code> runs on the last day of the month. Not standard in all cron implementations.</p>
+
+<h2>Common mistakes</h2>
+
+<p><strong>Timezone:</strong> cron runs in the server's local timezone by default. If your server is UTC and you want a job to run at 9 AM Eastern, you need to use UTC-4 or UTC-5 depending on DST. Many modern schedulers (AWS EventBridge, GitHub Actions) let you specify timezones explicitly.</p>
+
+<p><strong>Day of month vs day of week conflict:</strong> Setting both day-of-month and day-of-week to non-wildcard values is interpreted as OR, not AND. <code>0 0 1 * 1</code> runs on the 1st of every month AND every Monday — not on Mondays that are the 1st.</p>
+
+<p><strong>Minute vs hour:</strong> The most common confusion. <code>1 * * * *</code> runs at one minute past every hour (1:01, 2:01, etc.), not "every minute for 1 hour."</p>
+
+<p><strong>Overlapping jobs:</strong> If a cron job takes longer than its schedule interval, multiple instances can run simultaneously. Always check whether your job is idempotent before scheduling it frequently.</p>
+
+<h2>Testing expressions</h2>
+
+<p>Before deploying a cron job, verify what "next 10 runs" look like for your expression. Parse and preview cron schedules at <a href="/tools">Toolora → Developer → Cron Parser</a> — shows the next scheduled runs in both UTC and local time.</p>
+
+<h2>The sixth field (seconds)</h2>
+
+<p>Standard cron only has 5 fields (minimum resolution is 1 minute). Some implementations (Spring Scheduling, Quartz, AWS CloudWatch Events) add a seconds field at the beginning or end. If you need sub-minute scheduling, check which format your scheduler expects.</p>
+    `.trim(),
+  },
+
+  {
+    slug: "what-is-a-cdn-explained",
+    title: "What Is a CDN? How Content Delivery Networks Work",
+    description: "A CDN serves your files from servers close to your users. Here's how they work, what gets cached, and why using one is almost always worth it.",
+    date: "2026-04-30",
+    readTime: "5 min read",
+    category: "Developer Tools",
+    content: `
+<p>A Content Delivery Network (CDN) is a geographically distributed network of servers that delivers content to users from the location closest to them. Instead of every user hitting a single server in one data center, they get files from a nearby "edge" location — reducing latency and improving load times.</p>
+
+<h2>Why distance matters</h2>
+
+<p>HTTP requests travel at roughly 2/3 the speed of light through fiber optic cables. A request from Sydney to a server in Virginia adds about 160ms of round-trip time just for physics, before any processing happens. For a page that requires 20 separate HTTP requests, that's 3+ seconds of latency for nothing.</p>
+
+<p>CDN edge servers are deployed in dozens or hundreds of cities globally. A Sydney user might get served from a CDN edge in Sydney or Singapore — 5-20ms instead of 160ms.</p>
+
+<h2>What CDNs cache</h2>
+
+<p>CDNs are most effective for static assets — files that don't change between requests:</p>
+<ul>
+  <li>JavaScript and CSS bundles</li>
+  <li>Images, fonts, and videos</li>
+  <li>HTML files for statically-generated sites</li>
+  <li>API responses that can be shared across users (public data)</li>
+</ul>
+
+<p>Dynamic content (personalized pages, authenticated API responses) is harder to cache safely. Modern CDNs offer edge computing that can handle some dynamic logic at the edge, but the core use case remains static assets.</p>
+
+<h2>How CDN caching works</h2>
+
+<p>On the first request for a file, the CDN edge server doesn't have it. It fetches the file from your origin server (a "cache miss"), stores a copy, and serves it. Subsequent requests from the same or nearby users get the cached copy (a "cache hit") without touching your origin server.</p>
+
+<p>Cache duration is controlled by the <code>Cache-Control</code> response header from your origin. <code>Cache-Control: max-age=31536000, immutable</code> tells the CDN to cache for a year and not recheck. For versioned assets (with hash in the filename), this is appropriate — when the file changes, the filename changes, so cache invalidation is automatic.</p>
+
+<h2>Cache invalidation</h2>
+
+<p>When you need to force CDN edges to fetch fresh content before the cache expires, you either:</p>
+<ul>
+  <li><strong>Change the filename</strong> (content hash in the filename — the standard approach for JS/CSS bundles)</li>
+  <li><strong>Issue a cache purge</strong> via the CDN API — tells all edges to drop the cached version</li>
+  <li><strong>Use short cache TTLs</strong> — appropriate for frequently changing content</li>
+</ul>
+
+<h2>CDN providers</h2>
+
+<ul>
+  <li><strong>Cloudflare</strong> — free tier is generous; integrates DNS; includes DDoS protection</li>
+  <li><strong>AWS CloudFront</strong> — integrates tightly with S3, EC2, and other AWS services</li>
+  <li><strong>Fastly</strong> — low TTL caching (good for frequently updated content); popular with large media sites</li>
+  <li><strong>Vercel Edge Network / Netlify CDN</strong> — built-in CDN for sites deployed on these platforms</li>
+  <li><strong>Bunny.net</strong> — competitive pricing for high-volume bandwidth</li>
+</ul>
+
+<h2>Is a CDN always worth it?</h2>
+
+<p>For almost all public-facing sites: yes. CDNs also provide DDoS mitigation, TLS termination, compression, and often HTTP/3 support. The performance improvement for users outside your origin server's region is significant enough that CDNs should be the default, not an optimization for later.</p>
+
+<p>For internal tools or intranet apps with users in one office: the benefit is minimal. Optimize your server instead.</p>
+    `.trim(),
+  },
+
+  {
+    slug: "json-schema-validation-guide",
+    title: "JSON Schema Validation: What It Is and How to Use It",
+    description: "JSON Schema lets you define the structure of JSON data and validate that incoming data matches. Here's the key vocabulary, a real example, and the best libraries.",
+    date: "2026-05-01",
+    readTime: "5 min read",
+    category: "Developer Tools",
+    content: `
+<p>JSON Schema is a vocabulary for describing the structure of JSON data. You write a schema that defines what fields are required, what types they should be, what the valid value ranges are — and then validate any JSON document against it. If the document doesn't match, you get structured error messages instead of runtime crashes.</p>
+
+<h2>Why you need validation</h2>
+
+<p>Without validation, you trust incoming data to be well-formed. User inputs, webhook payloads, third-party API responses, and inter-service messages all eventually arrive malformed. Without validation, you find out when your code crashes accessing a field that doesn't exist or has the wrong type. With validation, you catch it at the boundary and return a clear error.</p>
+
+<h2>A basic schema</h2>
+
+<pre><code>{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["name", "age", "email"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100
+    },
+    "age": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 150
+    },
+    "email": {
+      "type": "string",
+      "format": "email"
+    },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string" },
+      "uniqueItems": true
+    }
+  },
+  "additionalProperties": false
+}</code></pre>
+
+<p>This schema requires <code>name</code>, <code>age</code>, and <code>email</code>; enforces types and ranges; validates the email format; allows an optional <code>tags</code> array of unique strings; and rejects any extra fields not listed (<code>additionalProperties: false</code>).</p>
+
+<h2>Key keywords</h2>
+
+<table>
+  <thead>
+    <tr><th>Keyword</th><th>Applies to</th><th>What it does</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>type</code></td><td>all</td><td>string, number, integer, boolean, array, object, null</td></tr>
+    <tr><td><code>required</code></td><td>object</td><td>Array of required property names</td></tr>
+    <tr><td><code>properties</code></td><td>object</td><td>Schema for each named property</td></tr>
+    <tr><td><code>minimum</code> / <code>maximum</code></td><td>number</td><td>Inclusive bounds</td></tr>
+    <tr><td><code>minLength</code> / <code>maxLength</code></td><td>string</td><td>Character length bounds</td></tr>
+    <tr><td><code>pattern</code></td><td>string</td><td>Regex the string must match</td></tr>
+    <tr><td><code>enum</code></td><td>any</td><td>Value must be one of the listed values</td></tr>
+    <tr><td><code>items</code></td><td>array</td><td>Schema for array elements</td></tr>
+    <tr><td><code>minItems</code> / <code>maxItems</code></td><td>array</td><td>Array length bounds</td></tr>
+    <tr><td><code>format</code></td><td>string</td><td>Semantic format (email, date-time, uri, uuid)</td></tr>
+    <tr><td><code>$ref</code></td><td>any</td><td>Reference another schema definition (DRY)</td></tr>
+  </tbody>
+</table>
+
+<h2>Composition keywords</h2>
+
+<p><code>oneOf</code>, <code>anyOf</code>, <code>allOf</code>, and <code>not</code> let you combine schemas:</p>
+
+<pre><code>"paymentMethod": {
+  "oneOf": [
+    { "properties": { "type": { "const": "card" }, "cardNumber": { "type": "string" } }, "required": ["cardNumber"] },
+    { "properties": { "type": { "const": "paypal" }, "email": { "type": "string" } }, "required": ["email"] }
+  ]
+}</code></pre>
+
+<p>This validates that <code>paymentMethod</code> matches exactly one of the two payment type schemas.</p>
+
+<h2>Libraries</h2>
+
+<ul>
+  <li><strong>Ajv</strong> (JavaScript/Node) — the most widely used; fast; supports the latest drafts</li>
+  <li><strong>jsonschema</strong> (Python) — standard Python option</li>
+  <li><strong>json-schema-validator</strong> (Java) — well-maintained Java library</li>
+  <li><strong>Zod</strong> (TypeScript) — not JSON Schema, but generates TypeScript types with runtime validation; popular for TypeScript-first projects</li>
+</ul>
+
+<p>Validate JSON against a schema instantly at <a href="/tools">Toolora → Developer → JSON Formatter</a> — paste your JSON, see formatted output and any syntax errors.</p>
+    `.trim(),
+  },
+
+  {
+    slug: "how-to-use-browser-devtools-network-tab",
+    title: "Browser DevTools: How to Read the Network Tab",
+    description: "The Network tab shows every HTTP request your browser makes. Here's how to read it, what to look for when debugging, and the filters that make it useful.",
+    date: "2026-05-01",
+    readTime: "6 min read",
+    category: "Developer Tools",
+    content: `
+<p>The Network tab in Chrome DevTools (and its equivalents in Firefox and Safari) is one of the most useful debugging tools in a developer's toolkit. It records every request the browser makes, shows you exactly what was sent and received, and lets you diagnose performance, authentication, CORS, and caching problems without any additional tooling.</p>
+
+<h2>Opening the Network tab</h2>
+
+<p>Press F12 (or Cmd+Option+I on Mac) to open DevTools, then click the "Network" tab. Important: the Network tab only records requests made while it's open. Refresh the page after opening it to capture the full page load.</p>
+
+<h2>Reading the waterfall</h2>
+
+<p>The waterfall chart shows all requests in chronological order, with each row representing one request. The colored bars show timing:</p>
+
+<ul>
+  <li><strong>Queueing (grey):</strong> The request was waiting before being sent — either for a connection slot or because of browser limits</li>
+  <li><strong>Stalled (grey, textured):</strong> Paused after being initiated — usually waiting for a connection to establish</li>
+  <li><strong>DNS lookup (teal):</strong> Time to resolve the domain to an IP address</li>
+  <li><strong>Initial connection (orange):</strong> TCP handshake time</li>
+  <li><strong>SSL (orange):</strong> TLS negotiation time (HTTPS only)</li>
+  <li><strong>TTFB — Time to First Byte (green):</strong> How long the server took to respond after receiving the request</li>
+  <li><strong>Content download (blue):</strong> Time to download the response body</li>
+</ul>
+
+<p>A large TTFB suggests server-side slowness. A large content download suggests a large file or slow connection. Long DNS/connection times suggest the domain wasn't cached or the server is far away.</p>
+
+<h2>Inspecting individual requests</h2>
+
+<p>Click any row to see details in the right panel:</p>
+
+<ul>
+  <li><strong>Headers tab:</strong> Request and response headers — authentication, content-type, caching, CORS</li>
+  <li><strong>Payload tab:</strong> The request body (for POST/PUT requests) — form data, JSON body</li>
+  <li><strong>Response tab:</strong> The raw response body — JSON data, HTML, error messages</li>
+  <li><strong>Preview tab:</strong> Formatted preview of the response (pretty-printed JSON, rendered HTML)</li>
+  <li><strong>Timing tab:</strong> Detailed timing breakdown for the individual request</li>
+</ul>
+
+<h2>Useful filters</h2>
+
+<p>The filter bar at the top of the Network tab lets you narrow down requests:</p>
+
+<ul>
+  <li><strong>Type buttons:</strong> XHR/Fetch (API calls), JS, CSS, Img, Media, Font — click to filter by type</li>
+  <li><strong>Search box:</strong> Filter by URL, domain, or response content</li>
+  <li><strong>Status filter:</strong> Right-click a request → "Hide successful requests" to see only errors</li>
+</ul>
+
+<h2>Common debugging scenarios</h2>
+
+<p><strong>CORS errors:</strong> The request shows a red status or fails with "No 'Access-Control-Allow-Origin' header." Check the preflight OPTIONS request (if it exists) and the response headers to see what the server is returning.</p>
+
+<p><strong>401/403 errors:</strong> Check the request headers — is the Authorization header present? Does the token look correct? Check the response body for the server's error message.</p>
+
+<p><strong>Unexpected cached responses:</strong> A request status of "(disk cache)" or "(memory cache)" means the browser served a cached copy. Shift+Refresh bypasses the cache. The response headers show the Cache-Control values that caused this.</p>
+
+<p><strong>Slow API calls:</strong> Sort by "Time" column to find the slowest requests. A high TTFB points to server processing time. A high content download time points to a large response body.</p>
+
+<h2>Preserving logs and throttling</h2>
+
+<p>"Preserve log" (checkbox in the toolbar) keeps the network log across page navigations — useful for debugging redirects. "Throttling" dropdown lets you simulate slow connections (3G, Slow 3G) to test how your site behaves for users with slow internet.</p>
+
+<p>The Network tab is the first place to look when an API call isn't working, a page is loading slowly, or something looks different than expected — the raw truth of what your browser actually requested and received is all there.</p>
+    `.trim(),
+  },
+
+  {
+    slug: "password-strength-entropy-explained",
+    title: "Password Strength and Entropy: What Makes a Password Hard to Crack",
+    description: "Password strength isn't about complexity rules — it's about entropy. Here's the math behind what makes passwords hard to crack and what advice actually works.",
+    date: "2026-05-02",
+    readTime: "5 min read",
+    category: "Security",
+    content: `
+<p>Most password requirements — one uppercase, one number, one special character, minimum 8 characters — are security theater. They add complexity that frustrates users without meaningfully improving security. Real password strength comes from entropy, and understanding entropy gives you a clearer picture of what actually matters.</p>
+
+<h2>What entropy means for passwords</h2>
+
+<p>Entropy measures the number of possible passwords an attacker has to try when they don't know yours. It's measured in bits: each bit doubles the search space. A password with 40 bits of entropy has 2^40 (~1 trillion) possible values.</p>
+
+<p>A modern GPU can try billions of hashes per second. With 2^40 possibilities and a fast hash (MD5, SHA-1), an attacker could crack a 40-bit password in minutes. With bcrypt at cost factor 12 (designed to be slow), the same search takes years.</p>
+
+<h2>Where entropy comes from</h2>
+
+<p>Entropy = log₂(pool_size) × password_length</p>
+
+<p>Two factors: the size of the character pool you're drawing from, and the length of the password.</p>
+
+<table>
+  <thead>
+    <tr><th>Character set</th><th>Pool size</th><th>Bits per character</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Digits only (0–9)</td><td>10</td><td>3.3</td></tr>
+    <tr><td>Lowercase letters</td><td>26</td><td>4.7</td></tr>
+    <tr><td>Lower + uppercase</td><td>52</td><td>5.7</td></tr>
+    <tr><td>Alphanumeric</td><td>62</td><td>5.9</td></tr>
+    <tr><td>Full ASCII printable</td><td>95</td><td>6.5</td></tr>
+  </tbody>
+</table>
+
+<p>An 8-character random password from full ASCII: 8 × 6.5 = 52 bits. A 16-character random password: 104 bits. Length is the dominant factor — adding 8 characters doubles the entropy increase over expanding the character set.</p>
+
+<h2>Why complexity rules are counterproductive</h2>
+
+<p>"At least one uppercase, one number, one symbol" requirements lead to predictable patterns: <code>Password1!</code>, <code>Summer2024!</code>. These patterns reduce entropy rather than increase it — attackers know them and use them in their wordlists.</p>
+
+<p>NIST's Digital Identity Guidelines (SP 800-63B) explicitly recommend against complexity rules. Instead, they recommend:</p>
+<ul>
+  <li>Minimum length of 8 characters (15+ recommended)</li>
+  <li>Allow any printable characters including spaces</li>
+  <li>Check against known breached password lists</li>
+  <li>No periodic forced resets (they lead to predictable incrementing: <code>Password1</code> → <code>Password2</code>)</li>
+</ul>
+
+<h2>Passphrases</h2>
+
+<p>A random passphrase from a 7776-word wordlist (Diceware) gives ~12.9 bits per word. A 4-word passphrase: ~52 bits. A 6-word passphrase: ~78 bits. Passphrases like "correct horse battery staple" are long, memorable, and harder to crack than "P@ssw0rd123."</p>
+
+<h2>What actually matters</h2>
+
+<ol>
+  <li><strong>Use a password manager.</strong> Let it generate truly random 20+ character passwords for every site. You only need to remember one password (the manager's master password).</li>
+  <li><strong>Use a unique password everywhere.</strong> Password reuse across sites is the most common cause of account compromise — not weak individual passwords.</li>
+  <li><strong>Enable two-factor authentication.</strong> Even a guessable password is protected if the attacker also needs a time-based code from your phone.</li>
+  <li><strong>Length &gt; complexity.</strong> If you must remember a password, a long passphrase beats a short complex password.</li>
+</ol>
+
+<p>Generate cryptographically random passwords at <a href="/tools">Toolora → Security → Password Generator</a>. Runs in your browser — no passwords sent to any server.</p>
+    `.trim(),
+  },
+
+  {
+    slug: "what-is-indexeddb-browser-storage",
+    title: "IndexedDB Explained: Browser Storage for Larger Data",
+    description: "IndexedDB is the browser's built-in database for storing structured data. Here's when to use it instead of localStorage, how it works, and the gotchas.",
+    date: "2026-05-02",
+    readTime: "5 min read",
+    category: "Developer Tools",
+    content: `
+<p>The browser has several ways to store data locally: cookies, localStorage, sessionStorage, Cache API, and IndexedDB. Most developers reach for localStorage by default — it's simple and synchronous. But localStorage has hard limits (usually 5–10MB) and only stores strings. When you need to store larger amounts of structured data in the browser, IndexedDB is the right tool.</p>
+
+<h2>What IndexedDB is</h2>
+
+<p>IndexedDB is a low-level browser API for storing large amounts of structured, typed data, including files and blobs. It's a full transactional database — with indexes, cursors, and atomic operations — running entirely in the browser. Data persists across sessions (like localStorage, unlike sessionStorage).</p>
+
+<p>Storage limits are much higher than localStorage — typically 50MB–unlimited depending on browser and device, with the browser asking permission above a threshold.</p>
+
+<h2>When to use IndexedDB vs localStorage</h2>
+
+<table>
+  <thead>
+    <tr><th>Use localStorage when…</th><th>Use IndexedDB when…</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Data is simple key-value pairs</td><td>Data is structured objects</td></tr>
+    <tr><td>Total size under 1–2MB</td><td>Size could exceed a few MB</td></tr>
+    <tr><td>You need synchronous access</td><td>Async is acceptable (it always is)</td></tr>
+    <tr><td>You're storing a few settings</td><td>You're storing collections of records</td></tr>
+    <tr><td>—</td><td>You need to query by multiple fields</td></tr>
+    <tr><td>—</td><td>You're storing files, blobs, or binary data</td></tr>
+  </tbody>
+</table>
+
+<h2>Core concepts</h2>
+
+<p><strong>Database:</strong> Each origin (domain) can have multiple named databases. Databases have versions — schema changes require a version upgrade.</p>
+
+<p><strong>Object store:</strong> The equivalent of a database table. Each store holds JavaScript objects. Objects can have any shape.</p>
+
+<p><strong>Key:</strong> Each record needs a unique key. It can be a keyPath (a field in the object, like <code>id</code>) or auto-generated.</p>
+
+<p><strong>Index:</strong> Lets you look up records by fields other than the primary key. Create an index on <code>email</code> and you can query by email efficiently.</p>
+
+<p><strong>Transaction:</strong> All reads and writes happen inside transactions. Transactions are either read-only or read-write, and they're atomic — either everything succeeds or nothing changes.</p>
+
+<h2>Basic usage</h2>
+
+<pre><code>// Open database (creates if not exists)
+const request = indexedDB.open('myApp', 1);
+
+request.onupgradeneeded = (event) => {
+  const db = event.target.result;
+  const store = db.createObjectStore('users', { keyPath: 'id' });
+  store.createIndex('email', 'email', { unique: true });
+};
+
+request.onsuccess = (event) => {
+  const db = event.target.result;
+
+  // Write a record
+  const tx = db.transaction('users', 'readwrite');
+  tx.objectStore('users').add({ id: 1, name: 'Alice', email: 'alice@example.com' });
+
+  // Read by key
+  const readTx = db.transaction('users', 'readonly');
+  const getReq = readTx.objectStore('users').get(1);
+  getReq.onsuccess = () => console.log(getReq.result);
+};</code></pre>
+
+<h2>Use Dexie.js to make it manageable</h2>
+
+<p>The raw IndexedDB API is verbose and callback-heavy. Dexie.js is the standard wrapper — it adds a clean promise-based API and makes IndexedDB feel like a modern ORM:</p>
+
+<pre><code>import Dexie from 'dexie';
+
+const db = new Dexie('myApp');
+db.version(1).stores({ users: '++id, email, name' });
+
+// Add
+await db.users.add({ email: 'alice@example.com', name: 'Alice' });
+
+// Query
+const alice = await db.users.where('email').equals('alice@example.com').first();</code></pre>
+
+<h2>Real use cases in browser apps</h2>
+
+<ul>
+  <li>Offline-first apps that sync when connectivity returns</li>
+  <li>Browser-based tools that process and cache large files</li>
+  <li>Draft auto-save systems for editors or forms</li>
+  <li>Caching API responses for fast initial load</li>
+</ul>
+
+<p>Toolora uses browser storage to cache processed files and tool state locally — your data stays in your browser between sessions without any server round-trips.</p>
+    `.trim(),
+  },
+
+  {
+    slug: "html-entities-special-characters-guide",
+    title: "HTML Entities and Special Characters: A Practical Guide",
+    description: "HTML entities let you display characters that would otherwise break your markup. Here's the reference for the ones you'll actually use.",
+    date: "2026-05-03",
+    readTime: "4 min read",
+    category: "Developer Tools",
+    content: `
+<p>HTML has a set of reserved characters — <code>&lt;</code>, <code>&gt;</code>, <code>&amp;</code>, and <code>"</code> — that have special meaning in HTML markup. If you want to display these characters literally on a web page, you need to escape them using HTML entities. Beyond the reserved set, entities are useful for non-ASCII characters that might cause encoding problems, and for typographic characters that are hard to type directly.</p>
+
+<h2>The required escapes</h2>
+
+<table>
+  <thead>
+    <tr><th>Character</th><th>Entity (named)</th><th>Entity (numeric)</th><th>When to use</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>&amp;</td><td><code>&amp;amp;</code></td><td><code>&amp;#38;</code></td><td>Always in text content when displaying &amp;</td></tr>
+    <tr><td>&lt;</td><td><code>&amp;lt;</code></td><td><code>&amp;#60;</code></td><td>Always in text content (starts a tag otherwise)</td></tr>
+    <tr><td>&gt;</td><td><code>&amp;gt;</code></td><td><code>&amp;#62;</code></td><td>Technically optional in text, required in attributes</td></tr>
+    <tr><td>"</td><td><code>&amp;quot;</code></td><td><code>&amp;#34;</code></td><td>Inside double-quoted attribute values</td></tr>
+    <tr><td>'</td><td><code>&amp;apos;</code></td><td><code>&amp;#39;</code></td><td>Inside single-quoted attribute values</td></tr>
+  </tbody>
+</table>
+
+<p>If you're using a templating engine or JSX, these are usually escaped automatically. The danger is when you concatenate strings manually to build HTML — that's when you create XSS vulnerabilities by forgetting to escape user input.</p>
+
+<h2>Non-breaking spaces and whitespace</h2>
+
+<table>
+  <thead>
+    <tr><th>Entity</th><th>Character</th><th>Use case</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>&amp;nbsp;</code></td><td>Non-breaking space</td><td>Prevents line break between words ("10 kg" should stay together)</td></tr>
+    <tr><td><code>&amp;ensp;</code></td><td>En space (½ em)</td><td>Typographic spacing</td></tr>
+    <tr><td><code>&amp;emsp;</code></td><td>Em space (1 em)</td><td>Paragraph indentation in email HTML</td></tr>
+    <tr><td><code>&amp;thinsp;</code></td><td>Thin space</td><td>Around mathematical operators, between numbers and units</td></tr>
+  </tbody>
+</table>
+
+<h2>Typographic characters</h2>
+
+<table>
+  <thead>
+    <tr><th>Entity</th><th>Character</th><th>Use</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>&amp;mdash;</code></td><td>— (em dash)</td><td>Parenthetical aside — like this</td></tr>
+    <tr><td><code>&amp;ndash;</code></td><td>– (en dash)</td><td>Ranges (pages 10–20, 2020–2026)</td></tr>
+    <tr><td><code>&amp;laquo;</code> / <code>&amp;raquo;</code></td><td>« »</td><td>French quotation marks</td></tr>
+    <tr><td><code>&amp;ldquo;</code> / <code>&amp;rdquo;</code></td><td>" "</td><td>Typographic double quotes</td></tr>
+    <tr><td><code>&amp;lsquo;</code> / <code>&amp;rsquo;</code></td><td>' '</td><td>Typographic single quotes / apostrophes</td></tr>
+    <tr><td><code>&amp;hellip;</code></td><td>…</td><td>Ellipsis (not three periods)</td></tr>
+    <tr><td><code>&amp;trade;</code></td><td>™</td><td>Trademark</td></tr>
+    <tr><td><code>&amp;copy;</code></td><td>©</td><td>Copyright</td></tr>
+    <tr><td><code>&amp;reg;</code></td><td>®</td><td>Registered trademark</td></tr>
+  </tbody>
+</table>
+
+<h2>Mathematical and technical symbols</h2>
+
+<table>
+  <thead>
+    <tr><th>Entity</th><th>Character</th><th>Use</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>&amp;times;</code></td><td>×</td><td>Multiplication (use instead of letter "x")</td></tr>
+    <tr><td><code>&amp;divide;</code></td><td>÷</td><td>Division</td></tr>
+    <tr><td><code>&amp;plusmn;</code></td><td>±</td><td>Plus-or-minus</td></tr>
+    <tr><td><code>&amp;ne;</code></td><td>≠</td><td>Not equal</td></tr>
+    <tr><td><code>&amp;le;</code> / <code>&amp;ge;</code></td><td>≤ ≥</td><td>Less/greater than or equal</td></tr>
+    <tr><td><code>&amp;infin;</code></td><td>∞</td><td>Infinity</td></tr>
+    <tr><td><code>&amp;deg;</code></td><td>°</td><td>Degrees</td></tr>
+  </tbody>
+</table>
+
+<h2>In practice: just use UTF-8</h2>
+
+<p>If your HTML document declares <code>&lt;meta charset="UTF-8"&gt;</code> (which all modern HTML documents should), you can type or paste most Unicode characters directly without entities. Entities are primarily needed for the five reserved HTML characters and for cases where you're generating HTML in contexts that don't guarantee UTF-8 encoding (older email clients, some XML processors).</p>
+
+<p>Encode and decode HTML entities at <a href="/tools">Toolora → Encoding → HTML Encoder</a>.</p>
+    `.trim(),
+  },
+
+  {
+    slug: "how-to-convert-csv-to-excel",
+    title: "How to Convert CSV to Excel (and When Each Format Is Better)",
+    description: "CSV and Excel files store tabular data but have very different capabilities. Here's how to convert between them and when to use each format.",
+    date: "2026-05-03",
+    readTime: "4 min read",
+    category: "Tools",
+    content: `
+<p>CSV (Comma-Separated Values) and Excel (.xlsx) files both store tabular data, but they're built for different purposes. CSV is a universal, portable text format. Excel is a rich binary format with formulas, formatting, charts, and multiple sheets. Converting between them is straightforward, but there are a few things that don't transfer cleanly.</p>
+
+<h2>Opening a CSV in Excel</h2>
+
+<p>The simplest method: rename the file from <code>.csv</code> to <code>.xlsx</code> doesn't work — they're different formats. Instead:</p>
+
+<ol>
+  <li>Open Excel → File → Open → Browse to your CSV file</li>
+  <li>Or: double-click the CSV file and Excel opens it directly (if Excel is your default for CSVs)</li>
+  <li>Or: in Excel, use the Data tab → From Text/CSV → Import wizard for more control over delimiters and encoding</li>
+</ol>
+
+<p>The Import wizard is the most reliable method because it lets you specify the delimiter (comma, semicolon, tab), character encoding (UTF-8 vs ANSI), and how to handle columns that look like dates or numbers.</p>
+
+<h2>What gets lost when opening CSV in Excel</h2>
+
+<p><strong>Leading zeros:</strong> A CSV value <code>00123</code> becomes <code>123</code> in Excel — the leading zeros are dropped because Excel treats it as a number. ZIP codes, phone numbers, and ID numbers with leading zeros need to be imported as text. In the Import wizard, select the column and choose "Text" as the data type.</p>
+
+<p><strong>Large numbers:</strong> Numbers with more than 15 significant digits (long IDs, cryptocurrency transaction hashes) are rounded by Excel's floating-point representation. Again, import as text.</p>
+
+<p><strong>Dates:</strong> Excel may auto-format dates incorrectly, especially for international formats. <code>03/04/2026</code> is March 4th in the US and April 3rd in the UK. The Import wizard lets you specify date format explicitly.</p>
+
+<h2>Exporting from Excel to CSV</h2>
+
+<p>File → Save As → Choose "CSV UTF-8 (Comma delimited)" from the format dropdown. UTF-8 is important — the older "CSV (MS-DOS)" option uses ANSI encoding which breaks non-ASCII characters.</p>
+
+<p>What gets lost when saving Excel as CSV:</p>
+<ul>
+  <li>Formulas (replaced by their calculated values)</li>
+  <li>Formatting (bold, colors, borders)</li>
+  <li>Charts and images</li>
+  <li>Multiple sheets (only the active sheet is exported)</li>
+  <li>Cell comments and metadata</li>
+</ul>
+
+<h2>When to use CSV</h2>
+
+<ul>
+  <li>Moving data between different applications (databases, Python, APIs)</li>
+  <li>Long-term data archival (CSV is human-readable, future-proof, and opens without proprietary software)</li>
+  <li>Importing data into any system that accepts tabular data</li>
+  <li>Version-controlling data (CSV diffs cleanly in git; xlsx doesn't)</li>
+</ul>
+
+<h2>When to use Excel</h2>
+
+<ul>
+  <li>Reports and dashboards with charts and formatting</li>
+  <li>Data that requires formulas and calculations</li>
+  <li>Sharing with non-technical stakeholders who need a rich presentation</li>
+  <li>Multiple related sheets in one file</li>
+</ul>
+
+<p>Convert CSV to JSON or Excel formats at <a href="/tools">Toolora → Converters → CSV to JSON</a>. Upload your file and download the converted output — processing happens in your browser, nothing is sent to a server.</p>
+    `.trim(),
+  },
+
+  {
+    slug: "api-authentication-api-key-vs-oauth",
+    title: "API Keys vs OAuth: Which Should Your API Use?",
+    description: "API keys are simple but limited. OAuth is flexible but complex. Here's when each authentication method is appropriate for your API.",
+    date: "2026-05-04",
+    readTime: "5 min read",
+    category: "Security",
+    content: `
+<p>When you're building an API that other developers will consume, you need to decide how they'll authenticate. The two most common patterns are API keys and OAuth 2.0 tokens. They solve different problems, and choosing the wrong one creates friction for your users or security holes in your design.</p>
+
+<h2>API keys: simple and effective for many use cases</h2>
+
+<p>An API key is a secret string — typically a long random token — that a client includes with every request, usually in a header:</p>
+
+<pre><code>Authorization: Bearer sk-a1b2c3d4e5f6...
+# or
+X-API-Key: sk-a1b2c3d4e5f6...</code></pre>
+
+<p>The server looks up the key, identifies which account it belongs to, and enforces that account's permissions and rate limits.</p>
+
+<p><strong>API keys work well when:</strong></p>
+<ul>
+  <li>The client is a server-side application (the key can be kept secret)</li>
+  <li>You're building developer tools, data APIs, or infrastructure APIs</li>
+  <li>The API is used on behalf of the key's owner (not on behalf of that owner's users)</li>
+  <li>Simplicity matters — developers can start calling your API in minutes</li>
+</ul>
+
+<p><strong>API keys are a poor fit when:</strong></p>
+<ul>
+  <li>The client is a mobile app or browser — keys in client-side code are extractable by anyone</li>
+  <li>You need scoped access (different keys for different permissions)</li>
+  <li>The API needs to act on behalf of your users (not the developer themselves)</li>
+</ul>
+
+<h2>OAuth 2.0: delegation and scoped access</h2>
+
+<p>OAuth is designed for delegation — "I authorize this app to access my resources on this service." It issues tokens with specific scopes that limit what the bearer can do. Tokens expire. They can be revoked without affecting the user's account credentials.</p>
+
+<p><strong>OAuth works well when:</strong></p>
+<ul>
+  <li>Your API holds user data and third-party apps need access to it (think: "Connect with Spotify," "Import from Google Drive")</li>
+  <li>You need granular permission scopes (read-only vs. read-write, specific resource types)</li>
+  <li>Users should be able to revoke third-party access without changing their password</li>
+  <li>Tokens should expire automatically for security</li>
+</ul>
+
+<p><strong>OAuth is overkill when:</strong></p>
+<ul>
+  <li>You're building a simple internal API or B2B service where the client is always a server</li>
+  <li>There are no user resources to delegate access to</li>
+  <li>Your developer users want to get started fast without implementing OAuth flows</li>
+</ul>
+
+<h2>The hybrid approach: many APIs use both</h2>
+
+<p>Stripe uses API keys for direct server-to-server calls (your server charges customers using your secret key). They also support OAuth for marketplace platforms where you need to act on behalf of connected accounts.</p>
+
+<p>GitHub uses both: personal access tokens (essentially API keys) for developer automation, and OAuth apps for third-party integrations that need access to users' repositories.</p>
+
+<p>This is a reasonable architecture: start with API keys for simplicity, add OAuth when you need user-delegated access.</p>
+
+<h2>Security practices for API keys</h2>
+
+<ul>
+  <li>Use long random keys (256 bits / 32 bytes is appropriate)</li>
+  <li>Hash the key before storing it in your database — store <code>SHA-256(key)</code>, not the key itself</li>
+  <li>Show the key only once (at creation time) and require users to regenerate if lost</li>
+  <li>Support key rotation without downtime</li>
+  <li>Prefix keys with your service name for instant recognition: <code>sk-...</code>, <code>sk_live_...</code></li>
+  <li>Allow users to create multiple keys with optional labels (useful for revoking one integration without breaking others)</li>
+</ul>
+    `.trim(),
+  },
+
+  {
+    slug: "what-is-websocket-vs-http",
+    title: "WebSockets vs HTTP: When to Use Each",
+    description: "HTTP is request-response. WebSockets keep a connection open for real-time bidirectional communication. Here's when the extra complexity is worth it.",
+    date: "2026-05-04",
+    readTime: "5 min read",
+    category: "Developer Tools",
+    content: `
+<p>HTTP and WebSockets solve different communication problems. HTTP is designed for one-off request-response interactions. WebSockets maintain a persistent, bidirectional connection between client and server. Choosing the wrong one leads to either unnecessary complexity or the wrong performance characteristics.</p>
+
+<h2>How HTTP works (and where it falls short)</h2>
+
+<p>HTTP is stateless and request-response: the client sends a request, the server processes it and sends a response, and the connection closes (or is reused for the next request with keep-alive). The server cannot send data to the client unless the client asked for it first.</p>
+
+<p>This model works well for 95% of web interactions: loading pages, submitting forms, calling APIs. But it breaks down for real-time scenarios where the server needs to push updates to the client without waiting for a request:</p>
+<ul>
+  <li>Live chat messages</li>
+  <li>Real-time collaborative editing</li>
+  <li>Live sports scores or stock prices</li>
+  <li>Multiplayer game state</li>
+  <li>Server-sent notifications</li>
+</ul>
+
+<p>The workarounds with HTTP are: polling (client asks repeatedly — wasteful), long polling (client asks and server holds the response open until something happens — hacky), or Server-Sent Events (SSE — server can push events, but only one direction).</p>
+
+<h2>How WebSockets work</h2>
+
+<p>A WebSocket starts as an HTTP request (the "upgrade handshake") and then upgrades the connection to a persistent TCP tunnel. Both client and server can send messages at any time, in either direction, without the overhead of HTTP headers on every message.</p>
+
+<p>The handshake:</p>
+<pre><code>GET /chat HTTP/1.1
+Upgrade: websocket
+Connection: Upgrade
+Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==
+
+HTTP/1.1 101 Switching Protocols
+Upgrade: websocket
+Connection: Upgrade
+Sec-WebSocket-Accept: s3pPLMBiTxaQ9kYGzzhZRbK+xOo=</code></pre>
+
+<p>After the 101 response, the connection is no longer HTTP — it's a WebSocket. Messages flow freely until either side closes the connection.</p>
+
+<h2>WebSocket code (browser)</h2>
+
+<pre><code>const ws = new WebSocket('wss://api.example.com/ws');
+
+ws.onopen = () => {
+  ws.send(JSON.stringify({ type: 'subscribe', channel: 'prices' }));
+};
+
+ws.onmessage = (event) => {
+  const data = JSON.parse(event.data);
+  console.log('Received:', data);
+};
+
+ws.onclose = () => {
+  console.log('Connection closed — reconnecting...');
+};</code></pre>
+
+<h2>When to use WebSockets</h2>
+
+<ul>
+  <li>Real-time features where the server pushes updates frequently</li>
+  <li>Bidirectional communication (client and server both need to send at any time)</li>
+  <li>Low-latency requirements (chat, gaming, collaborative tools)</li>
+  <li>Many small messages (WebSocket frames have much less overhead than HTTP requests)</li>
+</ul>
+
+<h2>When HTTP is better</h2>
+
+<ul>
+  <li>Standard CRUD operations (REST APIs)</li>
+  <li>Infrequent updates (polling every 30 seconds is simpler and sufficient)</li>
+  <li>Server-only push without client messages (use Server-Sent Events instead — simpler, works with standard HTTP infrastructure)</li>
+  <li>Caching is important (HTTP responses cache; WebSocket messages don't)</li>
+</ul>
+
+<h2>Operational considerations</h2>
+
+<p>WebSockets add operational complexity. Load balancers need sticky sessions (a client's messages must go to the same server instance). Connections need heartbeat pings to prevent timeouts. Reconnection logic needs to handle dropped connections gracefully. Scaling stateful connections is harder than stateless HTTP.</p>
+
+<p>For many "real-time" features, Server-Sent Events (SSE) is the right answer — simpler, works through HTTP/2 multiplexing, doesn't need special load balancer configuration. Use WebSockets when you genuinely need bidirectional real-time communication.</p>
+    `.trim(),
+  },
+
+  {
+    slug: "how-to-encode-url-parameters",
+    title: "How to Encode URL Parameters (Avoiding Common Mistakes)",
+    description: "Special characters in URLs need to be percent-encoded. Here's what breaks, how encoding works, and the functions to use in JavaScript, Python, and curl.",
+    date: "2026-05-05",
+    readTime: "4 min read",
+    category: "Developer Tools",
+    content: `
+<p>URLs can only contain a limited set of safe characters. Everything else needs to be percent-encoded — converted to a <code>%XX</code> format where XX is the hexadecimal value of the byte. Getting this wrong produces broken links, 400 errors, and security vulnerabilities. Here's how to do it right.</p>
+
+<h2>What needs encoding</h2>
+
+<p>RFC 3986 defines the "unreserved characters" that can appear in URLs without encoding: uppercase and lowercase letters, digits, hyphens, underscores, periods, and tildes (<code>A-Za-z0-9-_.~</code>). Everything else — spaces, ampersands, equals signs, forward slashes, hash symbols, question marks — must be percent-encoded when used in contexts where they'd be misinterpreted.</p>
+
+<p>Common characters and their encoded forms:</p>
+<table>
+  <thead>
+    <tr><th>Character</th><th>Encoded</th><th>Why it matters</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Space</td><td><code>%20</code> (or <code>+</code> in query strings)</td><td>Breaks URL parsing</td></tr>
+    <tr><td>&amp;</td><td><code>%26</code></td><td>Separates query parameters</td></tr>
+    <tr><td>=</td><td><code>%3D</code></td><td>Separates key from value</td></tr>
+    <tr><td>+</td><td><code>%2B</code></td><td>Means "space" in query strings</td></tr>
+    <tr><td>#</td><td><code>%23</code></td><td>Starts a fragment identifier</td></tr>
+    <tr><td>/</td><td><code>%2F</code></td><td>Path separator</td></tr>
+    <tr><td>?</td><td><code>%3F</code></td><td>Starts query string</td></tr>
+  </tbody>
+</table>
+
+<h2>In JavaScript: use the right function</h2>
+
+<p>JavaScript has four URL encoding functions. Using the wrong one is the most common mistake:</p>
+
+<p><code>encodeURIComponent(str)</code> — encodes everything except unreserved characters. Use this for encoding individual query parameter values or path segments.</p>
+
+<pre><code>const query = "?q=" + encodeURIComponent('hello world &amp; more');
+// → ?q=hello%20world%20%26%20more</code></pre>
+
+<p><code>encodeURI(str)</code> — encodes most characters but leaves the URL structure intact (<code>://?&=</code> are NOT encoded). Use this only to encode a complete URL, not its components.</p>
+
+<p><code>URLSearchParams</code> — the modern, correct way to build query strings:</p>
+<pre><code>const params = new URLSearchParams({ q: 'hello world', page: '2' });
+const url = "https://example.com/search?" + params;
+// → https://example.com/search?q=hello+world&page=2</code></pre>
+
+<p>Note: <code>URLSearchParams</code> uses <code>+</code> for spaces (application/x-www-form-urlencoded format) rather than <code>%20</code>. Both are valid in query strings — servers should handle both.</p>
+
+<h2>In Python</h2>
+
+<pre><code>from urllib.parse import urlencode, quote
+
+# Encode a single value
+encoded = quote('hello world &amp; more')  # → hello%20world%20%26%20more
+
+# Encode query parameters
+params = urlencode({'q': 'hello world', 'page': 2})  # → q=hello+world&page=2</code></pre>
+
+<h2>In curl</h2>
+
+<pre><code># curl doesn't encode for you — encode first
+curl "https://api.example.com/search?q=hello%20world%20%26%20more"
+
+# Or use --data-urlencode for POST parameters
+curl --data-urlencode "q=hello world &amp; more" https://api.example.com/search</code></pre>
+
+<h2>Decoding</h2>
+
+<p>Percent-decoding is the reverse: <code>%20</code> → space. In JavaScript: <code>decodeURIComponent('%20')</code>. In Python: <code>urllib.parse.unquote('%20')</code>.</p>
+
+<p>Encode and decode URLs at <a href="/tools">Toolora → Encoding → URL Encoder</a> — useful for debugging encoded API parameters or building URLs manually.</p>
+    `.trim(),
+  },
+
+  {
+    slug: "json-data-types-reference",
+    title: "JSON Data Types: A Complete Reference",
+    description: "JSON has exactly six data types. Here's what each one is, the edge cases that catch developers out, and how they map to types in different programming languages.",
+    date: "2026-05-05",
+    readTime: "4 min read",
+    category: "Developer Tools",
+    content: `
+<p>JSON is deliberately minimal. It defines exactly six data types, and everything in any JSON document is one of them. Understanding these types — including the edge cases — prevents a category of bugs that show up when data crosses language or system boundaries.</p>
+
+<h2>The six types</h2>
+
+<h3>1. String</h3>
+<p>A sequence of Unicode characters in double quotes. Single quotes are not valid JSON. The backslash escape sequences supported: <code>\"</code>, <code>\\</code>, <code>\/</code>, <code>\b</code>, <code>\f</code>, <code>\n</code>, <code>\r</code>, <code>\t</code>, and <code>\\uXXXX</code> (Unicode escape, where X is a hex digit).</p>
+<pre><code>"Hello, world!"
+"Line one\\nLine two"
+"Unicode: \\u00e9"  // é</code></pre>
+
+<h3>2. Number</h3>
+<p>JSON has one number type — no integers vs floats distinction. All numbers are IEEE 754 double-precision floats.</p>
+<pre><code>42
+-7
+3.14
+1.5e10
+-2.5E-3</code></pre>
+<p><strong>Critical edge case:</strong> IEEE 754 doubles can only represent integers exactly up to 2^53 (9,007,199,254,740,992). Larger integers lose precision. This is why Twitter/X sends tweet IDs as both a number and a string in their API — JSON parsers in JavaScript would round large integer IDs.</p>
+<p>Not valid: <code>NaN</code>, <code>Infinity</code>, <code>-Infinity</code>, leading zeros (<code>007</code>), trailing dots (<code>1.</code>).</p>
+
+<h3>3. Boolean</h3>
+<p><code>true</code> and <code>false</code> — lowercase only. <code>True</code>, <code>TRUE</code>, <code>"true"</code> are not valid JSON booleans.</p>
+
+<h3>4. Null</h3>
+<p><code>null</code> — lowercase only. Represents the intentional absence of a value. Different from an absent field: <code>{"key": null}</code> and <code>{}</code> are different — the first has the key with a null value, the second doesn't have the key at all.</p>
+
+<h3>5. Array</h3>
+<p>An ordered list of values in square brackets. Values can be any JSON type, and they don't need to be the same type:</p>
+<pre><code>[1, "two", true, null, {"three": 3}]</code></pre>
+<p>Trailing commas are not allowed: <code>[1, 2, 3,]</code> is invalid JSON.</p>
+
+<h3>6. Object</h3>
+<p>An unordered collection of key-value pairs in curly braces. Keys must be strings (in double quotes). Values can be any JSON type:</p>
+<pre><code>{"name": "Alice", "age": 30, "active": true}</code></pre>
+<p>Keys must be unique within an object — duplicate keys are technically undefined behavior. Most parsers keep the last value for duplicate keys, but don't rely on this.</p>
+
+<h2>Type mapping across languages</h2>
+
+<table>
+  <thead>
+    <tr><th>JSON</th><th>JavaScript</th><th>Python</th><th>Java</th><th>Go</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>string</td><td>String</td><td>str</td><td>String</td><td>string</td></tr>
+    <tr><td>number</td><td>Number</td><td>int / float</td><td>int / double</td><td>float64</td></tr>
+    <tr><td>boolean</td><td>Boolean</td><td>bool</td><td>boolean</td><td>bool</td></tr>
+    <tr><td>null</td><td>null</td><td>None</td><td>null</td><td>nil</td></tr>
+    <tr><td>array</td><td>Array</td><td>list</td><td>List</td><td>slice</td></tr>
+    <tr><td>object</td><td>Object</td><td>dict</td><td>Map / POJO</td><td>map / struct</td></tr>
+  </tbody>
+</table>
+
+<h2>What JSON doesn't have</h2>
+
+<ul>
+  <li>No date type — dates are always strings (ISO 8601 format by convention)</li>
+  <li>No undefined — only null</li>
+  <li>No binary data — blobs are Base64-encoded strings</li>
+  <li>No comments — any comment-like syntax is invalid JSON</li>
+  <li>No integer type — only number</li>
+</ul>
+
+<p>Format and validate JSON instantly at <a href="/tools">Toolora → Developer → JSON Formatter</a>.</p>
+    `.trim(),
+  },
+
+  {
+    slug: "what-is-ssl-tls-https-explained",
+    title: "SSL, TLS, and HTTPS: What's the Difference?",
+    description: "SSL is obsolete, TLS is the real protocol, and HTTPS is TLS applied to HTTP. Here's how they relate, how the handshake works, and what certificates actually prove.",
+    date: "2026-05-06",
+    readTime: "5 min read",
+    category: "Security",
+    content: `
+<p>"SSL certificate," "TLS encryption," and "HTTPS" are often used interchangeably in everyday speech, but they refer to different things. Understanding the distinction helps when debugging certificate errors, configuring servers, or understanding what HTTPS actually protects you from.</p>
+
+<h2>SSL vs TLS: what's the difference?</h2>
+
+<p>SSL (Secure Sockets Layer) was the original protocol, developed by Netscape in the mid-1990s. It had three versions: SSL 1.0 (never released publicly), SSL 2.0 (broken), and SSL 3.0 (also broken — POODLE attack in 2014).</p>
+
+<p>TLS (Transport Layer Security) is the successor to SSL, developed by the IETF. TLS 1.0, 1.1, and 1.2 were released from 1999 to 2008. TLS 1.3 (2018) is the current version and is significantly redesigned for security and performance.</p>
+
+<p>No modern system uses SSL. When someone says "SSL certificate" or "SSL encryption," they mean TLS. The terminology stuck even as the protocol evolved.</p>
+
+<h2>HTTPS = HTTP + TLS</h2>
+
+<p>HTTPS is simply HTTP transported over a TLS connection. The "S" stands for Secure. Everything you know about HTTP — status codes, headers, methods — works identically under HTTPS. TLS provides:</p>
+
+<ul>
+  <li><strong>Encryption:</strong> The data in transit is encrypted. An interceptor sees random bytes, not your request or the response.</li>
+  <li><strong>Authentication:</strong> The server proves it's the genuine owner of the domain (via the certificate). You know you're talking to actual google.com, not an impersonator.</li>
+  <li><strong>Integrity:</strong> Data can't be modified in transit without detection. A middleman can't inject ads, malware, or modified content into the response.</li>
+</ul>
+
+<h2>What a TLS certificate actually proves</h2>
+
+<p>A TLS certificate is a file containing the server's public key and identity information, signed by a Certificate Authority (CA) that your browser trusts. Your browser has a list of trusted CAs baked in — around 100–150 root CAs from companies like DigiCert, Let's Encrypt, and Comodo.</p>
+
+<p>When you connect to a site, the server presents its certificate. Your browser verifies:</p>
+<ol>
+  <li>The certificate was signed by a trusted CA</li>
+  <li>The certificate hasn't expired</li>
+  <li>The domain in the certificate matches the domain you're visiting</li>
+  <li>The certificate hasn't been revoked</li>
+</ol>
+
+<p>What certificates prove: the entity that obtained the certificate controls the domain. DV (Domain Validation) certificates — the most common type, issued instantly by Let's Encrypt — only verify domain control. OV (Organization Validation) and EV (Extended Validation) certificates verify business identity too, but the browser UI differences between them have become minimal.</p>
+
+<h2>The TLS 1.3 handshake (simplified)</h2>
+
+<ol>
+  <li>Client sends a "ClientHello" with supported cipher suites and a random value</li>
+  <li>Server responds with its chosen cipher suite, its certificate, and a key share</li>
+  <li>Client verifies the certificate and derives session keys from the key exchange</li>
+  <li>Encrypted data can flow</li>
+</ol>
+
+<p>TLS 1.3 reduced the handshake from 2 round-trips (TLS 1.2) to 1 round-trip, with a "0-RTT resumption" mode for returning connections that adds zero round-trip overhead. This makes HTTPS noticeably faster than older TLS versions.</p>
+
+<h2>Common certificate errors</h2>
+
+<ul>
+  <li><strong>NET::ERR_CERT_COMMON_NAME_INVALID:</strong> The certificate is for a different domain (e.g., certificate says example.com, you're visiting www.example.com)</li>
+  <li><strong>NET::ERR_CERT_DATE_INVALID:</strong> Certificate is expired or your system clock is wrong</li>
+  <li><strong>NET::ERR_CERT_AUTHORITY_INVALID:</strong> Self-signed certificate or signed by an untrusted CA</li>
+</ul>
+
+<h2>Getting HTTPS for free</h2>
+
+<p>Let's Encrypt issues free, automated DV certificates. Certbot is the standard client for obtaining and renewing them. Most hosting platforms (Vercel, Netlify, Cloudflare, Fly.io) handle certificate management automatically. There's no reason to pay for a basic DV certificate in 2026.</p>
+    `.trim(),
+  },
+
+  {
+    slug: "image-formats-webp-vs-jpg-vs-png",
+    title: "WebP vs JPG vs PNG: Which Image Format Should You Use?",
+    description: "Choosing the right image format can cut your page weight in half. Here's a practical guide to JPG, PNG, WebP, AVIF, and GIF — and when to use each.",
+    date: "2026-05-06",
+    readTime: "5 min read",
+    category: "Tools",
+    content: `
+<p>Image format choice is one of the highest-ROI performance decisions you can make for a website. Using the wrong format for the content type — like PNG for photos or JPEG for sharp-edged graphics — can easily double your image file sizes. Here's a practical breakdown of when to use each format.</p>
+
+<h2>JPEG (.jpg / .jpeg): the photo standard</h2>
+
+<p><strong>Best for:</strong> Photographs, complex images with many colors and gradients</p>
+<p><strong>Compression:</strong> Lossy — discards detail the eye can't easily see</p>
+<p><strong>Transparency:</strong> Not supported</p>
+<p><strong>Animation:</strong> Not supported</p>
+
+<p>JPEG uses a mathematical transform (DCT) that works well for the high-frequency detail in photographs. At quality 80–85, a well-compressed JPEG is indistinguishable from the original to most people at normal viewing distances. Below quality 60, you start seeing "artifacts" — blocky areas and color halos around high-contrast edges.</p>
+
+<p>Use JPEG for: product photos, hero images, portraits, any image that was originally a photograph.</p>
+<p>Don't use JPEG for: logos, screenshots, diagrams, text-heavy images — the DCT artifacts appear prominently around sharp edges and text.</p>
+
+<h2>PNG (.png): lossless for graphics</h2>
+
+<p><strong>Best for:</strong> Screenshots, logos, icons, images with text, images requiring transparency</p>
+<p><strong>Compression:</strong> Lossless — no quality loss</p>
+<p><strong>Transparency:</strong> Full alpha channel support</p>
+<p><strong>Animation:</strong> APNG (rare support)</p>
+
+<p>PNG files are larger than JPEG for photographs (because lossless compression doesn't discard data) but smaller for images with large flat-color regions, sharp lines, and text. A screenshot of a UI is a classic PNG use case — JPEG artifacts make text look blurry.</p>
+
+<p>Optimize PNG files with pngquant (lossy palette reduction) or oxipng (lossless optimization) before serving — you can often reduce PNG size by 30–60% without visible quality change.</p>
+
+<h2>WebP: the modern default</h2>
+
+<p><strong>Best for:</strong> Most web images in modern browsers</p>
+<p><strong>Compression:</strong> Both lossy and lossless modes</p>
+<p><strong>Transparency:</strong> Supported</p>
+<p><strong>Browser support:</strong> All modern browsers (Chrome, Firefox, Safari 14+, Edge)</p>
+
+<p>WebP typically achieves 25–35% smaller file sizes than JPEG at equivalent visual quality, and beats PNG for lossless compression too. It supports transparency (unlike JPEG) and both lossy and lossless modes (unlike JPEG/PNG being one or the other). For most web images, WebP should be your default output format in 2026.</p>
+
+<h2>AVIF: the best compression, limited support</h2>
+
+<p><strong>Compression:</strong> 40–50% smaller than JPEG at equivalent quality</p>
+<p><strong>Browser support:</strong> Chrome 85+, Firefox 93+, Safari 16+</p>
+
+<p>AVIF (based on the AV1 video codec) achieves the best compression of any common web format. Encoding is slow, which is why it's less widely adopted despite superior output quality. Use the <code>&lt;picture&gt;</code> element with AVIF as the first source and WebP as the fallback.</p>
+
+<h2>GIF: the legacy format to avoid</h2>
+
+<p>GIF is a 256-color indexed format from 1987. It remains in use only for simple animations. For new work: use WebP animated images (much smaller) or video (<code>&lt;video autoplay loop muted playsinline&gt;</code>) for animation.</p>
+
+<h2>SVG: vector graphics</h2>
+
+<p>SVG is the right format for logos, icons, and illustrations that need to scale to any size without pixelation. SVG files are XML text — they can be inlined in HTML, styled with CSS, and animated with JavaScript. For any graphic that was created as vectors (Figma, Illustrator), export as SVG rather than rasterizing to PNG.</p>
+
+<h2>Quick decision tree</h2>
+
+<ul>
+  <li>Photograph or complex image → WebP (with JPEG fallback)</li>
+  <li>Logo / icon / vector → SVG</li>
+  <li>Screenshot / UI / text → PNG or WebP lossless</li>
+  <li>Needs transparency → WebP or PNG</li>
+  <li>Animation → WebP animated or <code>&lt;video&gt;</code></li>
+  <li>Maximum compression, modern browsers only → AVIF</li>
+</ul>
+
+<p>Compress and convert images at <a href="/tools">Toolora → Image Tools</a> — all processing happens in your browser, nothing is uploaded.</p>
+    `.trim(),
+  },
+
+  {
+    slug: "how-to-use-curl-for-api-testing",
+    title: "How to Use curl to Test APIs (Quick Reference)",
+    description: "curl is the fastest way to test an API from the command line. Here's the commands you'll use most often, with real examples.",
+    date: "2026-05-07",
+    readTime: "5 min read",
+    category: "Developer Tools",
+    content: `
+<p>curl is a command-line tool for making HTTP requests. It's available on every platform, requires no setup, and gives you precise control over every aspect of a request. For testing APIs — especially during development or debugging — it's often faster than Postman or writing test code. Here are the commands you'll use most often.</p>
+
+<h2>Basic GET request</h2>
+
+<pre><code>curl https://api.example.com/users</code></pre>
+
+<p>curl makes a GET request by default and prints the response body to stdout. Add <code>-i</code> to include response headers, <code>-I</code> for headers only (HEAD request).</p>
+
+<h2>POST with JSON body</h2>
+
+<pre><code>curl -X POST https://api.example.com/users \
+  -H "Content-Type: application/json" \
+  -d '{"name": "Alice", "email": "alice@example.com"}'</code></pre>
+
+<p><code>-X POST</code> — set the HTTP method<br>
+<code>-H</code> — add a header<br>
+<code>-d</code> — the request body (automatically sets method to POST if you don't specify)</p>
+
+<p>On Windows, use double quotes for the outer string and escape inner quotes: <code>-d "{\"name\": \"Alice\"}"</code>. Or use a file (see below).</p>
+
+<h2>Send JSON from a file</h2>
+
+<pre><code>curl -X POST https://api.example.com/users \
+  -H "Content-Type: application/json" \
+  -d @payload.json</code></pre>
+
+<p>The <code>@</code> prefix tells curl to read the body from a file. Cleaner than trying to escape JSON in the shell.</p>
+
+<h2>Authentication</h2>
+
+<pre><code># Bearer token
+curl https://api.example.com/me \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiJ9..."
+
+# API key in header
+curl https://api.example.com/data \
+  -H "X-API-Key: sk-abc123"
+
+# Basic auth
+curl -u username:password https://api.example.com/private
+
+# Basic auth (curl encodes to Base64 automatically)
+curl -H "Authorization: Basic $(echo -n 'user:pass' | base64)" \
+  https://api.example.com/private</code></pre>
+
+<h2>Form data (URL-encoded)</h2>
+
+<pre><code>curl -X POST https://api.example.com/login \
+  -d "username=alice&password=secret"</code></pre>
+
+<p>With <code>-d</code> and no Content-Type header, curl defaults to <code>application/x-www-form-urlencoded</code>.</p>
+
+<h2>File upload (multipart)</h2>
+
+<pre><code>curl -X POST https://api.example.com/upload \
+  -F "file=@/path/to/document.pdf" \
+  -F "description=My document"</code></pre>
+
+<p><code>-F</code> creates a multipart/form-data request. Use <code>@</code> for file uploads.</p>
+
+<h2>Useful flags</h2>
+
+<table>
+  <thead>
+    <tr><th>Flag</th><th>What it does</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>-v</code></td><td>Verbose — shows full request and response headers</td></tr>
+    <tr><td><code>-s</code></td><td>Silent — suppresses progress and error output</td></tr>
+    <tr><td><code>-o file.json</code></td><td>Save response body to a file</td></tr>
+    <tr><td><code>-w "%{http_code}"</code></td><td>Print the HTTP status code after the response</td></tr>
+    <tr><td><code>-L</code></td><td>Follow redirects</td></tr>
+    <tr><td><code>-k</code></td><td>Skip SSL certificate verification (dev only)</td></tr>
+    <tr><td><code>--max-time 10</code></td><td>Abort if the request takes more than 10 seconds</td></tr>
+    <tr><td><code>-c cookies.txt</code></td><td>Save cookies to a file</td></tr>
+    <tr><td><code>-b cookies.txt</code></td><td>Send cookies from a file</td></tr>
+  </tbody>
+</table>
+
+<h2>Pretty-print JSON response</h2>
+
+<pre><code>curl https://api.example.com/users | python3 -m json.tool
+# or
+curl https://api.example.com/users | jq .</code></pre>
+
+<p>curl doesn't format JSON output. Pipe to <code>python3 -m json.tool</code> (no install needed) or <code>jq</code> for readable output.</p>
+
+<h2>Test Toolora's API</h2>
+
+<pre><code>curl https://toolora.dev/api/v1/tools \
+  -H "Authorization: Bearer YOUR_API_KEY" | jq .</code></pre>
+
+<p>All Toolora API endpoints are documented at <a href="/api-docs">toolora.dev/api-docs</a>.</p>
+    `.trim(),
+  },
+
+  {
+    slug: "what-is-content-security-policy",
+    title: "Content Security Policy (CSP): How to Protect Your Site From XSS",
+    description: "CSP is an HTTP header that tells browsers which sources are allowed to load scripts, styles, and other resources. Here's how to write one without breaking your site.",
+    date: "2026-05-07",
+    readTime: "6 min read",
+    category: "Security",
+    content: `
+<p>Cross-site scripting (XSS) is one of the most common web vulnerabilities — an attacker injects malicious JavaScript into your page, which then runs in your users' browsers. Content Security Policy (CSP) is a browser mechanism that limits what scripts can run and where resources can be loaded from, making XSS attacks much harder to execute even if a vulnerability exists.</p>
+
+<h2>How CSP works</h2>
+
+<p>CSP is delivered as an HTTP response header (or a <code>&lt;meta&gt;</code> tag, though headers are more powerful). It tells the browser: "Only trust scripts from these sources. Refuse everything else."</p>
+
+<pre><code>Content-Security-Policy: default-src 'self'; script-src 'self' cdn.example.com; style-src 'self' 'unsafe-inline'</code></pre>
+
+<p>If a malicious script injection tries to run <code>&lt;script src="https://evil.com/malware.js"&gt;</code>, the browser blocks it because <code>evil.com</code> isn't in the allowed sources.</p>
+
+<h2>The directives</h2>
+
+<p><code>default-src</code> — the fallback for any directive not explicitly set. Start here.</p>
+<p><code>script-src</code> — where JavaScript can be loaded from (the most important)</p>
+<p><code>style-src</code> — CSS sources</p>
+<p><code>img-src</code> — image sources</p>
+<p><code>font-src</code> — web font sources</p>
+<p><code>connect-src</code> — URLs for XMLHttpRequest, fetch, WebSocket, EventSource</p>
+<p><code>frame-src</code> — sources allowed in iframes</p>
+<p><code>object-src</code> — Flash and other plugin content (set to <code>'none'</code> — nothing should use this)</p>
+
+<h2>Source values</h2>
+
+<ul>
+  <li><code>'self'</code> — the same origin (scheme + host + port)</li>
+  <li><code>'none'</code> — block everything</li>
+  <li><code>'unsafe-inline'</code> — allow inline scripts/styles (significantly weakens CSP)</li>
+  <li><code>'unsafe-eval'</code> — allow <code>eval()</code> and <code>new Function()</code> (also weakens CSP)</li>
+  <li><code>https://cdn.example.com</code> — a specific origin</li>
+  <li><code>https:</code> — any HTTPS source (wide open for that directive)</li>
+  <li><code>'nonce-abc123'</code> — allow a specific inline script with this nonce value</li>
+  <li><code>'sha256-base64hash'</code> — allow a specific inline script matching this hash</li>
+</ul>
+
+<h2>The inline script problem</h2>
+
+<p>The biggest challenge when adopting CSP: <code>'unsafe-inline'</code>. If your site has inline <code>&lt;script&gt;</code> tags or inline event handlers (<code>onclick="..."</code>), you need <code>'unsafe-inline'</code> in <code>script-src</code> — which mostly defeats CSP's purpose.</p>
+
+<p>Solutions:</p>
+<ul>
+  <li><strong>Move scripts to external files</strong> — the cleanest approach</li>
+  <li><strong>Use nonces</strong> — generate a random nonce per request, add it to the CSP header and to each <code>&lt;script nonce="..."&gt;</code> tag. Attackers can't guess the nonce.</li>
+  <li><strong>Use hashes</strong> — compute SHA-256 of the exact script content and add it to the policy. The browser allows the script only if the content matches.</li>
+</ul>
+
+<h2>Starting with report-only mode</h2>
+
+<p>Use <code>Content-Security-Policy-Report-Only</code> instead of <code>Content-Security-Policy</code> to test your policy without breaking anything. The browser logs violations but doesn't block anything. Add a <code>report-uri</code> directive to collect violation reports:</p>
+
+<pre><code>Content-Security-Policy-Report-Only: default-src 'self'; report-uri https://your-csp-reporter.example.com</code></pre>
+
+<p>Review the reports, adjust your policy to allow legitimate sources, then switch to enforcing mode.</p>
+
+<h2>A practical starter policy</h2>
+
+<pre><code>Content-Security-Policy:
+  default-src 'self';
+  script-src 'self' 'nonce-{generated-per-request}';
+  style-src 'self' 'unsafe-inline';
+  img-src 'self' data: https:;
+  font-src 'self' https://fonts.gstatic.com;
+  connect-src 'self' https://api.example.com;
+  object-src 'none';
+  frame-ancestors 'none';
+  base-uri 'self'</code></pre>
+
+<p><code>frame-ancestors 'none'</code> prevents your site from being embedded in iframes (clickjacking protection). <code>base-uri 'self'</code> prevents injection of a malicious <code>&lt;base&gt;</code> tag that would redirect relative URLs.</p>
+    `.trim(),
+  },
+
+  {
+    slug: "privacy-by-design-explained",
+    title: "Privacy by Design: What It Is and Why It Matters in 2026",
+    description: "Privacy by Design means building privacy into your product from the start, not adding it later. Here's what the seven principles are and how they apply to real product decisions.",
+    date: "2026-05-08",
+    readTime: "5 min read",
+    category: "Privacy",
+    content: `
+<p>Privacy by Design (PbD) was originally a framework developed by Ann Cavoukian, Ontario's Information and Privacy Commissioner, in the 1990s. It's now embedded in GDPR Article 25 as a legal requirement for any product handling EU personal data. But beyond compliance, its seven principles represent genuinely good product philosophy — one that builds user trust and avoids expensive retrofits.</p>
+
+<h2>The seven foundational principles</h2>
+
+<h3>1. Proactive, not reactive; preventive, not remedial</h3>
+<p>Privacy problems are anticipated and prevented before they occur. The alternative — identifying privacy issues after launch and patching them — is more expensive, more damaging, and often impossible to fully remediate once data has already been collected.</p>
+
+<h3>2. Privacy as the default setting</h3>
+<p>Without the user taking any action, privacy should be maximized. If a user does nothing, their data is protected by default. Users should opt in to data sharing, not opt out. The burden of action should be on the data collector, not the user.</p>
+
+<h3>3. Privacy embedded into design</h3>
+<p>Privacy isn't a separate module or a checkbox at the end of the development cycle. It's built into the system architecture and product design from the beginning. This means making privacy decisions during feature design, not after.</p>
+
+<h3>4. Full functionality — positive-sum, not zero-sum</h3>
+<p>Privacy and functionality aren't trade-offs. The framing "we can't do X because privacy" almost always reflects a design failure, not an inherent conflict. Both goals can be achieved simultaneously — PbD requires demonstrating this, not accepting the false dichotomy.</p>
+
+<h3>5. End-to-end security — full lifecycle protection</h3>
+<p>Data is protected throughout its entire lifecycle — collection, storage, use, and deletion. Secure deletion is part of the design, not an afterthought. Data that's no longer needed is deleted, not retained indefinitely "just in case."</p>
+
+<h3>6. Visibility and transparency</h3>
+<p>What you collect and how you use it should be transparent and verifiable. Privacy policies should be readable. Data practices should match stated policies. Users should be able to verify what you claim.</p>
+
+<h3>7. Respect for user privacy — keep it user-centric</h3>
+<p>The interests of the user take precedence. Design decisions default to the user's benefit, not the operator's convenience. Users get control over their data — access, correction, deletion.</p>
+
+<h2>What this looks like in practice</h2>
+
+<p><strong>Data minimization:</strong> Collect only the data you actually need for the stated purpose. Not "might be useful someday." If you don't collect it, you can't leak it.</p>
+
+<p><strong>Purpose limitation:</strong> Define why you're collecting each piece of data and don't use it for other purposes without consent. The data you collected for analytics shouldn't end up in your marketing segmentation without users knowing.</p>
+
+<p><strong>Client-side processing:</strong> If computation can happen in the user's browser without the data ever reaching your servers, that's strictly better from a privacy standpoint. Tools that process files locally (like Toolora's approach) are a practical implementation of Privacy by Design.</p>
+
+<p><strong>Retention policies:</strong> Set specific retention periods for different data categories and enforce automatic deletion. "We keep data indefinitely" is not a privacy-respecting default.</p>
+
+<p><strong>Access controls:</strong> Only people who need access to specific data get it. Your marketing team doesn't need access to raw user account data. Enforce this with role-based access control, not informal norms.</p>
+
+<h2>The compliance angle</h2>
+
+<p>GDPR Article 25 requires "data protection by design and by default" — meaning controllers must implement Privacy by Design principles and demonstrate they've done so. This has made PbD relevant not just philosophically but legally. CCPA, PIPEDA, and similar privacy laws reinforce these principles across different jurisdictions.</p>
+
+<p>The pattern of building quickly, collecting broadly, and cleaning up later is increasingly legally risky, not just ethically questionable. Building with privacy from the start is the lower-risk path.</p>
+    `.trim(),
+  },
+
+  {
+    slug: "read-pdf-browser-without-upload",
+    title: "How to Read and Work With PDFs in the Browser Without Uploading Them",
+    description: "You don't need to upload a PDF to read, compress, split, or extract text from it. Modern browsers can process PDFs entirely locally. Here's how.",
+    date: "2026-05-08",
+    readTime: "4 min read",
+    category: "Privacy",
+    content: `
+<p>Most PDF tools on the web work by uploading your file to a server, processing it there, and returning the result. For personal documents, legal files, medical records, or confidential business documents, this is a significant privacy concern — your file may be stored, logged, or accessible to the service provider. But modern browsers are capable enough to process PDFs entirely locally, without your document ever leaving your machine.</p>
+
+<h2>What the browser can do with PDFs</h2>
+
+<p><strong>Read and render:</strong> Firefox has built-in PDF rendering. Chrome and Edge use PDF.js (Mozilla's JavaScript PDF renderer). Both display PDFs without plugins.</p>
+
+<p><strong>Extract text:</strong> PDF.js can extract the text content of a PDF programmatically. This is useful for searching, copying, or processing document text without uploading the file.</p>
+
+<p><strong>Compress:</strong> PDF compression libraries compiled to WebAssembly (like those based on Ghostscript or libpoppler) can recompress PDF images and optimize structure locally in the browser. File size reductions of 30–70% are common.</p>
+
+<p><strong>Split and merge:</strong> PDF-lib and similar JavaScript libraries can split a PDF into individual pages or merge multiple PDFs. These operations run entirely in memory in the browser tab.</p>
+
+<p><strong>Add signatures and annotations:</strong> Client-side PDF libraries support adding digital signatures, stamps, and annotations without server round-trips.</p>
+
+<p><strong>OCR (text recognition from scanned PDFs):</strong> Tesseract.js — the JavaScript port of Google's OCR engine — runs in the browser and can extract text from image-based PDFs locally.</p>
+
+<h2>How to verify a tool processes locally</h2>
+
+<p>Open your browser's Network tab (DevTools → Network) before using a PDF tool. After opening or processing a file, check whether any network requests were made that could have transmitted your document:</p>
+<ul>
+  <li>Look for POST requests to the service's domain with large payloads</li>
+  <li>Check the request size — if it's close to your PDF file size, the file was uploaded</li>
+  <li>If no network requests fire after you interact with the file, processing is local</li>
+</ul>
+
+<p>Alternatively, disconnect from the internet and try the tool. Client-side tools will still work; server-dependent tools will fail.</p>
+
+<h2>Toolora's PDF tools</h2>
+
+<p>All of Toolora's PDF tools — compress, split, merge, extract text — process files in your browser using WebAssembly. Your documents are never transmitted to Toolora's servers. You can verify this with the Network tab: after opening a PDF in any Toolora tool, no upload request fires.</p>
+
+<p>This matters for the documents where it matters most: contracts, medical records, legal filings, financial statements. The privacy guarantee isn't a marketing claim — it's an architectural reality that you can verify yourself.</p>
+
+<h2>When you do need server-side processing</h2>
+
+<p>Some operations are genuinely beyond what browsers can do efficiently:</p>
+<ul>
+  <li>Very large PDFs (hundreds of MB) where memory limits are a constraint</li>
+  <li>Complex OCR on hundreds of pages (performance)</li>
+  <li>Batch processing of thousands of files</li>
+  <li>Operations requiring specialized software not available in WASM</li>
+</ul>
+
+<p>For these cases, using a server-side tool is often necessary. The key is choosing a provider you trust, checking their data retention policy, and understanding what happens to your uploaded file after processing.</p>
+    `.trim(),
+  },
+
+  {
+    slug: "markdown-front-matter-guide",
+    title: "Markdown Front Matter: What It Is and How to Use It",
+    description: "Front matter is metadata embedded at the top of a Markdown file in YAML or TOML format. Here's how it works, what platforms support it, and what you can store in it.",
+    date: "2026-05-09",
+    readTime: "4 min read",
+    category: "Developer Tools",
+    content: `
+<p>Front matter is a block of metadata at the very beginning of a Markdown file, delimited by triple dashes. It lets you attach structured data — title, date, author, tags, layout, slug — to a document without putting that information in the document content itself. It's supported by static site generators, documentation platforms, and many Markdown editors.</p>
+
+<h2>The format</h2>
+
+<pre><code>---
+title: "My Blog Post Title"
+date: 2026-05-09
+author: Alice
+tags: [developer, tools, markdown]
+draft: false
+slug: "my-blog-post-title"
+---
+
+The actual content of the post starts here.</code></pre>
+
+<p>The content between the first <code>---</code> and the second <code>---</code> is YAML. Everything after is the Markdown document. The front matter is not rendered as content — it's processed separately as metadata.</p>
+
+<h2>Alternative formats</h2>
+
+<p>Some platforms use TOML front matter (delimited by <code>+++</code>) or JSON front matter (delimited by <code>{</code> and <code>}</code>). Hugo uses TOML by default. Jekyll uses YAML. Astro supports all three:</p>
+
+<pre><code>+++
+title = "My Post"
+date = 2026-05-09
++++</code></pre>
+
+<h2>Common front matter fields</h2>
+
+<table>
+  <thead>
+    <tr><th>Field</th><th>Type</th><th>Common use</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>title</code></td><td>string</td><td>Page title, used in &lt;title&gt; and h1</td></tr>
+    <tr><td><code>date</code></td><td>date</td><td>Publication date for sorting and display</td></tr>
+    <tr><td><code>description</code></td><td>string</td><td>Meta description for SEO</td></tr>
+    <tr><td><code>tags</code></td><td>array</td><td>Content categorization, tag pages</td></tr>
+    <tr><td><code>draft</code></td><td>boolean</td><td>Exclude from production build if true</td></tr>
+    <tr><td><code>slug</code></td><td>string</td><td>Override the URL slug</td></tr>
+    <tr><td><code>layout</code></td><td>string</td><td>Which template to render with</td></tr>
+    <tr><td><code>image</code></td><td>string</td><td>OG image path for social sharing</td></tr>
+    <tr><td><code>author</code></td><td>string</td><td>Author attribution</td></tr>
+    <tr><td><code>canonicalUrl</code></td><td>string</td><td>Canonical URL if syndicated from another source</td></tr>
+  </tbody>
+</table>
+
+<h2>Platform support</h2>
+
+<ul>
+  <li><strong>Jekyll:</strong> The original popularizer of YAML front matter. Required for any Jekyll page or post.</li>
+  <li><strong>Hugo:</strong> Supports YAML, TOML, and JSON front matter. Very flexible.</li>
+  <li><strong>Astro:</strong> Full TypeScript type inference for front matter fields with <code>defineCollection</code>.</li>
+  <li><strong>Next.js + MDX:</strong> Front matter parsed by libraries like <code>gray-matter</code>.</li>
+  <li><strong>Obsidian:</strong> Uses YAML front matter for note properties and metadata.</li>
+  <li><strong>GitHub README:</strong> GitHub doesn't render front matter — it appears as a table in the rendered output. Avoid front matter in GitHub READMEs.</li>
+</ul>
+
+<h2>Parsing front matter programmatically</h2>
+
+<pre><code>import matter from 'gray-matter';
+import fs from 'fs';
+
+const fileContent = fs.readFileSync('post.md', 'utf-8');
+const { data, content } = matter(fileContent);
+
+console.log(data.title);  // "My Blog Post Title"
+console.log(data.date);   // 2026-05-09T00:00:00.000Z
+console.log(content);     // The markdown content (without front matter)</code></pre>
+
+<p><code>gray-matter</code> is the standard JavaScript library for parsing front matter. It handles YAML, TOML, and JSON, and is used internally by Next.js, Astro, and many other frameworks.</p>
+    `.trim(),
+  },
+
+  {
+    slug: "how-to-create-favicon-for-website",
+    title: "How to Create a Favicon for Your Website (2026 Guide)",
+    description: "A favicon appears in browser tabs, bookmarks, and search results. Here's what sizes you need, how to generate them, and the HTML to add them correctly.",
+    date: "2026-05-09",
+    readTime: "4 min read",
+    category: "Developer Tools",
+    content: `
+<p>A favicon is the small icon that appears in browser tabs, bookmark lists, home screen shortcuts, and sometimes in search results. A missing or blurry favicon signals an unfinished site. Getting it right requires more than a single 16×16 PNG — modern devices need multiple sizes and formats.</p>
+
+<h2>What you actually need</h2>
+
+<table>
+  <thead>
+    <tr><th>File</th><th>Size</th><th>Used for</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>favicon.ico</td><td>16×16, 32×32 (multi-size)</td><td>Legacy browsers, browser tabs (ICO format)</td></tr>
+    <tr><td>favicon-32x32.png</td><td>32×32</td><td>Modern browsers, high-DPI tabs</td></tr>
+    <tr><td>favicon-16x16.png</td><td>16×16</td><td>Browser tabs at 1× density</td></tr>
+    <tr><td>apple-touch-icon.png</td><td>180×180</td><td>iOS home screen bookmarks</td></tr>
+    <tr><td>android-chrome-192x192.png</td><td>192×192</td><td>Android home screen</td></tr>
+    <tr><td>android-chrome-512x512.png</td><td>512×512</td><td>PWA splash screen, app store</td></tr>
+    <tr><td>safari-pinned-tab.svg</td><td>SVG</td><td>Safari pinned tabs (must be single-color SVG)</td></tr>
+    <tr><td>site.webmanifest</td><td>JSON</td><td>PWA metadata, references android icons</td></tr>
+  </tbody>
+</table>
+
+<h2>Creating the source image</h2>
+
+<p>Start with a square image at least 512×512 pixels. SVG is ideal as the source because it's infinitely scalable. Key design considerations:</p>
+
+<ul>
+  <li>At 16×16, only 256 pixels — complex designs become unrecognizable. Simple shapes and bold colors work best.</li>
+  <li>Test your favicon at small sizes before committing to the design.</li>
+  <li>Avoid thin lines that disappear at small sizes.</li>
+  <li>Use a background color unless the icon works on both light and dark browser chrome.</li>
+</ul>
+
+<h2>Generating all sizes automatically</h2>
+
+<p>The fastest approach: use a favicon generator like realfavicongenerator.net — upload your source image and it generates all required sizes plus the HTML code. This is the standard workflow for most developers.</p>
+
+<p>CLI alternative: ImageMagick can resize and convert to ICO:</p>
+<pre><code>convert source.png -resize 256x256 favicon.png
+convert favicon.png -define icon:auto-resize=64,48,32,16 favicon.ico</code></pre>
+
+<h2>The HTML</h2>
+
+<pre><code>&lt;link rel="icon" type="image/x-icon" href="/favicon.ico"&gt;
+&lt;link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"&gt;
+&lt;link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"&gt;
+&lt;link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"&gt;
+&lt;link rel="manifest" href="/site.webmanifest"&gt;</code></pre>
+
+<h2>The web manifest</h2>
+
+<pre><code>{
+  "name": "Your Site Name",
+  "short_name": "Site",
+  "icons": [
+    { "src": "/android-chrome-192x192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/android-chrome-512x512.png", "sizes": "512x512", "type": "image/png" }
+  ],
+  "theme_color": "#ffffff",
+  "background_color": "#ffffff",
+  "display": "standalone"
+}</code></pre>
+
+<h2>SVG favicon (modern browsers only)</h2>
+
+<p>Modern browsers support SVG favicons — a single file that scales perfectly at any size:</p>
+
+<pre><code>&lt;link rel="icon" href="/favicon.svg" type="image/svg+xml"&gt;</code></pre>
+
+<p>Use this alongside the PNG/ICO fallbacks. SVG favicons can also respond to dark mode using the <code>prefers-color-scheme</code> media query within the SVG file itself.</p>
+    `.trim(),
+  },
+
+  {
+    slug: "jwt-claims-explained",
+    title: "JWT Claims Explained: iss, sub, aud, exp, iat and More",
+    description: "JWT claims are the data payload of a token. Here's what each standard claim means, when to include it, and how verification should handle them.",
+    date: "2026-05-10",
+    readTime: "5 min read",
+    category: "Security",
+    content: `
+<p>A JWT payload is a set of "claims" — key-value pairs that assert things about the token's subject or context. Some claims are standardized (registered claims); others are defined by the application (private claims). Understanding what each standard claim does is essential for implementing JWT authentication correctly.</p>
+
+<h2>The registered claims (RFC 7519)</h2>
+
+<p><strong>iss (Issuer)</strong><br>
+Who issued the token. Usually a URL or URI identifying the authorization server. When verifying a token, check that <code>iss</code> matches the expected issuer — prevents accepting tokens from a different service that uses the same signing key.</p>
+<pre><code>"iss": "https://auth.example.com"</code></pre>
+
+<p><strong>sub (Subject)</strong><br>
+Who the token represents — usually a user ID. Must be unique within the issuer's context. This is the primary identifier you use to look up the user.</p>
+<pre><code>"sub": "user_01HQJZ4A8BNMRK7Y9Z"</code></pre>
+
+<p><strong>aud (Audience)</strong><br>
+Who the token is intended for — which service or services should accept it. If your API receives a token, it should verify that its identifier is in the <code>aud</code> claim. This prevents a token issued for one service being used on another.</p>
+<pre><code>"aud": ["https://api.example.com", "https://dashboard.example.com"]</code></pre>
+
+<p><strong>exp (Expiration Time)</strong><br>
+Unix timestamp after which the token must not be accepted. Critical for security — without expiration, a stolen token is valid forever. Common durations: 15 minutes for access tokens, hours to days for refresh tokens. Always verify <code>exp &gt; current time</code>.</p>
+<pre><code>"exp": 1714608000  // 2026-05-02 00:00:00 UTC</code></pre>
+
+<p><strong>iat (Issued At)</strong><br>
+Unix timestamp when the token was issued. Useful for detecting tokens that were issued suspiciously far in the past, or for comparing token age against session invalidation events ("if token was issued before user changed their password, reject it").</p>
+<pre><code>"iat": 1714604400</code></pre>
+
+<p><strong>nbf (Not Before)</strong><br>
+Unix timestamp before which the token must not be accepted. Useful for tokens that should be valid starting at a future time — delayed access, scheduled operations.</p>
+<pre><code>"nbf": 1714604400</code></pre>
+
+<p><strong>jti (JWT ID)</strong><br>
+A unique identifier for the token. Used to prevent replay attacks — once a token is used, store its <code>jti</code> in a database and reject any subsequent request using the same <code>jti</code>. Particularly important for one-time tokens (password reset links, email verification).</p>
+<pre><code>"jti": "01HQJZ4A8BNMRK7Y9Z"</code></pre>
+
+<h2>Common custom claims</h2>
+
+<p>Beyond registered claims, you can include application-specific data:</p>
+
+<pre><code>{
+  "sub": "user_01HQJZ4",
+  "email": "alice@example.com",
+  "role": "admin",
+  "plan": "pro",
+  "permissions": ["read:data", "write:data", "delete:data"],
+  "org_id": "org_abc123"
+}</code></pre>
+
+<p>This data is available to your API without a database lookup on every request — one of JWT's main advantages over opaque tokens.</p>
+
+<h2>What verification should check</h2>
+
+<p>A correct JWT verification implementation checks all of the following, not just the signature:</p>
+
+<ol>
+  <li>Signature is valid (using the expected algorithm — hardcode it, don't trust the header)</li>
+  <li><code>exp</code> is in the future</li>
+  <li><code>nbf</code> is in the past (if present)</li>
+  <li><code>iss</code> matches the expected issuer</li>
+  <li><code>aud</code> includes your service's identifier</li>
+  <li>If using <code>jti</code> for one-time tokens: this <code>jti</code> hasn't been used before</li>
+</ol>
+
+<p>Skipping any of these checks creates security vulnerabilities. Most JWT libraries handle standard claim validation if you pass the expected values during verification.</p>
+
+<h2>Inspect JWT claims</h2>
+
+<p>Paste any JWT into <a href="/tools">Toolora → Security → JWT Decoder</a> to see the decoded header, payload, and which standard claims are present. Everything runs in your browser — no tokens sent to any server.</p>
+    `.trim(),
+  },
+
+  {
+    slug: "how-to-diff-two-files-online",
+    title: "How to Compare Two Text Files and Find the Differences",
+    description: "Diffing two files shows exactly what changed between them. Here's how diff works, how to read the output, and the tools for comparing text, code, and documents.",
+    date: "2026-05-10",
+    readTime: "4 min read",
+    category: "Tools",
+    content: `
+<p>Comparing two versions of a text file to find what changed is called diffing. The Unix <code>diff</code> command has been the standard tool since the 1970s, and its output format influenced version control systems, code review tools, and collaboration software that billions of people use today. Understanding how diff works makes you a more effective developer and writer.</p>
+
+<h2>How diff works</h2>
+
+<p>Diff uses the Longest Common Subsequence (LCS) algorithm to find the largest block of text that appears in both files in the same order. Everything that's in file 1 but not in the LCS was deleted. Everything in file 2 but not in the LCS was added.</p>
+
+<h2>Reading unified diff output</h2>
+
+<pre><code>--- original.txt    2026-05-01
++++ modified.txt    2026-05-10
+@@ -1,6 +1,7 @@
+ Line 1 (unchanged)
+-Line 2 (deleted)
++Line 2 (modified)
++Line 3 (new line added)
+ Line 4 (unchanged)
+ Line 5 (unchanged)
+-Line 6 (deleted)
++Line 6 (unchanged now)</code></pre>
+
+<p><code>---</code> and <code>+++</code> identify the two files.<br>
+<code>@@ -1,6 +1,7 @@</code> is the "hunk header" — the original file had 6 lines starting from line 1; the modified file has 7 lines starting from line 1.<br>
+Lines starting with <code>-</code> were removed. Lines starting with <code>+</code> were added. Lines with a space were unchanged (context lines).</p>
+
+<h2>Common diff commands</h2>
+
+<pre><code># Basic diff
+diff original.txt modified.txt
+
+# Unified format (standard for patches and code review)
+diff -u original.txt modified.txt
+
+# Side-by-side comparison
+diff --side-by-side original.txt modified.txt
+
+# Ignore whitespace differences
+diff -w original.txt modified.txt
+
+# Ignore blank lines
+diff -B original.txt modified.txt
+
+# Case-insensitive
+diff -i original.txt modified.txt
+
+# Diff directories recursively
+diff -r dir1/ dir2/</code></pre>
+
+<h2>Creating and applying patches</h2>
+
+<pre><code># Create a patch file
+diff -u original.txt modified.txt > changes.patch
+
+# Apply the patch
+patch original.txt < changes.patch</code></pre>
+
+<p>Patches are how open-source contributions were shared before GitHub — you email a .patch file, the maintainer applies it. Git's <code>git diff</code> and <code>git apply</code> work the same way.</p>
+
+<h2>Modern tools for diffing</h2>
+
+<p><strong>git diff:</strong> The most common way to compare file versions in practice. <code>git diff HEAD~1</code> shows changes from the last commit. <code>git diff branch1..branch2</code> compares branches.</p>
+
+<p><strong>VS Code built-in diff:</strong> Right-click a file → Compare with → any other file. Shows a side-by-side or inline diff with syntax highlighting.</p>
+
+<p><strong>GitHub / GitLab:</strong> Every pull request shows a diff of all changes. The web-based diff viewer includes comment threads per line.</p>
+
+<p><strong>Browser-based text diff:</strong> For one-off comparisons of text, configurations, or documents without a git repository. Paste both versions and see highlighted changes.</p>
+
+<p>Compare two pieces of text instantly at <a href="/tools">Toolora → Text → Text Diff</a> — paste both versions, see exactly what changed, highlighted line by line. Processing is local.</p>
+    `.trim(),
+  },
+
+  {
+    slug: "what-is-a-proxy-server-explained",
+    title: "What Is a Proxy Server? Forward vs Reverse Proxy",
+    description: "Proxy servers sit between clients and servers, forwarding requests. Forward and reverse proxies serve completely different purposes. Here's the clear breakdown.",
+    date: "2026-05-11",
+    readTime: "5 min read",
+    category: "Developer Tools",
+    content: `
+<p>A proxy server sits between two parties in a network communication, forwarding requests from one side to the other. The word "proxy" comes from the legal term for someone authorized to act on another's behalf. In networking, proxies can inspect, filter, modify, cache, or simply relay traffic. The key distinction is whether the proxy acts on behalf of the client or the server.</p>
+
+<h2>Forward proxy: acting on behalf of clients</h2>
+
+<p>A forward proxy sits between clients (users) and the internet. Clients send requests to the proxy; the proxy forwards them to the destination server; the response comes back through the proxy to the client.</p>
+
+<p>From the destination server's perspective, the request appears to come from the proxy's IP address, not the client's.</p>
+
+<p><strong>Common uses for forward proxies:</strong></p>
+<ul>
+  <li><strong>Privacy / anonymization:</strong> The destination server doesn't see the client's real IP (VPNs work similarly, though at the network layer)</li>
+  <li><strong>Content filtering:</strong> Corporate network proxies block social media, malware sites, or content policy violations</li>
+  <li><strong>Circumventing geo-restrictions:</strong> Access content available in a different country by proxying through a server in that country</li>
+  <li><strong>Caching:</strong> A caching proxy stores frequently-accessed content locally, reducing bandwidth for large organizations</li>
+  <li><strong>Logging and monitoring:</strong> All outbound traffic can be inspected and logged at the proxy level</li>
+</ul>
+
+<h2>Reverse proxy: acting on behalf of servers</h2>
+
+<p>A reverse proxy sits in front of servers (your application). Clients send requests to the proxy; the proxy forwards them to the appropriate backend server; the response returns through the proxy to the client.</p>
+
+<p>From the client's perspective, they're talking to the proxy and don't know what's behind it.</p>
+
+<p><strong>Common uses for reverse proxies:</strong></p>
+<ul>
+  <li><strong>Load balancing:</strong> Distribute incoming requests across multiple backend servers. NGINX and HAProxy are classic reverse proxy load balancers.</li>
+  <li><strong>TLS termination:</strong> Handle HTTPS at the proxy, then communicate with backends over plain HTTP internally. Simplifies certificate management — only the proxy needs the certificate.</li>
+  <li><strong>Caching:</strong> Cache static assets and API responses at the proxy layer — the backend doesn't have to serve the same content repeatedly.</li>
+  <li><strong>Security:</strong> Hide backend IP addresses, filter malicious requests, enforce rate limits.</li>
+  <li><strong>Path routing:</strong> Route <code>/api/*</code> to a Node.js backend, <code>/static/*</code> to an S3 bucket, and <code>/*</code> to a React app.</li>
+  <li><strong>Compression:</strong> Compress responses with Gzip or Brotli at the proxy, offloading that work from application servers.</li>
+</ul>
+
+<h2>Common reverse proxy software</h2>
+
+<ul>
+  <li><strong>NGINX:</strong> The most widely deployed reverse proxy. Handles millions of connections per second, extensive configuration options.</li>
+  <li><strong>Caddy:</strong> Modern reverse proxy with automatic HTTPS (Let's Encrypt) out of the box. Simpler configuration than NGINX.</li>
+  <li><strong>Traefik:</strong> Dynamic configuration, integrates with Docker and Kubernetes — discovers services automatically.</li>
+  <li><strong>Cloudflare:</strong> A reverse proxy at global scale. All Cloudflare-protected sites route through Cloudflare's edge before reaching the origin server.</li>
+  <li><strong>AWS ALB:</strong> Application Load Balancer — a managed reverse proxy that integrates with other AWS services.</li>
+</ul>
+
+<h2>The difference at a glance</h2>
+
+<table>
+  <thead>
+    <tr><th></th><th>Forward proxy</th><th>Reverse proxy</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Acts on behalf of</td><td>Clients</td><td>Servers</td></tr>
+    <tr><td>Client knows about it?</td><td>Usually yes (configured on client)</td><td>Usually no (transparent)</td></tr>
+    <tr><td>Server knows about it?</td><td>No (sees proxy IP)</td><td>May not (sees proxy as the client)</td></tr>
+    <tr><td>Typical deployer</td><td>Organizations, VPN providers</td><td>Website operators, CDNs</td></tr>
+  </tbody>
+</table>
+
+<p>Most production web applications sit behind a reverse proxy. The proxy handles the complexity of TLS, load balancing, and routing so the application can focus on business logic.</p>
+    `.trim(),
+  },
+
+  {
+    slug: "online-tools-privacy-checklist",
+    title: "Before You Paste Into Any Online Tool: A Privacy Checklist",
+    description: "Most online tools upload your data to a server. Here's what to check before using any web tool with sensitive content — and what the safer alternatives are.",
+    date: "2026-05-11",
+    readTime: "4 min read",
+    category: "Privacy",
+    content: `
+<p>The internet is full of convenient tools: JSON formatters, PDF compressors, image converters, text analyzers, JWT decoders. Most of them work by uploading your data to a server. For personal, professional, or confidential content, this is a risk that's easy to overlook — and easy to avoid once you know what to check.</p>
+
+<h2>The five questions to ask about any online tool</h2>
+
+<h3>1. Is it server-side or client-side?</h3>
+<p>Server-side tools upload your data to process it. Client-side tools run JavaScript (or WebAssembly) in your browser — your data never leaves your machine. You can verify this by opening the browser's Network tab (F12 → Network) before using the tool, then using it and watching for upload requests. If no request fires with a payload matching your file, the processing is local.</p>
+
+<h3>2. What's the retention policy?</h3>
+<p>Even if the tool says "files are deleted immediately," check their privacy policy for specifics. Look for answers to: How long is the file stored? Are logs kept? Is the file used to train machine learning models? Is data shared with third parties?</p>
+
+<h3>3. Is the connection encrypted?</h3>
+<p>Minimum requirement: HTTPS. Without it, your data can be intercepted in transit. Check that the URL starts with <code>https://</code> and there's no certificate warning. This protects the transmission but not what happens on the server.</p>
+
+<h3>4. What happens to the output?</h3>
+<p>The processed output may also be stored. If you convert a document and download the result, does the server keep a copy of the output? For some tools (online pastebin services, for example), the output is explicitly stored and shared by design — useful sometimes, dangerous for private content.</p>
+
+<h3>5. Does the tool need all this access?</h3>
+<p>Some tools request sign-in, browser permissions, or clipboard access that isn't necessary for the task. A JSON formatter shouldn't need your Google account. An image compressor shouldn't request camera access. Excessive permission requests are a red flag.</p>
+
+<h2>Categories of data that deserve extra care</h2>
+
+<ul>
+  <li>Legal documents (contracts, filings, correspondence)</li>
+  <li>Medical records, insurance claims, prescriptions</li>
+  <li>Financial statements, tax documents, payroll data</li>
+  <li>Authentication tokens, API keys, passwords (never paste these into online tools)</li>
+  <li>Personal identification (passports, ID cards, licenses)</li>
+  <li>Proprietary business data, source code with credentials</li>
+  <li>Client data that you're responsible for protecting</li>
+</ul>
+
+<h2>Safer alternatives</h2>
+
+<p><strong>Client-side tools:</strong> Look for tools explicitly built to run locally. Toolora's tools are built this way — PDFs, images, text, code, and conversions all process in your browser.</p>
+
+<p><strong>CLI tools:</strong> Install tools locally and run them from the terminal. <code>jq</code> for JSON, <code>ffmpeg</code> for media, <code>pdfcpu</code> for PDFs, <code>ImageMagick</code> for images. No data leaves your machine.</p>
+
+<p><strong>VS Code extensions:</strong> Many online tool functions (JSON formatting, regex testing, markdown preview) are available as editor extensions that run locally.</p>
+
+<p><strong>Offline apps:</strong> For frequent use cases, a native app or desktop tool is more private than any web service.</p>
+
+<h2>The rule of thumb</h2>
+
+<p>If you wouldn't email the content to a stranger, don't paste it into an online tool unless you've verified it processes locally or you trust the service's privacy practices explicitly. The convenience of a free online tool is real — just know the trade-off you're making.</p>
+    `.trim(),
+  },
+
+  {
+    slug: "html-meta-tags-seo-complete-guide",
+    title: "HTML Meta Tags for SEO: The Complete 2026 Guide",
+    description: "The meta tags that actually affect SEO, what each one does, and what to ignore. Includes title, description, robots, canonical, og, and structured data.",
+    date: "2026-05-12",
+    readTime: "6 min read",
+    category: "SEO",
+    content: `
+<p>HTML meta tags are snippets in the <code>&lt;head&gt;</code> of your pages that provide metadata to search engines, social media platforms, and browsers. Some are critical for SEO. Many are obsolete. Here's a clear breakdown of what matters in 2026 and exactly what to implement.</p>
+
+<h2>The title tag: the most important SEO element</h2>
+
+<pre><code>&lt;title&gt;Your Page Title — Brand Name&lt;/title&gt;</code></pre>
+
+<p>Not technically a meta tag, but the most important metadata element. The title appears in search results, browser tabs, and bookmarks. Google displays up to 60 characters; longer titles are truncated. Best practices:</p>
+<ul>
+  <li>Include the primary keyword early</li>
+  <li>Each page should have a unique title</li>
+  <li>Include your brand at the end</li>
+  <li>Write for humans — the keyword should fit naturally</li>
+</ul>
+
+<h2>Meta description</h2>
+
+<pre><code>&lt;meta name="description" content="Your 150-160 character description that appears in search results."&gt;</code></pre>
+
+<p>The description appears below the title in search results. Google truncates at ~155 characters. It doesn't directly affect rankings, but it affects click-through rate — a compelling description brings more clicks. Each page should have a unique, relevant description.</p>
+
+<h2>Meta robots</h2>
+
+<pre><code>&lt;meta name="robots" content="index, follow"&gt;
+&lt;meta name="robots" content="noindex, nofollow"&gt;
+&lt;meta name="robots" content="noindex, follow"&gt;</code></pre>
+
+<p><code>index</code>/<code>noindex</code> — whether the page should appear in search results.<br>
+<code>follow</code>/<code>nofollow</code> — whether crawlers should follow links on the page.</p>
+
+<p>Default is <code>index, follow</code> — you only need to add this tag if you're changing the default for a specific page (admin pages, thank-you pages, duplicate content).</p>
+
+<h2>Canonical URL</h2>
+
+<pre><code>&lt;link rel="canonical" href="https://example.com/the-definitive-url"&gt;</code></pre>
+
+<p>Tells search engines which URL is the authoritative version when multiple URLs serve the same or very similar content. Critical for e-commerce (same product at multiple URLs with different parameters), paginated content, HTTP vs HTTPS, and www vs non-www variants.</p>
+
+<p>Always use the canonical that reflects the URL you want indexed, and make sure it's consistent with your sitemap and internal links.</p>
+
+<h2>Open Graph (OG) tags</h2>
+
+<pre><code>&lt;meta property="og:title" content="Page Title"&gt;
+&lt;meta property="og:description" content="150-200 character description"&gt;
+&lt;meta property="og:image" content="https://example.com/og-image.jpg"&gt;
+&lt;meta property="og:url" content="https://example.com/page"&gt;
+&lt;meta property="og:type" content="article"&gt;</code></pre>
+
+<p>Open Graph tags control how your page appears when shared on Facebook, LinkedIn, Slack, and many other platforms. The <code>og:image</code> is the most impactful — use a 1200×630px image for best display. Without these tags, platforms pull whatever text and image they find first, which is usually wrong.</p>
+
+<h2>Twitter Card tags</h2>
+
+<pre><code>&lt;meta name="twitter:card" content="summary_large_image"&gt;
+&lt;meta name="twitter:title" content="Page Title"&gt;
+&lt;meta name="twitter:description" content="Description"&gt;
+&lt;meta name="twitter:image" content="https://example.com/og-image.jpg"&gt;</code></pre>
+
+<p><code>summary_large_image</code> shows a large preview image. <code>summary</code> shows a small thumbnail. If OG tags are present, Twitter/X usually uses those as fallback — you need explicit Twitter tags to override.</p>
+
+<h2>Viewport (not SEO, but essential)</h2>
+
+<pre><code>&lt;meta name="viewport" content="width=device-width, initial-scale=1"&gt;</code></pre>
+
+<p>Required for mobile-friendly rendering. Google uses mobile-first indexing — without this, your page may rank poorly on mobile searches.</p>
+
+<h2>Tags to ignore (they don't affect SEO)</h2>
+
+<ul>
+  <li><code>&lt;meta name="keywords"&gt;</code> — Google ignored this since 2009</li>
+  <li><code>&lt;meta name="author"&gt;</code> — no SEO impact</li>
+  <li><code>&lt;meta name="generator"&gt;</code> — tells bots what CMS you use; no SEO impact, mild security disclosure</li>
+</ul>
+
+<h2>Structured data (JSON-LD)</h2>
+
+<p>Not a meta tag, but often grouped with them. JSON-LD structured data tells Google specifically what type of content is on the page — articles, products, FAQs, breadcrumbs, events. This enables rich results (star ratings, FAQ dropdowns, recipe cards) in search.</p>
+
+<pre><code>&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Page Title",
+  "datePublished": "2026-05-12",
+  "author": { "@type": "Organization", "name": "Toolora" }
+}
+&lt;/script&gt;</code></pre>
+    `.trim(),
+  },
+
+  {
+    slug: "how-to-generate-random-passwords-securely",
+    title: "How to Generate Random Passwords Securely in the Browser",
+    description: "Not all password generators are equally random. Here's what makes a password generator cryptographically secure and how to verify the one you're using qualifies.",
+    date: "2026-05-12",
+    readTime: "4 min read",
+    category: "Security",
+    content: `
+<p>Password generators seem simple — pick some characters at random and string them together. But the "random" part is where most implementations go wrong. Cryptographic security requires randomness that's unpredictable to an attacker, not just random-looking. Here's what that means in practice and how to verify you're using a secure generator.</p>
+
+<h2>Pseudorandom vs. cryptographically random</h2>
+
+<p><code>Math.random()</code> in JavaScript is a pseudorandom number generator (PRNG). It produces sequences that look random but are generated by a deterministic algorithm seeded with a value (often the current time in milliseconds). The output is predictable if you know the seed and algorithm. For gaming, simulations, and UI — fine. For passwords — a serious problem.</p>
+
+<p>Cryptographic random number generators (CSPRNGs) collect entropy from hardware events (keystrokes, mouse movements, thermal noise), interrupt timing, and other genuinely unpredictable sources. The output is not computationally predictable even if you know the algorithm.</p>
+
+<h2>The right API: <code>crypto.getRandomValues()</code></h2>
+
+<p>In browsers, the Web Crypto API provides access to the OS's CSPRNG:</p>
+
+<pre><code>// Get 32 cryptographically random bytes
+const array = new Uint8Array(32);
+crypto.getRandomValues(array);
+
+// Use the random bytes to pick characters from a set
+function generatePassword(length, charset) {
+  const array = new Uint8Array(length);
+  crypto.getRandomValues(array);
+  return Array.from(array, byte => charset[byte % charset.length]).join('');
+}
+
+const CHARSET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
+const password = generatePassword(20, CHARSET);
+</code></pre>
+
+<p><code>crypto.getRandomValues()</code> is available in all modern browsers and Node.js. Any password generator that uses this (or its Node.js equivalent <code>crypto.randomBytes()</code>) is cryptographically secure.</p>
+
+<h2>Modulo bias</h2>
+
+<p>There's a subtle flaw in the simple implementation above: <code>byte % charset.length</code> introduces modulo bias when the charset size doesn't evenly divide 256. For a 64-character charset, <code>256 / 64 = 4</code> exactly — no bias. For a 95-character charset (full printable ASCII), <code>256 / 95 ≈ 2.69</code> — the first 66 characters appear slightly more often than the last 29.</p>
+
+<p>The fix: rejection sampling. Discard bytes that would cause bias:</p>
+
+<pre><code>function generatePassword(length, charset) {
+  const max = Math.floor(256 / charset.length) * charset.length;
+  const result = [];
+  while (result.length < length) {
+    const array = new Uint8Array(length * 2); // oversample
+    crypto.getRandomValues(array);
+    for (const byte of array) {
+      if (byte < max && result.length < length) {
+        result.push(charset[byte % charset.length]);
+      }
+    }
+  }
+  return result.join('');
+}</code></pre>
+
+<p>For password generation, the bias from simple modulo is too small to matter practically — but for generating cryptographic keys, it's significant.</p>
+
+<h2>How to check if a tool is secure</h2>
+
+<ol>
+  <li>Open DevTools → Sources tab</li>
+  <li>Search the JavaScript for <code>Math.random</code> — if it's used in the password generation code, the tool is not cryptographically secure</li>
+  <li>Search for <code>getRandomValues</code> or <code>crypto.subtle</code> — if present, it uses the CSPRNG</li>
+  <li>Check the Network tab — a secure browser-based generator should make no network requests during password generation</li>
+</ol>
+
+<p>Generate secure passwords at <a href="/tools">Toolora → Security → Password Generator</a>. Uses <code>crypto.getRandomValues()</code>, runs entirely in the browser, and you can inspect the source to verify.</p>
+    `.trim(),
+  },
+
+  {
+    slug: "what-is-gzip-compression-explained",
+    title: "What Is Gzip Compression and How Does It Speed Up Websites?",
+    description: "Gzip compresses text files before sending them over HTTP. Here's how it works, how much it saves, how to enable it, and when Brotli is better.",
+    date: "2026-05-13",
+    readTime: "4 min read",
+    category: "Developer Tools",
+    content: `
+<p>Gzip is a compression algorithm used to reduce the size of files sent over HTTP. When your browser requests a web page, it sends an <code>Accept-Encoding: gzip, deflate, br</code> header to say it can handle compressed content. The server compresses the response before sending it. The browser decompresses before rendering. The result: significantly smaller transfers, faster page loads.</p>
+
+<h2>How much does Gzip save?</h2>
+
+<p>For text-based content (HTML, CSS, JavaScript, JSON, XML), Gzip typically achieves 60–80% compression. A 100KB JavaScript file compresses to 20–40KB. A 50KB HTML page compresses to 10–15KB.</p>
+
+<p>Gzip has minimal effect on already-compressed formats: images (JPEG, PNG, WebP), videos, audio, and PDF files use their own compression. Trying to Gzip a JPEG doesn't help — it's already compressed and Gzip may actually make it slightly larger.</p>
+
+<h2>How Gzip works</h2>
+
+<p>Gzip uses a combination of LZ77 (finds repeated byte sequences and replaces them with references) and Huffman coding (uses shorter bit sequences for more common symbols). Text files compress well because natural language and code have enormous amounts of repetition — the same words, patterns, HTML tags, and code constructs appear over and over.</p>
+
+<p>The decompression is faster than compression — browsers receive compressed data and decompress it nearly instantly. The CPU cost of decompression is negligible compared to the network time saved.</p>
+
+<h2>Enabling Gzip on common servers</h2>
+
+<p><strong>NGINX:</strong></p>
+<pre><code>gzip on;
+gzip_types text/plain text/css application/javascript application/json;
+gzip_min_length 1000;  # Don't compress tiny files
+gzip_comp_level 6;     # 1-9; 6 is a good balance of speed vs compression</code></pre>
+
+<p><strong>Apache:</strong></p>
+<pre><code>LoadModule deflate_module modules/mod_deflate.so
+AddOutputFilterByType DEFLATE text/html text/plain text/css application/javascript application/json</code></pre>
+
+<p><strong>Express (Node.js):</strong></p>
+<pre><code>import compression from 'compression';
+app.use(compression());</code></pre>
+
+<h2>Brotli: the modern alternative</h2>
+
+<p>Brotli (<code>br</code> encoding) was developed by Google and achieves 15–25% better compression than Gzip for typical web assets. All modern browsers support it. Brotli compression is slower, making it less suitable for on-the-fly compression of dynamic content — but for static assets, you can pre-compress with Brotli at build time.</p>
+
+<p>Serving priority: serve Brotli if the browser supports it (check for <code>br</code> in <code>Accept-Encoding</code>), fall back to Gzip otherwise.</p>
+
+<h2>Checking if compression is enabled</h2>
+
+<p>Open DevTools → Network tab → click any HTML/JS/CSS request → Headers tab → look for <code>Content-Encoding: gzip</code> or <code>Content-Encoding: br</code> in the response headers. If it's missing, compression isn't enabled.</p>
+
+<p>In curl: <code>curl -H "Accept-Encoding: gzip" -I https://example.com</code> and check the response headers.</p>
+
+<h2>Pitfalls</h2>
+
+<p><strong>Double compression:</strong> Don't Gzip files that are already Gzip compressed. Some CDN configurations accidentally recompress already-compressed assets.</p>
+
+<p><strong>Too-small files:</strong> Gzip adds overhead for tiny files (under ~1KB). The <code>gzip_min_length</code> setting in NGINX skips compression for small files.</p>
+
+<p><strong>CRIME and BREACH attacks:</strong> Compression on TLS connections can leak information if an attacker can inject content — relevant for secure sessions with dynamic content. Well-understood and mitigatable, but worth knowing about.</p>
+    `.trim(),
+  },
+
+  {
+    slug: "csv-best-practices-data-import-export",
+    title: "CSV Best Practices: Encoding, Quoting, and Headers That Don't Break",
+    description: "CSV looks simple but hides encoding traps, quoting edge cases, and dialect differences. Here's how to produce CSVs that open correctly everywhere.",
+    date: "2026-05-13",
+    readTime: "5 min read",
+    category: "Developer Tools",
+    content: `
+<p>CSV (Comma-Separated Values) is the most universal format for tabular data exchange, but it's defined loosely enough that different implementations have different assumptions about encoding, delimiters, quoting, and line endings. A CSV that looks fine in Excel might break in Python or vice versa. Here's how to write CSVs that work everywhere.</p>
+
+<h2>Always use UTF-8</h2>
+
+<p>Character encoding is the most common source of CSV problems. Two scenarios:</p>
+
+<p><strong>Excel's CSV export</strong> defaults to the system's legacy encoding (Windows-1252 on Windows, Mac Roman on older macOS). Characters like é, ü, ñ, Chinese characters, and emoji get garbled when opened in a system with a different encoding assumption.</p>
+
+<p><strong>UTF-8 BOM:</strong> Microsoft Excel has historically required a UTF-8 BOM (Byte Order Mark — three bytes at the start of the file: 0xEF, 0xBB, 0xBF) to recognize UTF-8 correctly. Without the BOM, Excel treats UTF-8 as ANSI and garbles non-ASCII characters. When creating CSVs for Excel users, include the BOM. When creating CSVs for programmatic use, omit it — many parsers can't handle the BOM.</p>
+
+<p>The safe approach for broad compatibility: UTF-8 with BOM for Excel-first files, UTF-8 without BOM for everything else.</p>
+
+<h2>Quoting rules</h2>
+
+<p>Values that contain commas, double quotes, or line breaks must be wrapped in double quotes:</p>
+
+<pre><code>name,address,notes
+Alice,"123 Main St, Suite 400",
+Bob,456 Oak Ave,"Said ""hello"" on arrival"
+Charlie,"Multi-line
+address",</code></pre>
+
+<p>A double quote inside a quoted field is escaped by doubling it: <code>""</code> inside quotes represents a literal <code>"</code>.</p>
+
+<p>Best practice: quote all string fields consistently, not just the ones that need it. Parsers handle this fine and it's easier to generate correctly.</p>
+
+<h2>Line endings</h2>
+
+<p>RFC 4180 (the closest thing to a CSV standard) specifies CRLF (<code>\r\n</code>) as the line terminator. In practice:</p>
+<ul>
+  <li>Windows: CRLF</li>
+  <li>Unix/macOS: LF</li>
+  <li>Most parsers accept both</li>
+  <li>Excel on Windows expects CRLF; it can handle LF but may behave oddly with some operations</li>
+</ul>
+
+<p>Use CRLF for maximum compatibility. In Python: <code>open('file.csv', 'w', newline='')</code> and let the csv module handle line endings.</p>
+
+<h2>Headers</h2>
+
+<ul>
+  <li>Always include a header row — it makes files self-describing</li>
+  <li>Use consistent, machine-friendly names: lowercase, underscores instead of spaces (<code>first_name</code> not <code>First Name</code>)</li>
+  <li>Don't use the same column name twice</li>
+  <li>Avoid special characters in headers</li>
+</ul>
+
+<h2>Numbers and dates</h2>
+
+<p><strong>Numbers:</strong> Use a period as the decimal separator (<code>1.99</code>, not <code>1,99</code>). Some European systems use a comma as the decimal separator — this conflicts with the CSV delimiter. If your data targets European users, consider using a semicolon as the delimiter instead.</p>
+
+<p><strong>Dates:</strong> Always use ISO 8601 format: <code>2026-05-13</code>. Locale-specific formats like <code>05/13/2026</code> vs <code>13/05/2026</code> are ambiguous and Excel will interpret them differently depending on regional settings.</p>
+
+<h2>Generating CSVs in common languages</h2>
+
+<pre><code># Python — always use the csv module, never string concatenation
+import csv
+with open('output.csv', 'w', newline='', encoding='utf-8-sig') as f:  # utf-8-sig adds BOM
+    writer = csv.writer(f)
+    writer.writerow(['name', 'email', 'age'])
+    writer.writerow(['Alice', 'alice@example.com', 30])</code></pre>
+
+<pre><code>// JavaScript
+const rows = [['name', 'email'], ['Alice', 'alice@example.com']];
+const csv = rows.map(r =>
+  r.map(cell => '"' + String(cell).replace(/"/g, '""') + '"').join(',')
+).join('\r\n');</code></pre>
+
+<p>Convert CSV to JSON and vice versa at <a href="/tools">Toolora → Converters → CSV to JSON</a>.</p>
+    `.trim(),
+  },
+
+  {
+    slug: "how-ai-reads-tool-descriptions-mcp",
+    title: "How AI Models Decide Which Tool to Call (And How to Write Better Tool Descriptions)",
+    description: "When an AI agent has multiple tools available, how does it decide which one to use? The answer is in the tool descriptions. Here's what makes a description that gets called.",
+    date: "2026-05-14",
+    readTime: "6 min read",
+    category: "AI Builders",
+    content: `
+<p>MCP (Model Context Protocol) and similar function-calling frameworks let AI models choose from a list of available tools to complete a task. The model doesn't run code to figure out what a tool does — it reads the description and decides. This means tool descriptions are the primary interface between your tool and the model's decision-making process. Poorly written descriptions mean tools get ignored even when they're the right choice.</p>
+
+<h2>How tool selection actually works</h2>
+
+<p>When a user sends a message to an AI with tools available, the model receives the full tool list with descriptions in its context window. It then reasons about which tool (if any) to call based on the combination of the user's request and the tool descriptions.</p>
+
+<p>The model is doing something like semantic matching: "The user wants to extract text from an image. I have a tool called 'ocr' with description 'Extracts text from images using optical character recognition.' That sounds like what I need." This matching is semantic — it's not keyword matching, it's understanding intent.</p>
+
+<h2>What makes a bad tool description</h2>
+
+<p><strong>Too short:</strong> <code>"Processes PDF files"</code> — processes how? Compresses? Converts? Extracts text? The model can't confidently decide when this is the right tool.</p>
+
+<p><strong>Too technical:</strong> <code>"Invokes libpoppler WASM pipeline for PDF rasterization"</code> — technical implementation details aren't what the model needs. It needs to know what problem the tool solves.</p>
+
+<p><strong>Naming-only:</strong> <code>"pdf_compress: Compress PDF"</code> — the name already implies what it does; the description adds nothing.</p>
+
+<p><strong>Missing triggers:</strong> Good descriptions tell the model when to use the tool. Without explicit "use this when..." signals, the model has to infer.</p>
+
+<h2>The trigger-first format</h2>
+
+<p>The most effective tool descriptions start with a "use this tool when..." statement:</p>
+
+<pre><code>Use this tool when the user wants to reduce the file size of a PDF document. 
+Accepts a PDF file and returns a compressed version with smaller file size.
+The quality of images in the PDF is slightly reduced but remains readable.
+Best for large PDFs with many embedded images. Not useful for text-only PDFs
+that are already small.</code></pre>
+
+<p>This format tells the model:</p>
+<ul>
+  <li>The exact user intent that triggers this tool</li>
+  <li>What the tool accepts and returns</li>
+  <li>What trade-offs to expect</li>
+  <li>When NOT to use it (equally important)</li>
+</ul>
+
+<h2>Include the domain vocabulary</h2>
+
+<p>Users phrase requests in many ways. A tool description for OCR should include the relevant terms users might use: "extract text from image," "read text from screenshot," "transcribe text from photo," "convert image to text." Models understand synonyms, but including the common phrasings in the description reduces ambiguity.</p>
+
+<h2>Specify input and output clearly</h2>
+
+<pre><code>Accepts: A PDF file (as base64-encoded string or file path), maximum 100MB.
+Returns: Plain text content extracted from the PDF, preserving paragraph breaks.
+Supports: Text-based PDFs. For scanned PDFs, use the 'ocr' tool instead.</code></pre>
+
+<p>Explicit input/output specifications help the model construct the correct tool call and handle the response correctly.</p>
+
+<h2>Test with adversarial prompts</h2>
+
+<p>After writing descriptions, test them by asking the model to complete tasks that require your tools, phrased in various ways. If the model doesn't call the tool when it should, or calls the wrong tool, the description needs adjustment. Common fixes:</p>
+<ul>
+  <li>Add more trigger phrasings</li>
+  <li>Remove ambiguous language that could match multiple tools</li>
+  <li>Add explicit "not for X" clauses when a tool is often confused with another</li>
+  <li>Shorten overly long descriptions — the model has a context window limit and reads hundreds of tokens of tool descriptions</li>
+</ul>
+
+<h2>Toolora MCP server</h2>
+
+<p>Toolora exposes 17 tools over MCP. Each description follows the trigger-first format with explicit input/output specs and disambiguation notes. Configure it at <a href="/mcp-hub">toolora.dev/mcp-hub</a> — compatible with Claude, Cursor, and any MCP-enabled client.</p>
+    `.trim(),
+  },
+
+  {
+    slug: "understanding-color-spaces-web",
+    title: "Color Spaces for the Web: sRGB, Display P3, and When It Matters",
+    description: "Modern screens can display colors that sRGB can't represent. Here's what wide-gamut color spaces are, how they work in CSS, and when you should care.",
+    date: "2026-05-14",
+    readTime: "5 min read",
+    category: "Developer Tools",
+    content: `
+<p>For most of the web's history, sRGB was the only color space that mattered. Screens could only display sRGB colors. Designers worked in sRGB. CSS colors were sRGB. Simple. But modern displays — iPhones, MacBooks, and many Android devices — can display a significantly wider range of colors than sRGB. In 2026, CSS has the tools to target these wider gamuts. Here's when and how to use them.</p>
+
+<h2>What a color space is</h2>
+
+<p>A color space defines a range (gamut) of colors that can be represented. It's defined by three primary colors (red, green, blue for additive spaces) and a white point. Different color spaces have different primaries, which means they can represent different sets of colors.</p>
+
+<p>sRGB (Standard RGB) was standardized in 1996 for computer monitors of that era. It covers about 35% of the colors visible to the human eye. It's still the standard for the web and legacy displays.</p>
+
+<p>Display P3 (also called DCI-P3 for the display version) has wider primaries — especially in the red and green regions. It covers about 54% of visible colors. It's the standard for Apple's ProMotion displays, recent iPhones, and high-end monitors.</p>
+
+<h2>The practical difference</h2>
+
+<p>Colors in Display P3 that can't be represented in sRGB look more vibrant — deeper reds, more vivid greens. You can't fake this with sRGB. If you design a logo in Display P3 and serve the image as sRGB, Display P3 users see a duller version than you intended.</p>
+
+<p>The difference is most visible in:
+<ul>
+  <li>Saturated reds (blood red, bright orange-red)</li>
+  <li>Vivid greens (grass green, lime)</li>
+  <li>Deep pinks and magentas</li>
+  <li>Rich yellows</li>
+</ul>
+
+<p>For pastels, neutrals, blues, and most UI colors, the difference is subtle or invisible.</p>
+
+<h2>Using wide-gamut colors in CSS</h2>
+
+<p>CSS Color Level 4 added wide-gamut color functions that modern browsers support:</p>
+
+<pre><code>/* Display P3 color */
+.vivid-red {
+  color: color(display-p3 1 0.08 0.1);
+}
+
+/* With fallback for older browsers */
+.vivid-red {
+  color: #ff1a1a;  /* sRGB fallback */
+  color: color(display-p3 1 0.08 0.1);  /* P3 on supporting browsers */
+}
+
+/* oklch — perceptually uniform, works across all color spaces */
+.vivid-red {
+  color: oklch(55% 0.22 25);
+}
+</code></pre>
+
+<p><code>oklch()</code> is the most useful new color function — it maps to perceptually uniform lightness and chroma, making it easy to create color scales where each step feels the same visual distance. The browser automatically picks the best representation for the current display.</p>
+
+<h2>Images: color profiles in practice</h2>
+
+<p>When you export an image from Figma or Lightroom, it can include an embedded ICC color profile (sRGB or Display P3). Browsers read this profile and render accordingly. If a Display P3 image is opened on an sRGB display, the browser tone-maps the out-of-gamut colors to the closest sRGB equivalent. If it's opened on a P3 display, the full range shows correctly.</p>
+
+<p>For web images: export with the appropriate ICC profile embedded. Don't strip profiles — stripped images often render differently than intended.</p>
+
+<h2>Should you use wide-gamut colors today?</h2>
+
+<p>For photos and images: yes — preserve the original color profile when exporting. For CSS colors: it depends on your audience. If most of your users are on Apple devices or recent high-end displays, wide-gamut CSS colors are worth the added complexity. For maximum compatibility with minimal complexity, staying in sRGB is still perfectly fine in 2026.</p>
+
+<p>For design systems and component libraries being built for the long term: consider using <code>oklch()</code> for all your color definitions — it's gamut-agnostic and will use whatever the display supports.</p>
+    `.trim(),
+  },
+
+  {
+    slug: "qr-code-error-correction-explained",
+    title: "QR Code Error Correction: How QR Codes Handle Damage and Still Scan",
+    description: "QR codes can be partially destroyed and still scan correctly. Here's how error correction levels work, what trade-offs they involve, and why it matters for QR code design.",
+    date: "2026-05-15",
+    readTime: "4 min read",
+    category: "Developer Tools",
+    content: `
+<p>QR codes can be printed on textured surfaces, dirty packaging, damaged labels, and curved objects — and still scan reliably. This isn't magic. It's error correction. QR codes embed redundant data that allows scanners to reconstruct missing or corrupted parts of the code. Understanding how this works lets you make better decisions about QR code design, size, and placement.</p>
+
+<h2>How QR code error correction works</h2>
+
+<p>QR codes use Reed-Solomon error correction — the same algorithm used in CDs, DVDs, Blu-ray discs, and deep-space communication. Reed-Solomon works by encoding the original data along with additional "check symbols" that allow any errors to be detected and corrected.</p>
+
+<p>The key property: if up to N% of the code is damaged, the original data can be fully reconstructed. The more redundant data included, the higher N, but also the larger the QR code needs to be to store the same payload.</p>
+
+<h2>The four error correction levels</h2>
+
+<table>
+  <thead>
+    <tr><th>Level</th><th>Max damage tolerated</th><th>Data capacity (relative)</th><th>Use case</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>L (Low)</td><td>~7%</td><td>Highest</td><td>Clean, controlled environments — indoor print, digital screens</td></tr>
+    <tr><td>M (Medium)</td><td>~15%</td><td>Good</td><td>General purpose — most use cases</td></tr>
+    <tr><td>Q (Quartile)</td><td>~25%</td><td>Lower</td><td>Industrial, outdoor labels, some printing imprecision</td></tr>
+    <tr><td>H (High)</td><td>~30%</td><td>Lowest</td><td>Logos embedded in QR code, harsh environments, strong branding</td></tr>
+  </tbody>
+</table>
+
+<p>Higher correction means more redundancy, which means either a larger QR code (more modules) or less data capacity at the same size.</p>
+
+<h2>Why logos inside QR codes work</h2>
+
+<p>Branded QR codes with company logos in the center look appealing — but putting an opaque image over part of the code destroys those modules. The reason this works is error correction: the logo covers roughly 20–30% of the code, which stays within the H-level correction threshold.</p>
+
+<p>This is why you need H-level error correction if you're embedding a logo, and why the logo must cover less than 30% of the code area. Going beyond this will cause scan failures, especially in poor lighting or at angles.</p>
+
+<h2>Why QR code size matters</h2>
+
+<p>A QR code needs to be scannable from the expected scanning distance. Camera modules on phones have a minimum resolution for reading QR codes. The minimum printable size for reliable scanning is roughly 2cm × 2cm for a typical smartphone at 25–30cm distance. For outdoor billboards scanned from meters away, you need much larger codes.</p>
+
+<p>The number of "modules" (pixels) in a QR code grows with the amount of data. A URL like <code>https://example.com</code> generates a smaller code than a full vCard with multiple fields.</p>
+
+<h2>Quiet zone</h2>
+
+<p>QR codes require a "quiet zone" — a white border of at least 4 modules around the code. Without this margin, scanners have trouble identifying the code's boundaries. Printing a QR code edge-to-edge on a label without quiet zone is one of the most common causes of scan failure.</p>
+
+<h2>Generate QR codes locally</h2>
+
+<p>Generate QR codes at <a href="/tools">Toolora → Developer → QR Code Generator</a> — select your error correction level, adjust size, and download. No server involved; the QR code is generated entirely in your browser.</p>
+    `.trim(),
+  },
+
+  {
+    slug: "what-is-a-hash-function-explained",
+    title: "Hash Functions Explained: Deterministic, One-Way, Collision-Resistant",
+    description: "A hash function maps any input to a fixed-size output. Here's what makes a hash function cryptographic, what the properties mean, and what hash functions are actually used for.",
+    date: "2026-05-15",
+    readTime: "5 min read",
+    category: "Security",
+    content: `
+<p>A hash function takes an input of any size — a word, a file, a terabyte of data — and produces a fixed-size output called a hash, digest, or checksum. Hash functions are one of the fundamental building blocks of cryptography and appear in security systems, data integrity checks, programming language internals, and distributed systems. Understanding what properties make a hash function useful — and what distinguishes cryptographic from non-cryptographic hashes — clarifies why they appear everywhere.</p>
+
+<h2>The core properties</h2>
+
+<p><strong>Deterministic:</strong> The same input always produces the same output. <code>SHA-256("hello")</code> will always produce the same 64-character hex string, on any machine, at any time. This is what makes hashes useful as fingerprints.</p>
+
+<p><strong>Fixed output size:</strong> Regardless of input size, the output is always the same length. SHA-256 always outputs 256 bits (64 hex characters), whether you hash a single byte or a 10GB file.</p>
+
+<p><strong>Fast to compute:</strong> Computing a hash should be quick. This makes them practical for checking file integrity and indexing data.</p>
+
+<p><strong>One-way (pre-image resistance):</strong> Given a hash output, it should be computationally infeasible to find the original input. There's no "un-hash" function. This property is what makes hashes useful for storing passwords — you store the hash, not the password, and verify by hashing the provided password and comparing.</p>
+
+<p><strong>Collision resistant:</strong> It should be computationally infeasible to find two different inputs that produce the same hash. A "collision" is a fundamental problem because it means two different files could have the same fingerprint, breaking integrity verification.</p>
+
+<p><strong>Avalanche effect:</strong> A small change in the input produces a completely different output. Change one bit of the input and about half the output bits change. This ensures that similar inputs don't produce similar hashes.</p>
+
+<h2>Cryptographic vs non-cryptographic hash functions</h2>
+
+<p>Non-cryptographic hash functions (FNV, MurmurHash, xxHash) are designed for speed and good distribution. They're used in hash maps, checksums, and data partitioning. They lack the security properties — a determined attacker can craft inputs with specific hash values.</p>
+
+<p>Cryptographic hash functions (SHA-256, SHA-3, BLAKE3) have all the properties above and are designed to resist attacks from adversaries. They're used in security-critical applications. They're also slower — typically 10–100× slower than fast non-cryptographic hashes.</p>
+
+<h2>Common applications</h2>
+
+<p><strong>File integrity:</strong> Software downloads list the SHA-256 hash of the file. After downloading, you hash the file and compare. If they match, the file wasn't corrupted or tampered with.</p>
+
+<p><strong>Password storage:</strong> Store <code>hash(password)</code>, not the password. On login, hash the provided password and compare. If the database is stolen, attackers have hashes, not passwords. (Note: use password-specific slow hashes like bcrypt, not SHA-256 — general-purpose hashes are too fast for password storage.)</p>
+
+<p><strong>Digital signatures:</strong> Sign a hash of the document, not the document itself (documents can be gigabytes; signature algorithms work on fixed-size inputs).</p>
+
+<p><strong>Merkle trees:</strong> Git, BitTorrent, and blockchains use trees of hashes to efficiently verify large amounts of data and track changes.</p>
+
+<p><strong>Hash maps:</strong> Language built-in dictionaries (Python <code>dict</code>, JavaScript <code>Object</code>, Java <code>HashMap</code>) use hash functions to quickly locate values by key.</p>
+
+<h2>The birthday problem and collision probability</h2>
+
+<p>With a 256-bit output, SHA-256 has 2^256 possible hash values — an astronomical number. The birthday paradox tells us collisions become likely when you've generated about 2^128 hashes — still an astronomical number, practically impossible to reach by accident. This is why SHA-256's 256-bit output provides 128 bits of collision security.</p>
+
+<p>Generate SHA-256, SHA-1, MD5, and other hashes at <a href="/tools">Toolora → Security → Hash Generator</a>. All hashing runs in your browser.</p>
     `.trim(),
   },
 ];
