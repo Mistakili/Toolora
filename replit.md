@@ -81,6 +81,17 @@ Exposed at `GET|POST /api/mcp` on the API server. Implements MCP Streamable HTTP
 - Stellar XLM + Solana USDC via `requirePayment` middleware
 - Additive: API key middleware (`requireApiKey`) is alternative auth path
 
+### AI Brochure (GPT-4o)
+
+**POST `/api/brochure/generate`** — AI-powered brochure generation from document HTML.
+- Request: `{ html: string, images?: string[] (data URIs, max 4), fileName?: string, sessionToken?: string }`
+- Response: `{ html: string }` — complete print-ready HTML document
+- Free tier: first 2 unique session tokens globally; after that, 402 `pro_required`
+- Same session token used twice: 402 `free_used`
+- DB table: `brochure_generations` (schema: `lib/db/src/schema/brochureGenerations.ts`)
+- Uses `AI_INTEGRATIONS_OPENAI_BASE_URL` / `AI_INTEGRATIONS_OPENAI_API_KEY` (Replit AI integration)
+- Frontend: `DocxEditor.tsx` — "✦ AI Brochure" gradient button calls endpoint; strips images from HTML, sends them separately; replaces `__IMG_N__` placeholders in response; opens print dialog
+
 ### SEO
 
 - `artifacts/toolbox/public/sitemap.xml` — full sitemap for all 20 tools + category/static pages

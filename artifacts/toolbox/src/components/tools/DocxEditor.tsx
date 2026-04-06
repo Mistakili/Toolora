@@ -395,6 +395,34 @@ function printAsPdf(html: string, title: string) {
 }
 
 
+const LS_SESSION = "toolora_uid";
+
+function getOrCreateSessionToken(): string {
+  let token = localStorage.getItem(LS_SESSION);
+  if (!token) {
+    token = crypto.randomUUID();
+    localStorage.setItem(LS_SESSION, token);
+  }
+  return token;
+}
+
+function extractImages(html: string): string[] {
+  const div = document.createElement("div");
+  div.innerHTML = html;
+  const srcs: string[] = [];
+  div.querySelectorAll("img").forEach(img => {
+    if (img.src.startsWith("data:") && srcs.length < 4) srcs.push(img.src);
+  });
+  return srcs;
+}
+
+function htmlWithoutImages(html: string): string {
+  const div = document.createElement("div");
+  div.innerHTML = html;
+  div.querySelectorAll("img").forEach(img => img.replaceWith(`<span>[image]</span>`));
+  return div.innerHTML;
+}
+
 export default function DocxEditor() {
   const editorRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -413,6 +441,8 @@ export default function DocxEditor() {
   const [showLinkModal, setShowLinkModal] = useState(false);
   const [linkUrl, setLinkUrl] = useState("");
   const [showBrochureModal, setShowBrochureModal] = useState(false);
+  const [aiGenerating, setAiGenerating] = useState(false);
+  const [aiError, setAiError] = useState("");
 
   const updateStats = useCallback(() => {
     if (editorRef.current) setStats(countStats(editorRef.current.innerHTML));
@@ -548,6 +578,50 @@ export default function DocxEditor() {
     setShowBrochureModal(false);
   }, [fileName]);
 
+  const handleAiBrochure = useCallback(async () => {
+    const html = editorRef.current?.innerHTML ?? "";
+    if (!html.trim() || html === "<br>") {
+      setAiError("Document is empty — add some content first.");
+      return;
+    }
+    setAiGenerating(true);
+    setAiError("");
+    try {
+      const BASE = import.meta.env.BASE_URL.replace(/\/$/, "");
+      const res = await fetch(`${BASE}/api/brochure/generate`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          html: htmlWithoutImages(html),
+          images: extractImages(html),
+          fileName,
+          sessionToken: getOrCreateSessionToken(),
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        if (data.error === "free_used") {
+          setAiError("You've already used your free AI brochure. Upgrade to Pro for unlimited generations.");
+        } else if (data.error === "pro_required") {
+          setAiError("The 2 free AI brochures have been claimed. Upgrade to Pro for unlimited use.");
+        } else {
+          setAiError(data.error ?? "Generation failed. Please try again.");
+        }
+        return;
+      }
+      const win = window.open("", "_blank");
+      if (!win) { setAiError("Popup blocked — please allow popups for this site."); return; }
+      win.document.write(data.html);
+      win.document.close();
+      win.focus();
+      setTimeout(() => win.print(), 1200);
+    } catch {
+      setAiError("Network error. Please try again.");
+    } finally {
+      setAiGenerating(false);
+    }
+  }, [fileName]);
+
   const handleInsertLink = useCallback(() => {
     saveRange();
     setShowLinkModal(true);
@@ -630,10 +704,22 @@ export default function DocxEditor() {
             <Upload className="w-3.5 h-3.5" />{importing ? "Opening…" : "Open .docx"}
           </button>
           <button
-            onClick={() => setShowBrochureModal(true)}
-            className="flex items-center gap-1.5 text-xs text-zinc-300 hover:text-white px-2.5 py-1.5 rounded border border-zinc-600 hover:bg-zinc-700 transition-colors"
+            onClick={handleAiBrochure}
+            disabled={aiGenerating}
+            className="flex items-center gap-1.5 text-xs bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 text-white px-3 py-1.5 rounded font-semibold transition-all disabled:opacity-60 disabled:cursor-not-allowed"
           >
-            <FileText className="w-3.5 h-3.5" /> Brochure
+            {aiGenerating ? (
+              <><span className="animate-spin inline-block w-3 h-3 border-2 border-white/30 border-t-white rounded-full" /> Designing…</>
+            ) : (
+              <>✦ AI Brochure</>
+            )}
+          </button>
+          <button
+            onClick={() => setShowBrochureModal(true)}
+            className="flex items-center gap-1.5 text-xs text-zinc-400 hover:text-white px-2.5 py-1.5 rounded border border-zinc-700 hover:bg-zinc-700 transition-colors"
+            title="CSS templates (instant)"
+          >
+            <FileText className="w-3.5 h-3.5" /> Template
           </button>
           <button
             onClick={handlePrint}
@@ -743,6 +829,22 @@ export default function DocxEditor() {
           />
           <button onClick={applyLink} className="px-2.5 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded transition-colors">Insert</button>
           <button onClick={() => setShowLinkModal(false)} className="text-zinc-400 hover:text-zinc-200 transition-colors">Cancel</button>
+        </div>
+      )}
+
+      {/* AI Brochure error banner */}
+      {aiError && (
+        <div className="flex items-center gap-3 bg-red-900/30 border-b border-red-700/50 text-red-300 text-sm px-4 py-2.5">
+          <span className="flex-1">{aiError}</span>
+          {(aiError.includes("Pro") || aiError.includes("free")) && (
+            <a
+              href="/pricing"
+              className="shrink-0 bg-violet-600 hover:bg-violet-500 text-white text-xs font-semibold px-3 py-1 rounded transition-colors"
+            >
+              Upgrade to Pro
+            </a>
+          )}
+          <button onClick={() => setAiError("")} className="shrink-0 text-red-400 hover:text-red-200 text-xl leading-none">×</button>
         </div>
       )}
 
