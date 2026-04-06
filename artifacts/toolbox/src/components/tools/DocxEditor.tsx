@@ -591,6 +591,7 @@ export default function DocxEditor() {
       const res = await fetch(`${BASE}/api/brochure/generate`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({
           html: htmlWithoutImages(html),
           images: extractImages(html),
