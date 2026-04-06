@@ -8,6 +8,12 @@ import { logger } from "../lib/logger";
 const router = Router();
 const FREE_LIMIT = 2;
 
+// Manually granted Pro access (email → true).
+// Add emails here for users granted free Pro access outside Stripe.
+const MANUAL_PRO_EMAILS = new Set([
+  "bolumariewatife@gmail.com",
+]);
+
 function stripImagesFromHtml(html: string): string {
   return html.replace(/<img[^>]+>/gi, "[image]");
 }
@@ -57,15 +63,20 @@ router.post("/brochure/generate", async (req: Request, res: Response) => {
       : null;
 
   if (authedEmail) {
-    try {
-      const [userRow] = await db
-        .select({ tier: tooloraUsersTable.tier })
-        .from(tooloraUsersTable)
-        .where(eq(tooloraUsersTable.email, authedEmail));
-      const tier = userRow?.tier ?? "free";
-      if (tier === "pro" || tier === "team") isPro = true;
-    } catch (e) {
-      logger.warn({ err: e }, "[brochure] could not look up user tier");
+    // Hard override: manually granted Pro access
+    if (MANUAL_PRO_EMAILS.has(authedEmail.toLowerCase())) {
+      isPro = true;
+    } else {
+      try {
+        const [userRow] = await db
+          .select({ tier: tooloraUsersTable.tier })
+          .from(tooloraUsersTable)
+          .where(eq(tooloraUsersTable.email, authedEmail));
+        const tier = userRow?.tier ?? "free";
+        if (tier === "pro" || tier === "team") isPro = true;
+      } catch (e) {
+        logger.warn({ err: e }, "[brochure] could not look up user tier");
+      }
     }
   }
 
