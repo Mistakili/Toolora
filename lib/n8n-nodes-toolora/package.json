@@ -21,7 +21,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/toolora/n8n-nodes-toolora"
+    "url": "git+https://github.com/toolora/n8n-nodes-toolora.git"
   },
   "main": "index.js",
   "scripts": {
