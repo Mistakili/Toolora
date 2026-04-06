@@ -223,16 +223,6 @@ function printAsPdf(html: string, title: string) {
   setTimeout(() => { win.print(); win.close(); }, 600);
 }
 
-function cleanPastedHtml(html: string): string {
-  const tmp = document.createElement("div");
-  tmp.innerHTML = html;
-  tmp.querySelectorAll("[class],[id],[data-*]").forEach(el => {
-    el.removeAttribute("class");
-    el.removeAttribute("id");
-  });
-  tmp.querySelectorAll("script,style,meta,link").forEach(el => el.remove());
-  return tmp.innerHTML;
-}
 
 export default function DocxEditor() {
   const editorRef = useRef<HTMLDivElement>(null);
@@ -310,16 +300,8 @@ export default function DocxEditor() {
     });
   }, [exec]);
 
-  const handlePaste = useCallback((e: React.ClipboardEvent) => {
-    e.preventDefault();
-    const html = e.clipboardData.getData("text/html");
-    if (html) {
-      document.execCommand("insertHTML", false, cleanPastedHtml(html));
-    } else {
-      const text = e.clipboardData.getData("text/plain");
-      document.execCommand("insertText", false, text);
-    }
-    updateStats();
+  const handlePaste = useCallback(() => {
+    setTimeout(updateStats, 0);
   }, [updateStats]);
 
   const handleNew = useCallback(() => {
