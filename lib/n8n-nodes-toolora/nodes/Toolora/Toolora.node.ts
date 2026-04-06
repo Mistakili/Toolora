@@ -6,6 +6,7 @@ import {
   NodeOperationError,
   IDataObject,
 } from "n8n-workflow";
+import NodeFormData from "form-data";
 
 const BASE_URL = "https://toolora.dev/api/agent";
 
@@ -307,7 +308,7 @@ export class Toolora implements INodeType {
           const buffer = await this.helpers.getBinaryDataBuffer(i, binaryProp);
           const endpoint = operation === "extractText" ? "/pdf/text" : "/pdf/extract";
 
-          const formData = new FormData();
+          const formData = new NodeFormData();
           formData.append("file", buffer, {
             filename: binaryData.fileName ?? "document.pdf",
             contentType: binaryData.mimeType ?? "application/pdf",
@@ -327,7 +328,7 @@ export class Toolora implements INodeType {
           const binaryData = this.helpers.assertBinaryData(i, binaryProp);
           const buffer = await this.helpers.getBinaryDataBuffer(i, binaryProp);
 
-          const formData = new FormData();
+          const formData = new NodeFormData();
           formData.append("file", buffer, {
             filename: binaryData.fileName ?? "image.png",
             contentType: binaryData.mimeType ?? "image/png",
@@ -352,7 +353,7 @@ export class Toolora implements INodeType {
               ? "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
               : "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 
-          const formData = new FormData();
+          const formData = new NodeFormData();
           formData.append("file", buffer, {
             filename: binaryData.fileName ?? "document",
             contentType: binaryData.mimeType ?? defaultMime,

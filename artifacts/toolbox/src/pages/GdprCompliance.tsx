@@ -146,7 +146,7 @@ export default function GdprCompliance() {
                 <ShieldCheck className="w-4 h-4" /> Try the Tools — Free
               </button>
             </Link>
-            <a href="mailto:hello@toolora.dev" className="flex items-center gap-2 px-6 py-3 bg-muted border border-border rounded-xl font-semibold hover:bg-muted/80 transition-colors">
+            <a href="mailto:support@toolora.dev" className="flex items-center gap-2 px-6 py-3 bg-muted border border-border rounded-xl font-semibold hover:bg-muted/80 transition-colors">
               <Building2 className="w-4 h-4" /> Enterprise Inquiry
             </a>
           </div>
@@ -319,7 +319,7 @@ export default function GdprCompliance() {
                 <Building2 className="w-4 h-4" /> Enterprise Options
               </button>
             </Link>
-            <a href="mailto:hello@toolora.dev" className="flex items-center gap-2 px-6 py-3 bg-muted border border-border rounded-xl font-semibold hover:bg-muted/80 transition-colors">
+            <a href="mailto:support@toolora.dev" className="flex items-center gap-2 px-6 py-3 bg-muted border border-border rounded-xl font-semibold hover:bg-muted/80 transition-colors">
               Contact Us <ArrowRight className="w-4 h-4" />
             </a>
           </div>
