@@ -7,6 +7,9 @@ import {
   getSessionId,
   getSession,
   updateSession,
+  SESSION_COOKIE,
+  SESSION_TTL,
+  SESSION_ROLL_INTERVAL,
   type SessionData,
 } from "../lib/auth";
 
@@ -85,5 +88,20 @@ export async function authMiddleware(
 
   req.user = refreshed.user;
   req.sessionData = refreshed;
+
+  // Rolling sessions: re-set cookie and extend DB expiry at most once per hour
+  const now = Date.now();
+  if (!refreshed.rolledAt || now - refreshed.rolledAt > SESSION_ROLL_INTERVAL) {
+    refreshed.rolledAt = now;
+    updateSession(sid, refreshed).catch(() => {});
+    res.cookie(SESSION_COOKIE, sid, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "lax",
+      path: "/",
+      maxAge: SESSION_TTL,
+    });
+  }
+
   next();
 }
