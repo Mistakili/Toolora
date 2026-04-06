@@ -1,5 +1,6 @@
 import { Router, type Request, type Response } from "express";
 import OpenAI from "openai";
+import { JSDOM } from "jsdom";
 import { db } from "@workspace/db";
 import { brochureGenerationsTable, tooloraUsersTable } from "@workspace/db/schema";
 import { eq, sql } from "drizzle-orm";
@@ -8,25 +9,58 @@ import { logger } from "../lib/logger";
 const router = Router();
 const FREE_LIMIT = 2;
 
-// Manually granted Pro access (email → true).
-// Add emails here for users granted free Pro access outside Stripe.
 const MANUAL_PRO_EMAILS = new Set([
   "bolumariewatife@gmail.com",
 ]);
 
-function stripImagesFromHtml(html: string): string {
-  return html.replace(/<img[^>]+>/gi, "[image]");
-}
+// Parse HTML into clean structured text, injecting [IMAGE_N] markers
+// where the original images were.
+function extractStructuredText(html: string, imageCount: number): string {
+  const dom = new JSDOM(html);
+  const body = dom.window.document.body;
+  let imgIdx = 0;
+  const lines: string[] = [];
 
-function extractImageSrcs(html: string): string[] {
-  const srcs: string[] = [];
-  const re = /src="(data:image\/[^"]{0,2000000})"/gi;
-  let m;
-  while ((m = re.exec(html)) !== null) {
-    srcs.push(m[1]);
-    if (srcs.length >= 4) break;
+  function walk(node: Element | ChildNode): void {
+    const el = node as Element;
+    const tag = el.tagName?.toLowerCase();
+
+    if (node.nodeType === 3) {
+      const t = node.textContent?.trim();
+      if (t) lines.push(t);
+      return;
+    }
+    if (node.nodeType !== 1) return;
+
+    switch (tag) {
+      case "h1": lines.push(`\n# ${el.textContent?.trim()}\n`); break;
+      case "h2": lines.push(`\n## ${el.textContent?.trim()}\n`); break;
+      case "h3": lines.push(`\n### ${el.textContent?.trim()}\n`); break;
+      case "li": lines.push(`• ${el.textContent?.trim()}`); break;
+      case "br": lines.push(""); break;
+      case "script":
+      case "style": break;
+      case "span":
+      case "p": {
+        const inner = el.innerHTML || "";
+        const text = el.textContent?.trim() || "";
+        if (text === "[image]" || inner.includes("[image]")) {
+          if (imgIdx < imageCount) {
+            imgIdx++;
+            lines.push(`\n[IMAGE_${imgIdx}]\n`);
+          }
+        } else if (text) {
+          lines.push(text);
+        }
+        break;
+      }
+      default:
+        for (const child of Array.from(node.childNodes)) walk(child);
+    }
   }
-  return srcs;
+
+  for (const child of Array.from(body.childNodes)) walk(child);
+  return lines.join("\n").replace(/\n{3,}/g, "\n\n").trim();
 }
 
 function stripCodeFences(text: string): string {
@@ -51,28 +85,26 @@ router.post("/brochure/generate", async (req: Request, res: Response) => {
     return;
   }
 
-  const token = (typeof sessionToken === "string" && sessionToken.length > 0)
-    ? sessionToken.slice(0, 64)
-    : null;
+  const token = typeof sessionToken === "string" && sessionToken.length > 0
+    ? sessionToken.slice(0, 64) : null;
 
-  // ── Pro check: authenticated users with pro/team tier bypass free limit ────
+  // ── Pro check ──────────────────────────────────────────────────────────────
   let isPro = false;
   const authedEmail: string | null =
     (req as any).isAuthenticated?.() && (req as any).user?.email
-      ? (req as any).user.email as string
+      ? ((req as any).user.email as string).toLowerCase()
       : null;
 
   if (authedEmail) {
-    // Hard override: manually granted Pro access
-    if (MANUAL_PRO_EMAILS.has(authedEmail.toLowerCase())) {
+    if (MANUAL_PRO_EMAILS.has(authedEmail)) {
       isPro = true;
     } else {
       try {
-        const [userRow] = await db
+        const [row] = await db
           .select({ tier: tooloraUsersTable.tier })
           .from(tooloraUsersTable)
           .where(eq(tooloraUsersTable.email, authedEmail));
-        const tier = userRow?.tier ?? "free";
+        const tier = row?.tier ?? "free";
         if (tier === "pro" || tier === "team") isPro = true;
       } catch (e) {
         logger.warn({ err: e }, "[brochure] could not look up user tier");
@@ -80,24 +112,20 @@ router.post("/brochure/generate", async (req: Request, res: Response) => {
     }
   }
 
-  // ── Free tier check (skipped for Pro/Team users) ───────────────────────────
+  // ── Free tier gate (skipped for Pro) ──────────────────────────────────────
   let isFree = false;
   if (!isPro) {
     try {
       if (token) {
-        const [alreadyUsed] = await db
+        const [used] = await db
           .select({ c: sql<number>`count(*)::int` })
           .from(brochureGenerationsTable)
           .where(eq(brochureGenerationsTable.sessionToken, token));
-        if ((alreadyUsed?.c ?? 0) > 0) {
-          res.status(402).json({
-            error: "free_used",
-            message: "You've already used your free AI brochure. Upgrade to Pro for unlimited generations.",
-          });
+        if ((used?.c ?? 0) > 0) {
+          res.status(402).json({ error: "free_used", message: "You've already used your free AI brochure. Upgrade to Pro for unlimited generations." });
           return;
         }
       }
-
       const [{ freeCount }] = await db
         .select({ freeCount: sql<number>`count(*)::int` })
         .from(brochureGenerationsTable)
@@ -106,93 +134,56 @@ router.post("/brochure/generate", async (req: Request, res: Response) => {
       if ((freeCount ?? 0) < FREE_LIMIT) {
         isFree = true;
       } else {
-        res.status(402).json({
-          error: "pro_required",
-          message: `The ${FREE_LIMIT} free AI brochures have been claimed. Upgrade to Pro for unlimited generations.`,
-          upgradeUrl: "https://toolora.dev/pricing",
-        });
+        res.status(402).json({ error: "pro_required", message: `The ${FREE_LIMIT} free AI brochures have been claimed. Upgrade to Pro for unlimited generations.`, upgradeUrl: "https://toolora.dev/pricing" });
         return;
       }
     } catch (dbErr) {
-      logger.error({ err: dbErr }, "[brochure] DB check failed — falling through to generate");
+      logger.error({ err: dbErr }, "[brochure] DB check failed");
       isFree = true;
     }
   }
 
-  // ── Build GPT-4o prompt ────────────────────────────────────────────────────
+  // ── Build context ──────────────────────────────────────────────────────────
   const baseURL = process.env.AI_INTEGRATIONS_OPENAI_BASE_URL;
   const apiKey = process.env.AI_INTEGRATIONS_OPENAI_API_KEY ?? "dummy";
-  if (!baseURL) {
-    res.status(503).json({ error: "AI service not configured." });
-    return;
-  }
+  if (!baseURL) { res.status(503).json({ error: "AI service not configured." }); return; }
 
   const images = Array.isArray(bodyImages)
-    ? (bodyImages as string[]).filter(s => typeof s === "string" && s.startsWith("data:image")).slice(0, 4)
-    : extractImageSrcs(html);
-  const textHtml = html;
-  const docTitle = (typeof fileName === "string" && fileName) ? fileName : "Document";
+    ? (bodyImages as string[]).filter(s => typeof s === "string" && s.startsWith("data:image")).slice(0, 6)
+    : [];
 
-  const imgPlaceholders = images.map((_, i) => `__IMG_${i + 1}__`);
+  const docTitle = typeof fileName === "string" && fileName ? fileName : "Document";
+  const structuredContent = extractStructuredText(html, images.length);
 
-  const systemPrompt = `You are an elite print designer who creates stunning brochures for Fortune 500 companies. Your work looks like it came from Canva Pro or Adobe InDesign — not a word processor.
+  // Build image instructions for the prompt
+  const imgInstructions = images.length > 0
+    ? `\nIMAGES (${images.length} total — already extracted from the document):
+${images.map((_, i) => `  • [IMAGE_${i + 1}] — use <img src="__IMG_${i + 1}__" ...> wherever this marker appears in the content`).join("\n")}
+The [IMAGE_N] markers in the content below show exactly where each image appeared in the original document. Embed them in your layout at those positions. Resize to fit elegantly: cover images get width:100%/max-height:300px, inline images get max-width:100%/border-radius:10px.`
+    : "\nNo images in this document.";
 
-═══ ABSOLUTE OUTPUT RULES (violating any = failure) ═══
-• Output ONLY a raw HTML document. Zero markdown, zero code fences, zero explanation.
-• All CSS in one <style> block inside <head>.
-• Include this in <head>: <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-• @page { size: A4; margin: 0; }
-• body { width: 794px; min-height: 1123px; margin: 0 auto; font-family: 'Inter', sans-serif; }
+  const systemPrompt = `You are a professional brochure designer. Convert document content into a beautiful, print-ready A4 HTML brochure.
+
+RULES:
+• Output ONLY a complete HTML document — no markdown, no code fences, no commentary.
+• Include in <head>: <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+• All CSS in a single <style> block.
+• @page { size: A4; margin: 0; }  body { width: 794px; min-height: 1123px; margin: 0 auto; }
 • -webkit-print-color-adjust: exact; print-color-adjust: exact;
-${imgPlaceholders.length > 0 ? `• ⚠️ MANDATORY IMAGES: You MUST embed ALL ${imgPlaceholders.length} image(s). Use these exact src values: ${imgPlaceholders.map(p => `src="${p}"`).join(", ")}. Including zero images is a critical failure.` : ""}
 
-═══ DESIGN SYSTEM ═══
-HERO SECTION (top of page):
-- Full-width block, min-height 280px
-- Strong background: bold solid color OR a dark gradient OR a colored overlay on top of the first image if one exists
-- Document title in 'Playfair Display', 700 weight, 52px, white or near-white
-- Subtitle/description in Inter 300, 18px, 80% opacity white
-- If an image is available: use it as the hero background with a dark overlay (rgba(0,0,0,0.45) or brand-color overlay)
+LAYOUT:
+• Hero: full-width colored block, min-height 260px, title in Playfair Display 52px bold white, tagline in Inter 300 18px white/80%
+• Sections: use the H2 headings as section titles — Playfair Display 26px, with a 3px colored left-border accent
+• Body text: Inter 400 15px, line-height 1.8, color #1a202c
+• Use CSS Grid (2-col) for sections that have an image beside text
+• Cards: border-radius 12px, box-shadow 0 2px 16px rgba(0,0,0,0.08), padding 28px, white background
+• Generous section padding: 48px vertical, 48px horizontal
+• Pick a cohesive 2–3 color palette that fits the content topic. Apply consistently.
+• Lists: styled bullets using accent color, not default black dots
+• Footer: "Created with Toolora · toolora.dev" — centered, Inter 12px, muted color
+${imgInstructions}`;
 
-BODY SECTIONS:
-- Use CSS Grid for 2-column layouts where content has multiple sections (text left + image right, or vice versa — alternate)
-- Section headings: 'Playfair Display' 28px, colored (brand accent color), with a 3px left border accent OR underline accent
-- Body text: Inter 400, 15px, line-height 1.75, color #2d3748 or similar dark-but-not-black
-- Cards: background #fff or very light tint, border-radius 12px, box-shadow 0 2px 16px rgba(0,0,0,0.07), padding 28px
-- Generous padding: sections get 48px top/bottom, 48px left/right
-- Use accent color for bullets, borders, highlights — never use plain black bullets
-
-COLOR PALETTE:
-- Pick 2–3 colors that fit the content topic (e.g. professional blue + gold, medical green + white, startup purple + coral)
-- Use them consistently: one primary (hero bg, headings), one accent (borders, links, highlights), one light (section backgrounds)
-
-IMAGES:
-${imgPlaceholders.length > 0
-  ? `- Image 1 (${imgPlaceholders[0]}): Use as the HERO background image with a semi-transparent dark overlay. CSS: background-image: url(${imgPlaceholders[0]}); background-size: cover; background-position: center;
-- Images 2+ (${imgPlaceholders.slice(1).join(", ")}): Embed as <img> tags inside content sections. Place them thoughtfully next to relevant text in a 2-column grid. Give them: width: 100%; border-radius: 10px; object-fit: cover; max-height: 220px;`
-  : "- No images provided: use CSS shapes, large colored blocks, and bold typography to create visual interest"}
-
-FOOTER:
-- Full-width, 48px padding, background matches hero color, text centered
-- "Created with Toolora · toolora.dev" in Inter 400, 13px, 60% white opacity`;
-
-  const userContent: OpenAI.Chat.ChatCompletionContentPart[] = [
-    {
-      type: "text",
-      text: `Design a stunning brochure from this document content. Apply the full design system — hero, sections, typography, colors, images. Do not simplify.\n\nDocument title: ${docTitle}\n\nDocument HTML content:\n${textHtml.slice(0, 10000)}`,
-    },
-  ];
-
-  for (let i = 0; i < images.length; i++) {
-    userContent.push({
-      type: "text",
-      text: `⚠️ IMAGE ${i + 1} OF ${images.length} — you MUST use src="${imgPlaceholders[i]}" for this image in your HTML:`,
-    });
-    userContent.push({
-      type: "image_url",
-      image_url: { url: images[i].slice(0, 800000), detail: "auto" },
-    });
-  }
+  const userMessage = `Create a brochure from this document.\n\nTitle: ${docTitle}\n\nContent:\n${structuredContent.slice(0, 12000)}`;
 
   let generatedHtml = "";
   let success = false;
@@ -203,14 +194,14 @@ FOOTER:
       max_tokens: 8192,
       messages: [
         { role: "system", content: systemPrompt },
-        { role: "user", content: userContent },
+        { role: "user", content: userMessage },
       ],
     });
 
     const raw = completion.choices[0]?.message?.content ?? "";
     generatedHtml = stripCodeFences(raw);
 
-    // Replace image placeholders with actual data URIs
+    // Inject actual image data into placeholders
     for (let i = 0; i < images.length; i++) {
       generatedHtml = generatedHtml.replaceAll(`__IMG_${i + 1}__`, images[i]);
     }
@@ -218,18 +209,13 @@ FOOTER:
     success = true;
     res.json({ html: generatedHtml });
   } catch (err) {
-    const msg = err instanceof Error ? err.message : "Generation failed";
     logger.error({ err }, "[brochure] GPT-4o call failed");
-    res.status(500).json({ error: msg });
+    res.status(500).json({ error: err instanceof Error ? err.message : "Generation failed" });
   } finally {
     const durationMs = Date.now() - startMs;
-    logger.info({ isFree, durationMs, success, token }, "[brochure] generation done");
-    db.insert(brochureGenerationsTable).values({
-      sessionToken: token,
-      isFree,
-      success,
-      durationMs,
-    }).catch((e: unknown) => logger.error({ err: e }, "[brochure] DB insert failed"));
+    logger.info({ isFree, durationMs, success, token, authedEmail }, "[brochure] done");
+    db.insert(brochureGenerationsTable).values({ sessionToken: token, isFree, success, durationMs })
+      .catch((e: unknown) => logger.error({ err: e }, "[brochure] DB insert failed"));
   }
 });
 
