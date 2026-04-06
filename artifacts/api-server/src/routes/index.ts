@@ -12,7 +12,6 @@ import stripeRouter from "./stripeRoutes";
 import subscribeRouter from "./subscribe";
 import pasteRouter from "./paste";
 import signalRouter from "./signal";
-import brochureRouter from "./brochure";
 
 const router: IRouter = Router();
 
@@ -29,6 +28,5 @@ router.use("/stripe", stripeRouter);
 router.use(subscribeRouter);
 router.use("/paste", pasteRouter);
 router.use("/signal", signalRouter);
-router.use(brochureRouter);
 
 export default router;
