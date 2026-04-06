@@ -150,6 +150,14 @@ export default function Integrations() {
               </button>
             </Link>
           </div>
+          <div className="mt-12 rounded-2xl overflow-hidden border border-border/40 shadow-2xl max-w-3xl mx-auto">
+            <img
+              src="/images/integrations-hero.png"
+              alt="Toolora automation workflow connectors for n8n, Zapier, and Make"
+              className="w-full h-auto object-cover"
+              loading="eager"
+            />
+          </div>
         </div>
       </section>
 

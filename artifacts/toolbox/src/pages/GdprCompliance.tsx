@@ -150,6 +150,14 @@ export default function GdprCompliance() {
               <Building2 className="w-4 h-4" /> Enterprise Inquiry
             </a>
           </div>
+          <div className="mt-12 rounded-2xl overflow-hidden border border-border/40 shadow-2xl max-w-3xl mx-auto">
+            <img
+              src="/images/blog-gdpr-compliance.png"
+              alt="GDPR-compliant document processing — no uploads, no servers, privacy by architecture"
+              className="w-full h-auto object-cover"
+              loading="eager"
+            />
+          </div>
         </div>
       </section>
 

@@ -144,6 +144,66 @@ uri = "file://artifacts/toolbox/public/images/enterprise-trust.png"
 type = "image"
 title = "enterprise privacy breach vs protection diptych"
 
+[[generated]]
+id = "SMtNpq76BF35dExFvhOCs"
+uri = "file://artifacts/toolbox/public/images/integrations-hero.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "UFwmRKH60kKgKzzZtECCs"
+uri = "file://artifacts/toolbox/public/images/blog-gdpr-compliance.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "dAp3_cLHNgBmVg8ueYMZJ"
+uri = "file://artifacts/toolbox/public/images/blog-ocr-scan.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "i0pbdh_SCTQpNfVtd4kyy"
+uri = "file://artifacts/toolbox/public/images/blog-pdf-tools.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "b4XwzQfZ93y3UdEEaRTBa"
+uri = "file://artifacts/toolbox/public/images/blog-developer-web.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "RGo-AVDm88_Ot25ha7Ya4"
+uri = "file://artifacts/toolbox/public/images/blog-data-convert.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "4QdJcZpzHF7A-PIMgiBTy"
+uri = "file://artifacts/toolbox/public/images/blog-ai-agent.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "s9Yh4-EZWGLGEmxSrjg55"
+uri = "file://artifacts/toolbox/public/images/blog-privacy-audit.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "Gq9uHGDpNGeuAFd0GQSj3"
+uri = "file://artifacts/toolbox/public/images/blog-text-tools.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "Z1FQdkoOrDjx1tylqohky"
+uri = "file://artifacts/toolbox/public/images/blog-seo-content.png"
+type = "image"
+title = "generated_image"
+
 [[outputs]]
 id = "W91hp3ihLhEvWTT51EilJ"
 uri = "file://artifacts/toolbox/public/og-image.png"
