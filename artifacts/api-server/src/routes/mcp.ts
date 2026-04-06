@@ -5,6 +5,7 @@ import { createWorker } from "tesseract.js";
 import mammoth from "mammoth";
 import ExcelJS from "exceljs";
 import OpenAI from "openai";
+import crypto from "node:crypto";
 import { db } from "@workspace/db";
 import { mcpCallsTable, pastesTable, memoriesTable } from "@workspace/db/schema";
 import { logger } from "../lib/logger";
@@ -262,6 +263,143 @@ const TOOLS = [
       required: ["key"],
     },
   },
+  {
+    name: "list_memories",
+    description:
+      "Use this tool to discover what has been saved in memory — e.g. at the start of a session, or when the user asks 'what have you saved?' or 'show me my memories'. Returns all saved memory keys with their preview, save date, and expiry. Optionally filter by a prefix (e.g. 'project-' to list only project memories). Pair with recall_memory to fetch the full content of any key.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        prefix: { type: "string", description: "Optional prefix to filter memory keys (e.g. 'project-'). If omitted, lists all memories." },
+      },
+      required: [],
+    },
+  },
+  {
+    name: "chunk_text",
+    description:
+      "Use this tool to split long text into smaller, overlapping chunks suitable for embedding, vector storage, or RAG pipelines. Triggers: 'chunk this document for RAG', 'split this into embeddings', 'break this into segments', 'prepare this text for a vector database'. Returns an array of chunks with index, text, character count, and estimated token count. Essential before embedding or storing text in a vector database.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        text: { type: "string", description: "The text to chunk." },
+        strategy: {
+          type: "string",
+          enum: ["paragraph", "sentence", "fixed"],
+          description: "Chunking strategy: 'paragraph' (split on blank lines, default), 'sentence' (split on sentence boundaries), 'fixed' (fixed character count).",
+        },
+        chunkSize: { type: "number", description: "Max characters per chunk for 'fixed' strategy, or target size hint for others (default: 1000)." },
+        overlap: { type: "number", description: "Number of characters to overlap between consecutive chunks (default: 100). Helps preserve context across chunk boundaries." },
+      },
+      required: ["text"],
+    },
+  },
+  {
+    name: "estimate_tokens",
+    description:
+      "Use this tool to estimate the token count of a text before sending it to an LLM. Triggers: 'how many tokens is this?', 'will this fit in context?', 'check if this is within the limit', 'token count for GPT-4'. Returns estimated token count, percentage of the model's context window used, and estimated API cost. Essential for context window management and cost planning.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        text: { type: "string", description: "The text to estimate tokens for." },
+        model: {
+          type: "string",
+          enum: ["gpt-4o", "gpt-4o-mini", "gpt-4-turbo", "gpt-3.5-turbo", "claude-3-5-sonnet", "claude-3-5-haiku", "claude-3-opus", "llama-3-70b"],
+          description: "Target model (default: gpt-4o). Used to calculate context window usage and cost estimate.",
+        },
+      },
+      required: ["text"],
+    },
+  },
+  {
+    name: "html_to_markdown",
+    description:
+      "Use this tool to convert raw HTML into clean, readable Markdown. Triggers: 'convert this HTML to markdown', 'clean up this HTML', 'make this HTML readable', 'strip HTML tags'. Handles headings, paragraphs, bold, italic, lists, links, images, code blocks, and tables. Returns clean Markdown and character count. Useful after web scraping or when processing HTML content for an LLM.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        html: { type: "string", description: "The HTML string to convert." },
+        includeLinks: { type: "boolean", description: "Whether to preserve hyperlinks as [text](url) in the output (default: true)." },
+        includeImages: { type: "boolean", description: "Whether to include image alt text as ![alt](src) (default: false — images often clutter output)." },
+      },
+      required: ["html"],
+    },
+  },
+  {
+    name: "extract_structured_data",
+    description:
+      "Use this tool to extract structured JSON data from any unstructured text — emails, reports, web pages, PDFs, meeting notes, etc. Triggers: 'extract the data from this', 'pull the fields out of this text', 'parse this into structured format', 'get me a JSON from this', 'extract names/dates/amounts from this'. Describe the structure you want in plain English (e.g. 'extract: company name, CEO, founding year, revenue'). Returns valid JSON matching your description.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        text: { type: "string", description: "The unstructured text to extract data from." },
+        schema: { type: "string", description: "Plain-English description of what to extract, e.g. 'Extract: person name, email, phone number, company'. Or provide a JSON Schema as a string." },
+        format: {
+          type: "string",
+          enum: ["json", "jsonl"],
+          description: "Output format: 'json' for a single object or array (default), 'jsonl' for one JSON object per line.",
+        },
+      },
+      required: ["text", "schema"],
+    },
+  },
+  {
+    name: "diff_texts",
+    description:
+      "Use this tool to compare two pieces of text and identify exactly what changed between them. Triggers: 'what changed between these two versions?', 'compare these texts', 'show me the diff', 'what's different?', 'find the changes in this revision'. Returns added lines (with +), removed lines (with -), unchanged lines, and summary statistics. Use this when reviewing edits, comparing document versions, or verifying AI-generated changes.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        text1: { type: "string", description: "The original text (before)." },
+        text2: { type: "string", description: "The new text (after)." },
+        context: { type: "number", description: "Number of unchanged lines to show around each change for context (default: 3). Set to 0 for changes only." },
+        ignoreWhitespace: { type: "boolean", description: "Ignore leading/trailing whitespace differences (default: false)." },
+      },
+      required: ["text1", "text2"],
+    },
+  },
+  {
+    name: "run_regex",
+    description:
+      "Use this tool to extract, test, or transform text using a regular expression. Triggers: 'extract all emails from this', 'find all URLs in this text', 'does this match a pattern?', 'replace all instances of X with Y', 'parse this log with regex'. Modes: 'matches' (all full matches), 'groups' (capture groups from all matches), 'test' (true/false), 'replace' (substitute matches). Returns results with match positions.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        text: { type: "string", description: "The text to search." },
+        pattern: { type: "string", description: "The regex pattern (without delimiters, e.g. '\\\\d{3}-\\\\d{4}')." },
+        flags: { type: "string", description: "Regex flags: 'g' (global), 'i' (case-insensitive), 'm' (multiline), 's' (dotAll). Combine freely, e.g. 'gi'. Default: 'g'." },
+        mode: {
+          type: "string",
+          enum: ["matches", "groups", "test", "replace"],
+          description: "Operation mode: 'matches' (default) returns all full matches, 'groups' returns named/numbered capture groups, 'test' returns true/false, 'replace' substitutes matches.",
+        },
+        replacement: { type: "string", description: "Replacement string when mode is 'replace'. Supports $1, $2 etc. for capture groups." },
+      },
+      required: ["text", "pattern"],
+    },
+  },
+  {
+    name: "hash_text",
+    description:
+      "Use this tool to generate a cryptographic hash of any text or data string. Triggers: 'hash this string', 'get the SHA256 of this', 'create a checksum', 'fingerprint this content', 'verify the integrity'. Supports MD5, SHA-1, SHA-256, SHA-512. Returns hex-encoded hash and the algorithm used. Use SHA-256 or SHA-512 for security-sensitive applications.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        text: { type: "string", description: "The text or data to hash." },
+        algorithm: {
+          type: "string",
+          enum: ["md5", "sha1", "sha256", "sha512"],
+          description: "Hash algorithm (default: sha256). Use sha256 or sha512 for security. MD5/SHA-1 are fast but cryptographically weak.",
+        },
+        encoding: {
+          type: "string",
+          enum: ["hex", "base64"],
+          description: "Output encoding: 'hex' (default, lowercase hexadecimal) or 'base64'.",
+        },
+      },
+      required: ["text"],
+    },
+  },
 ];
 
 // ─── Per-tool contextual footers (appended to text responses) ─────────────────
@@ -282,6 +420,14 @@ const TOOL_FOOTER: Record<string, string> = {
   create_shareable_paste: "\n\n— Shared via Toolora · 37 free browser tools at toolora.dev · Pro plan ($19/mo): toolora.dev/pricing",
   save_memory: "\n\n— Toolora MCP · Memory stored. Explore 37 free tools at toolora.dev",
   recall_memory: "\n\n— Toolora MCP · Explore 37 free tools at toolora.dev · Pro plan: toolora.dev/pricing",
+  list_memories: "\n\n— Toolora MCP · Explore 37 free tools at toolora.dev · Pro plan: toolora.dev/pricing",
+  chunk_text: "\n\n— Toolora MCP · Text chunking, word count, and content tools at toolora.dev · Pro plan: toolora.dev/pricing",
+  estimate_tokens: "\n\n— Toolora MCP · Token estimation and text tools at toolora.dev · Pro plan: toolora.dev/pricing",
+  html_to_markdown: "\n\n— Toolora MCP · HTML, Markdown, and developer tools at toolora.dev · Pro plan: toolora.dev/pricing",
+  extract_structured_data: "\n\n— Toolora MCP · AI-powered data extraction and 37 free tools at toolora.dev · Pro plan: toolora.dev/pricing",
+  diff_texts: "\n\n— Toolora MCP · Text diff, comparison, and developer tools at toolora.dev · Pro plan: toolora.dev/pricing",
+  run_regex: "\n\n— Toolora MCP · Regex, developer tools, and more at toolora.dev · Pro plan: toolora.dev/pricing",
+  hash_text: "\n\n— Toolora MCP · Hash, encode, and developer tools at toolora.dev · Pro plan: toolora.dev/pricing",
 };
 
 // ─── Error class ──────────────────────────────────────────────────────────────
@@ -957,6 +1103,360 @@ async function handleRecallMemory(args: Record<string, unknown>): Promise<string
   });
 }
 
+// ─── New tool handlers ────────────────────────────────────────────────────────
+
+async function handleListMemories(args: Record<string, unknown>): Promise<string> {
+  const { prefix } = args as { prefix?: string };
+  const { eq: _eq, and, gt, sql: drizzleSql, like } = await import("drizzle-orm");
+  const now = new Date();
+  const rows = await db
+    .select({ key: memoriesTable.key, createdAt: memoriesTable.createdAt, expiresAt: memoriesTable.expiresAt, content: memoriesTable.content })
+    .from(memoriesTable)
+    .where(
+      prefix
+        ? and(gt(memoriesTable.expiresAt, now), like(memoriesTable.key, `${prefix}%`))
+        : gt(memoriesTable.expiresAt, now)
+    )
+    .orderBy(memoriesTable.createdAt);
+
+  if (rows.length === 0) {
+    return JSON.stringify({ count: 0, memories: [], message: prefix ? `No memories found with prefix "${prefix}".` : "No memories saved yet." });
+  }
+
+  return JSON.stringify({
+    count: rows.length,
+    memories: rows.map(r => ({
+      key: r.key,
+      preview: r.content.slice(0, 120) + (r.content.length > 120 ? "…" : ""),
+      savedAt: r.createdAt?.toISOString(),
+      expiresAt: r.expiresAt.toISOString(),
+    })),
+  }, null, 2);
+  void _eq; void drizzleSql;
+}
+
+function handleChunkText(args: Record<string, unknown>): string {
+  const { text, strategy = "paragraph", chunkSize = 1000, overlap = 100 } = args as {
+    text?: string; strategy?: string; chunkSize?: number; overlap?: number;
+  };
+
+  if (!text || typeof text !== "string") throw new McpToolError("Missing required argument: text");
+  if (text.length === 0) throw new McpToolError("text is empty.");
+
+  const maxChunk = Math.max(100, Math.min(Number(chunkSize) || 1000, 50000));
+  const ov = Math.max(0, Math.min(Number(overlap) || 100, Math.floor(maxChunk / 2)));
+
+  const estimateTokens = (t: string) => Math.ceil(t.length / 4);
+
+  let rawChunks: string[] = [];
+
+  if (strategy === "fixed") {
+    for (let i = 0; i < text.length; i += maxChunk - ov) {
+      rawChunks.push(text.slice(i, i + maxChunk));
+    }
+  } else if (strategy === "sentence") {
+    const sentences = text.match(/[^.!?]+[.!?]+["']?|[^.!?]+$/g) ?? [text];
+    let current = "";
+    for (const sentence of sentences) {
+      if (current.length + sentence.length > maxChunk && current.length > 0) {
+        rawChunks.push(current.trim());
+        current = current.slice(-ov) + sentence;
+      } else {
+        current += sentence;
+      }
+    }
+    if (current.trim()) rawChunks.push(current.trim());
+  } else {
+    const paragraphs = text.split(/\n\n+/).filter(p => p.trim());
+    let current = "";
+    for (const para of paragraphs) {
+      if (current.length + para.length + 2 > maxChunk && current.length > 0) {
+        rawChunks.push(current.trim());
+        current = current.slice(-ov) + "\n\n" + para;
+      } else {
+        current = current ? current + "\n\n" + para : para;
+      }
+    }
+    if (current.trim()) rawChunks.push(current.trim());
+  }
+
+  rawChunks = rawChunks.filter(c => c.trim().length > 0);
+
+  const chunks = rawChunks.map((c, i) => ({
+    index: i,
+    text: c,
+    chars: c.length,
+    estimatedTokens: estimateTokens(c),
+  }));
+
+  return JSON.stringify({ strategy, chunkSize: maxChunk, overlap: ov, totalChunks: chunks.length, totalChars: text.length, totalEstimatedTokens: estimateTokens(text), chunks }, null, 2);
+}
+
+function handleEstimateTokens(args: Record<string, unknown>): string {
+  const { text, model = "gpt-4o" } = args as { text?: string; model?: string };
+  if (!text || typeof text !== "string") throw new McpToolError("Missing required argument: text");
+
+  const MODEL_INFO: Record<string, { contextWindow: number; inputCostPer1k: number; label: string }> = {
+    "gpt-4o":             { contextWindow: 128000, inputCostPer1k: 0.0025, label: "GPT-4o (128k)" },
+    "gpt-4o-mini":        { contextWindow: 128000, inputCostPer1k: 0.00015, label: "GPT-4o Mini (128k)" },
+    "gpt-4-turbo":        { contextWindow: 128000, inputCostPer1k: 0.01, label: "GPT-4 Turbo (128k)" },
+    "gpt-3.5-turbo":      { contextWindow: 16385,  inputCostPer1k: 0.0005, label: "GPT-3.5 Turbo (16k)" },
+    "claude-3-5-sonnet":  { contextWindow: 200000, inputCostPer1k: 0.003, label: "Claude 3.5 Sonnet (200k)" },
+    "claude-3-5-haiku":   { contextWindow: 200000, inputCostPer1k: 0.0008, label: "Claude 3.5 Haiku (200k)" },
+    "claude-3-opus":      { contextWindow: 200000, inputCostPer1k: 0.015, label: "Claude 3 Opus (200k)" },
+    "llama-3-70b":        { contextWindow: 128000, inputCostPer1k: 0.0009, label: "Llama 3 70B (128k)" },
+  };
+
+  const info = MODEL_INFO[model] ?? MODEL_INFO["gpt-4o"];
+  // cl100k approximation: ~4 chars per token for English prose
+  const estimatedTokens = Math.ceil(text.length / 4);
+  const percentUsed = ((estimatedTokens / info.contextWindow) * 100).toFixed(2);
+  const estimatedCostUSD = ((estimatedTokens / 1000) * info.inputCostPer1k).toFixed(6);
+  const fitsInContext = estimatedTokens <= info.contextWindow;
+
+  return JSON.stringify({
+    model: info.label,
+    estimatedTokens,
+    contextWindow: info.contextWindow,
+    percentOfContextUsed: `${percentUsed}%`,
+    fitsInContext,
+    estimatedInputCostUSD: `$${estimatedCostUSD}`,
+    chars: text.length,
+    words: text.trim().split(/\s+/).length,
+    note: "Token count is an approximation (~4 chars/token for English). Actual count may vary ±10% depending on language and content.",
+  }, null, 2);
+}
+
+function handleHtmlToMarkdown(args: Record<string, unknown>): string {
+  const { html, includeLinks = true, includeImages = false } = args as {
+    html?: string; includeLinks?: boolean; includeImages?: boolean;
+  };
+  if (!html || typeof html !== "string") throw new McpToolError("Missing required argument: html");
+
+  const { JSDOM } = require("jsdom") as typeof import("jsdom");
+  const dom = new JSDOM(html);
+  const doc = dom.window.document;
+
+  function convert(node: Node): string {
+    if (node.nodeType === 3) return node.textContent ?? "";
+    if (node.nodeType !== 1) return "";
+    const el = node as Element;
+    const tag = el.tagName?.toLowerCase();
+    const inner = () => Array.from(el.childNodes).map(convert).join("");
+
+    switch (tag) {
+      case "script": case "style": case "nav": case "header": case "footer": return "";
+      case "h1": return `\n# ${inner().trim()}\n\n`;
+      case "h2": return `\n## ${inner().trim()}\n\n`;
+      case "h3": return `\n### ${inner().trim()}\n\n`;
+      case "h4": return `\n#### ${inner().trim()}\n\n`;
+      case "h5": return `\n##### ${inner().trim()}\n\n`;
+      case "h6": return `\n###### ${inner().trim()}\n\n`;
+      case "p": { const t = inner().trim(); return t ? `\n${t}\n` : ""; }
+      case "br": return "\n";
+      case "hr": return "\n---\n";
+      case "strong": case "b": return `**${inner()}**`;
+      case "em": case "i": return `_${inner()}_`;
+      case "code": return `\`${el.textContent}\``;
+      case "pre": {
+        const code = el.querySelector("code");
+        const lang = code?.className?.replace(/language-/, "") ?? "";
+        return `\n\`\`\`${lang}\n${el.textContent}\n\`\`\`\n`;
+      }
+      case "blockquote": return `\n> ${inner().trim().replace(/\n/g, "\n> ")}\n`;
+      case "ul": return "\n" + Array.from(el.children).map(li => `- ${Array.from(li.childNodes).map(convert).join("").trim()}`).join("\n") + "\n";
+      case "ol": return "\n" + Array.from(el.children).map((li, i) => `${i + 1}. ${Array.from(li.childNodes).map(convert).join("").trim()}`).join("\n") + "\n";
+      case "li": return inner();
+      case "a": {
+        const href = el.getAttribute("href") ?? "";
+        const text = inner().trim();
+        if (!includeLinks || !href) return text;
+        return href === text ? href : `[${text}](${href})`;
+      }
+      case "img": {
+        if (!includeImages) return el.getAttribute("alt") ?? "";
+        const src = el.getAttribute("src") ?? "";
+        const alt = el.getAttribute("alt") ?? "";
+        return `![${alt}](${src})`;
+      }
+      case "table": {
+        const rows = Array.from(el.querySelectorAll("tr"));
+        if (rows.length === 0) return "";
+        const toRow = (r: Element) => "| " + Array.from(r.querySelectorAll("th,td")).map(c => c.textContent?.trim() ?? "").join(" | ") + " |";
+        const [head, ...body] = rows;
+        const cols = head.querySelectorAll("th,td").length;
+        const sep = "| " + Array(cols).fill("---").join(" | ") + " |";
+        return "\n" + toRow(head) + "\n" + sep + "\n" + body.map(toRow).join("\n") + "\n";
+      }
+      case "div": case "section": case "article": case "main": return inner();
+      case "span": return inner();
+      default: return inner();
+    }
+  }
+
+  const body = doc.body ?? doc.documentElement;
+  let markdown = convert(body).replace(/\n{3,}/g, "\n\n").trim();
+
+  return JSON.stringify({ markdown, chars: markdown.length, lines: markdown.split("\n").length });
+}
+
+async function handleExtractStructuredData(args: Record<string, unknown>): Promise<string> {
+  const { text, schema, format = "json" } = args as { text?: string; schema?: string; format?: string };
+  if (!text || typeof text !== "string") throw new McpToolError("Missing required argument: text");
+  if (!schema || typeof schema !== "string") throw new McpToolError("Missing required argument: schema");
+
+  const baseURL = process.env.AI_INTEGRATIONS_OPENAI_BASE_URL;
+  const apiKey = process.env.AI_INTEGRATIONS_OPENAI_API_KEY ?? "dummy";
+  if (!baseURL) throw new McpToolError("AI service not configured on this server.");
+
+  const ai = new OpenAI({ baseURL, apiKey });
+  const completion = await ai.chat.completions.create({
+    model: "gpt-4o-mini",
+    max_tokens: 4096,
+    response_format: { type: "json_object" },
+    messages: [
+      {
+        role: "system",
+        content: `You are a precise data extraction assistant. Extract structured data from text exactly as requested. Output ONLY valid JSON — no prose, no explanation, no markdown fences. If a field is not found, use null.`,
+      },
+      {
+        role: "user",
+        content: `Extract the following from the text below:\n\n${schema}\n\nText:\n${text.slice(0, 32000)}`,
+      },
+    ],
+  });
+
+  const raw = completion.choices[0]?.message?.content ?? "{}";
+  let parsed: unknown;
+  try { parsed = JSON.parse(raw); } catch { parsed = { raw }; }
+
+  if (format === "jsonl" && typeof parsed === "object" && parsed !== null) {
+    const items = Array.isArray(parsed) ? parsed : [parsed];
+    return items.map((item: unknown) => JSON.stringify(item)).join("\n");
+  }
+
+  return JSON.stringify(parsed, null, 2);
+}
+
+function handleDiffTexts(args: Record<string, unknown>): string {
+  const { text1, text2, context = 3, ignoreWhitespace = false } = args as {
+    text1?: string; text2?: string; context?: number; ignoreWhitespace?: boolean;
+  };
+  if (text1 === undefined || text1 === null) throw new McpToolError("Missing required argument: text1");
+  if (text2 === undefined || text2 === null) throw new McpToolError("Missing required argument: text2");
+
+  const normalize = (t: string) => ignoreWhitespace ? t.trim() : t;
+  const lines1 = String(text1).split("\n").map(normalize);
+  const lines2 = String(text2).split("\n").map(normalize);
+
+  // Simple LCS-based line diff
+  const m = lines1.length, n = lines2.length;
+  const dp: number[][] = Array.from({ length: m + 1 }, () => new Array(n + 1).fill(0));
+  for (let i = m - 1; i >= 0; i--) {
+    for (let j = n - 1; j >= 0; j--) {
+      dp[i][j] = lines1[i] === lines2[j] ? dp[i + 1][j + 1] + 1 : Math.max(dp[i + 1][j], dp[i][j + 1]);
+    }
+  }
+
+  type DiffOp = { op: "equal" | "insert" | "delete"; line: string };
+  const ops: DiffOp[] = [];
+  let i = 0, j = 0;
+  while (i < m || j < n) {
+    if (i < m && j < n && lines1[i] === lines2[j]) {
+      ops.push({ op: "equal", line: lines1[i] }); i++; j++;
+    } else if (j < n && (i >= m || dp[i][j + 1] >= dp[i + 1][j])) {
+      ops.push({ op: "insert", line: lines2[j] }); j++;
+    } else {
+      ops.push({ op: "delete", line: lines1[i] }); i++;
+    }
+  }
+
+  const ctx = Math.max(0, Number(context) || 3);
+  const changeIdxs = new Set(ops.map((o, idx) => o.op !== "equal" ? idx : -1).filter(x => x >= 0));
+  const showIdxs = new Set<number>();
+  changeIdxs.forEach(ci => {
+    for (let d = -ctx; d <= ctx; d++) {
+      const k = ci + d;
+      if (k >= 0 && k < ops.length) showIdxs.add(k);
+    }
+  });
+
+  const diffLines: string[] = [];
+  let lastIdx = -1;
+  for (let k = 0; k < ops.length; k++) {
+    if (!showIdxs.has(k)) continue;
+    if (lastIdx >= 0 && k > lastIdx + 1) diffLines.push("...");
+    const { op, line } = ops[k];
+    diffLines.push(op === "insert" ? `+ ${line}` : op === "delete" ? `- ${line}` : `  ${line}`);
+    lastIdx = k;
+  }
+
+  const added = ops.filter(o => o.op === "insert").length;
+  const removed = ops.filter(o => o.op === "delete").length;
+  const unchanged = ops.filter(o => o.op === "equal").length;
+  const identical = added === 0 && removed === 0;
+
+  return JSON.stringify({
+    identical,
+    summary: { added, removed, unchanged, totalLines1: m, totalLines2: n },
+    diff: diffLines.join("\n"),
+  }, null, 2);
+}
+
+function handleRunRegex(args: Record<string, unknown>): string {
+  const { text, pattern, flags = "g", mode = "matches", replacement = "" } = args as {
+    text?: string; pattern?: string; flags?: string; mode?: string; replacement?: string;
+  };
+  if (!text || typeof text !== "string") throw new McpToolError("Missing required argument: text");
+  if (!pattern || typeof pattern !== "string") throw new McpToolError("Missing required argument: pattern");
+
+  const safeFlags = (String(flags ?? "g")).replace(/[^gimsud]/g, "");
+  let re: RegExp;
+  try {
+    re = new RegExp(pattern, safeFlags.includes("g") ? safeFlags : safeFlags + "g");
+  } catch (e) {
+    throw new McpToolError(`Invalid regex pattern: ${(e as Error).message}`);
+  }
+
+  if (mode === "test") {
+    const testRe = new RegExp(pattern, safeFlags.replace("g", ""));
+    return JSON.stringify({ matched: testRe.test(text), pattern, flags: safeFlags });
+  }
+
+  if (mode === "replace") {
+    const result = text.replace(re, String(replacement));
+    return JSON.stringify({ result, originalLength: text.length, resultLength: result.length });
+  }
+
+  const matches: Array<{ match: string; index: number; groups?: Record<string, string> }> = [];
+  let m;
+  const globalRe = new RegExp(pattern, safeFlags.includes("g") ? safeFlags : safeFlags + "g");
+  while ((m = globalRe.exec(text)) !== null) {
+    matches.push({
+      match: m[0],
+      index: m.index,
+      groups: m.groups ?? (m.length > 1 ? Object.fromEntries(m.slice(1).map((g, i) => [`$${i + 1}`, g ?? ""])) : undefined),
+    });
+    if (matches.length >= 200) break;
+    if (!globalRe.global) break;
+  }
+
+  return JSON.stringify({ count: matches.length, pattern, flags: safeFlags, matches }, null, 2);
+}
+
+function handleHashText(args: Record<string, unknown>): string {
+  const { text, algorithm = "sha256", encoding = "hex" } = args as {
+    text?: string; algorithm?: string; encoding?: string;
+  };
+  if (text === undefined || text === null) throw new McpToolError("Missing required argument: text");
+  const validAlgorithms = ["md5", "sha1", "sha256", "sha512"];
+  const algo = validAlgorithms.includes(String(algorithm)) ? String(algorithm) : "sha256";
+  const enc = String(encoding) === "base64" ? "base64" : "hex";
+
+  const hash = crypto.createHash(algo).update(String(text), "utf8").digest(enc as BufferEncoding);
+  return JSON.stringify({ algorithm: algo, encoding: enc, hash, inputLength: String(text).length });
+}
+
 // ─── JSON-RPC helpers ─────────────────────────────────────────────────────────
 
 function rpcOk(id: string | number | null, result: unknown) {
@@ -1174,6 +1674,30 @@ Notable browser tools:
               break;
             case "recall_memory":
               text = await handleRecallMemory(args);
+              break;
+            case "list_memories":
+              text = await handleListMemories(args);
+              break;
+            case "chunk_text":
+              text = handleChunkText(args);
+              break;
+            case "estimate_tokens":
+              text = handleEstimateTokens(args);
+              break;
+            case "html_to_markdown":
+              text = handleHtmlToMarkdown(args);
+              break;
+            case "extract_structured_data":
+              text = await handleExtractStructuredData(args);
+              break;
+            case "diff_texts":
+              text = handleDiffTexts(args);
+              break;
+            case "run_regex":
+              text = handleRunRegex(args);
+              break;
+            case "hash_text":
+              text = handleHashText(args);
               break;
             default:
               res.json(rpcErr(id, -32602, `Unknown tool: ${name}`));
