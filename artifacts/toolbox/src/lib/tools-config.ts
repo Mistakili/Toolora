@@ -240,6 +240,13 @@ export const TOOLS: ToolDef[] = [
   },
 
   {
+    id: "docx-editor", name: "Word Document Editor", slug: "docx-editor", category: "productivity", isPopular: true, icon: FileText,
+    description: "Create, edit, and download Word documents directly in your browser. Open existing .docx files and save as .docx — no Microsoft Office needed.",
+    seoTitle: "Free Online Word Document Editor — Edit & Create .docx Files | Toolora",
+    seoDescription: "Create and edit Word documents in your browser for free. Open .docx files, format text, add headings and lists, then download as .docx. No Microsoft Office, no sign-up, no file upload.",
+  },
+
+  {
     id: "og-preview", name: "OG / Social Preview", slug: "og-preview", category: "developer", isPopular: false, icon: Globe,
     description: "Preview how your page looks when shared on Twitter, LinkedIn, Slack, and Facebook.",
     seoTitle: "Free Open Graph Preview Tool — Social Card Tester | Toolora",

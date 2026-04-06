@@ -45,6 +45,7 @@ import HtmlMinifier from "@/components/tools/HtmlMinifier";
 import SvgOptimizer from "@/components/tools/SvgOptimizer";
 import MarkdownToHtml from "@/components/tools/MarkdownToHtml";
 import OgPreview from "@/components/tools/OgPreview";
+import DocxEditor from "@/components/tools/DocxEditor";
 
 // ── Per-category SEO content blocks ─────────────────────────────────────────
 
@@ -184,6 +185,7 @@ const TOOL_COMPONENTS: Record<string, React.ComponentType<any>> = {
   "svg-optimizer": SvgOptimizer,
   "markdown-to-html": MarkdownToHtml,
   "og-preview": OgPreview,
+  "docx-editor": DocxEditor,
 };
 
 export default function ToolView() {

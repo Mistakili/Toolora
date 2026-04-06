@@ -1534,6 +1534,8 @@
   <!-- New Tool: OG / Social Preview -->
   <url><loc>https://toolora.dev/tools/developer/og-preview</loc><lastmod>2026-04-06</lastmod><changefreq>monthly</changefreq><priority>0.85</priority></url>
   <url><loc>https://toolora.dev/how-to/og-preview</loc><lastmod>2026-04-06</lastmod><changefreq>monthly</changefreq><priority>0.80</priority></url>
+  <url><loc>https://toolora.dev/tools/productivity/docx-editor</loc><lastmod>2026-04-06</lastmod><changefreq>monthly</changefreq><priority>0.88</priority></url>
+  <url><loc>https://toolora.dev/how-to/docx-editor</loc><lastmod>2026-04-06</lastmod><changefreq>monthly</changefreq><priority>0.82</priority></url>
 
   <!-- Comparison / Alternative Pages -->
   <url><loc>https://toolora.dev/compare/toolora-vs-smallpdf</loc><lastmod>2026-04-06</lastmod><changefreq>monthly</changefreq><priority>0.90</priority></url>

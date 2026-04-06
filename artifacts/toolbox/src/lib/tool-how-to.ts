@@ -1007,6 +1007,37 @@ export const HOW_TO_GUIDES: ToolHowTo[] = [
     ],
     relatedSlugs: ["html-minifier", "markdown-preview", "url-encoder"],
   },
+  {
+    slug: "docx-editor",
+    toolSlug: "docx-editor",
+    toolName: "Word Document Editor",
+    metaTitle: "How to Create and Edit Word Documents Online Free — No MS Office | Toolora",
+    metaDescription: "Create, format, and download .docx Word documents in your browser for free. Open existing .docx files, add headings and lists, and save — no Microsoft Office or Google account required.",
+    headline: "How to Create and Edit Word Documents Online Without Microsoft Office",
+    intro: "Microsoft Office costs $100+/year and Google Docs requires a Google account. Toolora's Word Document Editor is free, runs entirely in your browser, requires zero sign-up, and your document never gets uploaded anywhere. Open existing .docx files, edit them, and download them back as proper .docx files — all in one tab.",
+    steps: [
+      { title: "Open the Word Document Editor", description: "Navigate to the Word Document Editor. A blank document opens immediately — no loading screen, no account needed." },
+      { title: "Type or paste your content", description: "Click in the white document area and start typing. Paste content from anywhere — it strips external formatting so you start clean." },
+      { title: "Apply formatting with the toolbar", description: "Use Bold (Ctrl+B), Italic (Ctrl+I), Underline (Ctrl+U), or click H1/H2/H3 for headings. Add bullet or numbered lists. Change alignment and font size from the dropdown." },
+      { title: "Open an existing .docx file (optional)", description: "Click 'Open .docx' to import an existing Word document. The file is read locally — nothing is uploaded. Mammoth.js converts it to editable content in seconds." },
+      { title: "Name your document", description: "Click the document name at the top and type your file name. This becomes the .docx filename when you download." },
+      { title: "Download as .docx", description: "Click the blue 'Save as .docx' button. A proper Word-compatible .docx file downloads instantly to your device. Open it in Word, LibreOffice, or Google Docs." },
+    ],
+    useCases: [
+      { title: "MS Office expired or unavailable", description: "Quickly write and format a document without needing an active Office subscription. Download a proper .docx anyone can open." },
+      { title: "Quick document on a shared/work computer", description: "No need to log into personal accounts. Open the browser tool, write, download, done. Nothing stored anywhere." },
+      { title: "Edit a .docx someone sent you", description: "Open the file, make your edits, save it back as .docx — without installing anything or signing into cloud storage." },
+      { title: "Simple contracts and letters", description: "Format a professional letter or simple contract with headings, bold text, and lists. Download as .docx to share or print." },
+    ],
+    faq: [
+      { q: "Can I really open and edit existing .docx files?", a: "Yes. Click 'Open .docx', select your file, and it loads into the editor. Complex formatting (tables, images, tracked changes) may be simplified, but all text content is preserved." },
+      { q: "Is my document uploaded to any server?", a: "No. Everything happens in your browser. The file is read by your local JavaScript environment and never sent to any server. This makes it safe for confidential documents." },
+      { q: "Can the downloaded .docx be opened in Microsoft Word?", a: "Yes. The .docx file follows the Open XML standard and is compatible with Microsoft Word, LibreOffice Writer, Google Docs (import), and Apple Pages." },
+      { q: "Does it support images and tables?", a: "The current version supports text, headings (H1-H3), bold, italic, underline, bullet lists, numbered lists, and text alignment. Images and tables are on the roadmap." },
+      { q: "Is there a file size limit?", a: "No server-side limit. The only constraint is your device's available memory, which handles very large documents comfortably." },
+    ],
+    relatedSlugs: ["pdf-merge", "pdf-split", "markdown-preview"],
+  },
 ];
 
 export function getHowToGuide(slug: string): ToolHowTo | undefined {
