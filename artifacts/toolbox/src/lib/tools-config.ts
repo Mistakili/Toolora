@@ -3,7 +3,7 @@ import {
   Palette, Image as ImageIcon, FileJson, Clock, Link as LinkIcon, 
   Scissors, Minimize, SplitSquareHorizontal, Layers, Fingerprint, RefreshCcw,
   BookOpen, ListOrdered, Code2, CodeXml, Coins, GitCompare, CalendarClock,
-  Binary, Braces
+  Binary, Braces, Zap, BarChart2, Sparkles
 } from "lucide-react";
 
 export type ToolCategory = "pdf" | "image" | "text" | "developer" | "productivity";
@@ -199,6 +199,44 @@ export const TOOLS: ToolDef[] = [
     description: "Convert images between PNG, JPG, WebP, etc.",
     seoTitle: "Free Image Converter — Convert JPG, PNG, WebP Online | Toolora",
     seoDescription: "Convert images between JPEG, PNG, and WebP formats instantly. Free online image format converter. No uploads, no registration, fully private.",
+  },
+
+  // New Strategic Tools
+  {
+    id: "text-to-slug", name: "Text to Slug", slug: "text-to-slug", category: "text", isPopular: true, icon: LinkIcon,
+    description: "Convert any text, title, or phrase into a clean URL slug.",
+    seoTitle: "Free Text to Slug Converter — URL Slug Generator Online | Toolora",
+    seoDescription: "Convert any text, title, or phrase into a clean URL-safe slug instantly. Handles accents, special characters, and custom separators. Free, private, no upload.",
+  },
+  {
+    id: "css-gradient-generator", name: "CSS Gradient Generator", slug: "css-gradient-generator", category: "developer", isPopular: true, icon: Palette,
+    description: "Build beautiful linear and radial CSS gradients visually.",
+    seoTitle: "Free CSS Gradient Generator — Linear & Radial Gradients Online | Toolora",
+    seoDescription: "Create beautiful CSS gradients visually. Pick colors, set stops, choose direction, and copy the CSS instantly. Free online gradient generator — no ads.",
+  },
+  {
+    id: "readability-score", name: "Readability Score", slug: "readability-score", category: "text", icon: BarChart2,
+    description: "Analyze text readability using Flesch–Kincaid and grade level scores.",
+    seoTitle: "Free Readability Score Checker — Flesch-Kincaid Online | Toolora",
+    seoDescription: "Check the readability of any text using Flesch Reading Ease and Flesch-Kincaid Grade Level. Free online readability analyzer — runs in your browser, no uploads.",
+  },
+  {
+    id: "html-minifier", name: "HTML Minifier", slug: "html-minifier", category: "developer", icon: Minimize,
+    description: "Remove whitespace, comments, and optional tags from HTML code.",
+    seoTitle: "Free HTML Minifier — Minify HTML Online | Toolora",
+    seoDescription: "Minify HTML by removing whitespace, comments, and optional tags. Free online HTML minifier that runs in your browser — no server, no uploads, completely private.",
+  },
+  {
+    id: "svg-optimizer", name: "SVG Optimizer", slug: "svg-optimizer", category: "developer", icon: Sparkles,
+    description: "Remove metadata, comments, and redundant attributes from SVG files.",
+    seoTitle: "Free SVG Optimizer — Clean & Compress SVG Online | Toolora",
+    seoDescription: "Optimize SVG files by removing Inkscape metadata, comments, empty groups, and default attributes. Free browser-based SVG optimizer — files never leave your device.",
+  },
+  {
+    id: "markdown-to-html", name: "Markdown to HTML", slug: "markdown-to-html", category: "developer", icon: FileText,
+    description: "Convert Markdown text to clean HTML with live preview.",
+    seoTitle: "Free Markdown to HTML Converter — Live Preview Online | Toolora",
+    seoDescription: "Convert Markdown to HTML instantly with a live preview. Supports headings, bold, italic, code blocks, links, images, and blockquotes. Free, private, browser-based.",
   },
 
   // PDF Tools

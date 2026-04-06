@@ -38,6 +38,12 @@ import YamlJsonConverter from "@/components/tools/YamlJsonConverter";
 import CronParser from "@/components/tools/CronParser";
 import NumberBaseConverter from "@/components/tools/NumberBaseConverter";
 import StringEscape from "@/components/tools/StringEscape";
+import TextToSlug from "@/components/tools/TextToSlug";
+import CssGradientGenerator from "@/components/tools/CssGradientGenerator";
+import ReadabilityScore from "@/components/tools/ReadabilityScore";
+import HtmlMinifier from "@/components/tools/HtmlMinifier";
+import SvgOptimizer from "@/components/tools/SvgOptimizer";
+import MarkdownToHtml from "@/components/tools/MarkdownToHtml";
 
 // ── Per-category SEO content blocks ─────────────────────────────────────────
 
@@ -170,6 +176,12 @@ const TOOL_COMPONENTS: Record<string, React.ComponentType<any>> = {
   "cron-parser": CronParser,
   "number-base-converter": NumberBaseConverter,
   "string-escape": StringEscape,
+  "text-to-slug": TextToSlug,
+  "css-gradient-generator": CssGradientGenerator,
+  "readability-score": ReadabilityScore,
+  "html-minifier": HtmlMinifier,
+  "svg-optimizer": SvgOptimizer,
+  "markdown-to-html": MarkdownToHtml,
 };
 
 export default function ToolView() {
