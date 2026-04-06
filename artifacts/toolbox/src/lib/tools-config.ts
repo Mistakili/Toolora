@@ -3,7 +3,7 @@ import {
   Palette, Image as ImageIcon, FileJson, Clock, Link as LinkIcon, 
   Scissors, Minimize, SplitSquareHorizontal, Layers, Fingerprint, RefreshCcw,
   BookOpen, ListOrdered, Code2, CodeXml, Coins, GitCompare, CalendarClock,
-  Binary, Braces, Zap, BarChart2, Sparkles, Globe
+  Binary, Braces, Zap, BarChart2, Sparkles, Globe, ScissorsLineDashed, FileCode, DatabaseZap
 } from "lucide-react";
 
 export type ToolCategory = "pdf" | "image" | "text" | "developer" | "productivity";
@@ -251,6 +251,25 @@ export const TOOLS: ToolDef[] = [
     description: "Preview how your page looks when shared on Twitter, LinkedIn, Slack, and Facebook.",
     seoTitle: "Free Open Graph Preview Tool — Social Card Tester | Toolora",
     seoDescription: "See exactly how your page will appear when shared on Twitter/X, LinkedIn, Slack, and Facebook. Enter your og:title, og:description, and og:image — get live card previews instantly. Free, browser-based.",
+  },
+
+  {
+    id: "text-chunker", name: "Text Chunker", slug: "text-chunker", category: "developer", isPopular: true, icon: ScissorsLineDashed,
+    description: "Split long text into overlapping chunks for RAG pipelines and vector embeddings.",
+    seoTitle: "Free Text Chunker — Split Text for RAG & Vector Embeddings | Toolora",
+    seoDescription: "Split any text into overlapping chunks for RAG pipelines, vector databases, and LLM embeddings. Choose paragraph, sentence, or fixed-size strategy with configurable overlap. Free, browser-based, private.",
+  },
+  {
+    id: "html-to-markdown", name: "HTML to Markdown", slug: "html-to-markdown", category: "developer", isPopular: true, icon: FileCode,
+    description: "Convert raw HTML to clean, readable Markdown — ideal for web scraping and LLM input.",
+    seoTitle: "Free HTML to Markdown Converter — Convert HTML to Markdown Online | Toolora",
+    seoDescription: "Convert HTML to clean Markdown instantly. Handles headings, bold, italic, links, tables, code blocks, and lists. Perfect for web scraping output, CMS exports, and LLM input prep. Free, private, browser-based.",
+  },
+  {
+    id: "data-extractor", name: "AI Data Extractor", slug: "data-extractor", category: "developer", isPopular: true, icon: DatabaseZap,
+    description: "Extract structured JSON from any unstructured text using AI — emails, contracts, notes.",
+    seoTitle: "Free AI Data Extractor — Extract Structured Data from Text Online | Toolora",
+    seoDescription: "Extract structured JSON from any unstructured text using AI. Works on emails, contracts, meeting notes, product pages, and more. Describe what to extract in plain English and get back clean JSON.",
   },
 
   // PDF Tools

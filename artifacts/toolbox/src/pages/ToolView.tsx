@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useRoute, Link } from "wouter";
-import { ChevronRight, Home, ShieldCheck } from "lucide-react";
+import { ChevronRight, Home, ShieldCheck, Sparkles } from "lucide-react";
 import { ShareModal } from "@/components/shared/ShareModal";
 import { getToolBySlug, getCategoryById, getToolsByCategory } from "@/lib/tools-config";
 import NotFound from "./not-found";
@@ -46,6 +46,9 @@ import SvgOptimizer from "@/components/tools/SvgOptimizer";
 import MarkdownToHtml from "@/components/tools/MarkdownToHtml";
 import OgPreview from "@/components/tools/OgPreview";
 import DocxEditor from "@/components/tools/DocxEditor";
+import TextChunker from "@/components/tools/TextChunker";
+import HtmlToMarkdown from "@/components/tools/HtmlToMarkdown";
+import DataExtractor from "@/components/tools/DataExtractor";
 
 // ── Per-category SEO content blocks ─────────────────────────────────────────
 
@@ -186,6 +189,9 @@ const TOOL_COMPONENTS: Record<string, React.ComponentType<any>> = {
   "markdown-to-html": MarkdownToHtml,
   "og-preview": OgPreview,
   "docx-editor": DocxEditor,
+  "text-chunker": TextChunker,
+  "html-to-markdown": HtmlToMarkdown,
+  "data-extractor": DataExtractor,
 };
 
 export default function ToolView() {
@@ -272,10 +278,17 @@ export default function ToolView() {
               <p className="text-lg text-muted-foreground">{tool.description}</p>
             </div>
             <div className="shrink-0 flex flex-col sm:flex-row items-end sm:items-center gap-2">
-              <div className="hidden sm:flex items-center gap-2 bg-muted/50 px-4 py-2 rounded-xl text-sm border border-border">
-                <ShieldCheck className="w-4 h-4 text-green-500" />
-                <span>Processed Locally</span>
-              </div>
+              {tool.id === "data-extractor" ? (
+                <div className="hidden sm:flex items-center gap-2 bg-primary/10 px-4 py-2 rounded-xl text-sm border border-primary/20">
+                  <Sparkles className="w-4 h-4 text-primary" />
+                  <span>AI-Powered</span>
+                </div>
+              ) : (
+                <div className="hidden sm:flex items-center gap-2 bg-muted/50 px-4 py-2 rounded-xl text-sm border border-border">
+                  <ShieldCheck className="w-4 h-4 text-green-500" />
+                  <span>Processed Locally</span>
+                </div>
+              )}
               <ShareModal toolName={tool.name} toolUrl={window.location.href} />
             </div>
           </div>

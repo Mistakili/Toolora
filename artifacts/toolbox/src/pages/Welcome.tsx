@@ -71,7 +71,7 @@ export default function Welcome() {
           )}
         </h1>
         <p className="text-zinc-400 text-center text-lg mb-12 max-w-md mx-auto leading-relaxed">
-          37 tools. All free to use. Your files never leave your device — everything runs right here in your browser.
+          40 tools. All free to use. Your files never leave your device — everything runs right here in your browser.
         </p>
 
         {/* Quick start cards */}
@@ -104,7 +104,7 @@ export default function Welcome() {
             className="flex-1 flex items-center justify-center gap-2 bg-violet-600 hover:bg-violet-500 text-white font-semibold px-6 py-3 rounded-xl transition-colors"
           >
             <Sparkles className="w-4 h-4" />
-            Explore all 37 tools
+            Explore all 40 tools
           </a>
           <a
             href={`${BASE}/api-keys`}

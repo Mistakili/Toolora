@@ -217,7 +217,7 @@ function printAsPdf(html: string, title: string) {
     table { border-collapse: collapse; width: 100%; margin: 8pt 0; }
     td, th { border: 1px solid #ccc; padding: 4pt 8pt; }
     @media print { body { padding: 0.5in; } }
-  </style></head><body>${html}</body></html>\`);
+  </style></head><body>${html}</body></html>`);
   win.document.close();
   win.focus();
   setTimeout(() => { win.print(); win.close(); }, 600);
@@ -295,7 +295,7 @@ export default function DocxEditor() {
     exec("fontSize", "7");
     editorRef.current?.querySelectorAll("font[size='7']").forEach(el => {
       const span = document.createElement("span");
-      span.style.fontSize = `${size}pt`;
+      span.style.fontSize = size + "pt";
       span.innerHTML = (el as HTMLElement).innerHTML;
       el.replaceWith(span);
     });
