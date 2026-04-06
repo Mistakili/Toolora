@@ -21,7 +21,7 @@ const TOOLS = [
   {
     name: "extract_pdf_text",
     description:
-      "Extract all plain text from a PDF file. Accepts the file as a base64-encoded string. Returns the text content, page count, word count, and character count. Useful for reading documents, research papers, invoices, or any PDF without needing to open it.",
+      "Use this tool whenever the user shares, uploads, or references a PDF file and wants to read, summarise, search, or analyse its contents. Extracts all plain text from the PDF (base64-encoded). Returns text, page count, word count, and character count. Call this first before attempting any analysis of PDF content — e.g. 'summarise this PDF', 'what does this contract say', 'extract the data from this report'.",
     inputSchema: {
       type: "object",
       properties: {
@@ -34,7 +34,7 @@ const TOOLS = [
   {
     name: "merge_pdfs",
     description:
-      "Merge 2 to 20 PDF files into a single PDF document. Each file is provided as a base64-encoded string. Returns the merged PDF as a base64 PNG. Ideal for combining reports, invoices, chapters, or any multi-file PDF workflow.",
+      "Use this tool when the user provides two or more PDF files and wants them combined into one. Triggers: 'merge these PDFs', 'combine these documents', 'join these files into one PDF'. Accepts 2–20 base64-encoded PDFs in order. Returns the merged PDF as a base64 string.",
     inputSchema: {
       type: "object",
       properties: {
@@ -59,7 +59,7 @@ const TOOLS = [
   {
     name: "generate_qr_code",
     description:
-      "Generate a QR code image from any text or URL. Returns a base64-encoded PNG. Supports custom size and error correction level. Useful for creating shareable links, contact cards, payment addresses, or any scannable code.",
+      "Use this tool whenever the user asks for a QR code or wants a URL/text to be scannable. Triggers: 'make a QR code for this link', 'create a scannable code', 'generate a QR for my website'. Accepts any text or URL (max 2953 chars). Returns a base64-encoded PNG image. Display the image inline after generating it.",
     inputSchema: {
       type: "object",
       properties: {
@@ -77,7 +77,7 @@ const TOOLS = [
   {
     name: "csv_to_json",
     description:
-      "Convert a CSV string into a JSON array of objects. The first row is treated as column headers by default. Handles quoted fields, embedded commas, and CRLF line endings. Useful for processing spreadsheet exports, data files, and tabular data.",
+      "Use this tool when the user pastes or provides CSV data and needs it as structured JSON, or wants to query/filter/analyse tabular data. Triggers: 'parse this CSV', 'convert this spreadsheet export to JSON', 'read this data file'. Returns a JSON array of objects with column headers as keys. Use this before analysing or transforming any CSV content.",
     inputSchema: {
       type: "object",
       properties: {
@@ -90,7 +90,7 @@ const TOOLS = [
   {
     name: "json_to_csv",
     description:
-      "Convert a JSON array of objects into a CSV string. Column names are inferred from all object keys. Handles special characters, embedded commas, and quotes with proper escaping. Returns a CSV with CRLF line endings.",
+      "Use this tool when the user has JSON data (an array of objects) and wants it as a spreadsheet, CSV export, or downloadable table. Triggers: 'export this to CSV', 'convert this JSON to a spreadsheet', 'I need this as a table'. Infers column headers from object keys. Returns a properly escaped CSV string.",
     inputSchema: {
       type: "object",
       properties: {
@@ -107,7 +107,7 @@ const TOOLS = [
   {
     name: "ocr_image",
     description:
-      "Extract text from an image using OCR (Optical Character Recognition). Accepts the image as a base64-encoded string. Returns extracted text, confidence score, and word count. Useful for reading scanned documents, screenshots, handwritten notes, or any image where text needs to be extracted without a vision model.",
+      "Use this tool when the user shares an image that contains text they need extracted, read, or processed. Triggers: 'read the text in this image', 'extract text from this screenshot', 'what does this scanned page say', 'transcribe this handwritten note'. Accepts base64-encoded PNG/JPEG/WEBP/BMP/TIFF. Returns extracted text, confidence score, and word count. Prefer this over vision model text extraction for accuracy on scanned docs.",
     inputSchema: {
       type: "object",
       properties: {
@@ -120,7 +120,7 @@ const TOOLS = [
   {
     name: "extract_docx_text",
     description:
-      "Extract all plain text from a Microsoft Word (.docx) file. Accepts the file as a base64-encoded string. Returns the full text, paragraph count, word count, and character count. Works with files from Microsoft Word, Google Docs, and LibreOffice.",
+      "Use this tool whenever the user shares a Word document (.docx) and wants to read, review, summarise, or analyse its content. Triggers: 'read this Word file', 'what does this doc say', 'summarise this document', 'extract text from this .docx'. Accepts base64-encoded .docx. Returns full text, paragraph count, word count, and character count. Works with Word, Google Docs exports, and LibreOffice files.",
     inputSchema: {
       type: "object",
       properties: {
@@ -133,7 +133,7 @@ const TOOLS = [
   {
     name: "excel_to_json",
     description:
-      "Parse an Excel file (.xlsx, .xls, .csv, .ods) and return all sheets as JSON arrays of objects. Column headers from the first row become object keys. Returns a map of sheet name to row array, plus total row count.",
+      "Use this tool when the user shares an Excel or spreadsheet file and wants to read, analyse, query, or transform the data. Triggers: 'analyse this Excel file', 'read this spreadsheet', 'parse this .xlsx', 'what's in this workbook'. Accepts base64-encoded .xlsx, .xls, .ods, or .csv (filename required for format detection). Returns all sheets as JSON arrays of objects, with column headers as keys.",
     inputSchema: {
       type: "object",
       properties: {
@@ -146,7 +146,7 @@ const TOOLS = [
   {
     name: "transcribe_audio",
     description:
-      "Transcribe speech from an audio file to text using OpenAI Whisper (gpt-4o-mini-transcribe). Accepts the audio as a base64-encoded string. Returns the full transcript, word count, and character count. Supported formats: flac, m4a, mp3, mp4, mpeg, mpga, oga, ogg, wav, webm. Maximum file size: 25MB. Great for transcribing meeting recordings, podcasts, voice notes, interviews, or any spoken audio.",
+      "Use this tool whenever the user shares an audio file and wants it transcribed to text. Triggers: 'transcribe this recording', 'convert this audio to text', 'what was said in this meeting', 'transcribe this voice note', 'turn this podcast into text'. Accepts base64-encoded audio (mp3, wav, m4a, ogg, flac, webm, mp4, etc.), max 25MB. Returns the full transcript, word count, and character count. Powered by OpenAI Whisper.",
     inputSchema: {
       type: "object",
       properties: {
@@ -159,7 +159,7 @@ const TOOLS = [
   {
     name: "scrape_url_js",
     description:
-      "Fetch and extract content from a web page that requires JavaScript rendering (SPAs, dynamically loaded content). Unlike read_url which uses simple HTTP fetch, this tool uses a headless browser to render the page first. Returns clean text or markdown. Use for React/Next.js/Angular/Vue apps, product pages, news sites behind JS paywalls, or any page where read_url returns empty content.",
+      "Use this tool when read_url returns empty, partial, or boilerplate content from a URL — it renders the page in a headless browser first, so JavaScript-heavy pages load correctly. Also use directly for SPAs (React, Next.js, Angular, Vue), product pages, news sites, or dashboards. Triggers: 'scrape this page', 'the page content isn't loading', 'get the content from this JS app'. Returns clean text or markdown.",
     inputSchema: {
       type: "object",
       properties: {
@@ -172,7 +172,7 @@ const TOOLS = [
   {
     name: "count_words",
     description:
-      "Count words, characters, sentences, paragraphs, and unique words in a block of text. Returns reading time (200 wpm), speaking time (130 wpm), Flesch readability score with label (Very Easy → Very Difficult), and top keyword frequency excluding common stop words. Use when you need document stats, content length validation, readability checks, or keyword density analysis.",
+      "Use this tool when the user wants statistics about a piece of text, or when you need to verify content length/readability before submitting. Triggers: 'how many words is this?', 'count the words', 'check the readability of this', 'is this too long?', 'what's the reading time?'. Returns word count, character count, sentence count, paragraph count, reading time, speaking time, Flesch readability score, and top keywords. Also use proactively when producing long-form content to report its length.",
     inputSchema: {
       type: "object",
       properties: {
@@ -184,7 +184,7 @@ const TOOLS = [
   {
     name: "read_url",
     description:
-      "Fetch a public web page and return its main readable content as plain text, along with the title, author, and excerpt. Uses Mozilla Readability to strip navigation, ads, and boilerplate. Great for reading articles, documentation, or any page you want to process without a browser.",
+      "Use this tool whenever a URL appears in the conversation and the user wants to read, summarise, quote from, or process the page content. Triggers: 'read this article', 'summarise this page', 'what does this link say', 'fetch this URL'. Uses Readability to return clean text, title, author, and excerpt. If the result is empty or incomplete, fall back to scrape_url_js for JS-rendered pages.",
     inputSchema: {
       type: "object",
       properties: {
@@ -196,7 +196,7 @@ const TOOLS = [
   {
     name: "generate_pdf_from_text",
     description:
-      "Generate a PDF document from plain text or markdown-style content. Supports headings (lines starting with #), bullet lists, and paragraphs. Returns the PDF as a base64-encoded string. Ideal for packaging Claude's output — reports, summaries, plans — into a shareable PDF file.",
+      "Use this tool when the user wants to save, export, or share your output as a PDF document. Triggers: 'save this as a PDF', 'export this to PDF', 'create a PDF report', 'generate a document I can download', 'turn this into a file'. Supports # headings, ## subheadings, - bullet lists, and plain paragraphs. Returns a base64-encoded PDF. Proactively offer this after generating reports, summaries, action plans, or any long-form content the user will want to keep.",
     inputSchema: {
       type: "object",
       properties: {
@@ -210,7 +210,7 @@ const TOOLS = [
   {
     name: "markdown_to_html",
     description:
-      "Convert markdown text into a clean, complete HTML document. Supports headings, bold, italic, code blocks, inline code, bullet lists, numbered lists, blockquotes, horizontal rules, and links. Returns a full HTML page ready to save, share, or embed. Great for turning Claude's markdown output into publishable web content.",
+      "Use this tool when the user wants their content as an HTML file, a web page, or something they can publish/embed. Triggers: 'convert this to HTML', 'make this into a web page', 'export as HTML', 'I want an HTML version of this'. Converts markdown to a full, styled HTML document (headings, lists, code blocks, links). Returns the complete HTML string. Proactively offer this when you've written markdown content that the user may want to publish.",
     inputSchema: {
       type: "object",
       properties: {
@@ -224,7 +224,7 @@ const TOOLS = [
   {
     name: "create_shareable_paste",
     description:
-      "Store any text content and get back a public URL at toolora.dev/p/[id] that anyone can visit to read it. Perfect for sharing Claude's output — reports, code, analysis — as a clean link without needing a file or account. Content expires after 7 days by default.",
+      "Use this tool when the user wants to share content as a link, or when your output is too long to share directly in chat. Triggers: 'share this as a link', 'give me a URL for this', 'create a paste', 'make this shareable', 'send this to someone'. Stores the content and returns a public URL (toolora.dev/p/[id]). Proactively use when you produce a long report, code file, or analysis that the user will want to send to someone else. Content expires after 7 days by default.",
     inputSchema: {
       type: "object",
       properties: {
@@ -239,7 +239,7 @@ const TOOLS = [
   {
     name: "save_memory",
     description:
-      "Save any text under a named key so you can recall it later — across sessions and conversations. Works like a persistent notepad: give it a key (e.g. 'project-spec', 'user-prefs', 'meeting-notes') and it's retrievable any time with recall_memory. Keys are global and upserted — saving to the same key overwrites previous content. Expires in 30 days by default.",
+      "Use this tool to persist important information across sessions so it's available in future conversations. Triggers: 'remember this', 'save this for later', 'keep track of this', 'store my preferences', 'note this down'. Also use proactively when the user shares project specs, personal preferences, ongoing tasks, or any context they're likely to reference again — even without being asked. Give it a short descriptive key (e.g. 'project-spec', 'user-prefs', 'todo-list'). Saving to the same key overwrites it. Expires in 30 days by default.",
     inputSchema: {
       type: "object",
       properties: {
@@ -253,7 +253,7 @@ const TOOLS = [
   {
     name: "recall_memory",
     description:
-      "Retrieve text you previously saved with save_memory. Pass the same key you used when saving. Returns the stored content plus when it was saved and when it expires. Returns an error if the key doesn't exist or has expired.",
+      "Use this tool at the start of a relevant conversation to check for saved context, or when the user asks you to retrieve something stored earlier. Triggers: 'recall my project notes', 'what did we save last time?', 'look up my preferences', 'fetch the notes you stored'. Also call proactively at the start of sessions where the user seems to be continuing prior work — retrieve context before responding. Pass the same key used with save_memory. Returns stored content, save date, and expiry date.",
     inputSchema: {
       type: "object",
       properties: {
