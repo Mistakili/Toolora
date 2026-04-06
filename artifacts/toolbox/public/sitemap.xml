@@ -4,6 +4,16 @@
 
   <!-- Main pages -->
   <url>
+    <loc>https://toolora.dev/gdpr</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://toolora.dev/integrations</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
     <loc>https://toolora.dev/hipaa-checklist</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>

@@ -30,6 +30,8 @@ import HipaaChecklist from "@/pages/HipaaChecklist";
 import NotFound from "@/pages/not-found";
 import Paste from "@/pages/Paste";
 import About from "@/pages/About";
+import Integrations from "@/pages/Integrations";
+import GdprCompliance from "@/pages/GdprCompliance";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -65,6 +67,8 @@ function Router() {
             <Route path="/mcp" component={McpPage} />
             <Route path="/mcp-hub" component={McpHub} />
             <Route path="/about" component={About} />
+            <Route path="/integrations" component={Integrations} />
+            <Route path="/gdpr" component={GdprCompliance} />
             <Route path="/enterprise" component={Enterprise} />
             <Route path="/hipaa-checklist" component={HipaaChecklist} />
             <Route path="/tools/:category" component={CategoryView} />

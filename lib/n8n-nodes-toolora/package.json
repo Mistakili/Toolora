@@ -1,0 +1,49 @@
+{
+  "name": "n8n-nodes-toolora",
+  "version": "0.1.0",
+  "description": "n8n community node for Toolora — PDF extraction, OCR, QR codes, data conversion, and web scraping via the Toolora API",
+  "keywords": [
+    "n8n-community-node-package",
+    "toolora",
+    "pdf",
+    "ocr",
+    "qr-code",
+    "document",
+    "data-conversion",
+    "web-scraping",
+    "privacy"
+  ],
+  "license": "MIT",
+  "homepage": "https://toolora.dev",
+  "author": {
+    "name": "Toolora",
+    "url": "https://toolora.dev"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/toolora/n8n-nodes-toolora"
+  },
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc && node -e \"require('fs').cpSync('nodes/Toolora/toolora.svg','dist/nodes/Toolora/toolora.svg')\"",
+    "dev": "tsc --watch",
+    "prepublishOnly": "pnpm run build"
+  },
+  "n8n": {
+    "n8nNodesApiVersion": 1,
+    "credentials": [
+      "dist/credentials/TooloraApi.credentials.js"
+    ],
+    "nodes": [
+      "dist/nodes/Toolora/Toolora.node.js"
+    ]
+  },
+  "devDependencies": {
+    "n8n-workflow": "*",
+    "@types/node": "^18",
+    "typescript": "^5"
+  },
+  "peerDependencies": {
+    "n8n-workflow": "*"
+  }
+}

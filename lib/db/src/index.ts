@@ -20,7 +20,7 @@ const connectionString = process.env.DATABASE_URL.replace(
 
 export const pool = new Pool({
   connectionString,
-  ssl: { rejectUnauthorized: false },
+  ssl: process.env.NODE_ENV === "production" ? { rejectUnauthorized: false } : false,
 });
 
 // Prevent unhandled 'error' events on idle pool clients from crashing the
