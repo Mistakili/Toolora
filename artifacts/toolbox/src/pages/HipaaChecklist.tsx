@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "wouter";
 import { ShieldCheck, Download, Printer, CheckCircle2, XCircle, AlertTriangle, ArrowRight, Lock, Building2, Mail } from "lucide-react";
 import { useSEO } from "@/hooks/useSEO";
+import { TOOLS } from "@/lib/tools-config";
 
 const CHECKLIST = [
   {
@@ -409,7 +410,7 @@ export default function HipaaChecklist() {
               Toolora processes everything in your browser. Files never leave your device — so there's nothing to upload, no BAA required, and no server-side retention risk. It's privacy by architecture.
             </p>
             <div className="flex flex-wrap gap-3 justify-center mb-6">
-              {["Zero file uploads, ever", "No BAA required", "Verifiable in DevTools", "28 tools for docs, images & data"].map(f => (
+              {["Zero file uploads, ever", "No BAA required", "Verifiable in DevTools", `${TOOLS.length} tools for docs, images & data`].map(f => (
                 <div key={f} className="flex items-center gap-1.5 text-sm">
                   <CheckCircle2 className="w-4 h-4 text-green-500" />
                   <span>{f}</span>

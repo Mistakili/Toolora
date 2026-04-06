@@ -90,7 +90,7 @@ export default function Home() {
                 Free tools for AI builders.
               </h1>
               <p className="text-xl text-muted-foreground mb-10 leading-relaxed">
-                28 tools for developers and AI workflows. Format JSON, convert PDFs, transcribe audio, read URLs — everything runs locally in your browser. No uploads, no accounts, nothing stored.
+                {TOOLS.length} tools for developers and AI workflows. Format JSON, convert PDFs, transcribe audio, read URLs — everything runs locally in your browser. No uploads, no accounts, nothing stored.
               </p>
               
                     <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
@@ -194,7 +194,7 @@ export default function Home() {
                 dot: "bg-green-500",
                 title: "Browser Tools",
                 sub: "Zero-upload processing",
-                desc: "28 tools run entirely in WebAssembly inside your browser tab. Files are never transmitted anywhere — not even to us.",
+                desc: `${TOOLS.length} tools run entirely in WebAssembly inside your browser tab. Files are never transmitted anywhere — not even to us.`,
                 bullets: ["PDF · OCR · Image · Audio", "Works offline after load", "No account required", "Verifiable in DevTools"],
               },
               {
