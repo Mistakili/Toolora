@@ -133,37 +133,64 @@ router.post("/brochure/generate", async (req: Request, res: Response) => {
   const textHtml = html;
   const docTitle = (typeof fileName === "string" && fileName) ? fileName : "Document";
 
-  const systemPrompt = `You are a world-class brochure designer. Transform document content into a stunning, print-ready HTML brochure.
+  const imgPlaceholders = images.map((_, i) => `__IMG_${i + 1}__`);
 
-OUTPUT RULES:
-- Output ONLY a complete HTML document. No explanation, no markdown code fences.
-- All CSS must be in a <style> tag in <head>
-- @page { size: A4; margin: 0; }
-- Add: -webkit-print-color-adjust: exact; print-color-adjust: exact;
-- body max-width: 794px (A4 at 96dpi)
-${images.length > 0 ? `- Use __IMG_1__, __IMG_2__, etc. as src attributes for images (NOT data URIs in your output)` : ""}
+  const systemPrompt = `You are an elite print designer who creates stunning brochures for Fortune 500 companies. Your work looks like it came from Canva Pro or Adobe InDesign — not a word processor.
 
-DESIGN RULES:
-- Make it GENUINELY BEAUTIFUL — Canva/InDesign quality
-- Strong visual hierarchy: bold hero section with the title, then clear sections
-- Cohesive color palette (2-3 colors) derived from the content topic
-- Use large typography for headings, generous whitespace, visual rhythm
-- Add colored backgrounds/bands to create depth
-- Footer: "Created with Toolora · toolora.dev" in small grey text
-${images.length > 0 ? `- Place images where a designer would: hero image full-width, section images alongside relevant content, use CSS to size and position them elegantly` : "- Create visual interest with color blocks, dividers, and typography since there are no images"}`;
+═══ ABSOLUTE OUTPUT RULES (violating any = failure) ═══
+• Output ONLY a raw HTML document. Zero markdown, zero code fences, zero explanation.
+• All CSS in one <style> block inside <head>.
+• Include this in <head>: <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+• @page { size: A4; margin: 0; }
+• body { width: 794px; min-height: 1123px; margin: 0 auto; font-family: 'Inter', sans-serif; }
+• -webkit-print-color-adjust: exact; print-color-adjust: exact;
+${imgPlaceholders.length > 0 ? `• ⚠️ MANDATORY IMAGES: You MUST embed ALL ${imgPlaceholders.length} image(s). Use these exact src values: ${imgPlaceholders.map(p => `src="${p}"`).join(", ")}. Including zero images is a critical failure.` : ""}
+
+═══ DESIGN SYSTEM ═══
+HERO SECTION (top of page):
+- Full-width block, min-height 280px
+- Strong background: bold solid color OR a dark gradient OR a colored overlay on top of the first image if one exists
+- Document title in 'Playfair Display', 700 weight, 52px, white or near-white
+- Subtitle/description in Inter 300, 18px, 80% opacity white
+- If an image is available: use it as the hero background with a dark overlay (rgba(0,0,0,0.45) or brand-color overlay)
+
+BODY SECTIONS:
+- Use CSS Grid for 2-column layouts where content has multiple sections (text left + image right, or vice versa — alternate)
+- Section headings: 'Playfair Display' 28px, colored (brand accent color), with a 3px left border accent OR underline accent
+- Body text: Inter 400, 15px, line-height 1.75, color #2d3748 or similar dark-but-not-black
+- Cards: background #fff or very light tint, border-radius 12px, box-shadow 0 2px 16px rgba(0,0,0,0.07), padding 28px
+- Generous padding: sections get 48px top/bottom, 48px left/right
+- Use accent color for bullets, borders, highlights — never use plain black bullets
+
+COLOR PALETTE:
+- Pick 2–3 colors that fit the content topic (e.g. professional blue + gold, medical green + white, startup purple + coral)
+- Use them consistently: one primary (hero bg, headings), one accent (borders, links, highlights), one light (section backgrounds)
+
+IMAGES:
+${imgPlaceholders.length > 0
+  ? `- Image 1 (${imgPlaceholders[0]}): Use as the HERO background image with a semi-transparent dark overlay. CSS: background-image: url(${imgPlaceholders[0]}); background-size: cover; background-position: center;
+- Images 2+ (${imgPlaceholders.slice(1).join(", ")}): Embed as <img> tags inside content sections. Place them thoughtfully next to relevant text in a 2-column grid. Give them: width: 100%; border-radius: 10px; object-fit: cover; max-height: 220px;`
+  : "- No images provided: use CSS shapes, large colored blocks, and bold typography to create visual interest"}
+
+FOOTER:
+- Full-width, 48px padding, background matches hero color, text centered
+- "Created with Toolora · toolora.dev" in Inter 400, 13px, 60% white opacity`;
 
   const userContent: OpenAI.Chat.ChatCompletionContentPart[] = [
     {
       type: "text",
-      text: `Create a brochure for this document.\n\nDocument title: ${docTitle}\n\nDocument HTML:\n${textHtml.slice(0, 8000)}`,
+      text: `Design a stunning brochure from this document content. Apply the full design system — hero, sections, typography, colors, images. Do not simplify.\n\nDocument title: ${docTitle}\n\nDocument HTML content:\n${textHtml.slice(0, 10000)}`,
     },
   ];
 
   for (let i = 0; i < images.length; i++) {
-    userContent.push({ type: "text", text: `Image ${i + 1} (use src="__IMG_${i + 1}__" in your HTML):` });
+    userContent.push({
+      type: "text",
+      text: `⚠️ IMAGE ${i + 1} OF ${images.length} — you MUST use src="${imgPlaceholders[i]}" for this image in your HTML:`,
+    });
     userContent.push({
       type: "image_url",
-      image_url: { url: images[i].slice(0, 500000), detail: "low" },
+      image_url: { url: images[i].slice(0, 800000), detail: "auto" },
     });
   }
 
