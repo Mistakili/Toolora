@@ -199,6 +199,177 @@ async function exportAsDocx(html: string, fileName: string) {
   URL.revokeObjectURL(url);
 }
 
+// ─── Brochure templates ───────────────────────────────────────────────────────
+
+function parseSections(html: string) {
+  const doc = new DOMParser().parseFromString(`<body>${html}</body>`, "text/html");
+  const title = doc.querySelector("h1")?.textContent?.trim() ?? "Document";
+  const sections: Array<{ heading: string; body: string }> = [];
+  let intro = "";
+  let curHeading = "";
+  let curBody = "";
+  let inSection = false;
+
+  for (const el of Array.from(doc.body.children)) {
+    const tag = el.tagName.toLowerCase();
+    if (tag === "h1") continue;
+    if (tag === "h2") {
+      if (inSection) sections.push({ heading: curHeading, body: curBody });
+      else if (curBody) intro = curBody;
+      curHeading = el.innerHTML;
+      curBody = "";
+      inSection = true;
+    } else {
+      curBody += el.outerHTML;
+    }
+  }
+  if (inSection) sections.push({ heading: curHeading, body: curBody });
+  else if (curBody) intro = curBody;
+  return { title, intro, sections };
+}
+
+const BROCHURE_TEMPLATES = {
+  executive: {
+    label: "Executive",
+    desc: "Professional — dark header, clean single column",
+    accent: "#0f172a",
+    build(html: string, docTitle: string): string {
+      const { title, intro, sections } = parseSections(html);
+      const displayTitle = title || docTitle;
+      const sectionsHtml = sections.map(s => `
+        <div class="section">
+          <h2>${s.heading}</h2>
+          <div class="section-body">${s.body}</div>
+        </div>`).join("");
+      return `<!DOCTYPE html><html><head><title>${displayTitle}</title>
+<style>
+  @page { size: A4; margin: 0; }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:system-ui,-apple-system,Arial,sans-serif;background:#fff;color:#1e293b;font-size:11pt;line-height:1.65}
+  .cover{background:#0f172a;color:#fff;padding:52pt 56pt 44pt}
+  .cover-title{font-size:30pt;font-weight:800;line-height:1.15;letter-spacing:-0.5pt;margin-bottom:12pt}
+  .cover-rule{width:48pt;height:3pt;background:#6366f1;margin-bottom:16pt}
+  .cover-intro{font-size:11.5pt;opacity:.75;line-height:1.6;max-width:420pt}
+  .body{padding:40pt 56pt}
+  .section{margin-bottom:28pt}
+  h2{font-size:13pt;font-weight:700;color:#0f172a;border-left:3pt solid #6366f1;padding-left:12pt;margin-bottom:12pt;line-height:1.3}
+  h3{font-size:11.5pt;font-weight:600;color:#4f46e5;margin:14pt 0 5pt}
+  p{margin:0 0 9pt;color:#334155}
+  ul,ol{padding-left:18pt;margin:6pt 0 10pt}
+  li{margin:3pt 0;color:#334155}
+  img{max-width:100%;height:auto;margin:10pt 0;border-radius:4pt}
+  .footer{position:fixed;bottom:24pt;left:56pt;right:56pt;border-top:1pt solid #e2e8f0;padding-top:7pt;display:flex;justify-content:space-between;font-size:8.5pt;color:#94a3b8}
+  @media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+</style></head><body>
+<div class="cover">
+  <div class="cover-title">${displayTitle}</div>
+  <div class="cover-rule"></div>
+  ${intro ? `<div class="cover-intro">${intro}</div>` : ""}
+</div>
+<div class="body">${sectionsHtml || (intro ? "" : html)}</div>
+<div class="footer"><span>${displayTitle}</span><span>toolora.dev</span></div>
+</body></html>`;
+    },
+  },
+
+  modern: {
+    label: "Modern",
+    desc: "Two-column — gradient header, bold sections",
+    accent: "#7c3aed",
+    build(html: string, docTitle: string): string {
+      const { title, intro, sections } = parseSections(html);
+      const displayTitle = title || docTitle;
+      const half = Math.ceil(sections.length / 2);
+      const col1 = sections.slice(0, half);
+      const col2 = sections.slice(half);
+      const renderCol = (secs: typeof sections) => secs.map(s => `
+        <div class="card">
+          <div class="card-head">${s.heading}</div>
+          <div class="card-body">${s.body}</div>
+        </div>`).join("");
+      const bodyHtml = sections.length >= 2
+        ? `<div class="cols"><div class="col">${renderCol(col1)}</div><div class="col">${renderCol(col2)}</div></div>`
+        : `<div class="single">${sections.map(s => `<div class="card"><div class="card-head">${s.heading}</div><div class="card-body">${s.body}</div></div>`).join("") || html}</div>`;
+      return `<!DOCTYPE html><html><head><title>${displayTitle}</title>
+<style>
+  @page{size:A4;margin:0}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:system-ui,-apple-system,Arial,sans-serif;background:#fff;color:#1f2937;font-size:10.5pt;line-height:1.65}
+  .header{background:linear-gradient(135deg,#4f46e5 0%,#7c3aed 100%);color:#fff;padding:44pt 48pt 36pt;position:relative;overflow:hidden}
+  .header::after{content:'';position:absolute;right:-40pt;top:-40pt;width:200pt;height:200pt;background:rgba(255,255,255,.06);border-radius:50%}
+  .header-title{font-size:28pt;font-weight:800;line-height:1.15;margin-bottom:10pt;position:relative}
+  .header-sub{font-size:11pt;opacity:.8;max-width:380pt;position:relative}
+  .cols{display:grid;grid-template-columns:1fr 1fr;gap:0;padding:32pt 32pt}
+  .single{padding:32pt 48pt}
+  .col{padding:0 16pt}
+  .col:first-child{border-right:1pt solid #e5e7eb}
+  .card{margin-bottom:22pt}
+  .card-head{background:#ede9fe;color:#5b21b6;font-size:11.5pt;font-weight:700;padding:6pt 10pt;border-radius:4pt;margin-bottom:9pt}
+  .card-body p{margin:0 0 7pt;color:#374151}
+  .card-body ul,.card-body ol{padding-left:15pt;margin:5pt 0 7pt}
+  .card-body li{margin:2pt 0;color:#374151}
+  .card-body img{max-width:100%;height:auto;margin:6pt 0;border-radius:3pt}
+  h3{font-size:11pt;font-weight:600;color:#7c3aed;margin:10pt 0 4pt}
+  .intro{padding:24pt 48pt 0;font-size:11pt;color:#6b7280;border-bottom:1pt solid #f3f4f6;padding-bottom:20pt}
+  .footer{text-align:center;font-size:8.5pt;color:#9ca3af;padding:12pt;border-top:1pt solid #f3f4f6}
+  @media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+</style></head><body>
+<div class="header">
+  <div class="header-title">${displayTitle}</div>
+  ${intro ? `<div class="header-sub">${intro.replace(/<[^>]*>/g, " ").trim().slice(0, 160)}</div>` : ""}
+</div>
+${bodyHtml}
+<div class="footer">toolora.dev</div>
+</body></html>`;
+    },
+  },
+
+  flyer: {
+    label: "Bold Flyer",
+    desc: "High-impact — full color, cards for each section",
+    accent: "#059669",
+    build(html: string, docTitle: string): string {
+      const { title, intro, sections } = parseSections(html);
+      const displayTitle = title || docTitle;
+      const cards = sections.map(s => `
+        <div class="card">
+          <div class="card-title">${s.heading}</div>
+          <div class="card-text">${s.body}</div>
+        </div>`).join("");
+      return `<!DOCTYPE html><html><head><title>${displayTitle}</title>
+<style>
+  @page{size:A4;margin:0}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:system-ui,-apple-system,Arial,sans-serif;background:#f0fdf4;color:#14532d;font-size:11pt}
+  .hero{background:#065f46;color:#fff;text-align:center;padding:52pt 48pt 40pt}
+  .hero-tag{display:inline-block;background:#10b981;color:#fff;font-size:8.5pt;font-weight:700;letter-spacing:1.5pt;text-transform:uppercase;padding:4pt 10pt;border-radius:20pt;margin-bottom:18pt}
+  .hero-title{font-size:32pt;font-weight:900;line-height:1.1;margin-bottom:14pt;letter-spacing:-0.5pt}
+  .hero-intro{font-size:12pt;opacity:.8;line-height:1.6;max-width:380pt;margin:0 auto}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200pt,1fr));gap:16pt;padding:32pt 40pt}
+  .card{background:#fff;border-radius:8pt;padding:20pt;box-shadow:0 1pt 4pt rgba(0,0,0,.08);border-top:3pt solid #10b981}
+  .card-title{font-size:12.5pt;font-weight:700;color:#065f46;margin-bottom:10pt;line-height:1.3}
+  .card-text p{font-size:10.5pt;color:#374151;margin:0 0 7pt;line-height:1.6}
+  .card-text ul,.card-text ol{padding-left:14pt;margin:5pt 0 7pt}
+  .card-text li{font-size:10.5pt;color:#374151;margin:2pt 0;line-height:1.55}
+  .card-text img{max-width:100%;height:auto;margin:6pt 0;border-radius:4pt}
+  h3{font-size:11pt;font-weight:600;color:#059669;margin:9pt 0 4pt}
+  .footer{text-align:center;padding:16pt;font-size:8.5pt;color:#6b7280;background:#fff;border-top:1pt solid #d1fae5}
+  @media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+</style></head><body>
+<div class="hero">
+  <div class="hero-tag">Toolora</div>
+  <div class="hero-title">${displayTitle}</div>
+  ${intro ? `<div class="hero-intro">${intro.replace(/<[^>]*>/g, " ").trim().slice(0, 200)}</div>` : ""}
+</div>
+<div class="grid">${cards || `<div class="card"><div class="card-text">${html}</div></div>`}</div>
+<div class="footer">toolora.dev</div>
+</body></html>`;
+    },
+  },
+} as const;
+
+type BrochureKey = keyof typeof BROCHURE_TEMPLATES;
+
 function printAsPdf(html: string, title: string) {
   const win = window.open("", "_blank");
   if (!win) return;
@@ -241,6 +412,7 @@ export default function DocxEditor() {
   const [replaceText, setReplaceText] = useState("");
   const [showLinkModal, setShowLinkModal] = useState(false);
   const [linkUrl, setLinkUrl] = useState("");
+  const [showBrochureModal, setShowBrochureModal] = useState(false);
 
   const updateStats = useCallback(() => {
     if (editorRef.current) setStats(countStats(editorRef.current.innerHTML));
@@ -363,6 +535,19 @@ export default function DocxEditor() {
     printAsPdf(editorRef.current?.innerHTML ?? "", fileName);
   }, [fileName]);
 
+  const handleBrochure = useCallback((templateKey: BrochureKey) => {
+    const html = editorRef.current?.innerHTML ?? "";
+    const tpl = BROCHURE_TEMPLATES[templateKey];
+    const doc = tpl.build(html, fileName);
+    const win = window.open("", "_blank");
+    if (!win) return;
+    win.document.write(doc);
+    win.document.close();
+    win.focus();
+    setTimeout(() => win.print(), 800);
+    setShowBrochureModal(false);
+  }, [fileName]);
+
   const handleInsertLink = useCallback(() => {
     saveRange();
     setShowLinkModal(true);
@@ -443,6 +628,12 @@ export default function DocxEditor() {
             className="flex items-center gap-1.5 text-xs text-zinc-300 hover:text-white px-2.5 py-1.5 rounded border border-zinc-600 hover:bg-zinc-700 transition-colors disabled:opacity-50"
           >
             <Upload className="w-3.5 h-3.5" />{importing ? "Opening…" : "Open .docx"}
+          </button>
+          <button
+            onClick={() => setShowBrochureModal(true)}
+            className="flex items-center gap-1.5 text-xs text-zinc-300 hover:text-white px-2.5 py-1.5 rounded border border-zinc-600 hover:bg-zinc-700 transition-colors"
+          >
+            <FileText className="w-3.5 h-3.5" /> Brochure
           </button>
           <button
             onClick={handlePrint}
@@ -552,6 +743,42 @@ export default function DocxEditor() {
           />
           <button onClick={applyLink} className="px-2.5 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded transition-colors">Insert</button>
           <button onClick={() => setShowLinkModal(false)} className="text-zinc-400 hover:text-zinc-200 transition-colors">Cancel</button>
+        </div>
+      )}
+
+      {/* ── Brochure template picker ── */}
+      {showBrochureModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={() => setShowBrochureModal(false)}>
+          <div className="bg-zinc-900 border border-zinc-700 rounded-2xl p-6 w-full max-w-lg mx-4 shadow-2xl" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-1">
+              <h3 className="text-zinc-100 font-semibold text-base">Convert to Brochure</h3>
+              <button onClick={() => setShowBrochureModal(false)} className="text-zinc-400 hover:text-zinc-200 text-lg leading-none">✕</button>
+            </div>
+            <p className="text-zinc-400 text-xs mb-5">Your document structure (H1 = title, H2 = sections) is automatically formatted into the template. A print dialog will open — save as PDF.</p>
+            <div className="grid grid-cols-3 gap-3">
+              {(Object.entries(BROCHURE_TEMPLATES) as [BrochureKey, typeof BROCHURE_TEMPLATES[BrochureKey]][]).map(([key, tpl]) => (
+                <button
+                  key={key}
+                  onClick={() => handleBrochure(key)}
+                  className="group flex flex-col rounded-xl overflow-hidden border border-zinc-700 hover:border-zinc-400 transition-all hover:scale-[1.02] text-left"
+                >
+                  <div className="h-20 w-full flex items-center justify-center" style={{ background: tpl.accent }}>
+                    <div className="w-10 h-8 bg-white/20 rounded-sm" />
+                    <div className="absolute flex flex-col gap-1 opacity-60">
+                      <div className="w-8 h-1 bg-white rounded" />
+                      <div className="w-6 h-0.5 bg-white rounded" />
+                      <div className="w-7 h-0.5 bg-white rounded" />
+                    </div>
+                  </div>
+                  <div className="p-3 bg-zinc-800 flex-1">
+                    <div className="text-zinc-100 text-xs font-semibold mb-0.5">{tpl.label}</div>
+                    <div className="text-zinc-400 text-[10px] leading-snug">{tpl.desc}</div>
+                  </div>
+                </button>
+              ))}
+            </div>
+            <p className="text-zinc-600 text-[10px] mt-4 text-center">Tip: Use H1 for your title, H2 for section headings for best results</p>
+          </div>
         </div>
       )}
 
