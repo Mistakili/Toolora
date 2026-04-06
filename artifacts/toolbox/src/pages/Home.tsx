@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { Link } from "wouter";
-import { ArrowRight, Sparkles, Shield, Zap, Bot, FileText, Globe, BarChart2, Bell, Building2, Server, BookOpen } from "lucide-react";
+import { ArrowRight, Sparkles, Shield, Zap, Bot, FileText, Globe, BarChart2, Bell, Building2, Server, BookOpen, GraduationCap } from "lucide-react";
 import { motion } from "framer-motion";
 import { CATEGORIES, TOOLS } from "@/lib/tools-config";
 import { ToolCard } from "@/components/shared/ToolCard";
 import { useGetPopularTools } from "@workspace/api-client-react";
+import { BLOG_POSTS } from "@/lib/blog-posts";
+import { GLOSSARY } from "@/lib/glossary";
 
 export default function Home() {
   const [email, setEmail] = useState("");
@@ -84,13 +86,13 @@ export default function Home() {
               className="text-center lg:text-left order-last lg:order-first"
             >
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-8 border border-primary/20">
-                <Sparkles className="w-4 h-4" /> MCP-ready &middot; Claude Desktop &middot; Cursor &middot; Windsurf
+                <Shield className="w-4 h-4" /> Privacy-first &middot; MCP-ready &middot; Enterprise-ready
               </div>
               <h1 className="text-5xl md:text-7xl font-display font-bold tracking-tight mb-6">
-                Free tools for AI builders.
+                Your files never leave your device.
               </h1>
               <p className="text-xl text-muted-foreground mb-10 leading-relaxed">
-                {TOOLS.length} tools for developers and AI workflows. Format JSON, convert PDFs, transcribe audio, read URLs — everything runs locally in your browser. No uploads, no accounts, nothing stored.
+                {TOOLS.length} professional tools — text, PDF, image, developer, and visual — all running locally in your browser. No uploads, no accounts, nothing stored. Built for developers, legal teams, healthcare, and anyone handling sensitive data.
               </p>
               
                     <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
@@ -128,22 +130,18 @@ export default function Home() {
             </div>
             <div className="w-px h-8 bg-border hidden sm:block" />
             <div className="text-center">
-              <div className="text-2xl font-bold text-foreground">
-                {popularData?.tools
-                  ? (popularData.tools.reduce((sum: number, t: any) => sum + (t.usageCount ?? 0), 0)).toLocaleString()
-                  : "—"}
-              </div>
-              <div className="text-xs text-muted-foreground uppercase tracking-wider mt-0.5">Tools Used</div>
+              <div className="text-2xl font-bold text-foreground">{BLOG_POSTS.length}+</div>
+              <div className="text-xs text-muted-foreground uppercase tracking-wider mt-0.5">Blog Posts</div>
             </div>
             <div className="w-px h-8 bg-border hidden sm:block" />
             <div className="text-center">
-              <div className="text-2xl font-bold text-foreground">0kb</div>
-              <div className="text-xs text-muted-foreground uppercase tracking-wider mt-0.5">Data Uploaded</div>
+              <div className="text-2xl font-bold text-foreground">{GLOSSARY.length}+</div>
+              <div className="text-xs text-muted-foreground uppercase tracking-wider mt-0.5">Glossary Terms</div>
             </div>
             <div className="w-px h-8 bg-border hidden sm:block" />
             <div className="text-center">
-              <div className="text-2xl font-bold text-foreground">Free</div>
-              <div className="text-xs text-muted-foreground uppercase tracking-wider mt-0.5">Forever</div>
+              <div className="text-2xl font-bold text-foreground">0 bytes</div>
+              <div className="text-xs text-muted-foreground uppercase tracking-wider mt-0.5">Ever Uploaded</div>
             </div>
           </div>
         </div>
@@ -205,7 +203,7 @@ export default function Home() {
                 dot: "bg-primary",
                 title: "MCP Server",
                 sub: "Claude · Cursor · Windsurf",
-                desc: "12 of those same tools available as an MCP server. Paste one config block and your AI client can call them directly.",
+                desc: "17 of those same tools available as an MCP server. Paste one config block and your AI client can call them directly.",
                 bullets: ["Free · No API key", "Listed in Anthropic Registry", "Streamable HTTP transport", "toolora.dev/api/mcp"],
               },
               {
@@ -276,7 +274,7 @@ export default function Home() {
             <h2 className="text-2xl md:text-3xl font-display font-bold mb-2">More than just free tools</h2>
             <p className="text-muted-foreground">Toolora is a full privacy-first platform — for individuals, developers, and regulated teams.</p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {/* Enterprise */}
             <Link href="/enterprise">
               <div className="group relative rounded-2xl border border-border bg-card hover:border-amber-500/50 hover:bg-amber-500/5 transition-all duration-300 p-6 cursor-pointer h-full flex flex-col">
@@ -288,7 +286,7 @@ export default function Home() {
                 </div>
                 <h3 className="text-lg font-bold mb-2 group-hover:text-amber-500 transition-colors">Enterprise Plan</h3>
                 <p className="text-muted-foreground text-sm leading-relaxed flex-1">
-                  Built for law firms, healthcare teams, and financial services. Privacy by architecture — no BAA, no server uploads, full compliance story.
+                  Built for law firms, healthcare teams, and financial services. Privacy by architecture — no server uploads, full compliance story.
                 </p>
                 <div className="flex items-center gap-1 mt-4 text-sm font-semibold text-amber-500">
                   Learn more <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
@@ -303,14 +301,33 @@ export default function Home() {
                   <div className="w-11 h-11 rounded-xl bg-purple-500/10 flex items-center justify-center">
                     <Server className="w-5 h-5 text-purple-500" />
                   </div>
-                  <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20">Free</span>
+                  <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20">17 tools · Free</span>
                 </div>
                 <h3 className="text-lg font-bold mb-2 group-hover:text-purple-500 transition-colors">MCP Server Hub</h3>
                 <p className="text-muted-foreground text-sm leading-relaxed flex-1">
-                  A curated directory of privacy-first MCP servers. Drop Toolora's endpoint into Claude or Cursor and get 15 tools instantly — plus find other vetted local-first servers.
+                  Drop one config block into Claude Desktop, Cursor, or Windsurf and get 17 tools instantly. Listed in the Anthropic MCP registry.
                 </p>
                 <div className="flex items-center gap-1 mt-4 text-sm font-semibold text-purple-500">
                   Browse the hub <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                </div>
+              </div>
+            </Link>
+
+            {/* Knowledge Hub */}
+            <Link href="/glossary">
+              <div className="group relative rounded-2xl border border-border bg-card hover:border-green-500/50 hover:bg-green-500/5 transition-all duration-300 p-6 cursor-pointer h-full flex flex-col">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="w-11 h-11 rounded-xl bg-green-500/10 flex items-center justify-center">
+                    <GraduationCap className="w-5 h-5 text-green-500" />
+                  </div>
+                  <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-green-500/10 text-green-600 dark:text-green-400 border border-green-500/20">{GLOSSARY.length} terms</span>
+                </div>
+                <h3 className="text-lg font-bold mb-2 group-hover:text-green-500 transition-colors">Developer Glossary</h3>
+                <p className="text-muted-foreground text-sm leading-relaxed flex-1">
+                  {GLOSSARY.length} plain-English definitions for developer, privacy, cloud, AI, and security terms. With examples, use cases, and related tools.
+                </p>
+                <div className="flex items-center gap-1 mt-4 text-sm font-semibold text-green-500">
+                  Browse the glossary <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                 </div>
               </div>
             </Link>
@@ -322,11 +339,11 @@ export default function Home() {
                   <div className="w-11 h-11 rounded-xl bg-primary/10 flex items-center justify-center">
                     <BookOpen className="w-5 h-5 text-primary" />
                   </div>
-                  <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-primary/10 text-primary border border-primary/20">16 posts</span>
+                  <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-primary/10 text-primary border border-primary/20">{BLOG_POSTS.length} posts</span>
                 </div>
                 <h3 className="text-lg font-bold mb-2 group-hover:text-primary transition-colors">Privacy & Dev Blog</h3>
                 <p className="text-muted-foreground text-sm leading-relaxed flex-1">
-                  Deep dives on HIPAA compliance, JWT security, hashing vs encryption, MCP servers, and why most "free" tools are a data risk. Written for developers and compliance teams.
+                  Deep dives on HIPAA compliance, JWT security, hashing vs encryption, MCP servers, and why most "free" tools are a data risk.
                 </p>
                 <div className="flex items-center gap-1 mt-4 text-sm font-semibold text-primary">
                   Read the blog <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
