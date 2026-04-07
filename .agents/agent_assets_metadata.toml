@@ -228,6 +228,12 @@ uri = "file://attached_assets/generated_images/chrome-store-dev-tools.png"
 type = "image"
 title = "chrome store dev tools"
 
+[[generated]]
+id = "BWZrp2RZbHn3vq_Wb860H"
+uri = "file://attached_assets/generated_images/toolora-cover-bg.png"
+type = "image"
+title = "toolora cover background"
+
 [[outputs]]
 id = "W91hp3ihLhEvWTT51EilJ"
 uri = "file://artifacts/toolbox/public/og-image.png"
@@ -305,3 +311,9 @@ id = "HF8wLFHrf5NMwRPu7LOxu"
 uri = "file://attached_assets/chrome-store-listing.txt"
 type = "text"
 title = "Chrome Web Store Listing Copy — Updated"
+
+[[outputs]]
+id = "CazLbozHSFdaKQOoE9q2u"
+uri = "file://attached_assets/generated_images/toolora-hackathon-cover.jpg"
+type = "image"
+title = "Toolora Hackathon Cover Image (1280×720)"
