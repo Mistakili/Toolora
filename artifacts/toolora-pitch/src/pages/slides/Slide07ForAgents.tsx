@@ -38,13 +38,13 @@ export default function Slide07ForAgents() {
         {/* MCP Server */}
         <div className="flex-1 rounded-[1.5vw] border border-purple-500/25 bg-purple-500/8 p-[2.5vw]">
           <div className="font-body text-[1.1vw] text-purple-400 uppercase tracking-widest mb-[1.5vh]">MCP Server</div>
-          <div className="font-display font-bold text-[2.2vw] text-white mb-[1vh]">Free. 12 Tools.</div>
+          <div className="font-display font-bold text-[2.2vw] text-white mb-[1vh]">Free. 25 Tools.</div>
           <div className="font-body text-[1.4vw] text-white/50 mb-[2vh] leading-relaxed">Drop the endpoint into Claude Desktop or Cursor. Your AI gets Toolora's tools instantly. No API key required.</div>
           <div className="bg-black/40 border border-white/8 rounded-[0.8vw] px-[1.5vw] py-[1.2vh] mb-[1.5vh]">
-            <span className="font-body text-[1.2vw] text-purple-300">toolora.replit.app/api/mcp</span>
+            <span className="font-body text-[1.2vw] text-purple-300">toolora.dev/api/mcp</span>
           </div>
           <div className="space-y-[0.6vh]">
-            {["PDF extraction, OCR, DOCX, Excel", "Audio transcription (Whisper)", "QR generation, word count, CSV tools"].map(item => (
+            {["PDF merge, split & extraction", "Word count, hash, Base64, JWT decode", "Token counting, text chunking for RAG", "594 agent calls in first week live"].map(item => (
               <div key={item} className="flex items-center gap-[0.8vw]">
                 <div className="w-[0.5vw] h-[0.5vw] bg-purple-400 rounded-full shrink-0" />
                 <span className="font-body text-[1.4vw] text-white/60">{item}</span>

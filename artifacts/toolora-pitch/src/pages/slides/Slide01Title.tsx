@@ -18,14 +18,14 @@ export default function Slide01Title() {
         </div>
 
         <div className="mt-[2vh] font-display font-semibold text-[2.4vw] text-white/80 tracking-tight">
-          28 free browser-side tools. A developer API. Enterprise compliance. An MCP ecosystem.
+          41 free browser-side tools. A developer API. Enterprise compliance. An MCP ecosystem.
         </div>
 
         <div className="mt-[3.5vh] flex items-center justify-center gap-[3vw]">
           {[
-            ["28", "free tools"],
+            ["41", "free tools"],
             ["0", "uploads ever"],
-            ["15", "countries"],
+            ["594", "MCP calls/wk"],
             ["$199", "enterprise/mo"],
           ].map(([num, label]) => (
             <div key={label} className="text-center">

@@ -9,10 +9,10 @@ export default function Slide06Traction() {
 
       <div className="relative z-10 grid grid-cols-4 gap-[2vw] w-full px-[8vw] mb-[3.5vh]">
         {[
-          { val: "28",  label: "free tools",      color: "text-white",     border: "border-white/8 bg-white/3" },
-          { val: "0",   label: "uploads required", color: "text-purple-400", border: "border-purple-500/25 bg-purple-500/8" },
-          { val: "15",  label: "countries",        color: "text-white",     border: "border-white/8 bg-white/3" },
-          { val: "377", label: "human views",      color: "text-green-400", border: "border-green-500/20 bg-green-500/6" },
+          { val: "41",  label: "free tools live",   color: "text-white",     border: "border-white/8 bg-white/3" },
+          { val: "0",   label: "uploads required",  color: "text-purple-400", border: "border-purple-500/25 bg-purple-500/8" },
+          { val: "757", label: "page views",         color: "text-green-400", border: "border-green-500/20 bg-green-500/6" },
+          { val: "594", label: "MCP calls / week",   color: "text-blue-400",  border: "border-blue-500/20 bg-blue-500/6" },
         ].map(({ val, label, color, border }) => (
           <div key={label} className={`text-center border rounded-[1.5vw] py-[3vh] px-[1vw] ${border}`}>
             <div className={`font-display font-bold leading-none mb-[1vh] ${color}`} style={{ fontSize: "9vw" }}>{val}</div>
@@ -23,14 +23,14 @@ export default function Slide06Traction() {
 
       <div className="relative z-10 flex flex-wrap gap-x-[3vw] gap-y-[1.2vh] items-center justify-center px-[8vw]">
         {[
-          "16 blog posts (SEO flywheel active)",
-          "Bing + Google organic traffic",
-          "x402 Solana USDC + Stellar XLM live",
-          "Chrome extension submitted to Web Store",
-          "Product Hunt listed",
+          "Chrome extension live on Web Store",
+          "MCP server: agents connect within hours of launch",
+          "Bing + Google organic traffic growing",
+          "SEO blog active — tool pages ranking",
           "Enterprise self-serve checkout ($199/mo)",
-          "MCP Hub launched — 8 vetted servers",
           "30-day money-back guarantee",
+          "HackerNoon article — technical audience reach",
+          "Product Hunt listed",
         ].map(item => (
           <div key={item} className="flex items-center gap-[0.8vw]">
             <div className="w-[0.5vw] h-[0.5vw] bg-green-400 rounded-full shrink-0" />

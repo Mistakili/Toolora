@@ -21,7 +21,7 @@ export default function Slide05BusinessModel() {
         <div className="rounded-[1.2vw] border border-white/8 bg-white/3 p-[2vw] flex flex-col">
           <div className="font-body text-[1vw] text-white/30 uppercase tracking-widest mb-[1vh]">Layer 1 · Acquisition</div>
           <div className="font-display font-bold text-[2vw] text-white mb-[0.8vh]">Free Tools</div>
-          <div className="font-body text-[1.3vw] text-white/40 mb-[2vh] leading-relaxed flex-1">28 browser-side tools. No account. No paywall. SEO flywheel generates organic traffic 24/7.</div>
+          <div className="font-body text-[1.3vw] text-white/40 mb-[2vh] leading-relaxed flex-1">41 browser-side tools. No account. No paywall. Chrome extension + SEO flywheel generate organic traffic 24/7.</div>
           <div className="border-t border-white/8 pt-[1.2vh]">
             <div className="font-display font-bold text-[2.5vw] text-white">$0</div>
             <div className="font-body text-[1.2vw] text-white/30">Converts to API users</div>
@@ -53,11 +53,11 @@ export default function Slide05BusinessModel() {
         {/* Tier 4 */}
         <div className="rounded-[1.2vw] border border-white/8 bg-white/3 p-[2vw] flex flex-col">
           <div className="font-body text-[1vw] text-white/30 uppercase tracking-widest mb-[1vh]">Layer 4 · Ecosystem</div>
-          <div className="font-display font-bold text-[2vw] text-white mb-[0.8vh]">MCP Hub</div>
-          <div className="font-body text-[1.3vw] text-white/40 mb-[2vh] leading-relaxed flex-1">Curated directory of privacy-first MCP servers. Toolora featured. Every listed server links back. Developer distribution flywheel.</div>
+          <div className="font-display font-bold text-[2vw] text-white mb-[0.8vh]">MCP Server</div>
+          <div className="font-body text-[1.3vw] text-white/40 mb-[2vh] leading-relaxed flex-1">25-tool MCP server agents discover automatically. 594 calls in week 1. Listed in Claude Desktop, Cursor, and MCP directories.</div>
           <div className="border-t border-white/8 pt-[1.2vh]">
-            <div className="font-display font-bold text-[2.5vw] text-white/60">Future</div>
-            <div className="font-body text-[1.2vw] text-white/30">Promoted listings · verified badges</div>
+            <div className="font-display font-bold text-[2.5vw] text-white/60">Growing</div>
+            <div className="font-body text-[1.2vw] text-white/30">Agent distribution flywheel</div>
           </div>
         </div>
       </div>

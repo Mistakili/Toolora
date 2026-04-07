@@ -14,7 +14,7 @@ export default function Slide08Closing() {
         </div>
 
         <div className="font-display font-bold text-[5vw] leading-[1.1] tracking-tight text-white mb-[1.5vh]">
-          Free tools that never upload.
+          41 tools that never upload.
         </div>
         <div className="font-display font-bold text-[5vw] leading-[1.1] tracking-tight text-purple-400 mb-[1.5vh]">
           An API developers pay for.
@@ -23,7 +23,7 @@ export default function Slide08Closing() {
           An enterprise tier that sells itself.
         </div>
         <div className="font-display font-bold text-[5vw] leading-[1.1] tracking-tight text-white/40 mb-[4vh]">
-          An MCP ecosystem that compounds.
+          An MCP server agents find on their own.
         </div>
 
         <div className="font-body text-[1.8vw] text-white/40 max-w-[50vw] mx-auto leading-relaxed">
@@ -41,7 +41,7 @@ export default function Slide08Closing() {
 
       <div className="absolute bottom-[4vh] left-[4vw] right-[4vw] flex items-center justify-between">
         <span className="font-body text-[1.3vw] text-white/20">April 2026</span>
-        <span className="font-body text-[1.3vw] text-white/20">28 tools · 15 countries · $199/mo enterprise</span>
+        <span className="font-body text-[1.3vw] text-white/20">41 tools · 757 views · 594 MCP calls · $199/mo enterprise</span>
       </div>
     </div>
   );

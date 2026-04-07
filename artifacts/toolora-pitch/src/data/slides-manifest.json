@@ -4,7 +4,7 @@
     "position": 1,
     "filepath": "src/pages/slides/Slide01Title.tsx",
     "title": "Toolora",
-    "description": "28 free browser-side tools · Developer API · Enterprise · MCP ecosystem",
+    "description": "41 free browser-side tools · Developer API · Enterprise · MCP ecosystem",
     "speakerNotes": ""
   },
   {
@@ -20,7 +20,7 @@
     "position": 3,
     "filepath": "src/pages/slides/Slide03Solution.tsx",
     "title": "The Solution",
-    "description": "28 tools, zero uploads — every tool runs in the browser via WebAssembly",
+    "description": "41 tools, zero uploads — every tool runs in the browser, plus Chrome extension live",
     "speakerNotes": ""
   },
   {
@@ -36,7 +36,7 @@
     "position": 5,
     "filepath": "src/pages/slides/Slide05BusinessModel.tsx",
     "title": "Business Model",
-    "description": "Four revenue layers: Free Tools → Agent API → Enterprise → MCP Hub",
+    "description": "Four revenue layers: Free Tools (41) → Agent API → Enterprise → MCP Server",
     "speakerNotes": ""
   },
   {
@@ -44,7 +44,7 @@
     "position": 6,
     "filepath": "src/pages/slides/Slide06Traction.tsx",
     "title": "Traction",
-    "description": "28 tools · 15 countries · 377 human views · 16 blog posts · x402 live",
+    "description": "41 tools · 757 page views · 594 MCP calls/week · Chrome extension live",
     "speakerNotes": ""
   },
   {
@@ -52,7 +52,7 @@
     "position": 7,
     "filepath": "src/pages/slides/Slide07ForAgents.tsx",
     "title": "For AI Agents & Developers",
-    "description": "Agent API (Stripe + x402) · Free MCP Server · Enterprise ($199/mo)",
+    "description": "Agent API (Stripe + x402) · Free MCP Server (25 tools, toolora.dev/api/mcp) · Enterprise ($199/mo)",
     "speakerNotes": ""
   },
   {
@@ -60,7 +60,7 @@
     "position": 8,
     "filepath": "src/pages/slides/Slide08Closing.tsx",
     "title": "One Platform",
-    "description": "Free tools · Developer API · Enterprise tier · MCP ecosystem. toolora.dev",
+    "description": "41 tools · Free tools · Developer API · Enterprise tier · MCP ecosystem. toolora.dev",
     "speakerNotes": ""
   }
 ]
