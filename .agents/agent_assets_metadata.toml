@@ -204,6 +204,30 @@ uri = "file://artifacts/toolbox/public/images/blog-seo-content.png"
 type = "image"
 title = "generated_image"
 
+[[generated]]
+id = "j_z38GkJZ_noVmnw5pArU"
+uri = "file://attached_assets/generated_images/chrome-store-hero.png"
+type = "image"
+title = "chrome store hero"
+
+[[generated]]
+id = "BmVcRGMkM-LaOUtDXiTnM"
+uri = "file://attached_assets/generated_images/chrome-store-tools-grid.png"
+type = "image"
+title = "chrome store tools grid"
+
+[[generated]]
+id = "qo9yGpKUTdu-xbSYhEgxY"
+uri = "file://attached_assets/generated_images/chrome-store-privacy.png"
+type = "image"
+title = "chrome store privacy"
+
+[[generated]]
+id = "2DB7PRkuvomVyYR_BGXl8"
+uri = "file://attached_assets/generated_images/chrome-store-dev-tools.png"
+type = "image"
+title = "chrome store dev tools"
+
 [[outputs]]
 id = "W91hp3ihLhEvWTT51EilJ"
 uri = "file://artifacts/toolbox/public/og-image.png"
@@ -227,3 +251,27 @@ id = "IFyFCVa1412A3O9iIW1nw"
 uri = "file://artifacts/toolbox/public/images/privacy-shield-new.png"
 type = "image"
 title = "Privacy Shield Illustration"
+
+[[outputs]]
+id = "bh1nM9LpA-1PlontWa0q9"
+uri = "file://attached_assets/generated_images/chrome-store-hero.png"
+type = "image"
+title = "1 — Hero / Marquee (lead image)"
+
+[[outputs]]
+id = "d5EZDcaHkOorpjfySKqkW"
+uri = "file://attached_assets/generated_images/chrome-store-tools-grid.png"
+type = "image"
+title = "2 — Tool Grid Screenshot"
+
+[[outputs]]
+id = "U9RsKuuAzzZtSys0SjLsH"
+uri = "file://attached_assets/generated_images/chrome-store-privacy.png"
+type = "image"
+title = "3 — Privacy / No Upload"
+
+[[outputs]]
+id = "Y083DI2soJpH-4OVDK2jj"
+uri = "file://attached_assets/generated_images/chrome-store-dev-tools.png"
+type = "image"
+title = "4 — Developer / AI Tools"
