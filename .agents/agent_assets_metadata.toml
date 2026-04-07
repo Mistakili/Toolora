@@ -275,3 +275,27 @@ id = "Y083DI2soJpH-4OVDK2jj"
 uri = "file://attached_assets/generated_images/chrome-store-dev-tools.png"
 type = "image"
 title = "4 — Developer / AI Tools"
+
+[[outputs]]
+id = "-9e2ccek8HTQfVX2tELjF"
+uri = "file://attached_assets/generated_images/promo-slide-1.jpg"
+type = "image"
+title = "Slide 1 — Hero · \"Your Files Never Leave Your Browser\""
+
+[[outputs]]
+id = "1eiciAfVoW-g0FUksorUi"
+uri = "file://attached_assets/generated_images/promo-slide-2.jpg"
+type = "image"
+title = "Slide 2 — PDF · \"Merge & Split PDFs Without Uploading\""
+
+[[outputs]]
+id = "9eIHmUgbSqHe-Tnqo9iqB"
+uri = "file://attached_assets/generated_images/promo-slide-3.jpg"
+type = "image"
+title = "Slide 3 — Dev Tools · \"15+ Developer Utilities. Privacy-First.\""
+
+[[outputs]]
+id = "JRyBYq912fvcKQ6ir6dTA"
+uri = "file://attached_assets/generated_images/promo-slide-4.jpg"
+type = "image"
+title = "Slide 4 — AI/MCP · \"Built for the AI-Native Developer Workflow\""
