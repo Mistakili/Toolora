@@ -33,7 +33,10 @@ router.get("/popular", async (req, res) => {
     res.json(data);
   } catch (err) {
     req.log.error({ err }, "Failed to fetch popular tools");
-    res.status(500).json({ error: "Internal server error" });
+    // Return empty list instead of 500 so the frontend keeps working
+    const fallback = GetPopularToolsResponse.parse({ tools: [] });
+    res.setHeader("X-Cache", "FALLBACK");
+    res.json(fallback);
   }
 });
 
@@ -79,7 +82,9 @@ router.post("/:slug/use", async (req, res) => {
     res.json(data);
   } catch (err) {
     req.log.error({ err }, "Failed to track tool usage");
-    res.status(500).json({ error: "Internal server error" });
+    // Non-critical — return success anyway so the tool still works
+    const fallback = TrackToolUsageResponse.parse({ success: true, usageCount: 0 });
+    res.json(fallback);
   }
 });
 
