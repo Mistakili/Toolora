@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Toolora — Free Browser Tools",
-  "version": "1.0.1",
-  "description": "20+ free tools in one click. JSON formatter, PDF merger, image compressor, password generator, QR codes — private & browser-based.",
+  "version": "1.0.2",
+  "description": "41 free tools in one click. JSON, JWT, Regex, PDF, image compression, QR codes, token counter, and more — 100% private & browser-based.",
   "icons": {
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",
