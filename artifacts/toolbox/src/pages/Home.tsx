@@ -571,6 +571,88 @@ print(r.json()["text"])  # ← full PDF text`}
         </div>
       </section>
 
+      {/* SEO Content Section — substantive prose for AI and search indexing */}
+      <section className="py-20 border-t border-border/50">
+        <div className="container mx-auto px-4 max-w-4xl">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-display font-bold mb-4">What is Toolora?</h2>
+            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+              A complete suite of free online tools that run entirely in your browser — no file uploads, no accounts, no data ever leaving your device.
+            </p>
+          </div>
+
+          <div className="prose prose-neutral dark:prose-invert max-w-none space-y-10">
+
+            <div className="grid md:grid-cols-2 gap-8">
+              <div className="space-y-3">
+                <h3 className="text-xl font-bold flex items-center gap-2">
+                  <span className="w-8 h-8 rounded-lg bg-red-500/10 flex items-center justify-center text-red-500 text-sm font-bold shrink-0">PDF</span>
+                  PDF Tools
+                </h3>
+                <p className="text-muted-foreground text-sm leading-relaxed">
+                  Merge multiple PDF files into a single document by dragging them into order. Split any PDF into individual pages or extract specific page ranges. All PDF processing runs client-side using WebAssembly — your documents never touch a server, making these tools safe for contracts, medical records, and legal filings.
+                </p>
+              </div>
+
+              <div className="space-y-3">
+                <h3 className="text-xl font-bold flex items-center gap-2">
+                  <span className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-500 text-sm font-bold shrink-0">IMG</span>
+                  Image Tools
+                </h3>
+                <p className="text-muted-foreground text-sm leading-relaxed">
+                  Compress JPG, PNG, and WebP images without visible quality loss. Resize by pixel dimensions or percentage while locking aspect ratio. Convert between image formats instantly. All image processing uses the browser's Canvas API — your photos are never transmitted anywhere.
+                </p>
+              </div>
+
+              <div className="space-y-3">
+                <h3 className="text-xl font-bold flex items-center gap-2">
+                  <span className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary text-sm font-bold shrink-0">&lt;/&gt;</span>
+                  Developer Tools
+                </h3>
+                <p className="text-muted-foreground text-sm leading-relaxed">
+                  Format and validate JSON, generate MD5, SHA-256, and SHA-512 hashes, decode JWT tokens, test regex patterns with live highlighting, convert between YAML and JSON, parse cron expressions, convert number bases, escape strings for JSON and SQL, and generate UUIDs in bulk. The Token Counter supports GPT-4o, Claude, and Llama tokenizers so you know your API cost before you send a request.
+                </p>
+              </div>
+
+              <div className="space-y-3">
+                <h3 className="text-xl font-bold flex items-center gap-2">
+                  <span className="w-8 h-8 rounded-lg bg-green-500/10 flex items-center justify-center text-green-500 text-sm font-bold shrink-0">TXT</span>
+                  Text Tools
+                </h3>
+                <p className="text-muted-foreground text-sm leading-relaxed">
+                  Count words, characters, and reading time. Convert case (camelCase, snake_case, title case, and more). Sort and deduplicate lines. Compare two texts and see a line-by-line diff. Calculate Flesch–Kincaid readability scores. Generate Lorem Ipsum placeholder text. Convert Markdown to HTML with a live preview, or clean HTML back into readable Markdown.
+                </p>
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-primary/20 bg-primary/5 p-8 space-y-4">
+              <h3 className="text-xl font-bold">AI and RAG Workflow Tools</h3>
+              <p className="text-muted-foreground text-sm leading-relaxed">
+                The <strong className="text-foreground">Text Chunker</strong> splits long documents into overlapping segments ready for vector database ingestion — choose paragraph, sentence, or fixed-size chunking, set the chunk size and overlap, and download as JSONL with token estimates per chunk. The <strong className="text-foreground">HTML to Markdown Converter</strong> cleans scraped web content into LLM-readable Markdown, handling tables, code blocks, and nested lists. The <strong className="text-foreground">AI Data Extractor</strong> pulls structured JSON from any unstructured text — describe what fields to extract in plain English and get clean output from emails, contracts, or meeting notes. The <strong className="text-foreground">Document Memory Loader</strong> chunks an entire PDF or Word document and saves it to Claude-accessible persistent memory so you can ask questions about it in any future session without re-uploading.
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              <h3 className="text-xl font-bold">Why Your Files Should Never Leave Your Browser</h3>
+              <p className="text-muted-foreground text-sm leading-relaxed">
+                Most free online tools upload your files to a remote server to process them. That means sensitive documents — financial reports, healthcare records, legal contracts, private photos — are transmitted over the internet and stored, however briefly, on infrastructure you do not control and cannot audit. Toolora is built differently: all browser-tool processing runs in WebAssembly and native browser APIs inside your own tab. You can verify this yourself by opening DevTools and watching the Network tab while using any tool. You will see no outbound file upload.
+              </p>
+              <p className="text-muted-foreground text-sm leading-relaxed">
+                This architecture makes Toolora suitable for regulated industries. Healthcare teams can process patient documents without violating HIPAA upload restrictions. Legal professionals can work with privileged materials. Financial analysts can handle non-public information. Developers can test with real credentials and API keys without worrying about those values appearing in server logs.
+              </p>
+            </div>
+
+            <div className="space-y-3">
+              <h3 className="text-xl font-bold">Free MCP Server for Claude, Cursor, and Windsurf</h3>
+              <p className="text-muted-foreground text-sm leading-relaxed">
+                Beyond the browser tools, Toolora runs a free Model Context Protocol server with 25 tools. Paste one configuration block into Claude Desktop, Cursor, or Windsurf and your AI agent can immediately call PDF extraction, HTML to Markdown conversion, text chunking, regex execution, hash generation, token estimation, structured data extraction, QR code generation, web page reading, and persistent memory — all without an API key. The server is listed in the Anthropic MCP registry and uses the streamable HTTP transport format.
+              </p>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
       {/* Email capture */}
       <section className="py-20 border-t border-border/50 bg-muted/20">
         <div className="container mx-auto px-4 max-w-xl text-center">
