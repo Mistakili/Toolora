@@ -43,14 +43,18 @@ function Tag({ children }: { children: React.ReactNode }) {
 }
 
 const TOOLS = [
-  { icon: FileText,  label: "PDF Merge",         desc: "Merge PDFs in-browser, zero upload",     href: "/tools/documents/pdf-merge",        cat: "Documents" },
-  { icon: Image,     label: "Image Compress",     desc: "Shrink images locally, no cloud needed", href: "/tools/images/image-compress",       cat: "Images" },
-  { icon: Code2,     label: "JSON Formatter",     desc: "Format & validate JSON instantly",        href: "/tools/developer/json-formatter",    cat: "Developer" },
-  { icon: Hash,      label: "Hash Generator",     desc: "MD5, SHA-256, SHA-512 hashes",           href: "/tools/developer/hash-generator",    cat: "Security" },
-  { icon: Key,       label: "Password Generator", desc: "Cryptographically random passwords",      href: "/tools/developer/password-generator",cat: "Security" },
-  { icon: QrCode,    label: "QR Code Generator",  desc: "Clean QR codes, no watermarks ever",     href: "/tools/productivity/qr-generator",   cat: "Productivity" },
-  { icon: Type,      label: "Word Counter",        desc: "Words, chars, readability score & keywords", href: "/tools/text/word-counter",           cat: "Text" },
-  { icon: Lock,      label: "Base64 Encoder",      desc: "Encode & decode without a server",       href: "/tools/developer/base64",            cat: "Developer" },
+  { icon: FileText,  label: "PDF Merge",            desc: "Merge PDFs in-browser, zero upload",          href: "/tools/pdf/pdf-merge",                 cat: "PDF" },
+  { icon: Image,     label: "Image Compressor",      desc: "Shrink images locally, no cloud needed",      href: "/tools/image/image-compress",          cat: "Image" },
+  { icon: Code2,     label: "JSON Formatter",        desc: "Format & validate JSON instantly",             href: "/tools/developer/json-formatter",      cat: "Developer" },
+  { icon: Hash,      label: "Hash Generator",        desc: "MD5, SHA-256, SHA-512 hashes",                href: "/tools/developer/hash-generator",      cat: "Developer" },
+  { icon: Key,       label: "JWT Decoder",           desc: "Inspect token header, payload & expiry",      href: "/tools/developer/jwt-decoder",         cat: "Developer" },
+  { icon: QrCode,    label: "QR Code Generator",     desc: "Clean QR codes, no watermarks ever",          href: "/tools/productivity/qr-generator",     cat: "Productivity" },
+  { icon: Type,      label: "Word Counter",          desc: "Words, chars, sentences & reading time",      href: "/tools/text/word-counter",             cat: "Text" },
+  { icon: Lock,      label: "Base64 Encoder",        desc: "Encode & decode without a server",            href: "/tools/developer/base64",              cat: "Developer" },
+  { icon: Terminal,  label: "Regex Tester",          desc: "Live match highlighting & capture groups",    href: "/tools/developer/regex-tester",        cat: "Developer" },
+  { icon: Cpu,       label: "Token Counter",         desc: "GPT-4o, Claude, Llama token counts",          href: "/tools/developer/token-counter",       cat: "AI & RAG" },
+  { icon: Key,       label: "Password Generator",    desc: "Cryptographically random passwords",          href: "/tools/productivity/password-generator",cat: "Productivity" },
+  { icon: Globe,     label: "OG / Social Preview",   desc: "Preview Open Graph & Twitter cards",          href: "/tools/developer/og-preview",          cat: "Developer" },
 ];
 
 const PROMISES = [
@@ -61,10 +65,10 @@ const PROMISES = [
 ];
 
 const STATS = [
-  { value: "20+",    label: "Free tools" },
-  { value: "0",      label: "Uploads required" },
-  { value: "100%",   label: "Browser-side" },
-  { value: "12",     label: "MCP tools" },
+  { value: "41",  label: "Free tools" },
+  { value: "0",   label: "Uploads required" },
+  { value: "25",  label: "MCP tools" },
+  { value: "594", label: "Agent calls/week" },
 ];
 
 const API_FEATURES = [
@@ -90,7 +94,7 @@ export default function Showcase() {
   const heroY = useTransform(scrollY, [0, 400], [0, -60]);
 
   const [copied, setCopied] = useState(false);
-  const mcpEndpoint = "https://toolora.replit.app/api/mcp";
+  const mcpEndpoint = "https://toolora.dev/api/mcp";
 
   useEffect(() => { document.title = "Toolora — Free Browser-Side Tools Platform"; }, []);
 
@@ -145,8 +149,8 @@ export default function Showcase() {
         >
           <p className="text-base sm:text-xl font-extrabold text-white mb-6 border border-white/10 bg-white/5 rounded-2xl px-6 py-3 inline-block">
             I built a full privacy-first SaaS —&nbsp;
-            <span className="text-purple-400">20+ tools</span>, an Agent API, and an MCP server —&nbsp;
-            in&nbsp;<span className="text-purple-400">one week</span>, using Replit AI.
+            <span className="text-purple-400">41 tools</span>, an Agent API, MCP server &amp; Chrome extension —&nbsp;
+            using <span className="text-purple-400">Replit AI</span>.
           </p>
 
           <Tag><Shield className="w-3 h-3" /> Privacy First · No Uploads · 100% Free</Tag>
@@ -161,8 +165,8 @@ export default function Showcase() {
           </h1>
 
           <p className="mt-6 text-lg sm:text-xl text-white/60 max-w-2xl mx-auto leading-relaxed">
-            20+ free tools — PDF merge, image compression, hash generation, QR codes,
-            JSON formatting, and more. Your files never leave your device. Not even for a millisecond.
+            41 free tools — PDF, image, developer utilities, AI/RAG prep, and more.
+            Your files never leave your device. Not even for a millisecond.
           </p>
 
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -288,7 +292,7 @@ export default function Showcase() {
           <Reveal delay={0.2} className="mt-8 text-center">
             <a href="/">
               <span className="text-sm text-purple-400 hover:text-purple-300 transition-colors cursor-pointer inline-flex items-center gap-1">
-                See all 20+ tools <ArrowRight className="w-3.5 h-3.5" />
+                See all 41 tools <ArrowRight className="w-3.5 h-3.5" />
               </span>
             </a>
           </Reveal>
@@ -356,12 +360,12 @@ export default function Showcase() {
                 </div>
                 <div>
                   <div className="font-bold text-white">MCP Server</div>
-                  <div className="text-xs text-purple-400">Free · 15 tools · Claude / Cursor</div>
+                  <div className="text-xs text-purple-400">Free · 25 tools · Claude / Cursor</div>
                 </div>
               </div>
               <p className="text-sm text-white/55 leading-relaxed mb-5">
                 Drop the Toolora MCP endpoint into Claude Desktop or Cursor and your AI assistant
-                gains direct access to 12 browser-grade tools — no API key required.
+                gains direct access to 25 tools — no API key required. 594 agent calls in week 1.
               </p>
 
               {/* Endpoint box */}
@@ -381,7 +385,7 @@ export default function Showcase() {
               </div>
 
               <div className="mt-5 space-y-1.5">
-                {["PDF text extraction","Image analysis","QR generation","Hash & encode","Web scraping","+ 7 more"].map((f) => (
+                {["PDF merge, split & extraction","Word count, hash, Base64, JWT decode","Token counting for GPT-4o & Claude","Text chunking for RAG pipelines","+ 21 more tools"].map((f) => (
                   <div key={f} className="flex items-center gap-2 text-sm text-white/55">
                     <Check className="w-3.5 h-3.5 text-purple-400 shrink-0" />
                     {f}
