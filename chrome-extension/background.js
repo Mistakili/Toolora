@@ -3,17 +3,23 @@ const BASE = "https://toolora.dev";
 const TEXT_TOOLS = [
   { id: "word-counter",     label: "Word Counter",          path: "/tools/text/word-counter" },
   { id: "case-converter",   label: "Case Converter",        path: "/tools/text/case-converter" },
-  { id: "markdown-preview", label: "Markdown Preview",      path: "/tools/text/markdown-preview" },
   { id: "text-diff",        label: "Text Diff",             path: "/tools/text/text-diff" },
-  { id: "lorem-ipsum",      label: "Lorem Ipsum Generator", path: "/tools/text/lorem-ipsum" },
+  { id: "markdown-preview", label: "Markdown Preview",      path: "/tools/text/markdown-preview" },
+  { id: "text-chunker",     label: "Text Chunker (RAG)",    path: "/tools/developer/text-chunker" },
+  { id: "html-to-markdown", label: "HTML to Markdown",      path: "/tools/developer/html-to-markdown" },
 ];
 
 const DEV_TOOLS = [
-  { id: "json-formatter",   label: "JSON Formatter",        path: "/tools/developer/json-formatter" },
-  { id: "base64",           label: "Base64 Encoder/Decoder",path: "/tools/developer/base64" },
-  { id: "url-encoder",      label: "URL Encoder/Decoder",   path: "/tools/developer/url-encoder" },
-  { id: "hash-generator",   label: "Hash Generator",        path: "/tools/developer/hash-generator" },
-  { id: "uuid-generator",   label: "UUID Generator",        path: "/tools/developer/uuid-generator" },
+  { id: "json-formatter",     label: "JSON Formatter",          path: "/tools/developer/json-formatter" },
+  { id: "base64",             label: "Base64 Encoder/Decoder",  path: "/tools/developer/base64" },
+  { id: "url-encoder",        label: "URL Encoder/Decoder",     path: "/tools/developer/url-encoder" },
+  { id: "hash-generator",     label: "Hash Generator",          path: "/tools/developer/hash-generator" },
+  { id: "jwt-decoder",        label: "JWT Decoder",             path: "/tools/developer/jwt-decoder" },
+  { id: "regex-tester",       label: "Regex Tester",            path: "/tools/developer/regex-tester" },
+  { id: "token-counter",      label: "Token Counter",           path: "/tools/developer/token-counter" },
+  { id: "yaml-json-converter",label: "YAML ↔ JSON Converter",   path: "/tools/developer/yaml-json-converter" },
+  { id: "string-escape",      label: "String Escape Tool",      path: "/tools/developer/string-escape" },
+  { id: "data-extractor",     label: "AI Data Extractor",       path: "/tools/developer/data-extractor" },
 ];
 
 chrome.runtime.onInstalled.addListener(() => {
