@@ -1,0 +1,135 @@
+Toolora is a free collection of 41 developer and productivity tools that run entirely inside your browser — no uploads, no sign-in, no tracking, no nonsense.
+
+With this extension, you can launch any Toolora tool in one click from your browser toolbar, or right-click any selected text on any webpage to instantly send it to a Toolora tool. It works everywhere, all the time, without leaving what you're doing.
+
+────────────────────────────────────────
+🔧 WHY TOOLORA?
+────────────────────────────────────────
+
+Most online tools upload your files and text to a server. That means your passwords, your PDFs, your code, and your private data pass through someone else's machine.
+
+Toolora is different. Every single operation happens locally in your browser using JavaScript and WebAssembly. Your data never leaves your device. There is no server receiving your files. There is no database storing what you typed.
+
+This is privacy-first tooling built for people who care about where their data goes.
+
+────────────────────────────────────────
+🛠️ TOOLS INCLUDED
+────────────────────────────────────────
+
+DEVELOPER TOOLS
+• JSON Formatter & Validator — Paste messy JSON, get it formatted, validated, and error-highlighted instantly. Supports minify/prettify toggle and syntax error detection.
+• Base64 Encoder / Decoder — Encode text or files to Base64 or decode Base64 strings back to readable text. Handles both text and binary data.
+• URL Encoder / Decoder — Percent-encode URLs or decode encoded strings. Essential for working with query parameters, APIs, and web scraping.
+• Regex Tester — Test regular expressions against sample text with real-time match highlighting and group capture display.
+• JWT Decoder — Decode JSON Web Tokens to inspect headers, payloads, and signatures without sending them anywhere.
+• Hash Generator — Generate MD5, SHA-1, SHA-256, and SHA-512 hashes from any text input.
+• Token Counter — Count tokens for GPT-4o, Claude 3.5, and Llama models before you make an API call. Shows exact count and % of context window used.
+• YAML ↔ JSON Converter — Convert between YAML and JSON instantly. Validates both formats on the fly.
+• Cron Expression Parser — Paste a cron schedule and get a plain-English explanation of when it runs, plus the next 5 execution times.
+• Number Base Converter — Convert between decimal, binary, octal, and hexadecimal in real time.
+• String Escape Tool — Escape and unescape strings for JSON, SQL, regex, CSV, shell, and XML targets.
+• Color Picker & Converter — Convert between HEX, RGB, HSL, and CMYK color formats. Includes a visual color picker.
+• Lorem Ipsum Generator — Generate placeholder text by word count, sentence count, or paragraph count.
+• UUID Generator — Generate RFC-compliant UUIDs (v4) in bulk. Copy one or all at once.
+
+TEXT TOOLS
+• Word Counter — Real-time word, character, sentence, and paragraph count with estimated reading time.
+• Case Converter — Transform text between UPPER CASE, lower case, Title Case, camelCase, snake_case, and kebab-case.
+• Markdown Preview — Write Markdown and see the rendered HTML preview side by side in real time.
+• HTML to Markdown — Convert web-scraped HTML into clean, LLM-ready Markdown. Handles tables, code blocks, lists, and links.
+• Diff Checker — Paste two blocks of text and see exactly what changed, line by line, highlighted clearly.
+• Text Deduplicator — Remove duplicate lines from any list. Sort and clean in one click.
+• Readability Scorer — Calculate Flesch–Kincaid readability scores for any block of text.
+
+AI & RAG TOOLS
+• Text Chunker — Split long documents into overlapping segments for vector database ingestion. Choose paragraph, sentence, or fixed-size chunking. Exports as plain text or JSONL with token estimates per chunk — ready for Pinecone, Chroma, or Weaviate.
+• AI Data Extractor — Describe what fields you want in plain English and extract structured JSON from any unstructured text — emails, contracts, meeting notes, or product pages.
+• Document Memory Loader — Upload a PDF, DOCX, or text file and it is automatically chunked and saved to Claude-accessible persistent memory. Ask questions about your document in any future Claude session without re-uploading.
+
+IMAGE TOOLS
+• Image Compressor — Reduce image file sizes without uploading them. Drag in a JPEG or PNG, adjust quality, and download the compressed result instantly.
+• Image Converter — Convert between JPG, PNG, WebP, and other formats locally in your browser.
+• Image Resizer — Resize images to specific pixel dimensions or percentages while maintaining aspect ratio.
+• EXIF Data Viewer — Inspect the hidden metadata in your photos — camera model, GPS location, timestamp, and more.
+
+PDF TOOLS
+• PDF Merger — Combine multiple PDF files into a single document without uploading anything to a server. Drag, reorder, merge, download.
+• PDF Splitter — Extract specific pages from a PDF or split it into individual pages.
+
+SECURITY & PRIVACY TOOLS
+• Password Generator — Generate cryptographically strong random passwords with custom length, character sets, and rules. No password is ever sent anywhere.
+• QR Code Generator — Turn any URL, text, or data into a QR code instantly. Download as PNG. Works offline.
+
+────────────────────────────────────────
+🤖 FREE MCP SERVER FOR CLAUDE & CURSOR
+────────────────────────────────────────
+
+Toolora also runs a free Model Context Protocol (MCP) server at toolora.dev/api/mcp. Add one configuration block to Claude Desktop, Cursor, or Windsurf and your AI agent instantly gains access to 25 server-side tools — including PDF text extraction, HTML to Markdown, text chunking, regex execution, hash generation, token counting, structured data extraction, QR code generation, web page reading, and persistent memory.
+
+No API key required. Listed in the Anthropic MCP registry.
+
+────────────────────────────────────────
+⚡ HOW THE EXTENSION WORKS
+────────────────────────────────────────
+
+THE TOOLBAR POPUP
+Click the Toolora icon in your browser toolbar and a searchable launcher appears. Type to filter tools instantly, or browse by category. Click any tool to open it in a new tab.
+
+RIGHT-CLICK CONTEXT MENU
+Select any text on any webpage, right-click, and choose "Open in Toolora." The extension detects what kind of text it is — JSON, Base64, a URL, plain text — and opens the most relevant tool with your selection pre-loaded and ready to work.
+
+KEYBOARD SHORTCUT
+Press Ctrl+Shift+T (Cmd+Shift+T on Mac) from anywhere in Chrome to open the Toolora launcher instantly without touching your mouse.
+
+────────────────────────────────────────
+🔒 PRIVACY & PERMISSIONS
+────────────────────────────────────────
+
+Toolora requests only the minimum permissions necessary:
+
+• contextMenus — To add the right-click "Open in Toolora" option
+• tabs — To open the selected tool in a new tab
+• clipboardRead — To optionally pre-fill tools with clipboard content when you invoke them
+
+We do not request:
+• Access to your browsing history
+• Access to page content on websites you visit
+• Any network permissions to external servers
+• Your identity or account information
+
+The extension contains no analytics, no tracking pixels, no advertising SDKs, and no third-party scripts of any kind. The only network requests the extension makes are to open toolora.dev in a new tab — which is the same as you typing the URL yourself.
+
+────────────────────────────────────────
+🆓 100% FREE, FOREVER
+────────────────────────────────────────
+
+Every tool in the Toolora extension is completely free to use with no limits. There is no premium tier for basic tools, no usage cap, no account required, and no ads inside the extension.
+
+Toolora offers an optional Pro plan ($19/mo) and Agent API for developers who want to call Toolora tools programmatically in their own apps and AI workflows. The browser extension and all 41 tools at toolora.dev will always be free.
+
+────────────────────────────────────────
+👩‍💻 BUILT FOR DEVELOPERS AND POWER USERS
+────────────────────────────────────────
+
+Toolora was built by developers, for developers. We got tired of:
+
+• Pasting sensitive data into random online tools
+• Waiting for server-side processing when your browser is perfectly capable
+• Paying for simple utilities that should be free
+• Tool sites that bury the actual tool under ads and popups
+
+So we built the collection we always wanted — fast, private, and always available.
+
+If you find a bug or want to request a tool, reach out through toolora.dev. We read every message.
+
+────────────────────────────────────────
+🌐 ALSO AVAILABLE AT TOOLORA.DEV
+────────────────────────────────────────
+
+The full Toolora toolkit is available at toolora.dev without installing anything. The extension simply makes it faster to reach tools you use every day, with the added convenience of the right-click menu and keyboard shortcut.
+
+All tools on the website work the same way — fully browser-side, no uploads, no sign-in required.
+
+────────────────────────────────────────
+
+Install Toolora. Use every tool, every day, with complete confidence that your data stays on your device.

@@ -299,3 +299,9 @@ id = "JRyBYq912fvcKQ6ir6dTA"
 uri = "file://attached_assets/generated_images/promo-slide-4.jpg"
 type = "image"
 title = "Slide 4 — AI/MCP · \"Built for the AI-Native Developer Workflow\""
+
+[[outputs]]
+id = "HF8wLFHrf5NMwRPu7LOxu"
+uri = "file://attached_assets/chrome-store-listing.txt"
+type = "text"
+title = "Chrome Web Store Listing Copy — Updated"
