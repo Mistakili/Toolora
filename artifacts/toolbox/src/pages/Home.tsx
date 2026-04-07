@@ -108,8 +108,8 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* MCP callout */}
-              <div className="mt-6 flex items-center justify-center">
+              {/* MCP + Chrome callouts */}
+              <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
                 <Link href="/mcp-hub" className="group inline-flex items-center gap-2.5 px-4 py-2.5 rounded-xl border border-border bg-muted/30 hover:border-primary/40 hover:bg-primary/5 transition-all duration-200 text-sm">
                   <span className="flex items-center gap-1.5 text-muted-foreground">
                     <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
@@ -117,6 +117,23 @@ export default function Home() {
                   </span>
                   <span className="text-primary font-medium group-hover:underline">No API key needed →</span>
                 </Link>
+                <a
+                  href="https://chromewebstore.google.com/detail/lpbbnmhnmbccfiipolepbahphffdoine"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group inline-flex items-center gap-2.5 px-4 py-2.5 rounded-xl border border-border bg-muted/30 hover:border-blue-500/40 hover:bg-blue-500/5 transition-all duration-200 text-sm"
+                >
+                  <span className="flex items-center gap-1.5 text-muted-foreground">
+                    <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <circle cx="12" cy="12" r="4" fill="#4285F4"/>
+                      <path d="M12 8h8.6a10 10 0 1 0-1.1 9.3L15 12" stroke="#34A853" strokeWidth="2" fill="none"/>
+                      <path d="M12 8H3.4A10 10 0 0 0 12 22v-5.4" stroke="#FBBC05" strokeWidth="2" fill="none"/>
+                      <path d="M15 12l4.5 7.3A10 10 0 0 0 20.6 8H12" stroke="#EA4335" strokeWidth="2" fill="none"/>
+                    </svg>
+                    Chrome Extension — live
+                  </span>
+                  <span className="text-blue-400 font-medium group-hover:underline">Add to Chrome →</span>
+                </a>
               </div>
 
             </motion.div>
