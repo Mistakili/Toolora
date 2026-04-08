@@ -548,7 +548,7 @@ export default function Home() {
                 <div className="group rounded-2xl border border-border bg-card hover:border-primary/40 transition-all duration-300 h-full flex flex-col cursor-pointer overflow-hidden">
                   <div className="relative h-44 overflow-hidden">
                     <img
-                      src={import.meta.env.BASE_URL + "images/" + getPostImage(post.slug, post.category)}
+                      src={getPostImage(post.slug, post.category)}
                       alt={post.title}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
