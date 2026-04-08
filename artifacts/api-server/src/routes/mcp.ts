@@ -1,4 +1,5 @@
 import { Router, type IRouter, type Request, type Response } from "express";
+import { verifySolanaTransaction } from "../lib/verifyTx";
 import { PDFDocument } from "pdf-lib";
 import QRCode from "qrcode";
 import { createWorker } from "tesseract.js";
@@ -398,6 +399,39 @@ const TOOLS = [
         },
       },
       required: ["text"],
+    },
+  },
+  {
+    name: "private_execute_tool",
+    description:
+      "Execute any Toolora privacy-sensitive tool with a MagicBlock Private Ephemeral Rollup payment proof. Use this when an agent or user needs to run a tool privately — no identity exposure, no input logging, payments untraceable on-chain. Each call costs 0.01 USDC paid via MagicBlock PER. PAYMENT FLOW: (1) POST https://payments.magicblock.app/v1/spl/transfer with {from, to: '3rXKwQ1kpjBd5tdcco32qsvqUh1BnZjcYnS5kYrP7AYE', amount: 10000, cluster, mint} → get unsigned tx → sign with wallet → submit → get txSignature. Then call this tool with that signature. AVAILABLE TOOLS: word-counter (word/char stats), text-case (UPPER/lower/camel/snake), json-formatter (format+validate JSON), base64 (encode/decode), jwt-decoder (decode JWT claims), html-to-markdown, text-chunker (RAG prep), csv-to-json, url-encoder, regex-tester, hash-generator.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        tool: {
+          type: "string",
+          enum: ["word-counter", "text-case", "json-formatter", "base64", "jwt-decoder", "html-to-markdown", "text-chunker", "csv-to-json", "url-encoder", "regex-tester", "hash-generator"],
+          description: "The private tool to run.",
+        },
+        input: {
+          type: "string",
+          description: "The text input to process privately. NOT logged server-side.",
+        },
+        txSignature: {
+          type: "string",
+          description: "MagicBlock PER transaction signature proving a 0.01 USDC private payment to the Toolora vault. Use 'demo_test' for testing without a real payment.",
+        },
+        payer: {
+          type: "string",
+          description: "Solana public key (base58) of the wallet that signed the payment.",
+        },
+        cluster: {
+          type: "string",
+          enum: ["devnet", "mainnet"],
+          description: "Solana cluster (default: devnet).",
+        },
+      },
+      required: ["tool", "input", "txSignature", "payer"],
     },
   },
 ];
@@ -1699,6 +1733,34 @@ Notable browser tools:
             case "hash_text":
               text = handleHashText(args);
               break;
+            case "private_execute_tool": {
+              const ptool = typeof args.tool === "string" ? args.tool : "";
+              const pinput = typeof args.input === "string" ? args.input : "";
+              const ptxSig = typeof args.txSignature === "string" ? args.txSignature : "";
+              const ppayer = typeof args.payer === "string" ? args.payer : "";
+              const pcluster: "devnet" | "mainnet" = args.cluster === "mainnet" ? "mainnet" : "devnet";
+              if (!ptool || !pinput || !ptxSig || !ppayer) {
+                throw new McpToolError("Missing required parameters: tool, input, txSignature, payer");
+              }
+              const pverify = await verifySolanaTransaction(ptxSig, pcluster);
+              if (!pverify.verified) {
+                throw new McpToolError(`Payment verification failed: ${pverify.error ?? "unconfirmed"}`);
+              }
+              const port = process.env.PORT ?? "8080";
+              const execRes = await fetch(`http://localhost:${port}/api/private-execute`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ tool: ptool, input: pinput, txSignature: ptxSig, payer: ppayer, cluster: pcluster }),
+                signal: AbortSignal.timeout(15_000),
+              });
+              if (!execRes.ok) {
+                const errData = await execRes.json().catch(() => ({ error: "execution failed" })) as { error?: string };
+                throw new McpToolError(`Private tool execution failed: ${errData.error ?? "unknown error"}`);
+              }
+              const execResult = await execRes.json() as { output?: string };
+              text = execResult.output ?? "(no output)";
+              break;
+            }
             default:
               res.json(rpcErr(id, -32602, `Unknown tool: ${name}`));
               return;

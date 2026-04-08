@@ -15,6 +15,7 @@ import signalRouter from "./signal";
 import docMemoryRouter from "./docMemory";
 import privateExecuteRouter from "./privateExecute";
 import privateMcpRouter from "./privateMcp";
+import privateBalanceRouter from "./privateBalance";
 
 const router: IRouter = Router();
 
@@ -22,6 +23,7 @@ router.use(healthRouter);
 router.use("/tools", toolsRouter);
 router.use("/private-execute", privateExecuteRouter);
 router.use("/private-mcp", privateMcpRouter);
+router.use("/private-balance", privateBalanceRouter);
 router.use(authRouter);
 router.use("/user", userRouter);
 router.use("/agent", agentRouter);
