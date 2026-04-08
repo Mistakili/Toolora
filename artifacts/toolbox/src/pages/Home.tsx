@@ -71,9 +71,9 @@ export default function Home() {
               <div className="relative w-72 h-72 sm:w-96 sm:h-96 lg:w-[480px] lg:h-[480px]">
                 <div className="absolute inset-0 rounded-full bg-primary/20 blur-3xl scale-90 animate-pulse" />
                 <img
-                  src={`${import.meta.env.BASE_URL}images/hero-visual.png`}
-                  alt="Your data stays in your browser — contained, never uploaded"
-                  className="relative z-10 w-full h-full object-cover rounded-full drop-shadow-[0_0_60px_rgba(139,92,246,0.4)]"
+                  src={import.meta.env.BASE_URL + "images/hero-visual-new.png"}
+                  alt="Toolora — a box of digital tools for everyone"
+                  className="relative z-10 w-full h-full object-contain drop-shadow-[0_0_60px_rgba(139,92,246,0.5)]"
                 />
               </div>
             </motion.div>

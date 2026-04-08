@@ -234,6 +234,12 @@ uri = "file://attached_assets/generated_images/toolora-cover-bg.png"
 type = "image"
 title = "toolora cover background"
 
+[[generated]]
+id = "Gl1AW6zFEwUJwu2mCV0oG"
+uri = "file://artifacts/toolbox/public/images/hero-visual-new.png"
+type = "image"
+title = "toolora toolbox hero visual"
+
 [[outputs]]
 id = "W91hp3ihLhEvWTT51EilJ"
 uri = "file://artifacts/toolbox/public/og-image.png"
