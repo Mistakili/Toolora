@@ -1,0 +1,99 @@
+The Bags Hackathon
+Introducing The Bags Hackathon with $4,000,000 in funding for developers building on Bags.fm. Build good tech, win cash, start companies. We're distributing $1M in grants to 100 teams that ship real products with real traction. The remaining $3M will go into The Bags Fund to support builders with capital, distribution, and more.
+
+100 winners are selected based on real traction: onchain performance, app usage, and growth potential. Early traction and growth trajectory weigh heavily in our evaluation.
+
+Applications are reviewed on a rolling basis. Apply now to be accepted into the first cohort.
+
+
+Apply Now
+Rules
+1
+100 Winners
+
+The top 100 projects each receive a grant between $10,000 and $100,000. Winners can apply to the Bags Fund for ongoing support with listings, capital, and more. Projects that ship and get traction will be rewarded.
+
+2
+Ranked by Real Traction
+
+Winners are ranked holistically across two dimensions: onchain performance (market cap, volume, active traders, etc.) and app traction (MRR, DAU, Github Stars, etc.). New projects are also eligible and early signs of growth weigh heavily in our evaluation.
+
+3
+Verified Projects Only
+
+All winning projects must be verified onchain. We verify the team, the contract, and the revenue. Ownership is confirmed and everything is publicly verifiable.
+
+4
+Must Use Bags
+
+Your project must have a Bags token, use the Bags API, or release a fee sharing app. Deeper integrations rank higher.
+
+5
+Ship to Win
+
+Ideas alone don't qualify. You must deploy a working product with real users and real transaction. Prototypes are accepted at application, but grants are distributed to shipped products. We reserve the right to evaluate projects qualitatively.
+
+6
+Rolling Applications
+
+There is no single deadline. Applications are open throughout Q1, reviewed continuously, and grants are distributed as projects are accepted and verified.
+
+How winners are ranked
+Projects are evaluated across two dimensions. For new projects, early signs of growth weigh heavily.
+
+Product Traction
+
+MRR, DAU, GitHub Stars, and more.
+
+Onchain Performance
+
+Market Cap, Volume, Active Traders, Revenue, + more.
+
+Bonus prizes
+Verified badge
+Verified Hackathon Badge
+
+Winners receive a verified badge marking them as a Bags Hackathon winner.
+
+Mac Mini
+100 Mac Minis
+
+Every hackathon winner receives a brand new Apple Mac Mini.
+
+Categories
+Apply under any of the following categories. Projects can span multiple tracks.
+
+Bags API
+Fee Sharing
+AI Agents
+Claude Skills
+DeFi
+Payments
+Privacy
+Social Finance
+Other
+Developer Resources
+Bags
+Docs →
+DFlow
+Docs →
+Privy
+Docs →
+Helius
+Docs →
+Meteora
+Docs →
+Solana
+Docs →
+Community
+Join the Bags Discord to connect with other builders, get support, and stay up to date on hackathon announcements. Join Discord.
+
+Refer a builder
+Know a great builder? Refer a builder to the hackathon and receive a share of the hackathon grant pool. Get ref link.
+
+About applying
+Fill out a short application. It takes about 5 minutes. You'll need your project name, a brief description, and a verified profile.
+
+Projects that leverage the Bags API are given priority. Grant sizes vary by scope and stage. We invest as soon as projects are accepted.
+
+Questions? Reach out to apps@bags.fm or join the Bags Discord.
