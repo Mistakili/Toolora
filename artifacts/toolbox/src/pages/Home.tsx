@@ -164,6 +164,17 @@ export default function Home() {
         </div>
       </section>
 
+      {/* What is Toolora — orienting blurb */}
+      <section className="py-12 border-b border-border/30">
+        <div className="container mx-auto px-4 max-w-3xl text-center">
+          <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
+            Toolora is a free, open suite of browser-based tools for working with files, text, code, and data.{" "}
+            <span className="text-foreground font-medium">Everything runs locally — nothing is ever uploaded or stored.</span>{" "}
+            Built for everyday users, developers, and AI agents alike.
+          </p>
+        </div>
+      </section>
+
       {/* Architecture Section */}
       <section className="py-20 border-b border-border/50">
         <div className="container mx-auto px-4 max-w-5xl">

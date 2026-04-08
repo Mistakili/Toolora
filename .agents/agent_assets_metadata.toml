@@ -323,3 +323,9 @@ id = "CazLbozHSFdaKQOoE9q2u"
 uri = "file://attached_assets/generated_images/toolora-hackathon-cover.jpg"
 type = "image"
 title = "Toolora Hackathon Cover Image (1280×720)"
+
+[[outputs]]
+id = "RKvArMAJAOp2hZPfJon3p"
+uri = "file://attached_assets/medium-post-toolora.md"
+type = "text"
+title = "Medium Post — Your Files Should Never Leave Your Browser"
