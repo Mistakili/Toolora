@@ -13,11 +13,13 @@ import subscribeRouter from "./subscribe";
 import pasteRouter from "./paste";
 import signalRouter from "./signal";
 import docMemoryRouter from "./docMemory";
+import privateExecuteRouter from "./privateExecute";
 
 const router: IRouter = Router();
 
 router.use(healthRouter);
 router.use("/tools", toolsRouter);
+router.use("/private-execute", privateExecuteRouter);
 router.use(authRouter);
 router.use("/user", userRouter);
 router.use("/agent", agentRouter);
