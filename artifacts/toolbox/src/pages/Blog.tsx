@@ -136,7 +136,7 @@ export default function Blog() {
         <div className="absolute inset-0 bg-gradient-to-b from-background/50 via-background/30 to-background/95" />
         <div className="relative z-10 h-full flex flex-col items-center justify-center text-center px-4 gap-3">
           <p className="text-xs font-mono text-primary uppercase tracking-widest">Toolora Blog</p>
-          <h1 className="text-4xl md:text-5xl font-display font-bold drop-shadow-lg">Writing about privacy, AI tools,<br className="hidden md:block" /> and the open web.</h1>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-display font-bold drop-shadow-lg">Writing about privacy, AI tools,<br className="hidden sm:block" /> and the open web.</h1>
           <p className="text-muted-foreground text-base max-w-xl">{sorted.length} articles · updated weekly</p>
         </div>
       </section>

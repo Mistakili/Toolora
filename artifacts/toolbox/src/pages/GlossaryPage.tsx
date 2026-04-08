@@ -38,17 +38,17 @@ export default function GlossaryPage({ params }: GlossaryPageProps) {
   return (
     <div className="max-w-4xl mx-auto px-4 py-12 space-y-10">
       <div className="space-y-3">
-        <div className="flex items-center gap-2 text-sm text-zinc-500">
-          <BookOpen className="w-4 h-4" />
-          <Link href="/glossary" className="hover:text-zinc-300 transition-colors">
+        <div className="flex flex-wrap items-center gap-1.5 text-sm text-zinc-500">
+          <BookOpen className="w-4 h-4 shrink-0" />
+          <Link href="/glossary" className="hover:text-zinc-300 transition-colors shrink-0">
             Glossary
           </Link>
           <span>/</span>
-          <span className="text-zinc-400">{entry.category}</span>
+          <span className="text-zinc-400 shrink-0">{entry.category}</span>
           <span>/</span>
-          <span className="text-zinc-300">{entry.term}</span>
+          <span className="text-zinc-300 break-all">{entry.term}</span>
         </div>
-        <h1 className="text-4xl font-bold text-white">What is {entry.term}?</h1>
+        <h1 className="text-3xl sm:text-4xl font-bold text-white">What is {entry.term}?</h1>
         <p className="text-zinc-500 text-sm">{entry.shortDescription}</p>
       </div>
 

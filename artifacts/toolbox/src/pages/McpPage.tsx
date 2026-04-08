@@ -162,7 +162,7 @@ export default function McpPage() {
     <div className="w-full">
 
       {/* ── Full-bleed hero ──────────────────────────────────────────────── */}
-      <section className="relative h-[500px] overflow-hidden">
+      <section className="relative min-h-[480px] sm:h-[500px] overflow-hidden">
         <img
           src={`${import.meta.env.BASE_URL}images/mcp-visual.png`}
           alt="MCP server network visualization"
@@ -183,8 +183,8 @@ export default function McpPage() {
             that processes files, generates PDFs, runs OCR, and returns structured results — used in Claude workflows across 15 countries.{" "}
             <strong className="text-foreground">No API key. No auth. Nothing stored.</strong>
           </p>
-          <div className="flex items-center justify-center gap-2">
-            <code className="text-sm bg-muted/80 backdrop-blur-sm border border-border rounded-lg px-4 py-2 font-mono text-primary">
+          <div className="flex flex-wrap items-center justify-center gap-2">
+            <code className="text-xs sm:text-sm bg-muted/80 backdrop-blur-sm border border-border rounded-lg px-3 sm:px-4 py-2 font-mono text-primary break-all">
               {MCP_ENDPOINT}
             </code>
             <CopyButton text={MCP_ENDPOINT} />
