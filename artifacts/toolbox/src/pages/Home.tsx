@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { CATEGORIES, TOOLS } from "@/lib/tools-config";
 import { ToolCard } from "@/components/shared/ToolCard";
 import { useGetPopularTools } from "@workspace/api-client-react";
-import { BLOG_POSTS } from "@/lib/blog-posts";
+import { BLOG_POSTS, getPostImage } from "@/lib/blog-posts";
 import { GLOSSARY } from "@/lib/glossary";
 
 export default function Home() {
@@ -92,7 +92,7 @@ export default function Home() {
                 Your files never leave your device.
               </h1>
               <p className="text-xl text-muted-foreground mb-10 leading-relaxed">
-                {TOOLS.length} professional tools — text, PDF, image, developer, and visual — all running locally in your browser. No uploads, no accounts, nothing stored. Built for developers, legal teams, healthcare, and anyone handling sensitive data.
+                {TOOLS.length} tools. All local. Zero uploads. Nothing ever stored.
               </p>
               
                     <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
@@ -209,8 +209,9 @@ export default function Home() {
                 dot: "bg-green-500",
                 title: "Browser Tools",
                 sub: "Zero-upload processing",
-                desc: `${TOOLS.length} tools run entirely in WebAssembly inside your browser tab. Files are never transmitted anywhere — not even to us.`,
-                bullets: ["PDF · OCR · Image · Audio", "Works offline after load", "No account required", "Verifiable in DevTools"],
+                desc: TOOLS.length + " tools — all run in your browser. Files never leave your device.",
+                img: "mcp-tools-visual.png",
+                bullets: ["PDF · OCR · Image · Audio", "Works offline", "No account required"],
               },
               {
                 num: "02",
@@ -220,8 +221,9 @@ export default function Home() {
                 dot: "bg-primary",
                 title: "MCP Server",
                 sub: "Claude · Cursor · Windsurf",
-                desc: "17 of those same tools available as an MCP server. Paste one config block and your AI client can call them directly.",
-                bullets: ["Free · No API key", "Listed in Anthropic Registry", "Streamable HTTP transport", "toolora.dev/api/mcp"],
+                desc: "17 tools as an MCP server. One config block — your AI calls them directly.",
+                img: "mcp-server-room.png",
+                bullets: ["Free · No API key", "Anthropic Registry", "toolora.dev/api/mcp"],
               },
               {
                 num: "03",
@@ -231,26 +233,37 @@ export default function Home() {
                 dot: "bg-amber-500",
                 title: "Agent API",
                 sub: "For autonomous workflows",
-                desc: "A metered REST API for agents and pipelines. Pay per use via x402 micropayments or subscribe for a monthly call budget.",
-                bullets: ["x402 USDC micropayments", "Pro $19 · Team $79 · Ent $199", "OpenAPI spec included", "Same privacy, at scale"],
+                desc: "Pay-per-call REST API for agents. x402 micropayments or monthly subscription.",
+                img: "mcp-memory-visual.png",
+                bullets: ["x402 USDC micropayments", "Pro $19 · Team $79", "OpenAPI spec included"],
               },
             ].map((layer, i) => (
-              <div key={layer.num} className={`relative flex flex-col p-8 ${i === 1 ? `border border-x-0 md:border-x md:border-y-0 ${layer.border} ${layer.bg}` : ""}`}>
-                <div className="flex items-center gap-3 mb-5">
-                  <span className={`font-mono text-xs font-bold ${layer.color} opacity-60`}>{layer.num}</span>
-                  <span className={`w-1.5 h-1.5 rounded-full ${layer.dot}`} />
-                  <span className="text-xs text-muted-foreground font-medium">{layer.sub}</span>
+              <div key={layer.num} className={"relative flex flex-col overflow-hidden rounded-xl " + (i === 1 ? "border " + layer.border + " " + layer.bg : "")}>
+                <div className="relative h-44 overflow-hidden">
+                  <img
+                    src={import.meta.env.BASE_URL + "images/" + layer.img}
+                    alt={layer.title}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-b from-transparent to-background/90" />
+                  <div className="absolute bottom-3 left-4 flex items-center gap-2">
+                    <span className={"font-mono text-xs font-bold " + layer.color + " opacity-60"}>{layer.num}</span>
+                    <span className={"w-1.5 h-1.5 rounded-full " + layer.dot} />
+                    <span className="text-xs text-muted-foreground font-medium">{layer.sub}</span>
+                  </div>
                 </div>
-                <h3 className={`text-xl font-display font-bold mb-3 ${layer.color}`}>{layer.title}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed mb-5">{layer.desc}</p>
-                <ul className="space-y-1.5 mt-auto">
-                  {layer.bullets.map(b => (
-                    <li key={b} className="flex items-center gap-2 text-xs text-muted-foreground">
-                      <span className={`w-1 h-1 rounded-full shrink-0 ${layer.dot}`} />
-                      {b}
-                    </li>
-                  ))}
-                </ul>
+                <div className="p-6">
+                  <h3 className={"text-xl font-display font-bold mb-2 " + layer.color}>{layer.title}</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed mb-4">{layer.desc}</p>
+                  <ul className="space-y-1.5">
+                    {layer.bullets.map(b => (
+                      <li key={b} className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <span className={"w-1 h-1 rounded-full shrink-0 " + layer.dot} />
+                        {b}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </div>
             ))}
           </div>
@@ -294,76 +307,72 @@ export default function Home() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {/* Enterprise */}
             <Link href="/enterprise">
-              <div className="group relative rounded-2xl border border-border bg-card hover:border-amber-500/50 hover:bg-amber-500/5 transition-all duration-300 p-6 cursor-pointer h-full flex flex-col">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="w-11 h-11 rounded-xl bg-amber-500/10 flex items-center justify-center">
-                    <Building2 className="w-5 h-5 text-amber-500" />
-                  </div>
-                  <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">$199/mo</span>
+              <div className="group relative rounded-2xl border border-border bg-card hover:border-amber-500/50 transition-all duration-300 cursor-pointer h-full flex flex-col overflow-hidden">
+                <div className="relative h-40 overflow-hidden">
+                  <img src={import.meta.env.BASE_URL + "images/enterprise-hero.png"} alt="Enterprise" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-card via-card/40 to-transparent" />
+                  <span className="absolute top-3 right-3 text-xs font-bold px-2.5 py-1 rounded-full bg-amber-500/90 text-black">$199/mo</span>
                 </div>
-                <h3 className="text-lg font-bold mb-2 group-hover:text-amber-500 transition-colors">Enterprise Plan</h3>
-                <p className="text-muted-foreground text-sm leading-relaxed flex-1">
-                  Built for law firms, healthcare teams, and financial services. Privacy by architecture — no server uploads, full compliance story.
-                </p>
-                <div className="flex items-center gap-1 mt-4 text-sm font-semibold text-amber-500">
-                  Learn more <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                <div className="p-5 flex flex-col flex-1">
+                  <h3 className="text-lg font-bold mb-1.5 group-hover:text-amber-500 transition-colors">Enterprise Plan</h3>
+                  <p className="text-muted-foreground text-sm flex-1">Law firms, healthcare & finance. Privacy by architecture.</p>
+                  <div className="flex items-center gap-1 mt-4 text-sm font-semibold text-amber-500">
+                    Learn more <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                  </div>
                 </div>
               </div>
             </Link>
 
             {/* MCP Hub */}
             <Link href="/mcp-hub">
-              <div className="group relative rounded-2xl border border-border bg-card hover:border-purple-500/50 hover:bg-purple-500/5 transition-all duration-300 p-6 cursor-pointer h-full flex flex-col">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="w-11 h-11 rounded-xl bg-purple-500/10 flex items-center justify-center">
-                    <Server className="w-5 h-5 text-purple-500" />
-                  </div>
-                  <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20">17 tools · Free</span>
+              <div className="group relative rounded-2xl border border-border bg-card hover:border-purple-500/50 transition-all duration-300 cursor-pointer h-full flex flex-col overflow-hidden">
+                <div className="relative h-40 overflow-hidden">
+                  <img src={import.meta.env.BASE_URL + "images/mcp-hub-hero.png"} alt="MCP Hub" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-card via-card/40 to-transparent" />
+                  <span className="absolute top-3 right-3 text-xs font-bold px-2.5 py-1 rounded-full bg-purple-500/90 text-white">17 tools · Free</span>
                 </div>
-                <h3 className="text-lg font-bold mb-2 group-hover:text-purple-500 transition-colors">MCP Server Hub</h3>
-                <p className="text-muted-foreground text-sm leading-relaxed flex-1">
-                  Drop one config block into Claude Desktop, Cursor, or Windsurf and get 17 tools instantly. Listed in the Anthropic MCP registry.
-                </p>
-                <div className="flex items-center gap-1 mt-4 text-sm font-semibold text-purple-500">
-                  Browse the hub <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                <div className="p-5 flex flex-col flex-1">
+                  <h3 className="text-lg font-bold mb-1.5 group-hover:text-purple-500 transition-colors">MCP Server Hub</h3>
+                  <p className="text-muted-foreground text-sm flex-1">One config block. Claude, Cursor, Windsurf — ready instantly.</p>
+                  <div className="flex items-center gap-1 mt-4 text-sm font-semibold text-purple-500">
+                    Browse the hub <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                  </div>
                 </div>
               </div>
             </Link>
 
             {/* Knowledge Hub */}
             <Link href="/glossary">
-              <div className="group relative rounded-2xl border border-border bg-card hover:border-green-500/50 hover:bg-green-500/5 transition-all duration-300 p-6 cursor-pointer h-full flex flex-col">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="w-11 h-11 rounded-xl bg-green-500/10 flex items-center justify-center">
-                    <GraduationCap className="w-5 h-5 text-green-500" />
-                  </div>
-                  <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-green-500/10 text-green-600 dark:text-green-400 border border-green-500/20">{GLOSSARY.length} terms</span>
+              <div className="group relative rounded-2xl border border-border bg-card hover:border-green-500/50 transition-all duration-300 cursor-pointer h-full flex flex-col overflow-hidden">
+                <div className="relative h-40 overflow-hidden">
+                  <img src={import.meta.env.BASE_URL + "images/about-privacy-visual.png"} alt="Glossary" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-card via-card/40 to-transparent" />
+                  <span className="absolute top-3 right-3 text-xs font-bold px-2.5 py-1 rounded-full bg-green-500/90 text-black">{GLOSSARY.length} terms</span>
                 </div>
-                <h3 className="text-lg font-bold mb-2 group-hover:text-green-500 transition-colors">Developer Glossary</h3>
-                <p className="text-muted-foreground text-sm leading-relaxed flex-1">
-                  {GLOSSARY.length} plain-English definitions for developer, privacy, cloud, AI, and security terms. With examples, use cases, and related tools.
-                </p>
-                <div className="flex items-center gap-1 mt-4 text-sm font-semibold text-green-500">
-                  Browse the glossary <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                <div className="p-5 flex flex-col flex-1">
+                  <h3 className="text-lg font-bold mb-1.5 group-hover:text-green-500 transition-colors">Developer Glossary</h3>
+                  <p className="text-muted-foreground text-sm flex-1">Plain-English definitions for privacy, AI, cloud & security.</p>
+                  <div className="flex items-center gap-1 mt-4 text-sm font-semibold text-green-500">
+                    Browse the glossary <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                  </div>
                 </div>
               </div>
             </Link>
 
             {/* Blog */}
             <Link href="/blog">
-              <div className="group relative rounded-2xl border border-border bg-card hover:border-primary/50 hover:bg-primary/5 transition-all duration-300 p-6 cursor-pointer h-full flex flex-col">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="w-11 h-11 rounded-xl bg-primary/10 flex items-center justify-center">
-                    <BookOpen className="w-5 h-5 text-primary" />
-                  </div>
-                  <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-primary/10 text-primary border border-primary/20">{BLOG_POSTS.length} posts</span>
+              <div className="group relative rounded-2xl border border-border bg-card hover:border-primary/50 transition-all duration-300 cursor-pointer h-full flex flex-col overflow-hidden">
+                <div className="relative h-40 overflow-hidden">
+                  <img src={import.meta.env.BASE_URL + "images/blog-hero.png"} alt="Blog" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-card via-card/40 to-transparent" />
+                  <span className="absolute top-3 right-3 text-xs font-bold px-2.5 py-1 rounded-full bg-primary/90 text-white">{BLOG_POSTS.length} posts</span>
                 </div>
-                <h3 className="text-lg font-bold mb-2 group-hover:text-primary transition-colors">Privacy & Dev Blog</h3>
-                <p className="text-muted-foreground text-sm leading-relaxed flex-1">
-                  Deep dives on HIPAA compliance, JWT security, hashing vs encryption, MCP servers, and why most "free" tools are a data risk.
-                </p>
-                <div className="flex items-center gap-1 mt-4 text-sm font-semibold text-primary">
-                  Read the blog <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                <div className="p-5 flex flex-col flex-1">
+                  <h3 className="text-lg font-bold mb-1.5 group-hover:text-primary transition-colors">Privacy & Dev Blog</h3>
+                  <p className="text-muted-foreground text-sm flex-1">HIPAA, JWT, MCP servers, and why "free" tools are a data risk.</p>
+                  <div className="flex items-center gap-1 mt-4 text-sm font-semibold text-primary">
+                    Read the blog <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                  </div>
                 </div>
               </div>
             </Link>
@@ -425,58 +434,25 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Right: quick-start code box */}
+            {/* Right: cinematic visual */}
             <div className="flex-1 w-full max-w-lg">
-              <div className="rounded-2xl border border-border bg-[#0d1117] overflow-hidden">
-                <div className="flex items-center gap-2 px-4 py-3 border-b border-border/50">
-                  <div className="w-3 h-3 rounded-full bg-red-500/60" />
-                  <div className="w-3 h-3 rounded-full bg-yellow-500/60" />
-                  <div className="w-3 h-3 rounded-full bg-green-500/60" />
-                  <span className="ml-2 text-xs text-muted-foreground font-mono">agent_example.py</span>
+              <div className="relative rounded-2xl overflow-hidden border border-yellow-500/20 shadow-2xl shadow-yellow-500/10">
+                <img
+                  src={import.meta.env.BASE_URL + "images/api-keys-hero.png"}
+                  alt="Agent API — x402 micropayments"
+                  className="w-full h-72 object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0d1117] via-[#0d1117]/30 to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 p-5">
+                  <div className="font-mono text-xs text-green-400/80 mb-2">POST /api/agent/pdf/text → 402 → pay → retry → result</div>
+                  <div className="flex items-center gap-3">
+                    <span className="px-2.5 py-1 rounded-full bg-yellow-500/15 border border-yellow-500/30 text-yellow-400 text-xs font-semibold">x402 · Stellar XLM</span>
+                    <span className="px-2.5 py-1 rounded-full bg-yellow-500/15 border border-yellow-500/30 text-yellow-400 text-xs font-semibold">USDC · Solana</span>
+                    <a href="/api/agent/stats" target="_blank" rel="noopener noreferrer" className="ml-auto text-xs text-muted-foreground hover:text-foreground flex items-center gap-1">
+                      <BarChart2 className="w-3 h-3" /> stats
+                    </a>
+                  </div>
                 </div>
-                <pre className="p-5 text-xs font-mono text-green-400/90 leading-relaxed overflow-x-auto">
-{`import requests, base64, json
-
-# 1. Call the endpoint — receive 402 with payment details
-r = requests.post("https://api.toolora.dev/api/agent/pdf/text",
-                  files={"file": open("report.pdf","rb")})
-# r.status_code == 402  ← pay to continue
-
-# 2. Send 0.5 XLM to payTo address on Stellar, get txHash
-
-# 3. Retry with proof of payment
-payment = base64.b64encode(json.dumps({
-  "txHash":  "<stellar_tx_hash>",
-  "from":    "<your_wallet>",
-  "amount":  "0.5",
-  "network": "stellar:mainnet"
-}).encode()).decode()
-
-r = requests.post(
-  "https://api.toolora.dev/api/agent/pdf/text",
-  headers={"X-PAYMENT": payment},
-  files={"file": open("report.pdf","rb")}
-)
-print(r.json()["text"])  # ← full PDF text`}
-                </pre>
-              </div>
-              <div className="flex items-center justify-between mt-3 px-1">
-                <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                  <BarChart2 className="w-3.5 h-3.5" />
-                  <span>Usage stats at</span>
-                  <a
-                    href="/api/agent/stats"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-primary hover:underline font-mono"
-                  >
-                    /api/agent/stats
-                  </a>
-                </div>
-                <span className="text-xs text-muted-foreground">
-                  <Zap className="w-3 h-3 inline mr-1 text-yellow-400" />
-                  x402 · Stellar XLM
-                </span>
               </div>
             </div>
           </div>
@@ -529,29 +505,27 @@ print(r.json()["text"])  # ← full PDF text`}
       </section>
 
       {/* Feature Highlight */}
-      <section className="py-24 bg-primary text-primary-foreground relative overflow-hidden">
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff10_1px,transparent_1px),linear-gradient(to_bottom,#ffffff10_1px,transparent_1px)] bg-[size:4rem_4rem]"></div>
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="flex flex-col md:flex-row items-center gap-12">
-            <div className="flex-1">
-              <h2 className="text-4xl font-display font-bold mb-6">Privacy is not a feature.<br/>It's our foundation.</h2>
-              <p className="text-primary-foreground/80 text-lg mb-8 max-w-xl leading-relaxed">
-                When you use our PDF manipulation, image conversion, or developer tools, your files never leave your device. All processing is powered by modern WebAssembly and browser APIs directly on your machine.
-              </p>
-              <ul className="space-y-4 mb-8">
-                <li className="flex items-center gap-3 font-medium"><Shield className="w-5 h-5 text-green-300" /> Zero server uploads</li>
-                <li className="flex items-center gap-3 font-medium"><Zap className="w-5 h-5 text-yellow-300" /> Lightning fast local execution</li>
-              </ul>
-            </div>
-            <div className="flex-1 flex justify-center">
-              <div className="relative w-64 h-64 md:w-96 md:h-96">
-                 <img 
-                  src={`${import.meta.env.BASE_URL}images/privacy-shield.png`} 
-                  alt="Privacy Shield" 
-                  className="w-full h-full object-contain animate-in fade-in zoom-in duration-1000"
-                />
-              </div>
-            </div>
+      <section className="relative overflow-hidden bg-primary text-primary-foreground">
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff10_1px,transparent_1px),linear-gradient(to_bottom,#ffffff10_1px,transparent_1px)] bg-[size:4rem_4rem]" />
+        <div className="grid md:grid-cols-2 min-h-[420px]">
+          {/* Image — full bleed left column */}
+          <div className="relative order-last md:order-first min-h-[300px] md:min-h-0">
+            <img
+              src={import.meta.env.BASE_URL + "images/privacy-shield-new.png"}
+              alt="Privacy by architecture"
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent to-primary/80 hidden md:block" />
+            <div className="absolute inset-0 bg-gradient-to-t from-primary/80 to-transparent md:hidden" />
+          </div>
+          {/* Text column */}
+          <div className="relative z-10 flex flex-col justify-center px-8 md:px-14 py-16">
+            <h2 className="text-4xl md:text-5xl font-display font-bold mb-6 leading-tight">Privacy is not a feature.<br/>It's our foundation.</h2>
+            <ul className="space-y-4">
+              <li className="flex items-center gap-3 font-medium text-lg"><Shield className="w-5 h-5 text-green-300 shrink-0" /> Zero server uploads</li>
+              <li className="flex items-center gap-3 font-medium text-lg"><Zap className="w-5 h-5 text-yellow-300 shrink-0" /> WebAssembly in your browser</li>
+              <li className="flex items-center gap-3 font-medium text-lg"><Sparkles className="w-5 h-5 text-blue-300 shrink-0" /> Verifiable in DevTools</li>
+            </ul>
           </div>
         </div>
       </section>
@@ -570,16 +544,25 @@ print(r.json()["text"])  # ← full PDF text`}
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {BLOG_POSTS.slice(0, 3).map((post) => (
-              <Link key={post.slug} href={`/blog/${post.slug}`}>
-                <div className="group rounded-2xl border border-border bg-card hover:border-primary/40 hover:bg-muted/40 transition-all duration-300 p-6 h-full flex flex-col cursor-pointer">
-                  <div className="flex items-center gap-2 mb-4">
-                    <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-primary/10 text-primary">{post.category}</span>
-                    <span className="text-xs text-muted-foreground">{post.readTime}</span>
+              <Link key={post.slug} href={"/blog/" + post.slug}>
+                <div className="group rounded-2xl border border-border bg-card hover:border-primary/40 transition-all duration-300 h-full flex flex-col cursor-pointer overflow-hidden">
+                  <div className="relative h-44 overflow-hidden">
+                    <img
+                      src={import.meta.env.BASE_URL + "images/" + getPostImage(post.slug, post.category)}
+                      alt={post.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-card via-card/20 to-transparent" />
+                    <div className="absolute top-3 left-3 flex items-center gap-2">
+                      <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-primary/90 text-white">{post.category}</span>
+                      <span className="text-xs text-white/70 bg-black/40 px-2 py-0.5 rounded-full">{post.readTime}</span>
+                    </div>
                   </div>
-                  <h3 className="font-bold text-base mb-2 leading-snug group-hover:text-primary transition-colors flex-1">{post.title}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed mb-4 line-clamp-2">{post.description}</p>
-                  <div className="flex items-center gap-1 text-sm font-semibold text-primary">
-                    Read more <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                  <div className="p-5 flex flex-col flex-1">
+                    <h3 className="font-bold text-base mb-3 leading-snug group-hover:text-primary transition-colors flex-1">{post.title}</h3>
+                    <div className="flex items-center gap-1 text-sm font-semibold text-primary">
+                      Read more <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                    </div>
                   </div>
                 </div>
               </Link>
