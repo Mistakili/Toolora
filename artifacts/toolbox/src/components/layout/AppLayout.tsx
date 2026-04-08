@@ -1,6 +1,6 @@
 import { ReactNode, useState, useRef, useEffect } from "react";
 import { Link, useLocation } from "wouter";
-import { Settings2, Sparkles, Moon, Sun, Search, Menu, X, ShieldCheck, History, LogOut, LogIn, Key, CreditCard, LayoutDashboard, Zap, Building2 } from "lucide-react";
+import { Settings2, Sparkles, Moon, Sun, Search, Menu, X, ShieldCheck, History, LogOut, LogIn, Key, CreditCard, LayoutDashboard, Zap, Building2, Lock } from "lucide-react";
 import { useTheme } from "../ThemeProvider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -85,6 +85,13 @@ export function AppLayout({ children }: { children: ReactNode }) {
           </div>
 
           <div className="flex items-center gap-2">
+            <a
+              href="/private/"
+              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-violet-500/10 text-violet-400 hover:bg-violet-500/20 rounded-full text-xs font-medium border border-violet-500/30 mr-1 transition-colors"
+            >
+              <Lock className="w-3 h-3" />
+              <span>Private</span>
+            </a>
             <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-green-500/10 text-green-600 dark:text-green-400 rounded-full text-xs font-medium border border-green-500/20 mr-2">
               <ShieldCheck className="w-3.5 h-3.5" />
               <span>Local Processing</span>
@@ -199,6 +206,10 @@ export function AppLayout({ children }: { children: ReactNode }) {
 
           {/* Mobile nav links */}
           <nav className="flex flex-col gap-1 pt-1 border-t border-border">
+            <a href="/private/"
+              className="flex items-center gap-2 px-3 py-2.5 text-sm rounded-lg bg-violet-500/10 text-violet-400 border border-violet-500/20 hover:bg-violet-500/20 transition-colors">
+              <Lock className="w-4 h-4" /> Toolora Private
+            </a>
             <Link href="/pricing" onClick={() => setIsMenuOpen(false)}
               className="flex items-center gap-2 px-3 py-2.5 text-sm rounded-lg hover:bg-muted transition-colors">
               <CreditCard className="w-4 h-4 text-muted-foreground" /> Pricing
@@ -321,6 +332,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
           <div>
             <h4 className="font-semibold mb-4">Resources</h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
+              <li><a href="/private/" className="hover:text-foreground transition-colors text-violet-400">Toolora Private</a></li>
               <li><Link href="/blog" className="hover:text-foreground transition-colors">Blog</Link></li>
               <li><Link href="/pricing" className="hover:text-foreground transition-colors">Pricing</Link></li>
               <li><Link href="/api-keys" className="hover:text-foreground transition-colors">API Keys</Link></li>
