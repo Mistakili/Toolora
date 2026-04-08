@@ -5,8 +5,7 @@ import { motion } from "framer-motion";
 import { CATEGORIES, TOOLS } from "@/lib/tools-config";
 import { ToolCard } from "@/components/shared/ToolCard";
 import { useGetPopularTools } from "@workspace/api-client-react";
-import { BLOG_POSTS, getPostImage } from "@/lib/blog-posts";
-import { GLOSSARY } from "@/lib/glossary";
+import { BLOG_POSTS_COUNT, GLOSSARY_COUNT, HOME_BLOG_POSTS } from "@/lib/home-data";
 
 export default function Home() {
   const [email, setEmail] = useState("");
@@ -147,12 +146,12 @@ export default function Home() {
             </div>
             <div className="w-px h-8 bg-border hidden sm:block" />
             <div className="text-center">
-              <div className="text-2xl font-bold text-foreground">{BLOG_POSTS.length}+</div>
+              <div className="text-2xl font-bold text-foreground">{BLOG_POSTS_COUNT}+</div>
               <div className="text-xs text-muted-foreground uppercase tracking-wider mt-0.5">Blog Posts</div>
             </div>
             <div className="w-px h-8 bg-border hidden sm:block" />
             <div className="text-center">
-              <div className="text-2xl font-bold text-foreground">{GLOSSARY.length}+</div>
+              <div className="text-2xl font-bold text-foreground">{GLOSSARY_COUNT}+</div>
               <div className="text-xs text-muted-foreground uppercase tracking-wider mt-0.5">Glossary Terms</div>
             </div>
             <div className="w-px h-8 bg-border hidden sm:block" />
@@ -358,7 +357,7 @@ export default function Home() {
                 <div className="relative h-40 overflow-hidden">
                   <img src={import.meta.env.BASE_URL + "images/about-privacy-visual.png"} alt="Glossary" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                   <div className="absolute inset-0 bg-gradient-to-t from-card via-card/40 to-transparent" />
-                  <span className="absolute top-3 right-3 text-xs font-bold px-2.5 py-1 rounded-full bg-green-500/90 text-black">{GLOSSARY.length} terms</span>
+                  <span className="absolute top-3 right-3 text-xs font-bold px-2.5 py-1 rounded-full bg-green-500/90 text-black">{GLOSSARY_COUNT} terms</span>
                 </div>
                 <div className="p-5 flex flex-col flex-1">
                   <h3 className="text-lg font-bold mb-1.5 group-hover:text-green-500 transition-colors">Developer Glossary</h3>
@@ -376,7 +375,7 @@ export default function Home() {
                 <div className="relative h-40 overflow-hidden">
                   <img src={import.meta.env.BASE_URL + "images/blog-hero.png"} alt="Blog" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                   <div className="absolute inset-0 bg-gradient-to-t from-card via-card/40 to-transparent" />
-                  <span className="absolute top-3 right-3 text-xs font-bold px-2.5 py-1 rounded-full bg-primary/90 text-white">{BLOG_POSTS.length} posts</span>
+                  <span className="absolute top-3 right-3 text-xs font-bold px-2.5 py-1 rounded-full bg-primary/90 text-white">{BLOG_POSTS_COUNT} posts</span>
                 </div>
                 <div className="p-5 flex flex-col flex-1">
                   <h3 className="text-lg font-bold mb-1.5 group-hover:text-primary transition-colors">Privacy & Dev Blog</h3>
@@ -550,16 +549,16 @@ export default function Home() {
               <p className="text-muted-foreground">Privacy, security, and developer deep dives.</p>
             </div>
             <Link href="/blog" className="hidden sm:flex items-center text-sm font-medium text-primary hover:underline">
-              View all {BLOG_POSTS.length} posts <ArrowRight className="w-4 h-4 ml-1" />
+              View all {BLOG_POSTS_COUNT} posts <ArrowRight className="w-4 h-4 ml-1" />
             </Link>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {BLOG_POSTS.slice(0, 3).map((post) => (
+            {HOME_BLOG_POSTS.map((post) => (
               <Link key={post.slug} href={"/blog/" + post.slug}>
                 <div className="group rounded-2xl border border-border bg-card hover:border-primary/40 transition-all duration-300 h-full flex flex-col cursor-pointer overflow-hidden">
                   <div className="relative h-44 overflow-hidden">
                     <img
-                      src={getPostImage(post.slug, post.category)}
+                      src={post.image}
                       alt={post.title}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
