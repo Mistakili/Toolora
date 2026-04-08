@@ -1,4 +1,5 @@
 import { Router, type IRouter } from "express";
+import { verifySolanaTransaction } from "../lib/verifyTx";
 
 const router: IRouter = Router();
 
@@ -325,10 +326,23 @@ router.post("/", async (req, res) => {
     return;
   }
 
+  const { cluster } = body;
   const payerDisplay = payer.length > 8 ? payer.slice(0, 8) + "..." : payer;
   const sigDisplay = txSignature.length > 16 ? txSignature.slice(0, 16) + "..." : txSignature;
 
-  req.log.info({ tool, payer: payerDisplay, sig: sigDisplay }, "Private tool execution");
+  // Verify payment on-chain before executing
+  const verification = await verifySolanaTransaction(txSignature, cluster);
+  if (!verification.verified) {
+    req.log.warn({ tool, sig: sigDisplay, cluster, error: verification.error }, "Payment verification failed");
+    res.status(402).json({
+      error: "Payment verification failed",
+      detail: verification.error,
+      hint: "Ensure the transaction is confirmed on-chain. Demo signatures must start with 'demo_'.",
+    });
+    return;
+  }
+
+  req.log.info({ tool, payer: payerDisplay, sig: sigDisplay, verified: true, source: verification.source }, "Private tool execution");
 
   try {
     const output = executor(input);

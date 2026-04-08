@@ -20,7 +20,7 @@ export default function PrivateApp() {
   const [apiHealthy, setApiHealthy] = useState(false);
   const [isDemo, setIsDemo] = useState(false);
   const [animating, setAnimating] = useState(false);
-  const cluster: Cluster = "devnet";
+  const [cluster, setCluster] = useState<Cluster>("devnet");
 
   const DEMO_PUBLIC_KEY = "Demo1111111111111111111111111111111111111111";
   const DEMO_BALANCE = 5_000_000; // 5.00 USDC
@@ -118,6 +118,24 @@ export default function PrivateApp() {
                 ⚡ Try Demo
               </button>
             )}
+            {/* Cluster switcher */}
+            <button
+              onClick={() => setCluster((c) => c === "devnet" ? "mainnet" : "devnet")}
+              className={`hidden sm:flex items-center gap-1 text-xs px-2.5 py-1 rounded-md border font-mono transition-colors ${
+                cluster === "mainnet"
+                  ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20"
+                  : "border-border bg-muted/30 text-muted-foreground hover:bg-muted/60"
+              }`}
+              title={cluster === "mainnet" ? "Switch to devnet" : "Switch to mainnet"}
+            >
+              {cluster === "mainnet" ? "● mainnet" : "○ devnet"}
+            </button>
+            <a
+              href="/submission"
+              className="hidden sm:block text-xs text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Submission →
+            </a>
             <a
               href="https://toolora.dev"
               className="hidden sm:block text-xs text-muted-foreground hover:text-foreground transition-colors"
