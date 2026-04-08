@@ -131,7 +131,7 @@ export default function PrivateApp() {
               {cluster === "mainnet" ? "● mainnet" : "○ devnet"}
             </button>
             <a
-              href="/submission"
+              href="/private/submission"
               className="hidden sm:block text-xs text-muted-foreground hover:text-foreground transition-colors"
             >
               Submission →
