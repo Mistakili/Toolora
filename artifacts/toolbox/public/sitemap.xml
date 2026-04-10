@@ -420,7 +420,7 @@
     </image:image>
   </url>
 
-  <!-- New developer & text tools -->
+  <!-- New developer and text tools -->
   <url>
     <loc>https://toolora.dev/tools/developer/jwt-decoder</loc>
     <changefreq>monthly</changefreq>
@@ -1532,7 +1532,7 @@
   <url><loc>https://toolora.dev/glossary/fine-tuning</loc><lastmod>2026-04-06</lastmod><changefreq>monthly</changefreq><priority>0.75</priority></url>
   <url><loc>https://toolora.dev/glossary/prompt-engineering</loc><lastmod>2026-04-06</lastmod><changefreq>monthly</changefreq><priority>0.75</priority></url>
 
-  <!-- Encryption & Auth -->
+  <!-- Encryption and Auth -->
   <url><loc>https://toolora.dev/glossary/encryption</loc><lastmod>2026-04-06</lastmod><changefreq>monthly</changefreq><priority>0.75</priority></url>
   <url><loc>https://toolora.dev/glossary/oauth</loc><lastmod>2026-04-06</lastmod><changefreq>monthly</changefreq><priority>0.75</priority></url>
   <url><loc>https://toolora.dev/glossary/jwt</loc><lastmod>2026-04-06</lastmod><changefreq>monthly</changefreq><priority>0.75</priority></url>
