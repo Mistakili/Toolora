@@ -73,6 +73,7 @@ Toolora exposes an MCP (Model Context Protocol) server for direct integration wi
 - `create_shareable_paste` — Store text content and return a public URL (toolora.dev/p/[id]) that anyone can visit. Expires in 7 days.
 - `save_memory` — Persist any text under a named key (e.g. "project-spec", "meeting-notes"). Retrievable across Claude sessions with recall_memory. Expires in 30 days by default (max 90).
 - `recall_memory` — Retrieve text previously saved with save_memory. Pass the same key. Returns content, savedAt, and expiresAt.
+- `get_arc_trading_signal` — Fetch a live Solana DEX divergence trading signal from Soliris Arc, the agent-to-agent data market on Arc (Circle's L1 blockchain). Each signal costs $0.001 USDC paid automatically on-chain via x402 protocol. Signals identify real-time arbitrage spreads across Raydium, Orca, Jupiter, and Meteora. Use demo=true for a sample without payment.
 
 ### Adding to Claude Desktop
 
@@ -129,6 +130,33 @@ Flow:
 1. Call any paid endpoint — receive a 402 response with 'accepts' array listing both options
 2. Send payment on your preferred chain to the 'payTo' address in the 402 response
 3. Retry the request with header: X-PAYMENT: <base64(JSON)>
+
+## Toolora Private (On-Chain AI Tool Execution)
+
+Toolora Private (https://toolora.dev/private) is a privacy-preserving AI tool execution environment with per-call USDC micropayments via MagicBlock's Private Ephemeral Rollup on Solana. Each tool call is paid for individually — no subscriptions, no tracking, payments verified on-chain. Built for the Colosseum Frontier Hackathon (MagicBlock Privacy Track).
+
+## Key Blog Posts
+
+- [AI Agents Are Paying for Data: A Real On-Chain Transaction](https://toolora.dev/blog/ai-agents-pay-for-data-arc-blockchain) — How AI agents pay other AI agents for data using x402 micropayments on Arc (Circle's L1). Each signal costs $0.001 USDC, settled in under 1 second. Real verifiable transaction included.
+- [The AI Trading Agent That Commits Its Reasoning On-Chain Before It Trades](https://toolora.dev/blog/ai-agent-on-chain-decision-ledger-soliris) — Soliris logs the agent's full reasoning to the Solana blockchain before the swap fires — timestamp-provable and publicly verifiable.
+- [Stop Pasting JWTs Into Random Websites](https://toolora.dev/blog/stop-pasting-jwts-into-random-websites) — Why JWT decoder tools that send tokens to a server are a security risk. Toolora's decoder runs entirely in-browser.
+- [How to Merge PDFs Without Uploading Files](https://toolora.dev/blog/merge-pdfs-without-uploading) — Technical explanation of client-side PDF processing. Files never leave the device.
+- [HIPAA-Compliant Online Document Tools](https://toolora.dev/blog/hipaa-compliant-online-document-tools) — Why browser-based processing satisfies HIPAA's technical safeguard requirements.
+- [Flesch Readability Score: What It Means and How to Check Yours Free](https://toolora.dev/blog/flesch-readability-score-checker) — Explanation of Flesch Reading Ease, Flesch-Kincaid Grade Level, and the free in-browser checker.
+- [Sitemap XML SEO Guide](https://toolora.dev/blog/sitemap-xml-guide-seo) — Complete guide to sitemap.xml structure, priorities, and submission for technical SEO.
+- [What Is OAuth? Explained Without Jargon](https://toolora.dev/blog/what-is-oauth-explained) — Plain-English explanation of OAuth 2.0 authorization flows.
+
+## Glossary (281 terms)
+
+The Toolora Glossary at https://toolora.dev/glossary covers AI, APIs, cryptography, blockchain, developer tools, and web standards. Key terms:
+- https://toolora.dev/glossary/jwt — JSON Web Token explained
+- https://toolora.dev/glossary/mcp — Model Context Protocol
+- https://toolora.dev/glossary/api — Application Programming Interface
+- https://toolora.dev/glossary/encryption — Symmetric and asymmetric encryption
+- https://toolora.dev/glossary/oauth — OAuth 2.0 authorization framework
+- https://toolora.dev/glossary/json — JavaScript Object Notation
+- https://toolora.dev/glossary/base64 — Base64 encoding scheme
+- https://toolora.dev/glossary/regex — Regular expressions
 
 ## Shareable Pastes
 
