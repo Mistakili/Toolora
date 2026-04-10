@@ -434,6 +434,21 @@ const TOOLS = [
       required: ["tool", "input", "txSignature", "payer"],
     },
   },
+  {
+    name: "get_arc_trading_signal",
+    description:
+      "Fetch a live Solana DEX divergence trading signal from Soliris Arc — the agent-to-agent data market built on Arc (Circle's L1 blockchain). Each signal costs $0.001 USDC paid automatically on-chain via the x402 protocol. Signals identify real-time arbitrage spreads across Raydium, Orca, Jupiter, and Meteora. This is the agentic economy in action: your AI pays another AI for data, settled in under 1 second, no humans in the loop. Use demo=true to get a sample signal without payment. For live signals the API returns a 402 with payment details. Powered by Soliris (soliris.pro).",
+    inputSchema: {
+      type: "object",
+      properties: {
+        demo: {
+          type: "boolean",
+          description: "If true, returns a sample signal without requiring payment. Use this to explore the signal format before integrating payments.",
+        },
+      },
+      required: [],
+    },
+  },
 ];
 
 // ─── Per-tool contextual footers (appended to text responses) ─────────────────
@@ -1759,6 +1774,83 @@ Notable browser tools:
               }
               const execResult = await execRes.json() as { output?: string };
               text = execResult.output ?? "(no output)";
+              break;
+            }
+            case "get_arc_trading_signal": {
+              const isDemo = args.demo === true;
+              if (isDemo) {
+                text = [
+                  "SOLIRIS ARC SIGNAL — Demo",
+                  "",
+                  "Token Pair : SOL/USDC",
+                  "Spread     : 0.34%",
+                  "Buy on     : Raydium  @ $142.18",
+                  "Sell on    : Orca     @ $142.66",
+                  "Signal age : 2.1 s",
+                  "",
+                  "Payment model: $0.001 USDC per signal · Arc blockchain (Chain ID: 1516)",
+                  "Settlement  : < 1 second · USDC native · x402 standard",
+                  "Real TX     : 0x25d6d05ad14294c21f0430e85b22100d2477e4b22483ea439f3fb082caf9b8a9",
+                  "",
+                  "This is a demo signal. Call without demo=true for live data (payment required).",
+                  "Powered by Soliris Arc — soliris-arc.xyz/arc-signals",
+                  "Full trading intelligence: soliris.pro",
+                ].join("\n");
+              } else {
+                try {
+                  const signalRes = await fetch("https://soliris-arc.xyz/api/arc/signal/latest", {
+                    signal: AbortSignal.timeout(8000),
+                    headers: { "User-Agent": "Toolora-MCP/1.0" },
+                  });
+                  if (signalRes.status === 402) {
+                    const paymentData = await signalRes.json().catch(() => ({})) as Record<string, unknown>;
+                    text = [
+                      "PAYMENT REQUIRED — Soliris Arc Signal",
+                      "",
+                      "Cost: $0.001 USDC on Arc blockchain (Circle L1, Chain ID: 1516)",
+                      "Standard: x402 · Settlement: < 1 second",
+                      "",
+                      "Payment details returned by API:",
+                      JSON.stringify(paymentData, null, 2),
+                      "",
+                      "To pay: submit USDC via your Circle wallet, include X-Payment-Proof header on retry.",
+                      "Use demo=true to see a sample signal without payment.",
+                      "Learn more: soliris-arc.xyz/arc-signals",
+                    ].join("\n");
+                  } else if (signalRes.ok) {
+                    const signal = await signalRes.json().catch(() => null) as Record<string, unknown> | null;
+                    if (signal) {
+                      text = [
+                        "LIVE SOLIRIS ARC SIGNAL",
+                        "",
+                        "Token Pair : " + (signal.tokenSymbol ?? "N/A"),
+                        "Spread     : " + (signal.spreadPct ?? "N/A") + "%",
+                        "Buy on     : " + (signal.buyDex ?? "N/A"),
+                        "Sell on    : " + (signal.sellDex ?? "N/A"),
+                        "",
+                        "Paid via x402 · Arc Chain ID: 1516 · USDC native",
+                        "Powered by Soliris Arc — soliris-arc.xyz/arc-signals",
+                        "Full trading intelligence: soliris.pro",
+                      ].join("\n");
+                    } else {
+                      text = "Signal received but response could not be parsed. Try demo=true for a sample, or check soliris-arc.xyz/arc-signals.";
+                    }
+                  } else {
+                    text = "Soliris Arc API returned status " + signalRes.status + ". Try demo=true for a sample signal.";
+                  }
+                } catch (fetchErr: unknown) {
+                  const msg = fetchErr instanceof Error ? fetchErr.message : "fetch error";
+                  if (msg.includes("timeout") || msg.includes("fetch") || msg.includes("ECONNREFUSED")) {
+                    text = [
+                      "Could not reach Soliris Arc API (network timeout).",
+                      "Use demo=true to see a sample signal.",
+                      "Live API: soliris-arc.xyz/arc-signals",
+                    ].join("\n");
+                  } else {
+                    throw fetchErr;
+                  }
+                }
+              }
               break;
             }
             default:

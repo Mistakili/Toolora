@@ -9,6 +9,7 @@ export interface BlogPost {
 }
 
 const SLUG_IMAGE_MAP: Record<string, string> = {
+  "ai-agents-pay-for-data-arc-blockchain":              "mcp-tools-visual.png",
   "ai-agent-on-chain-decision-ledger-soliris":          "mcp-tools-visual.png",
   "flesch-readability-score-checker":                   "blog-word-count-stats.png",
   "hipaa-compliant-online-document-tools":              "blog-hipaa-compliance.png",
@@ -126,6 +127,95 @@ export function getPostImage(slug: string, category: string): string {
 }
 
 export const BLOG_POSTS: BlogPost[] = [
+  {
+    slug: "ai-agents-pay-for-data-arc-blockchain",
+    title: "AI Agents Are Paying for Data. Here's a Real On-Chain Transaction.",
+    description: "A trading bot asked for a Solana DEX signal. Got told it costs $0.001. Paid on Arc blockchain automatically. Got the signal. No human clicked anything. Here's exactly how it works.",
+    date: "2026-04-08",
+    readTime: "6 min read",
+    category: "AI Builders",
+    content: `
+<p>Most APIs charge humans. A human signs up, enters a credit card, gets an API key, and the monthly invoice lands in someone's inbox.</p>
+
+<p>That model doesn't work for AI agents. An agent running 10,000 requests a day can't pause to handle a Stripe checkout. It can't read an email. It can't approve a subscription renewal. The human-in-the-loop billing model is a fundamental mismatch for the agentic economy.</p>
+
+<p>We built something that solves this. And we have the on-chain transaction to prove it works.</p>
+
+<h2>What actually happened</h2>
+
+<p>A trading bot running on Soliris sent a request to the Arc Signals API:</p>
+
+<pre><code>GET /api/arc/signal/latest</code></pre>
+
+<p>The API responded with HTTP <strong>402 Payment Required</strong> — the original intended use of that status code, finally being used correctly. The response body contained payment details: $0.001 USDC, on Arc blockchain, via the x402 standard.</p>
+
+<p>The bot read those details, submitted a USDC micropayment on Arc, got a proof, and retried the request with that proof in the header. The signal was released instantly.</p>
+
+<p>Total time: under one second. Total cost: $0.001. No humans involved.</p>
+
+<p>You can verify the transaction yourself: <a href="https://testnet.arcscan.app/tx/0x25d6d05ad14294c21f0430e85b22100d2477e4b22483ea439f3fb082caf9b8a9" target="_blank" rel="noopener">0x25d6d05…b8a9 on ArcScan</a></p>
+
+<h2>Why Arc and not Ethereum or Solana</h2>
+
+<p>The math is brutal on most chains. A $0.001 signal on Ethereum costs $0.30–$5.00 in gas. The gas is 300–5,000x the value of what you're buying. That's not a business model — it's burning money.</p>
+
+<p>Arc (Circle's L1 blockchain) was purpose-built for exactly this. Gas on Arc costs approximately $0.000015 per transaction — about 1.5% of the $0.001 signal price. That's a margin-positive operation. At 1 million signals, the provider nets $700 after all fees.</p>
+
+<p>The chain details: Arc Chain ID 1516, USDC native (no wrapped tokens), finality in ~0.4 seconds.</p>
+
+<h2>The x402 standard</h2>
+
+<p>HTTP 402 has been reserved since 1999 for "Payment Required." Nobody implemented it because micropayments weren't viable. Now they are.</p>
+
+<p>The x402 standard defines a specific format for how a server signals that payment is required and how a client proves payment. It's minimal: a 402 response with payment details in the body, and an <code>X-Payment-Proof</code> header on the retry. The full flow:</p>
+
+<pre><code>// Step 1 — request the resource
+const res = await fetch("/api/arc/signal/latest");
+
+// Step 2 — handle payment if required
+if (res.status === 402) {
+  const { paymentDetails } = await res.json();
+  const proof = await circleWallet.pay(paymentDetails); // $0.001 USDC on Arc
+
+  // Step 3 — retry with proof
+  const signal = await fetch("/api/arc/signal/latest", {
+    headers: { "X-Payment-Proof": proof }
+  });
+  return signal.json(); // { tokenSymbol, spreadPct, buyDex, sellDex }
+}</code></pre>
+
+<p>That's the entire integration. Any AI agent that can make HTTP requests can pay for data this way.</p>
+
+<h2>Agent pays agent</h2>
+
+<p>The part that makes this genuinely new: it's not just an AI agent paying a human-operated API. Every signal triggers <strong>two payments</strong>.</p>
+
+<ul>
+<li>Your trading bot pays $0.001 to the Soliris Arc API</li>
+<li>The Soliris Arc API automatically pays $0.0003 to the raw data-feed agent that provided the DEX prices</li>
+</ul>
+
+<p>The data-feed agent is also software. It has a wallet. It earns money for providing data. The entire value chain — from raw DEX price feed to processed signal to trading decision — is AI agents paying AI agents, with no human authorizing any individual transaction.</p>
+
+<p>This is what the agentic economy actually looks like in practice. Not a chatbot with a credit card. Autonomous software exchanging value for data, settled on-chain, auditable by anyone.</p>
+
+<h2>How Toolora connects to this</h2>
+
+<p>Toolora's MCP server now includes a <code>get_arc_trading_signal</code> tool. Any AI agent connected to Toolora via MCP — Claude Desktop, Cursor, Windsurf — can call it. Use <code>demo=true</code> to see the signal format without payment, or call live for a real x402 payment flow against the Soliris Arc API.</p>
+
+<p>This is Toolora's broader bet: that AI agents need tools, and those tools should be available over MCP, and some of those tools should be able to transact value on behalf of the agent. The signal tool is the first Toolora MCP tool that touches money — specifically someone else's money, paid automatically, on-chain.</p>
+
+<p>The full Soliris ecosystem lives at <a href="https://soliris.pro" target="_blank" rel="noopener">soliris.pro</a>. The Arc Signals demo is at <a href="https://soliris-arc.xyz/arc-signals/" target="_blank" rel="noopener">soliris-arc.xyz/arc-signals</a>. The code is open source on GitHub.</p>
+
+<h2>What this means for API design</h2>
+
+<p>If you're building an API that AI agents will consume, the old model — API keys, monthly billing, human approval flows — creates unnecessary friction. An agent can't manage an API key rotation. It can't respond to a billing alert. It can't fill out a forgot-password form.</p>
+
+<p>The better model: charge per call, accept on-chain payment proof, return data. No accounts. No keys. No humans. Just HTTP and money.</p>
+
+<p>The x402 standard plus a low-gas chain like Arc makes this viable for sub-cent transactions. We've proven it works. The transaction is on-chain. Go build something with it.</p>
+`,
+  },
   {
     slug: "ai-agent-on-chain-decision-ledger-soliris",
     title: "The AI Trading Agent That Commits Its Reasoning On-Chain Before It Trades",
