@@ -94,8 +94,9 @@ router.get("/analytics", async (req: Request, res: Response) => {
   if (!requireAdmin(req, res)) return;
 
   try {
-    // Exclude bots from all human-facing metrics
+    // Exclude bots AND Replit dev environment (country='Local') from real traffic metrics
     const humanFilter = sql`${pageViewsTable.deviceType} != 'bot'`;
+    const externalFilter = sql`${pageViewsTable.deviceType} != 'bot' AND ${pageViewsTable.country} != 'Local'`;
     const thirtyDays = sql`${pageViewsTable.createdAt} >= NOW() - INTERVAL '30 days'`;
     const sevenDays = sql`${pageViewsTable.createdAt} >= NOW() - INTERVAL '7 days'`;
 
@@ -103,33 +104,39 @@ router.get("/analytics", async (req: Request, res: Response) => {
     const [totalRows] = await db
       .select({ total: count() })
       .from(pageViewsTable)
-      .where(sql`${humanFilter} AND ${thirtyDays}`);
+      .where(sql`${externalFilter} AND ${thirtyDays}`);
 
     const [uniqueSessionRows] = await db
       .select({ unique: sql<number>`COUNT(DISTINCT ${pageViewsTable.sessionId})` })
       .from(pageViewsTable)
-      .where(sql`${humanFilter} AND ${thirtyDays} AND ${pageViewsTable.sessionId} IS NOT NULL`);
+      .where(sql`${externalFilter} AND ${thirtyDays} AND ${pageViewsTable.sessionId} IS NOT NULL`);
 
     const [todayRows] = await db
       .select({ total: count() })
       .from(pageViewsTable)
-      .where(sql`${humanFilter} AND DATE(${pageViewsTable.createdAt}) = CURRENT_DATE`);
+      .where(sql`${externalFilter} AND DATE(${pageViewsTable.createdAt}) = CURRENT_DATE`);
 
     const [weekRows] = await db
       .select({ total: count() })
       .from(pageViewsTable)
-      .where(sql`${humanFilter} AND ${sevenDays}`);
+      .where(sql`${externalFilter} AND ${sevenDays}`);
 
     const [botRows] = await db
       .select({ total: count() })
       .from(pageViewsTable)
       .where(sql`${pageViewsTable.deviceType} = 'bot' AND ${thirtyDays}`);
 
+    // Dev browsing (Replit preview sessions) — shown separately so you know what's internal
+    const [devRows] = await db
+      .select({ total: count() })
+      .from(pageViewsTable)
+      .where(sql`${humanFilter} AND ${thirtyDays} AND ${pageViewsTable.country} = 'Local'`);
+
     // ── Top pages ─────────────────────────────────────────────────────────────
     const topPages = await db
       .select({ path: pageViewsTable.path, views: count() })
       .from(pageViewsTable)
-      .where(sql`${humanFilter} AND ${thirtyDays}`)
+      .where(sql`${externalFilter} AND ${thirtyDays}`)
       .groupBy(pageViewsTable.path)
       .orderBy(desc(count()))
       .limit(20);
@@ -138,7 +145,7 @@ router.get("/analytics", async (req: Request, res: Response) => {
     const byDevice = await db
       .select({ deviceType: pageViewsTable.deviceType, views: count() })
       .from(pageViewsTable)
-      .where(sql`${humanFilter} AND ${thirtyDays}`)
+      .where(sql`${externalFilter} AND ${thirtyDays}`)
       .groupBy(pageViewsTable.deviceType)
       .orderBy(desc(count()));
 
@@ -146,7 +153,7 @@ router.get("/analytics", async (req: Request, res: Response) => {
     const byBrowser = await db
       .select({ browser: pageViewsTable.browser, views: count() })
       .from(pageViewsTable)
-      .where(sql`${humanFilter} AND ${thirtyDays}`)
+      .where(sql`${externalFilter} AND ${thirtyDays}`)
       .groupBy(pageViewsTable.browser)
       .orderBy(desc(count()))
       .limit(8);
@@ -155,7 +162,7 @@ router.get("/analytics", async (req: Request, res: Response) => {
     const byOS = await db
       .select({ os: pageViewsTable.os, views: count() })
       .from(pageViewsTable)
-      .where(sql`${humanFilter} AND ${thirtyDays}`)
+      .where(sql`${externalFilter} AND ${thirtyDays}`)
       .groupBy(pageViewsTable.os)
       .orderBy(desc(count()))
       .limit(8);
@@ -164,7 +171,7 @@ router.get("/analytics", async (req: Request, res: Response) => {
     const byCountry = await db
       .select({ country: pageViewsTable.country, views: count() })
       .from(pageViewsTable)
-      .where(sql`${humanFilter} AND ${thirtyDays} AND ${pageViewsTable.country} IS NOT NULL AND ${pageViewsTable.country} NOT IN ('Unknown', 'Local')`)
+      .where(sql`${externalFilter} AND ${thirtyDays} AND ${pageViewsTable.country} IS NOT NULL AND ${pageViewsTable.country} NOT IN ('Unknown', 'Local')`)
       .groupBy(pageViewsTable.country)
       .orderBy(desc(count()))
       .limit(15);
@@ -173,7 +180,7 @@ router.get("/analytics", async (req: Request, res: Response) => {
     const byCities = await db
       .select({ city: pageViewsTable.city, country: pageViewsTable.country, views: count() })
       .from(pageViewsTable)
-      .where(sql`${humanFilter} AND ${thirtyDays} AND ${pageViewsTable.city} IS NOT NULL AND ${pageViewsTable.city} NOT IN ('Unknown', 'Dev')`)
+      .where(sql`${externalFilter} AND ${thirtyDays} AND ${pageViewsTable.city} IS NOT NULL AND ${pageViewsTable.city} NOT IN ('Unknown', 'Dev')`)
       .groupBy(pageViewsTable.city, pageViewsTable.country)
       .orderBy(desc(count()))
       .limit(10);
@@ -186,7 +193,7 @@ router.get("/analytics", async (req: Request, res: Response) => {
         sessions: sql<number>`COUNT(DISTINCT ${pageViewsTable.sessionId})`,
       })
       .from(pageViewsTable)
-      .where(sql`${humanFilter} AND ${thirtyDays}`)
+      .where(sql`${externalFilter} AND ${thirtyDays}`)
       .groupBy(sql`DATE(${pageViewsTable.createdAt})`)
       .orderBy(sql`DATE(${pageViewsTable.createdAt})`);
 
@@ -197,7 +204,7 @@ router.get("/analytics", async (req: Request, res: Response) => {
         views: count(),
       })
       .from(pageViewsTable)
-      .where(humanFilter)
+      .where(externalFilter)
       .groupBy(sql`EXTRACT(HOUR FROM ${pageViewsTable.createdAt})::int`)
       .orderBy(sql`EXTRACT(HOUR FROM ${pageViewsTable.createdAt})::int`);
 
@@ -205,7 +212,7 @@ router.get("/analytics", async (req: Request, res: Response) => {
     const byReferrer = await db
       .select({ referrer: pageViewsTable.referrer, views: count() })
       .from(pageViewsTable)
-      .where(sql`${humanFilter} AND ${thirtyDays} AND ${pageViewsTable.referrer} IS NOT NULL AND ${pageViewsTable.referrer} != ''`)
+      .where(sql`${externalFilter} AND ${thirtyDays} AND ${pageViewsTable.referrer} IS NOT NULL AND ${pageViewsTable.referrer} != ''`)
       .groupBy(pageViewsTable.referrer)
       .orderBy(desc(count()))
       .limit(10);
@@ -217,6 +224,7 @@ router.get("/analytics", async (req: Request, res: Response) => {
         todayViews: Number(todayRows?.total ?? 0),
         weekViews: Number(weekRows?.total ?? 0),
         botViews30d: Number(botRows?.total ?? 0),
+        devViews30d: Number(devRows?.total ?? 0),
       },
       topPages: topPages.map((r) => ({ path: r.path, views: Number(r.views) })),
       byDevice: byDevice.map((r) => ({ deviceType: r.deviceType ?? "Unknown", views: Number(r.views) })),
