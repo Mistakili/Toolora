@@ -644,6 +644,17 @@
     </image:image>
   </url>
   <url>
+    <loc>https://toolora.dev/blog/ai-agents-pay-for-data-arc-blockchain</loc>
+    <lastmod>2026-04-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://toolora.dev/images/mcp-tools-visual.png</image:loc>
+      <image:title>AI Agents Are Paying for Data. Here's a Real On-Chain Transaction. — Toolora Blog</image:title>
+      <image:caption>How AI agents pay other AI agents for data using x402 micropayments on Arc blockchain, with a real on-chain transaction.</image:caption>
+    </image:image>
+  </url>
+  <url>
     <loc>https://toolora.dev/blog/ai-agent-on-chain-decision-ledger-soliris</loc>
     <lastmod>2026-04-05</lastmod>
     <changefreq>monthly</changefreq>
