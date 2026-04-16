@@ -1903,6 +1903,79 @@ Notable browser tools:
   }
 });
 
+// ─── OAuth 2.0 Authorization Server (MCP 2025-03-26 spec) ────────────────────
+// Claude.ai and other MCP clients probe this endpoint before connecting to
+// remote MCP servers. Without it they fail discovery and never connect.
+
+const _oauthCodes = new Map<string, { redirectUri: string; expiresAt: number }>();
+const _oauthTokens = new Set<string>();
+
+router.get("/.well-known/oauth-authorization-server", (_req: Request, res: Response) => {
+  res.json({
+    issuer: "https://toolora.dev/api/mcp",
+    authorization_endpoint: "https://toolora.dev/api/mcp/oauth/authorize",
+    token_endpoint: "https://toolora.dev/api/mcp/oauth/token",
+    response_types_supported: ["code"],
+    grant_types_supported: ["authorization_code", "client_credentials"],
+    code_challenge_methods_supported: ["S256"],
+    scopes_supported: ["mcp"],
+    token_endpoint_auth_methods_supported: ["none"],
+  });
+});
+
+router.get("/oauth/authorize", (req: Request, res: Response) => {
+  const redirectUri = req.query["redirect_uri"] as string | undefined;
+  const state = req.query["state"] as string | undefined;
+
+  if (!redirectUri) {
+    res.status(400).json({ error: "invalid_request", error_description: "redirect_uri is required" });
+    return;
+  }
+
+  const code = crypto.randomBytes(16).toString("hex");
+  _oauthCodes.set(code, { redirectUri, expiresAt: Date.now() + 5 * 60 * 1000 });
+
+  try {
+    const dest = new URL(redirectUri);
+    dest.searchParams.set("code", code);
+    if (state) dest.searchParams.set("state", state);
+    res.redirect(dest.toString());
+  } catch {
+    res.status(400).json({ error: "invalid_request", error_description: "redirect_uri is not a valid URL" });
+  }
+});
+
+router.post("/oauth/token", (req: Request, res: Response) => {
+  const grantType: string = req.body?.grant_type ?? "";
+
+  if (grantType === "authorization_code") {
+    const code: string = req.body?.code ?? "";
+    const entry = _oauthCodes.get(code);
+    if (!entry || Date.now() > entry.expiresAt) {
+      res.status(400).json({ error: "invalid_grant", error_description: "Code is invalid or expired" });
+      return;
+    }
+    _oauthCodes.delete(code);
+  } else if (grantType !== "client_credentials") {
+    res.status(400).json({ error: "unsupported_grant_type" });
+    return;
+  }
+
+  const token = crypto.randomBytes(32).toString("hex");
+  _oauthTokens.add(token);
+  if (_oauthTokens.size > 2000) {
+    const [oldest] = _oauthTokens;
+    _oauthTokens.delete(oldest);
+  }
+
+  res.json({
+    access_token: token,
+    token_type: "Bearer",
+    expires_in: 86400,
+    scope: "mcp",
+  });
+});
+
 // ─── Discovery endpoint ───────────────────────────────────────────────────────
 
 router.get("/", (_req: Request, res: Response) => {

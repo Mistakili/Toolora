@@ -1,4 +1,4 @@
-export const BLOG_POSTS_COUNT = 102;
+export const BLOG_POSTS_COUNT = 108;
 export const GLOSSARY_COUNT = 281;
 
 export interface HomeBlogPost {
