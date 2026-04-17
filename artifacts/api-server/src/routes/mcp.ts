@@ -473,7 +473,7 @@ const TOOLS = [
   {
     name: "private_execute_tool",
     description:
-      "Execute any Toolora privacy-sensitive tool with a MagicBlock Private Ephemeral Rollup payment proof. Use this when an agent or user needs to run a tool privately — no identity exposure, no input logging, payments untraceable on-chain. Each call costs 0.01 USDC paid via MagicBlock PER. PAYMENT FLOW: (1) POST https://payments.magicblock.app/v1/spl/transfer with {from, to: '3rXKwQ1kpjBd5tdcco32qsvqUh1BnZjcYnS5kYrP7AYE', amount: 10000, cluster, mint} → get unsigned tx → sign with wallet → submit → get txSignature. Then call this tool with that signature. AVAILABLE TOOLS: word-counter (word/char stats), text-case (UPPER/lower/camel/snake), json-formatter (format+validate JSON), base64 (encode/decode), jwt-decoder (decode JWT claims), html-to-markdown, text-chunker (RAG prep), csv-to-json, url-encoder, regex-tester, hash-generator.",
+      "Execute any Toolora privacy-sensitive tool with a MagicBlock Private Ephemeral Rollup payment proof. Use this when an agent or user needs to run a tool privately — no identity exposure, no input logging, payments untraceable on-chain. Each call costs 0.01 USDC paid via MagicBlock PER. PAYMENT FLOW: (1) POST https://payments.magicblock.app/v1/spl/transfer with {from, to: '59wUbJWMiBK737srMxPjtKFJDrcuh28Uezj9xjtMimQF', amount: 10000, cluster, mint} → get unsigned tx → sign with wallet → submit → get txSignature. Then call this tool with that signature. AVAILABLE TOOLS: word-counter (word/char stats), text-case (UPPER/lower/camel/snake), json-formatter (format+validate JSON), base64 (encode/decode), jwt-decoder (decode JWT claims), html-to-markdown, text-chunker (RAG prep), csv-to-json, url-encoder, regex-tester, hash-generator.",
     inputSchema: {
       type: "object",
       properties: {
@@ -1915,7 +1915,7 @@ Notable browser tools:
                 throw new McpToolError("Missing required parameter: input (the text to process privately).");
               }
               if (ptxSig === "demo_test" || ptxSig === "demo") {
-                text = `[DEMO MODE — no payment required]\n\nTool: ${ptool}\nInput length: ${pinput.length} chars\n\nThis is a demo response. In production, calling private_execute_tool charges 0.01 USDC via MagicBlock's Private Ephemeral Rollup. The payment proof and tool input are never logged. Pay 0.01 USDC to vault 3rXKwQ1kpjBd5tdcco32qsvqUh1BnZjcYnS5kYrP7AYE via https://payments.magicblock.app/v1/spl/transfer, then call again with the real txSignature and payer wallet pubkey. See toolora.dev/private for the full flow.`;
+                text = `[DEMO MODE — no payment required]\n\nTool: ${ptool}\nInput length: ${pinput.length} chars\n\nThis is a demo response. In production, calling private_execute_tool charges 0.01 USDC via MagicBlock's Private Ephemeral Rollup. The payment proof and tool input are never logged. Pay 0.01 USDC to vault 59wUbJWMiBK737srMxPjtKFJDrcuh28Uezj9xjtMimQF via https://payments.magicblock.app/v1/spl/transfer, then call again with the real txSignature and payer wallet pubkey. See toolora.dev/private for the full flow.`;
                 break;
               }
               if (!ptxSig || !ppayer) {

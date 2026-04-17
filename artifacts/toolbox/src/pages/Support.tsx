@@ -1,6 +1,6 @@
 import { useSEO } from "@/hooks/useSEO";
 
-const SOLANA_TIP_ADDRESS = "3rXKwQ1kpjBd5tdcco32qsvqUh1BnZjcYnS5kYrP7AYE";
+const SOLANA_TIP_ADDRESS = "59wUbJWMiBK737srMxPjtKFJDrcuh28Uezj9xjtMimQF";
 
 export default function Support() {
   useSEO({

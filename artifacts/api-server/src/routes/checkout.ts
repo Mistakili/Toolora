@@ -10,7 +10,7 @@ import { base58Encode } from "../lib/base58";
 
 const router: IRouter = Router();
 
-const VAULT = process.env.SOLANA_VAULT_ADDRESS ?? "3rXKwQ1kpjBd5tdcco32qsvqUh1BnZjcYnS5kYrP7AYE";
+const VAULT = process.env.SOLANA_VAULT_ADDRESS ?? "59wUbJWMiBK737srMxPjtKFJDrcuh28Uezj9xjtMimQF";
 const CLUSTER = (process.env.SOLANA_CLUSTER === "mainnet" ? "mainnet" : "devnet") as "mainnet" | "devnet";
 const USDC_MINT_MAINNET = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
 const USDC_MINT_DEVNET = "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU";

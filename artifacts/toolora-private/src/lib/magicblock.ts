@@ -152,4 +152,4 @@ export function parseUSDC(amount: string): number {
 
 export const TOOL_COST_LAMPORTS = 10_000;
 export const TOOL_COST_DISPLAY = "0.01";
-export const TOOLORA_VAULT = "3rXKwQ1kpjBd5tdcco32qsvqUh1BnZjcYnS5kYrP7AYE";
+export const TOOLORA_VAULT = "59wUbJWMiBK737srMxPjtKFJDrcuh28Uezj9xjtMimQF";
