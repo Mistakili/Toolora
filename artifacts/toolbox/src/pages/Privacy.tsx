@@ -59,7 +59,7 @@ export default function Privacy() {
             <li>• Send you product update notifications (newsletter subscribers)</li>
             <li>• Manage your API key access and subscription tier (API users)</li>
           </ul>
-          <p className="mt-3 text-muted-foreground">We do not sell, rent, or share your email address with third parties for marketing purposes. You can unsubscribe at any time by contacting us at <strong className="text-foreground">privacy@toolora.dev</strong>.</p>
+          <p className="mt-3 text-muted-foreground">We do not sell, rent, or share your email address with third parties for marketing purposes. You can unsubscribe at any time by contacting us at <strong className="text-foreground">support@toolora.dev</strong>.</p>
         </section>
 
         <section>
@@ -89,7 +89,7 @@ export default function Privacy() {
 
         <section>
           <h2 className="text-xl font-bold mb-3">8. Contact & Data Deletion</h2>
-          <p className="text-muted-foreground leading-relaxed">Questions about this policy, or requests to access or delete your data? Email us at <strong className="text-foreground">privacy@toolora.dev</strong>. We'll respond within 30 days.</p>
+          <p className="text-muted-foreground leading-relaxed">Questions about this policy, or requests to access or delete your data? Email us at <strong className="text-foreground">support@toolora.dev</strong>. We'll respond within 30 days.</p>
         </section>
       </div>
     </div>

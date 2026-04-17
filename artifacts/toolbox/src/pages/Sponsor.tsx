@@ -119,7 +119,7 @@ export default function Sponsor() {
 
       <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-6 text-sm text-zinc-400 space-y-3">
         <div>
-          <strong className="text-zinc-200">No crypto?</strong> We can also accept payment via Wise, Payoneer, or Paystack (cards, including Naira and global cards). Email <a href="mailto:sponsor@toolora.dev" className="text-violet-400 hover:underline">sponsor@toolora.dev</a> for an invoice.
+          <strong className="text-zinc-200">No crypto?</strong> We can also accept payment via Wise, Payoneer, or Paystack (cards, including Naira and global cards). Email <a href="mailto:support@toolora.dev" className="text-violet-400 hover:underline">support@toolora.dev</a> for an invoice.
         </div>
         <div>
           <strong className="text-zinc-200">Need a custom deal?</strong> Annual rates, exclusivity, custom placements — same email.
