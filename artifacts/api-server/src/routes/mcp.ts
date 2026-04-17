@@ -540,10 +540,11 @@ function handleCountWords(args: Record<string, unknown>): string {
 }
 
 async function handleReadUrl(args: Record<string, unknown>): Promise<string> {
-  const { url } = args as { url?: string };
+  const urlRaw = (args.url ?? args.link ?? args.href ?? args.uri) as unknown;
+  const url = typeof urlRaw === "string" ? urlRaw.trim() : "";
 
-  if (!url || typeof url !== "string") {
-    throw new McpToolError("Missing required argument: url");
+  if (!url) {
+    throw new McpToolError("Missing required argument: url. Pass a full http:// or https:// URL.");
   }
 
   let parsedUrl: URL;
@@ -554,16 +555,42 @@ async function handleReadUrl(args: Record<string, unknown>): Promise<string> {
     throw new McpToolError("Invalid URL. Must be a full http:// or https:// URL.");
   }
 
-  const html = await fetch(url, {
-    headers: {
-      "User-Agent": "Mozilla/5.0 (compatible; Toolora-MCP/1.0; +https://toolora.dev/api/mcp)",
-      Accept: "text/html,application/xhtml+xml",
-    },
-    signal: AbortSignal.timeout(15_000),
-  }).then((r) => {
-    if (!r.ok) throw new McpToolError(`Fetch failed: HTTP ${r.status}`);
-    return r.text();
-  });
+  let response: Response;
+  try {
+    response = await fetch(url, {
+      headers: {
+        "User-Agent":
+          "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+        Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+        "Accept-Language": "en-US,en;q=0.9",
+      },
+      redirect: "follow",
+      signal: AbortSignal.timeout(15_000),
+    });
+  } catch (err) {
+    return JSON.stringify({
+      ok: false,
+      url,
+      error: `Network fetch failed: ${err instanceof Error ? err.message : String(err)}`,
+      hint: "If the page requires JavaScript rendering, try scrape_url_js instead.",
+    });
+  }
+
+  if (!response.ok) {
+    return JSON.stringify({
+      ok: false,
+      url,
+      status: response.status,
+      error: `Server returned HTTP ${response.status}`,
+      hint: response.status === 403 || response.status === 429
+        ? "The site is blocking automated requests. Try scrape_url_js for a browser-rendered fetch."
+        : response.status === 404
+        ? "Page not found. Verify the URL is correct."
+        : "Try scrape_url_js for JS-rendered pages or a different URL.",
+    });
+  }
+
+  const html = await response.text();
 
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const { JSDOM } = require("jsdom");
@@ -575,7 +602,12 @@ async function handleReadUrl(args: Record<string, unknown>): Promise<string> {
   const article = reader.parse();
 
   if (!article) {
-    throw new McpToolError("Could not extract readable content from this URL. The page may require JS rendering or login.");
+    return JSON.stringify({
+      ok: false,
+      url,
+      error: "Could not extract readable content from this URL.",
+      hint: "The page may require JS rendering or login. Try scrape_url_js instead.",
+    });
   }
 
   const content = article.textContent?.replace(/\s+/g, " ").trim() ?? "";
@@ -1131,20 +1163,34 @@ async function handleSaveMemory(args: Record<string, unknown>): Promise<string> 
 }
 
 async function handleRecallMemory(args: Record<string, unknown>): Promise<string> {
-  const { key } = args as { key?: string };
-  if (!key || typeof key !== "string" || key.trim().length === 0) throw new McpToolError("Missing required argument: key");
+  const keyRaw = (args.key ?? args.name ?? args.id ?? args.memoryKey) as unknown;
+  const key = typeof keyRaw === "string" ? keyRaw.trim() : "";
+  if (!key) {
+    return JSON.stringify({
+      found: false,
+      message: "No key provided. Pass the key string used with save_memory, or call list_memories to see available keys.",
+      hint: "Try list_memories first to discover what is saved.",
+    });
+  }
 
   const { eq, and, gt } = await import("drizzle-orm");
   const rows = await db
     .select()
     .from(memoriesTable)
-    .where(and(eq(memoriesTable.key, key.trim()), gt(memoriesTable.expiresAt, new Date())))
+    .where(and(eq(memoriesTable.key, key), gt(memoriesTable.expiresAt, new Date())))
     .limit(1);
 
-  if (rows.length === 0) throw new McpToolError(`No memory found for key "${key.trim()}". It may not exist or may have expired.`);
+  if (rows.length === 0) {
+    return JSON.stringify({
+      found: false,
+      key,
+      message: `No memory saved under "${key}". Use list_memories to see what keys exist, or save_memory to create one.`,
+    });
+  }
 
   const row = rows[0];
   return JSON.stringify({
+    found: true,
     key: row.key,
     content: row.content,
     savedAt: row.createdAt?.toISOString(),
@@ -1277,10 +1323,12 @@ function handleEstimateTokens(args: Record<string, unknown>): string {
 }
 
 function handleHtmlToMarkdown(args: Record<string, unknown>): string {
-  const { html, includeLinks = true, includeImages = false } = args as {
-    html?: string; includeLinks?: boolean; includeImages?: boolean;
+  const htmlRaw = (args.html ?? args.content ?? args.text ?? args.body ?? args.markup ?? args.input) as unknown;
+  const { includeLinks = true, includeImages = false } = args as {
+    includeLinks?: boolean; includeImages?: boolean;
   };
-  if (!html || typeof html !== "string") throw new McpToolError("Missing required argument: html");
+  const html = typeof htmlRaw === "string" ? htmlRaw : "";
+  if (!html) throw new McpToolError("Missing required argument: html. Pass the HTML string to convert.");
 
   const { JSDOM } = require("jsdom") as typeof import("jsdom");
   const dom = new JSDOM(html);
@@ -1350,9 +1398,13 @@ function handleHtmlToMarkdown(args: Record<string, unknown>): string {
 }
 
 async function handleExtractStructuredData(args: Record<string, unknown>): Promise<string> {
-  const { text, schema, format = "json" } = args as { text?: string; schema?: string; format?: string };
-  if (!text || typeof text !== "string") throw new McpToolError("Missing required argument: text");
-  if (!schema || typeof schema !== "string") throw new McpToolError("Missing required argument: schema");
+  const textRaw = (args.text ?? args.content ?? args.input ?? args.source ?? args.body) as unknown;
+  const schemaRaw = (args.schema ?? args.query ?? args.fields ?? args.description ?? args.instructions ?? args.prompt) as unknown;
+  const { format = "json" } = args as { format?: string };
+  const text = typeof textRaw === "string" ? textRaw : "";
+  const schema = typeof schemaRaw === "string" ? schemaRaw : "";
+  if (!text) throw new McpToolError("Missing required argument: text. Pass the unstructured source text.");
+  if (!schema) throw new McpToolError("Missing required argument: schema. Describe the fields to extract in plain English (e.g. 'name, email, phone').");
 
   const baseURL = process.env.AI_INTEGRATIONS_OPENAI_BASE_URL;
   const apiKey = process.env.AI_INTEGRATIONS_OPENAI_API_KEY ?? "dummy";
@@ -1391,12 +1443,14 @@ function handleDiffTexts(args: Record<string, unknown>): string {
   const { text1, text2, context = 3, ignoreWhitespace = false } = args as {
     text1?: string; text2?: string; context?: number; ignoreWhitespace?: boolean;
   };
-  if (text1 === undefined || text1 === null) throw new McpToolError("Missing required argument: text1");
-  if (text2 === undefined || text2 === null) throw new McpToolError("Missing required argument: text2");
+  const t1Raw = (text1 ?? (args as Record<string, unknown>).a ?? (args as Record<string, unknown>).old ?? (args as Record<string, unknown>).before ?? (args as Record<string, unknown>).original ?? (args as Record<string, unknown>).left) as unknown;
+  const t2Raw = (text2 ?? (args as Record<string, unknown>).b ?? (args as Record<string, unknown>).new ?? (args as Record<string, unknown>).after ?? (args as Record<string, unknown>).updated ?? (args as Record<string, unknown>).right) as unknown;
+  if (t1Raw === undefined || t1Raw === null) throw new McpToolError("Missing required argument: text1 (the original/before text).");
+  if (t2Raw === undefined || t2Raw === null) throw new McpToolError("Missing required argument: text2 (the new/after text).");
 
   const normalize = (t: string) => ignoreWhitespace ? t.trim() : t;
-  const lines1 = String(text1).split("\n").map(normalize);
-  const lines2 = String(text2).split("\n").map(normalize);
+  const lines1 = String(t1Raw).split("\n").map(normalize);
+  const lines2 = String(t2Raw).split("\n").map(normalize);
 
   // Simple LCS-based line diff
   const m = lines1.length, n = lines2.length;
@@ -1754,8 +1808,18 @@ Notable browser tools:
               const ptxSig = typeof args.txSignature === "string" ? args.txSignature : "";
               const ppayer = typeof args.payer === "string" ? args.payer : "";
               const pcluster: "devnet" | "mainnet" = args.cluster === "mainnet" ? "mainnet" : "devnet";
-              if (!ptool || !pinput || !ptxSig || !ppayer) {
-                throw new McpToolError("Missing required parameters: tool, input, txSignature, payer");
+              if (!ptool) {
+                throw new McpToolError("Missing required parameter: tool. Choose one of: word-counter, text-case, json-formatter, base64, jwt-decoder, html-to-markdown, text-chunker, csv-to-json, url-encoder, regex-tester, hash-generator.");
+              }
+              if (!pinput) {
+                throw new McpToolError("Missing required parameter: input (the text to process privately).");
+              }
+              if (ptxSig === "demo_test" || ptxSig === "demo") {
+                text = `[DEMO MODE — no payment required]\n\nTool: ${ptool}\nInput length: ${pinput.length} chars\n\nThis is a demo response. In production, calling private_execute_tool charges 0.01 USDC via MagicBlock's Private Ephemeral Rollup. The payment proof and tool input are never logged. Pay 0.01 USDC to vault 3rXKwQ1kpjBd5tdcco32qsvqUh1BnZjcYnS5kYrP7AYE via https://payments.magicblock.app/v1/spl/transfer, then call again with the real txSignature and payer wallet pubkey. See toolora.dev/private for the full flow.`;
+                break;
+              }
+              if (!ptxSig || !ppayer) {
+                throw new McpToolError("Missing payment parameters: txSignature and payer are required for live calls. Use txSignature='demo_test' to try this tool without a real payment.");
               }
               const pverify = await verifySolanaTransaction(ptxSig, pcluster);
               if (!pverify.verified) {
