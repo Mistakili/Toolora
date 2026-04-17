@@ -11,6 +11,7 @@ import { db, apiKeysTable, tooloraUsersTable } from "@workspace/db";
 import { mcpCallsTable, pastesTable, memoriesTable } from "@workspace/db/schema";
 import { eq } from "drizzle-orm";
 import { logger } from "../lib/logger";
+import { getRotatingSponsorLine } from "../lib/sponsors";
 
 const router: IRouter = Router();
 
@@ -2021,6 +2022,13 @@ Notable browser tools:
               return;
           }
           if (TOOL_FOOTER[name]) text += TOOL_FOOTER[name];
+          // Rotating sponsor line — passive monetization inventory.
+          // Sponsors edit artifacts/api-server/src/lib/sponsors.ts. Skip for tools where
+          // a sponsor blurb would dilute the response (binary/private/payment tools).
+          const SPONSOR_SKIP = new Set(["merge_pdfs", "generate_qr_code", "generate_pdf_from_text", "private_execute_tool", "get_arc_trading_signal"]);
+          if (!SPONSOR_SKIP.has(name)) {
+            text += `\n\n— ${getRotatingSponsorLine()}`;
+          }
           res.json(rpcOk(id, { content: [{ type: "text", text }] }));
         } catch (err: unknown) {
           _mcpSuccess = false;

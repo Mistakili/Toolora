@@ -35,6 +35,9 @@ const Welcome = lazy(() => import("@/pages/Welcome"));
 const GdprCompliance = lazy(() => import("@/pages/GdprCompliance"));
 const ToolHowToPage = lazy(() => import("@/pages/ToolHowToPage"));
 const ComparisonPage = lazy(() => import("@/pages/ComparisonPage"));
+const Sponsor = lazy(() => import("@/pages/Sponsor"));
+const Support = lazy(() => import("@/pages/Support"));
+const Ebook = lazy(() => import("@/pages/Ebook"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -87,6 +90,9 @@ function Router() {
               <Route path="/glossary/:slug" component={GlossaryPage} />
               <Route path="/how-to/:slug" component={ToolHowToPage} />
               <Route path="/compare/:slug" component={ComparisonPage} />
+              <Route path="/sponsor" component={Sponsor} />
+              <Route path="/support" component={Support} />
+              <Route path="/ebook" component={Ebook} />
               <Route component={NotFound} />
             </Switch>
           </AppLayout>

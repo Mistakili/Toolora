@@ -2,6 +2,8 @@ import { Link, useParams } from "wouter";
 import { ArrowLeft, Clock, Tag, Calendar } from "lucide-react";
 import { getBlogPost, BLOG_POSTS, getPostImage } from "@/lib/blog-posts";
 import { useSEO } from "@/hooks/useSEO";
+import { pickAffiliate } from "@/lib/affiliates";
+import { AffiliateCard } from "@/components/shared/AffiliateCard";
 
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
@@ -133,6 +135,11 @@ export default function BlogPost() {
           prose-ol:text-muted-foreground prose-ul:text-muted-foreground"
         dangerouslySetInnerHTML={{ __html: post.content }}
       />
+
+      {(() => {
+        const affiliate = pickAffiliate([post.category, ...post.title.toLowerCase().split(/\s+/)]);
+        return affiliate ? <AffiliateCard affiliate={affiliate} /> : null;
+      })()}
 
       <hr className="border-border my-12" />
 
