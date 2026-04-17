@@ -5,9 +5,14 @@ import { desc, sum, count, sql, ne, avg } from "drizzle-orm";
 import { isAdminSession } from "../lib/auth";
 import { getUncachableStripeClient } from "../stripeClient";
 import { randomUUID, timingSafeEqual } from "crypto";
-import { readFileSync } from "fs";
-import { join, dirname } from "path";
-import { fileURLToPath } from "url";
+import mcpSeedData from "../data/mcpSeed.json" with { type: "json" };
+
+type SeedRow = {
+  name: string; tagline: string; description: string; url: string;
+  config_url: string | null; category: string; logo_url: string | null;
+  featured: boolean; polar_checkout_id: string;
+};
+const mcpSeed = mcpSeedData as SeedRow[];
 
 const router: IRouter = Router();
 
@@ -20,19 +25,6 @@ router.post("/seed-mcp", async (req: Request, res: Response) => {
     return;
   }
   try {
-    // Resolve seed JSON relative to this file (works in dev tsx + compiled dist).
-    const here = dirname(fileURLToPath(import.meta.url));
-    let seedRaw: string;
-    try {
-      seedRaw = readFileSync(join(here, "..", "data", "mcpSeed.json"), "utf8");
-    } catch {
-      seedRaw = readFileSync(join(here, "..", "..", "src", "data", "mcpSeed.json"), "utf8");
-    }
-    const mcpSeed = JSON.parse(seedRaw) as Array<{
-      name: string; tagline: string; description: string; url: string;
-      config_url: string | null; category: string; logo_url: string | null;
-      featured: boolean; polar_checkout_id: string;
-    }>;
     const rows = mcpSeed.map((l) => ({
       id: randomUUID(),
       name: l.name,
