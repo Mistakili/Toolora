@@ -174,6 +174,41 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Featured In — social proof strip */}
+      <section className="py-10 border-b border-border/30 bg-muted/20">
+        <div className="container mx-auto px-4 max-w-5xl">
+          <p className="text-[10px] font-mono text-muted-foreground uppercase tracking-[0.2em] text-center mb-6">
+            Featured in
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-4 md:gap-x-12">
+            <div className="text-center">
+              <div className="text-base md:text-lg font-semibold text-foreground/80">HackerNoon</div>
+              <div className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider mt-0.5">Local vs Hosted MCP</div>
+            </div>
+            <div className="hidden md:block w-px h-8 bg-border" />
+            <div className="text-center">
+              <div className="text-base md:text-lg font-semibold text-foreground/80">Hacker News</div>
+              <div className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider mt-0.5">Show HN</div>
+            </div>
+            <div className="hidden md:block w-px h-8 bg-border" />
+            <div className="text-center">
+              <div className="text-base md:text-lg font-semibold text-foreground/80">Product Hunt</div>
+              <div className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider mt-0.5">Launched</div>
+            </div>
+            <div className="hidden md:block w-px h-8 bg-border" />
+            <div className="text-center">
+              <div className="text-base md:text-lg font-semibold text-foreground/80">Chrome Web Store</div>
+              <div className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider mt-0.5">Extension Live</div>
+            </div>
+            <div className="hidden md:block w-px h-8 bg-border" />
+            <div className="text-center">
+              <div className="text-base md:text-lg font-semibold text-foreground/80">Endorsed by Grok</div>
+              <div className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider mt-0.5">on X · 1.8K views</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Architecture Section */}
       <section className="py-20 border-b border-border/50">
         <div className="container mx-auto px-4 max-w-5xl">
