@@ -18,6 +18,7 @@ import privateMcpRouter from "./privateMcp";
 import privateBalanceRouter from "./privateBalance";
 import webhooksRouter from "./webhooks";
 import directoryRouter from "./directory";
+import checkoutRouter from "./checkout";
 
 const router: IRouter = Router();
 
@@ -40,5 +41,6 @@ router.use("/signal", signalRouter);
 router.use(docMemoryRouter);
 router.use("/webhooks", webhooksRouter);
 router.use("/directory", directoryRouter);
+router.use("/checkout", checkoutRouter);
 
 export default router;
