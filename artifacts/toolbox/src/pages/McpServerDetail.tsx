@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link, useRoute } from "wouter";
-import { ArrowLeft, ExternalLink, Sparkles, Plus, Copy, Check } from "lucide-react";
+import { ArrowLeft, ExternalLink, Sparkles, Plus } from "lucide-react";
 import { useSEO } from "@/hooks/useSEO";
 import { mcpSlugify } from "@/lib/mcpSlug";
+import { AddToClient } from "@/components/AddToClient";
+import { NewsletterCapture } from "@/components/NewsletterCapture";
 import NotFound from "./not-found";
 
 const API = (import.meta.env.VITE_API_URL as string | undefined) ?? "";
@@ -18,18 +20,6 @@ interface Listing {
   logoUrl: string | null;
   featured: boolean;
   createdAt: string;
-}
-
-function CopyBtn({ text }: { text: string }) {
-  const [copied, setCopied] = useState(false);
-  return (
-    <button
-      onClick={async () => { await navigator.clipboard.writeText(text); setCopied(true); setTimeout(() => setCopied(false), 1500); }}
-      className="inline-flex items-center gap-1 text-xs text-zinc-400 hover:text-zinc-200"
-    >
-      {copied ? <><Check className="w-3 h-3 text-green-400" /> Copied</> : <><Copy className="w-3 h-3" /> Copy</>}
-    </button>
-  );
 }
 
 export default function McpServerDetail() {
@@ -89,12 +79,6 @@ export default function McpServerDetail() {
     );
   }
 
-  const claudeConfig = JSON.stringify({
-    mcpServers: {
-      [mcpSlugify(listing.name)]: { command: "npx", args: ["-y", "mcp-remote", listing.configUrl ?? listing.url] },
-    },
-  }, null, 2);
-
   return (
     <main className="max-w-3xl mx-auto px-4 py-12">
       <Link href="/mcp-hub" className="inline-flex items-center gap-1.5 text-sm text-zinc-400 hover:text-zinc-200 mb-6">
@@ -134,17 +118,17 @@ export default function McpServerDetail() {
         )}
       </div>
 
-      <section className="rounded-2xl border border-zinc-800 bg-zinc-900/40 p-6 mb-10">
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="text-sm font-semibold text-zinc-200">Quick install (Claude Desktop)</h2>
-          <CopyBtn text={claudeConfig} />
-        </div>
-        <pre className="text-xs text-zinc-300 font-mono overflow-x-auto bg-zinc-950 p-3 rounded-lg border border-zinc-800">{claudeConfig}</pre>
-        <p className="text-xs text-zinc-500 mt-3">
-          Paste into <code className="text-violet-300">claude_desktop_config.json</code> →
-          Settings → Developer → Edit Config. Restart Claude. Tools appear automatically.
-        </p>
-      </section>
+      <div className="mb-10">
+        <AddToClient
+          serverName={listing.name}
+          serverUrl={listing.url}
+          configUrl={listing.configUrl}
+        />
+      </div>
+
+      <div className="mb-10">
+        <NewsletterCapture source="mcp-weekly" category={listing.category} />
+      </div>
 
       {related.length > 0 && (
         <section className="mb-10">

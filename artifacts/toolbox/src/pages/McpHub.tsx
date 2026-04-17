@@ -3,6 +3,7 @@ import { Link } from "wouter";
 import { Search, Sparkles, ExternalLink, Zap, Shield, ArrowRight, Plus, TrendingUp, Boxes, Crown } from "lucide-react";
 import { useSEO } from "@/hooks/useSEO";
 import { mcpSlugify } from "@/lib/mcpSlug";
+import { NewsletterCapture } from "@/components/NewsletterCapture";
 
 const API = (import.meta.env.VITE_API_URL as string | undefined) ?? "";
 
@@ -322,6 +323,33 @@ export default function McpHub() {
             <p className="text-sm text-zinc-400 mb-3">Read the official spec and learn how to connect any server to your AI client.</p>
             <span className="text-xs text-violet-400 inline-flex items-center gap-1 group-hover:gap-2 transition-all">Open spec <ArrowRight className="w-3 h-3" /></span>
           </a>
+        </div>
+
+        {/* ─── Wedge promos: Hosted MCP + x402 ─── */}
+        <div className="mt-12 grid md:grid-cols-2 gap-4">
+          <Link href="/host" className="group relative overflow-hidden rounded-2xl border border-emerald-500/30 bg-gradient-to-br from-emerald-950/40 to-zinc-900/60 p-6 hover:border-emerald-400/60 transition shadow-lg hover:shadow-emerald-500/20">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(16,185,129,0.15),transparent_60%)]" />
+            <div className="relative inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-0.5 mb-3">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-300">Coming Q2</span>
+            </div>
+            <h3 className="relative font-bold text-zinc-100 mb-1.5 text-lg">Vercel for MCP servers</h3>
+            <p className="relative text-sm text-zinc-400 mb-3">Skip the laptop — host any open-source server with a public URL, auth, and rate limits. Free 1k calls/mo.</p>
+            <span className="relative text-xs text-emerald-400 inline-flex items-center gap-1 group-hover:gap-2 transition-all">Join the waitlist <ArrowRight className="w-3 h-3" /></span>
+          </Link>
+          <Link href="/x402" className="group relative overflow-hidden rounded-2xl border border-yellow-500/30 bg-gradient-to-br from-yellow-950/30 to-zinc-900/60 p-6 hover:border-yellow-400/60 transition shadow-lg hover:shadow-yellow-500/20">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(234,179,8,0.15),transparent_60%)]" />
+            <div className="relative inline-flex items-center gap-2 rounded-full border border-yellow-500/30 bg-yellow-500/10 px-2.5 py-0.5 mb-3">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-yellow-300">Building now</span>
+            </div>
+            <h3 className="relative font-bold text-zinc-100 mb-1.5 text-lg">x402 pay-per-call marketplace</h3>
+            <p className="relative text-sm text-zinc-400 mb-3">Charge agents per API call. USDC settlement to your wallet. The toll booth for the agent economy.</p>
+            <span className="relative text-xs text-yellow-400 inline-flex items-center gap-1 group-hover:gap-2 transition-all">Get early access <ArrowRight className="w-3 h-3" /></span>
+          </Link>
+        </div>
+
+        {/* ─── Newsletter capture ─── */}
+        <div className="mt-12">
+          <NewsletterCapture source="mcp-weekly" />
         </div>
 
         <div className="mt-12 relative overflow-hidden rounded-2xl border border-zinc-800 bg-gradient-to-br from-zinc-900/60 to-zinc-950/60 p-8 text-center">
