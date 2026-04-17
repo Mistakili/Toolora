@@ -25,6 +25,9 @@ const GlossaryIndex = lazy(() => import("@/pages/GlossaryIndex"));
 const Showcase = lazy(() => import("@/pages/Showcase"));
 const McpPage = lazy(() => import("@/pages/McpPage"));
 const McpHub = lazy(() => import("@/pages/McpHub"));
+const McpServerDetail = lazy(() => import("@/pages/McpServerDetail"));
+const McpCategory = lazy(() => import("@/pages/McpCategory"));
+const McpBestOf = lazy(() => import("@/pages/McpBestOf"));
 const Enterprise = lazy(() => import("@/pages/Enterprise"));
 const HipaaChecklist = lazy(() => import("@/pages/HipaaChecklist"));
 const NotFound = lazy(() => import("@/pages/not-found"));
@@ -79,6 +82,9 @@ function Router() {
               <Route path="/blog/:slug" component={BlogPost} />
               <Route path="/mcp" component={McpPage} />
               <Route path="/mcp-hub" component={McpHub} />
+              <Route path="/mcp-hub/server/:slug" component={McpServerDetail} />
+              <Route path="/mcp-hub/category/:slug" component={McpCategory} />
+              <Route path="/mcp-hub/best/:slug" component={McpBestOf} />
               <Route path="/about" component={About} />
               <Route path="/integrations" component={Integrations} />
               <Route path="/gdpr" component={GdprCompliance} />

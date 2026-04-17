@@ -59,6 +59,42 @@ router.get("/listings", async (req: Request, res: Response): Promise<void> => {
   }
 });
 
+function slugify(s: string): string {
+  return s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+}
+
+router.get("/listings/:slug", async (req: Request, res: Response): Promise<void> => {
+  try {
+    const slug = String(req.params.slug ?? "").slice(0, 80).toLowerCase();
+    if (!slug) { res.status(404).json({ error: "not_found" }); return; }
+    const rows = await db
+      .select({
+        id: mcpListingsTable.id,
+        name: mcpListingsTable.name,
+        tagline: mcpListingsTable.tagline,
+        description: mcpListingsTable.description,
+        url: mcpListingsTable.url,
+        configUrl: mcpListingsTable.configUrl,
+        category: mcpListingsTable.category,
+        logoUrl: mcpListingsTable.logoUrl,
+        featured: mcpListingsTable.featured,
+        createdAt: mcpListingsTable.createdAt,
+      })
+      .from(mcpListingsTable)
+      .where(eq(mcpListingsTable.approved, true));
+    const match = rows.find((r) => slugify(r.name) === slug);
+    if (!match) { res.status(404).json({ error: "not_found" }); return; }
+    // Sibling listings in the same category for "Related" section.
+    const related = rows
+      .filter((r) => r.category === match.category && r.id !== match.id)
+      .slice(0, 6);
+    res.json({ listing: match, related });
+  } catch (err) {
+    logger.error({ err }, "[directory] listing detail failed");
+    res.status(500).json({ error: "server_error" });
+  }
+});
+
 router.get("/sponsors", async (_req: Request, res: Response): Promise<void> => {
   try {
     const rows = await db
