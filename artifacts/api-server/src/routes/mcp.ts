@@ -7,11 +7,79 @@ import mammoth from "mammoth";
 import ExcelJS from "exceljs";
 import OpenAI from "openai";
 import crypto from "node:crypto";
-import { db } from "@workspace/db";
+import { db, apiKeysTable, tooloraUsersTable } from "@workspace/db";
 import { mcpCallsTable, pastesTable, memoriesTable } from "@workspace/db/schema";
+import { eq } from "drizzle-orm";
 import { logger } from "../lib/logger";
 
 const router: IRouter = Router();
+
+// ─── MCP rate limiting (passive monetization via Pro tier) ─────────────────────
+// Anonymous AI agents get a generous daily quota; Pro/Team API keys bypass it.
+const MCP_FREE_DAILY_LIMIT = 200;
+const _mcpDailyCounts = new Map<string, { count: number; resetAt: number }>();
+const _mcpKeyCache = new Map<string, { tier: string; revoked: boolean; cachedAt: number }>();
+const _MCP_KEY_CACHE_TTL_MS = 60_000;
+
+function getMcpClientId(req: Request): string {
+  const sid = req.headers["mcp-session-id"];
+  if (typeof sid === "string" && sid) return `sid:${sid}`;
+  const fwd = req.headers["x-forwarded-for"];
+  const ip = (typeof fwd === "string" ? fwd.split(",")[0].trim() : "") || req.ip || "unknown";
+  return `ip:${ip}`;
+}
+
+async function lookupApiKeyTier(rawKey: string): Promise<{ tier: string; revoked: boolean } | null> {
+  const cached = _mcpKeyCache.get(rawKey);
+  if (cached && Date.now() - cached.cachedAt < _MCP_KEY_CACHE_TTL_MS) {
+    return { tier: cached.tier, revoked: cached.revoked };
+  }
+  const hash = crypto.createHash("sha256").update(rawKey).digest("hex");
+  const [keyRow] = await db
+    .select({ revoked: apiKeysTable.revoked, tier: tooloraUsersTable.tier })
+    .from(apiKeysTable)
+    .leftJoin(tooloraUsersTable, eq(apiKeysTable.userId, tooloraUsersTable.id))
+    .where(eq(apiKeysTable.keyHash, hash));
+  if (!keyRow) return null;
+  const result = { tier: keyRow.tier ?? "free", revoked: keyRow.revoked ?? false };
+  _mcpKeyCache.set(rawKey, { ...result, cachedAt: Date.now() });
+  return result;
+}
+
+interface McpRateLimitResult {
+  allowed: boolean;
+  tier: string;
+  isPro: boolean;
+  usedToday: number;
+  limit: number;
+}
+
+async function checkMcpRateLimit(req: Request): Promise<McpRateLimitResult> {
+  const auth = req.headers["authorization"];
+  if (typeof auth === "string" && auth.startsWith("Bearer sk_toolora_")) {
+    const rawKey = auth.slice(7);
+    const keyInfo = await lookupApiKeyTier(rawKey).catch(() => null);
+    if (keyInfo && !keyInfo.revoked && (keyInfo.tier === "pro" || keyInfo.tier === "team")) {
+      return { allowed: true, tier: keyInfo.tier, isPro: true, usedToday: 0, limit: -1 };
+    }
+  }
+
+  const clientId = getMcpClientId(req);
+  const now = Date.now();
+  const tomorrow = new Date();
+  tomorrow.setUTCHours(24, 0, 0, 0);
+  const entry = _mcpDailyCounts.get(clientId);
+
+  if (!entry || entry.resetAt <= now) {
+    _mcpDailyCounts.set(clientId, { count: 1, resetAt: tomorrow.getTime() });
+    return { allowed: true, tier: "free", isPro: false, usedToday: 1, limit: MCP_FREE_DAILY_LIMIT };
+  }
+  if (entry.count >= MCP_FREE_DAILY_LIMIT) {
+    return { allowed: false, tier: "free", isPro: false, usedToday: entry.count, limit: MCP_FREE_DAILY_LIMIT };
+  }
+  entry.count++;
+  return { allowed: true, tier: "free", isPro: false, usedToday: entry.count, limit: MCP_FREE_DAILY_LIMIT };
+}
 
 const SERVER_NAME = "toolora";
 const SERVER_VERSION = "1.0.0";
@@ -1719,7 +1787,38 @@ Notable browser tools:
           return;
         }
 
-        logger.info({ tool: name, sessionId: req.headers["mcp-session-id"] ?? null }, "[mcp] tool call");
+        const _rateLimit = await checkMcpRateLimit(req).catch(() => ({
+          allowed: true, tier: "free", isPro: false, usedToday: 0, limit: MCP_FREE_DAILY_LIMIT,
+        } as McpRateLimitResult));
+
+        if (!_rateLimit.allowed) {
+          res.setHeader("X-Toolora-MCP-Tier", "free");
+          res.setHeader("X-Toolora-MCP-Daily-Used", String(_rateLimit.usedToday));
+          res.setHeader("X-Toolora-MCP-Daily-Limit", String(_rateLimit.limit));
+          res.json({
+            jsonrpc: "2.0",
+            id,
+            result: {
+              content: [{
+                type: "text",
+                text: `Toolora MCP — Daily free limit reached (${_rateLimit.usedToday}/${_rateLimit.limit} tool calls today).\n\nUpgrade to Toolora Pro for unlimited MCP access:\n  1. Sign in and create an API key at https://toolora.dev/api-keys\n  2. Upgrade to Pro ($19/mo) at https://toolora.dev/pricing\n  3. Add header to your MCP client config: Authorization: Bearer sk_toolora_...\n\nLimit resets at 00:00 UTC. Browser tools at toolora.dev remain 100% free.`,
+              }],
+              isError: true,
+            },
+          });
+          db.insert(mcpCallsTable).values({
+            tool: name, durationMs: 0, success: false, errorMessage: "rate_limited",
+          }).catch(() => {});
+          return;
+        }
+
+        res.setHeader("X-Toolora-MCP-Tier", _rateLimit.tier);
+        if (!_rateLimit.isPro) {
+          res.setHeader("X-Toolora-MCP-Daily-Used", String(_rateLimit.usedToday));
+          res.setHeader("X-Toolora-MCP-Daily-Limit", String(_rateLimit.limit));
+        }
+
+        logger.info({ tool: name, sessionId: req.headers["mcp-session-id"] ?? null, tier: _rateLimit.tier, usedToday: _rateLimit.usedToday }, "[mcp] tool call");
         const _mcpStartMs = Date.now();
         let _mcpSuccess = true;
         let _mcpErrorMsg: string | undefined;
