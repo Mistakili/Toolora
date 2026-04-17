@@ -38,6 +38,7 @@ const ComparisonPage = lazy(() => import("@/pages/ComparisonPage"));
 const Sponsor = lazy(() => import("@/pages/Sponsor"));
 const Support = lazy(() => import("@/pages/Support"));
 const Ebook = lazy(() => import("@/pages/Ebook"));
+const SubmitMCP = lazy(() => import("@/pages/SubmitMCP"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -93,6 +94,7 @@ function Router() {
               <Route path="/sponsor" component={Sponsor} />
               <Route path="/support" component={Support} />
               <Route path="/ebook" component={Ebook} />
+              <Route path="/submit-mcp" component={SubmitMCP} />
               <Route component={NotFound} />
             </Switch>
           </AppLayout>

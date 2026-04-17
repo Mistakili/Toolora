@@ -16,6 +16,8 @@ import docMemoryRouter from "./docMemory";
 import privateExecuteRouter from "./privateExecute";
 import privateMcpRouter from "./privateMcp";
 import privateBalanceRouter from "./privateBalance";
+import webhooksRouter from "./webhooks";
+import directoryRouter from "./directory";
 
 const router: IRouter = Router();
 
@@ -36,5 +38,7 @@ router.use(subscribeRouter);
 router.use("/paste", pasteRouter);
 router.use("/signal", signalRouter);
 router.use(docMemoryRouter);
+router.use("/webhooks", webhooksRouter);
+router.use("/directory", directoryRouter);
 
 export default router;
