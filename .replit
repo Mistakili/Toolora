@@ -36,6 +36,7 @@ SOLANA_RECEIVER_ADDRESS = "Hk1HUcgMeYcaK5XiSXB1iransRf43iA8iU67Er5QGA68"
 ADMIN_EMAIL = "akinslaboratory@gmail.com"
 SOLANA_CLUSTER = "mainnet"
 SOLANA_VAULT_ADDRESS = "59wUbJWMiBK737srMxPjtKFJDrcuh28Uezj9xjtMimQF"
+MCP_SEED_TOKEN = "vANp7HiIKUTKXOMni9Y3qWJ-cEPbHg9L"
 
 [nix]
 channel = "stable-25_05"

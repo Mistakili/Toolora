@@ -1,11 +1,73 @@
 import { Router, type IRouter, type Request, type Response } from "express";
 import { db } from "@workspace/db";
-import { agentPaymentsTable, pageViewsTable, emailSubscribersTable, toolUsageTable, mcpCallsTable, tooloraUsersTable } from "@workspace/db/schema";
+import { agentPaymentsTable, pageViewsTable, emailSubscribersTable, toolUsageTable, mcpCallsTable, tooloraUsersTable, mcpListingsTable } from "@workspace/db/schema";
 import { desc, sum, count, sql, ne, avg } from "drizzle-orm";
 import { isAdminSession } from "../lib/auth";
 import { getUncachableStripeClient } from "../stripeClient";
+import { randomUUID, timingSafeEqual } from "crypto";
+import { readFileSync } from "fs";
+import { join, dirname } from "path";
+import { fileURLToPath } from "url";
 
 const router: IRouter = Router();
+
+// ─── POST /api/admin/seed-mcp — one-shot directory seeding (token-guarded) ───
+router.post("/seed-mcp", async (req: Request, res: Response) => {
+  const expected = process.env.MCP_SEED_TOKEN ?? "";
+  const provided = String(req.headers["x-seed-token"] ?? "");
+  if (!expected || provided.length !== expected.length || !timingSafeEqual(Buffer.from(expected), Buffer.from(provided))) {
+    res.status(403).json({ error: "forbidden" });
+    return;
+  }
+  try {
+    // Resolve seed JSON relative to this file (works in dev tsx + compiled dist).
+    const here = dirname(fileURLToPath(import.meta.url));
+    let seedRaw: string;
+    try {
+      seedRaw = readFileSync(join(here, "..", "data", "mcpSeed.json"), "utf8");
+    } catch {
+      seedRaw = readFileSync(join(here, "..", "..", "src", "data", "mcpSeed.json"), "utf8");
+    }
+    const mcpSeed = JSON.parse(seedRaw) as Array<{
+      name: string; tagline: string; description: string; url: string;
+      config_url: string | null; category: string; logo_url: string | null;
+      featured: boolean; polar_checkout_id: string;
+    }>;
+    const rows = mcpSeed.map((l) => ({
+      id: randomUUID(),
+      name: l.name,
+      tagline: l.tagline,
+      description: l.description,
+      url: l.url,
+      configUrl: l.config_url,
+      category: l.category,
+      logoUrl: l.logo_url,
+      featured: l.featured,
+      polarCheckoutId: l.polar_checkout_id,
+      approved: true,
+    }));
+    const result = await db
+      .insert(mcpListingsTable)
+      .values(rows)
+      .onConflictDoUpdate({
+        target: mcpListingsTable.polarCheckoutId,
+        set: {
+          name: sql`excluded.name`,
+          tagline: sql`excluded.tagline`,
+          description: sql`excluded.description`,
+          url: sql`excluded.url`,
+          configUrl: sql`excluded.config_url`,
+          category: sql`excluded.category`,
+          featured: sql`excluded.featured`,
+          approved: sql`true`,
+        },
+      })
+      .returning({ id: mcpListingsTable.id });
+    res.json({ ok: true, upserted: result.length });
+  } catch (err) {
+    res.status(500).json({ error: "seed_failed", detail: err instanceof Error ? err.message : "unknown" });
+  }
+});
 
 function requireAdmin(req: Request, res: Response): boolean {
   if (!req.isAuthenticated()) {
