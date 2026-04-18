@@ -367,6 +367,8 @@ router.get("/mcp", async (req: Request, res: Response) => {
       .groupBy(sql`DATE(${mcpCallsTable.createdAt})`)
       .orderBy(sql`DATE(${mcpCallsTable.createdAt})`);
 
+    // Only surface errors from the last 24 hours so stale validation/QA noise
+    // ages out automatically and the panel reflects what's actually broken now.
     const recentErrors = await db
       .select({
         tool: mcpCallsTable.tool,
@@ -374,7 +376,7 @@ router.get("/mcp", async (req: Request, res: Response) => {
         createdAt: mcpCallsTable.createdAt,
       })
       .from(mcpCallsTable)
-      .where(sql`NOT ${mcpCallsTable.success} AND ${isRealTool}`)
+      .where(sql`NOT ${mcpCallsTable.success} AND ${isRealTool} AND ${mcpCallsTable.createdAt} >= NOW() - INTERVAL '24 hours'`)
       .orderBy(desc(mcpCallsTable.createdAt))
       .limit(10);
 
