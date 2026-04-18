@@ -45,6 +45,7 @@ const Support = lazy(() => import("@/pages/Support"));
 const Ebook = lazy(() => import("@/pages/Ebook"));
 const SubmitMCP = lazy(() => import("@/pages/SubmitMCP"));
 const McpOwnerDashboard = lazy(() => import("@/pages/McpOwnerDashboard"));
+const McpAuthors = lazy(() => import("@/pages/McpAuthors"));
 const Agents = lazy(() => import("@/pages/Agents"));
 
 const queryClient = new QueryClient({
@@ -88,6 +89,7 @@ function Router() {
               <Route path="/mcp-hub" component={McpHub} />
               <Route path="/mcp-hub/server/:slug" component={McpServerDetail} />
               <Route path="/mcp-hub/owner/:slug" component={McpOwnerDashboard} />
+              <Route path="/mcp-hub/authors" component={McpAuthors} />
               <Route path="/mcp-hub/category/:slug" component={McpCategory} />
               <Route path="/mcp-hub/best/:slug" component={McpBestOf} />
               <Route path="/agents" component={Agents} />

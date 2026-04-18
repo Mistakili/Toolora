@@ -313,6 +313,131 @@ function verifyOwnerToken(token: string, listingId: string): string | null {
   }
 }
 
+// ── GitHub-based ownership verification ────────────────────────────────────
+// Listings without a buyer_email (the 340 imported ones) can be claimed by
+// proving control of the GitHub account whose repo is in the listing's `url`.
+// Flow:
+//   POST /owner/claim-github/start  { slug } → { verifyToken, githubOwner, instructions }
+//   POST /owner/claim-github/verify { slug, verifyToken } → fetches the GitHub
+//     user's public bio; if it contains the verifyToken string, marks
+//     verified_github_owner on the listing and returns an owner token.
+// We tie the verifyToken to (listingId, githubOwner) via HMAC so a token
+// minted for repo A can't be replayed against repo B.
+
+function parseGithubFromUrl(url: string): { owner: string; repo: string } | null {
+  try {
+    const u = new URL(url);
+    if (!/github\.com$/i.test(u.hostname)) return null;
+    const parts = u.pathname.split("/").filter(Boolean);
+    if (parts.length < 2) return null;
+    return { owner: parts[0], repo: parts[1].replace(/\.git$/, "") };
+  } catch {
+    return null;
+  }
+}
+
+function signVerifyToken(listingId: string, githubOwner: string): string {
+  // Short-lived (24h) HMAC-derived token presented to the user as a string to
+  // paste into their GitHub bio. Deterministic for a given (listing, owner)
+  // within a 24-hour window so the user can refresh the page.
+  const window = Math.floor(Date.now() / (24 * 60 * 60 * 1000));
+  const payload = `${listingId}.${githubOwner.toLowerCase()}.${window}`;
+  const sig = crypto.createHmac("sha256", OWNER_SECRET).update(payload).digest("hex").slice(0, 16);
+  return `toolora-verify-${sig}`;
+}
+
+router.post("/owner/claim-github/start", async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { slug } = req.body as { slug?: string };
+    if (!slug) { res.status(400).json({ ok: false, error: "bad_request" }); return; }
+    const listing = await findListingBySlugWithUrl(String(slug).toLowerCase().slice(0, 80));
+    if (!listing) { res.status(404).json({ ok: false, error: "not_found" }); return; }
+    const gh = parseGithubFromUrl(listing.url);
+    if (!gh) {
+      res.status(400).json({ ok: false, error: "not_github", hint: "This listing's project URL is not a GitHub repo, so GitHub verification isn't available. Email hello@toolora.dev to claim." });
+      return;
+    }
+    const verifyToken = signVerifyToken(listing.id, gh.owner);
+    res.json({
+      ok: true,
+      verifyToken,
+      githubOwner: gh.owner,
+      githubRepo: gh.repo,
+      instructions:
+        `1. Open https://github.com/settings/profile  2. Paste this string anywhere in your "Bio" field: ${verifyToken}  3. Save, then click "Verify" below. You can remove it from your bio after verification.`,
+    });
+  } catch (err) {
+    logger.error({ err }, "[directoryEvents] claim-github/start failed");
+    res.status(500).json({ ok: false, error: "server_error" });
+  }
+});
+
+router.post("/owner/claim-github/verify", async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { slug } = req.body as { slug?: string };
+    if (!slug) { res.status(400).json({ ok: false, error: "bad_request" }); return; }
+    const listing = await findListingBySlugWithUrl(String(slug).toLowerCase().slice(0, 80));
+    if (!listing) { res.status(404).json({ ok: false, error: "not_found" }); return; }
+    const gh = parseGithubFromUrl(listing.url);
+    if (!gh) { res.status(400).json({ ok: false, error: "not_github" }); return; }
+
+    const expected = signVerifyToken(listing.id, gh.owner);
+    // Fetch the user's public bio from GitHub
+    const ghHeaders: Record<string, string> = {
+      "User-Agent": "toolora-verify/1.0 (hello@toolora.dev)",
+      Accept: "application/vnd.github+json",
+    };
+    if (process.env.GITHUB_TOKEN) ghHeaders.Authorization = `Bearer ${process.env.GITHUB_TOKEN}`;
+    const r = await fetch(`https://api.github.com/users/${encodeURIComponent(gh.owner)}`, { headers: ghHeaders });
+    if (!r.ok) {
+      res.status(502).json({ ok: false, error: "github_unreachable", hint: "Could not reach GitHub. Try again in a moment." });
+      return;
+    }
+    const profile = (await r.json()) as { bio?: string | null; email?: string | null; login?: string };
+    const bio = (profile.bio ?? "").toString();
+    if (!bio.includes(expected)) {
+      res.status(401).json({
+        ok: false,
+        error: "verification_string_not_found",
+        hint: `We checked github.com/${gh.owner}'s bio and didn't find the verification string. Make sure you saved your profile and try again. (We re-fetch live; no GitHub caching delay.)`,
+      });
+      return;
+    }
+    // Success: persist + issue owner token
+    await db
+      .update(mcpListingsTable)
+      .set({ verifiedGithubOwner: gh.owner.toLowerCase() })
+      .where(eq(mcpListingsTable.id, listing.id));
+    const token = signOwnerToken(listing.id, `gh:${gh.owner.toLowerCase()}`);
+    res.json({ ok: true, token, listingId: listing.id, githubOwner: gh.owner });
+  } catch (err) {
+    logger.error({ err }, "[directoryEvents] claim-github/verify failed");
+    res.status(500).json({ ok: false, error: "server_error" });
+  }
+});
+
+// findListingBySlug variant that also returns `url` for GitHub parsing
+async function findListingBySlugWithUrl(slug: string) {
+  const target = slug.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+  const rows = await db
+    .select({
+      id: mcpListingsTable.id,
+      name: mcpListingsTable.name,
+      buyerEmail: mcpListingsTable.buyerEmail,
+      url: mcpListingsTable.url,
+      verifiedGithubOwner: mcpListingsTable.verifiedGithubOwner,
+    })
+    .from(mcpListingsTable)
+    .where(
+      and(
+        eq(mcpListingsTable.approved, true),
+        sql`regexp_replace(regexp_replace(lower(${mcpListingsTable.name}), '[^a-z0-9]+', '-', 'g'), '(^-|-$)', '', 'g') = ${target}`,
+      ),
+    )
+    .limit(1);
+  return rows[0] ?? null;
+}
+
 // POST /api/directory/owner/claim — { slug, email } → { token } if buyerEmail matches
 router.post("/owner/claim", async (req: Request, res: Response): Promise<void> => {
   try {

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useRoute } from "wouter";
-import { ArrowLeft, BarChart3, Download, ExternalLink, RefreshCw, TrendingUp, TrendingDown, Eye, Bot } from "lucide-react";
+import { ArrowLeft, BarChart3, Download, ExternalLink, RefreshCw, TrendingUp, TrendingDown, Eye, Bot, Github, Copy, Check } from "lucide-react";
 import { useSEO } from "@/hooks/useSEO";
 
 const API = (import.meta.env.VITE_API_URL as string | undefined) ?? "";
@@ -126,27 +126,30 @@ export default function McpOwnerDashboard() {
       <p className="text-sm text-zinc-400 mb-8">Free analytics for every listed MCP server. Updated in real time.</p>
 
       {!token && (
-        <form onSubmit={claim} className="rounded-2xl border border-zinc-800 bg-zinc-900/40 p-6 mb-8 max-w-md">
-          <label className="block text-sm font-medium text-zinc-200 mb-2">Email used when you submitted this listing</label>
-          <input
-            type="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="you@example.com"
-            className="w-full rounded-lg bg-zinc-950 border border-zinc-800 px-3 py-2.5 text-sm text-zinc-100 placeholder-zinc-600 focus:border-violet-500 focus:outline-none"
-          />
-          {error && <p className="mt-2 text-xs text-amber-400">{error}</p>}
-          <button
-            disabled={busy}
-            className="mt-3 w-full inline-flex items-center justify-center gap-2 rounded-lg bg-violet-600 hover:bg-violet-500 disabled:opacity-50 text-white px-4 py-2.5 text-sm font-semibold"
-          >
-            {busy ? <RefreshCw className="w-4 h-4 animate-spin" /> : "Sign in to view analytics"}
-          </button>
-          <p className="mt-3 text-xs text-zinc-500">
-            We verify against the email on file for this listing — no password, no second account. Lost the email? <a href="mailto:hello@toolora.dev" className="text-violet-400 hover:underline">contact us</a>.
-          </p>
-        </form>
+        <div className="grid md:grid-cols-2 gap-4 mb-8">
+          <form onSubmit={claim} className="rounded-2xl border border-zinc-800 bg-zinc-900/40 p-6">
+            <h3 className="text-sm font-semibold text-zinc-100 mb-1">Option A · Email on file</h3>
+            <p className="text-xs text-zinc-500 mb-3">For listings submitted via Polar checkout.</p>
+            <label className="block text-xs font-medium text-zinc-300 mb-2">Email you submitted with</label>
+            <input
+              type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="you@example.com"
+              className="w-full rounded-lg bg-zinc-950 border border-zinc-800 px-3 py-2 text-sm text-zinc-100 placeholder-zinc-600 focus:border-violet-500 focus:outline-none"
+            />
+            {error && <p className="mt-2 text-xs text-amber-400">{error}</p>}
+            <button
+              disabled={busy}
+              className="mt-3 w-full inline-flex items-center justify-center gap-2 rounded-lg bg-violet-600 hover:bg-violet-500 disabled:opacity-50 text-white px-4 py-2 text-sm font-semibold"
+            >
+              {busy ? <RefreshCw className="w-4 h-4 animate-spin" /> : "Sign in via email"}
+            </button>
+          </form>
+
+          <GithubClaimCard slug={slug} onSuccess={(t) => { localStorage.setItem(tokenKey(slug), t); setToken(t); }} />
+        </div>
       )}
 
       {token && stats && (
@@ -264,6 +267,85 @@ function ClientBreakdown({ rows }: { rows: Array<{ kind: string; count: number }
         );
       })}
     </ul>
+  );
+}
+
+function GithubClaimCard({ slug, onSuccess }: { slug: string; onSuccess: (token: string) => void }) {
+  const [busy, setBusy] = useState(false);
+  const [verifyToken, setVerifyToken] = useState<string | null>(null);
+  const [githubOwner, setGithubOwner] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
+
+  const start = async () => {
+    setBusy(true); setError(null);
+    try {
+      const r = await fetch(API + "/api/directory/owner/claim-github/start", {
+        method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ slug }),
+      });
+      const d = await r.json();
+      if (!d.ok) { setError(d.hint || d.error || "Could not start verification."); return; }
+      setVerifyToken(d.verifyToken); setGithubOwner(d.githubOwner);
+    } catch { setError("Network error. Try again."); }
+    finally { setBusy(false); }
+  };
+
+  const verify = async () => {
+    setBusy(true); setError(null);
+    try {
+      const r = await fetch(API + "/api/directory/owner/claim-github/verify", {
+        method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ slug }),
+      });
+      const d = await r.json();
+      if (!d.ok) { setError(d.hint || d.error || "Verification string not found in your GitHub bio yet."); return; }
+      onSuccess(d.token);
+    } catch { setError("Network error. Try again."); }
+    finally { setBusy(false); }
+  };
+
+  const copy = async () => {
+    if (!verifyToken) return;
+    await navigator.clipboard.writeText(verifyToken);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  return (
+    <div className="rounded-2xl border border-violet-500/30 bg-gradient-to-br from-violet-950/30 to-zinc-900/40 p-6">
+      <h3 className="text-sm font-semibold text-zinc-100 mb-1 inline-flex items-center gap-2"><Github className="w-4 h-4" /> Option B · GitHub bio verification</h3>
+      <p className="text-xs text-zinc-400 mb-3">For the 340+ servers we auto-listed. No email needed.</p>
+
+      {!verifyToken && (
+        <>
+          <p className="text-xs text-zinc-400 mb-3">We'll generate a one-line code. Paste it into your GitHub bio, then click verify. You can remove it from your bio right after.</p>
+          <button onClick={start} disabled={busy} className="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-zinc-100 hover:bg-white text-zinc-900 disabled:opacity-50 px-4 py-2 text-sm font-semibold">
+            {busy ? <RefreshCw className="w-4 h-4 animate-spin" /> : <>Start GitHub verification</>}
+          </button>
+        </>
+      )}
+
+      {verifyToken && (
+        <>
+          <p className="text-xs text-zinc-400 mb-2">
+            1. Open <a href="https://github.com/settings/profile" target="_blank" rel="noopener noreferrer" className="text-violet-300 underline">github.com/settings/profile</a>
+            {githubOwner && <> (signed in as <strong className="text-zinc-200">@{githubOwner}</strong>)</>}
+          </p>
+          <p className="text-xs text-zinc-400 mb-2">2. Paste this into your "Bio" and save:</p>
+          <div className="flex items-center gap-2 mb-3">
+            <code className="flex-1 rounded-md bg-zinc-950 border border-zinc-800 px-3 py-2 text-xs text-emerald-300 font-mono select-all">{verifyToken}</code>
+            <button onClick={copy} className="p-2 rounded-md border border-zinc-700 hover:border-zinc-500 text-zinc-300">
+              {copied ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
+            </button>
+          </div>
+          <p className="text-xs text-zinc-400 mb-3">3. Click verify:</p>
+          <button onClick={verify} disabled={busy} className="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-violet-600 hover:bg-violet-500 disabled:opacity-50 text-white px-4 py-2 text-sm font-semibold">
+            {busy ? <RefreshCw className="w-4 h-4 animate-spin" /> : "Verify my GitHub bio"}
+          </button>
+        </>
+      )}
+
+      {error && <p className="mt-3 text-xs text-amber-400">{error}</p>}
+    </div>
   );
 }
 

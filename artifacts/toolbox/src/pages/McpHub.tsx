@@ -425,6 +425,24 @@ export default function McpHub() {
           </div>
         </div>
 
+        {/* ─── Author / agent shortcuts ──────────────────── */}
+        <div className="mt-10 grid sm:grid-cols-2 gap-3">
+          <Link href="/mcp-hub/authors" className="group rounded-xl border border-amber-500/30 bg-zinc-900/40 hover:border-amber-400/60 p-4 flex items-center justify-between transition">
+            <div>
+              <p className="text-sm font-semibold text-zinc-100">Built one of these? Claim your listing</p>
+              <p className="text-xs text-zinc-400 mt-0.5">Free analytics dashboard + README badge. 60-second GitHub bio verification, no email needed.</p>
+            </div>
+            <ArrowRight className="w-4 h-4 text-amber-400 group-hover:translate-x-0.5 transition-transform" />
+          </Link>
+          <Link href="/agents" className="group rounded-xl border border-cyan-500/30 bg-zinc-900/40 hover:border-cyan-400/60 p-4 flex items-center justify-between transition">
+            <div>
+              <p className="text-sm font-semibold text-zinc-100">Building an agent? Read agents.json</p>
+              <p className="text-xs text-zinc-400 mt-0.5">340+ MCP servers as a single CORS-enabled JSON feed, sorted by quality.</p>
+            </div>
+            <ArrowRight className="w-4 h-4 text-cyan-400 group-hover:translate-x-0.5 transition-transform" />
+          </Link>
+        </div>
+
         {/* ─── Wedge promos ─────────────────────────────── */}
         <div className="mt-10 grid md:grid-cols-2 gap-4">
           <Link href="/host" className="group relative overflow-hidden rounded-2xl border border-emerald-500/30 bg-gradient-to-br from-emerald-950/40 to-zinc-900/60 p-6 hover:border-emerald-400/60 transition shadow-lg hover:shadow-emerald-500/20">

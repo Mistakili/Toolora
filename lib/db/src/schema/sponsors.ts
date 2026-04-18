@@ -33,6 +33,7 @@ export const mcpListingsTable = pgTable("mcp_listings", {
   buyerEmail: text("buyer_email"),
   polarCheckoutId: text("polar_checkout_id").unique(),
   approved: boolean("approved").notNull().default(true),
+  verifiedGithubOwner: text("verified_github_owner"),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
 });
 
