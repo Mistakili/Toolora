@@ -36,21 +36,26 @@ const FEATURED_TOOLORA: Listing = {
   createdAt: new Date().toISOString(),
 };
 
-const CATEGORY_GRADIENTS: Record<string, string> = {
-  "Developer Tools": "from-blue-500 to-cyan-500",
-  "Data": "from-emerald-500 to-teal-500",
-  "AI/LLM": "from-violet-500 to-fuchsia-500",
-  "Productivity": "from-amber-500 to-orange-500",
-  "Marketing": "from-pink-500 to-rose-500",
-  "Finance": "from-yellow-500 to-amber-500",
-  "Other": "from-zinc-500 to-zinc-700",
+// Category accent — used only as a thin top border on cards so users can scan-recognize
+const CATEGORY_ACCENT: Record<string, string> = {
+  "Developer Tools": "border-cyan-400/60",
+  "Data": "border-emerald-400/60",
+  "AI/LLM": "border-violet-400/60",
+  "Productivity": "border-amber-400/60",
+  "Marketing": "border-pink-400/60",
+  "Finance": "border-yellow-400/60",
+  "Other": "border-zinc-400/60",
 };
 
+// Real AI-generated editorial photography — one per category
 const CATEGORY_HERO_IMAGE: Record<string, string> = {
-  "Developer Tools": BASE + "images/mcp-server-room.png",
-  "Data": BASE + "images/mcp-tools-visual.png",
-  "AI/LLM": BASE + "images/mcp-memory-visual.png",
-  "Productivity": BASE + "images/mcp-hub-hero.png",
+  "Developer Tools": BASE + "images/mcp-cat-developer-tools.png",
+  "Data": BASE + "images/mcp-cat-data.png",
+  "AI/LLM": BASE + "images/mcp-cat-ai-llm.png",
+  "Productivity": BASE + "images/mcp-cat-productivity.png",
+  "Marketing": BASE + "images/mcp-cat-marketing.png",
+  "Finance": BASE + "images/mcp-cat-finance.png",
+  "Other": BASE + "images/mcp-cat-other.png",
 };
 
 const CATEGORY_TAGLINE: Record<string, string> = {
@@ -63,39 +68,50 @@ const CATEGORY_TAGLINE: Record<string, string> = {
   "Other": "Useful, just not in a box.",
 };
 
-function gradFor(c: string) { return CATEGORY_GRADIENTS[c] ?? CATEGORY_GRADIENTS.Other; }
+const CATEGORY_BLURB: Record<string, string> = {
+  "Developer Tools": "The servers your IDE has been waiting for. Code search, repo intelligence, deploys, and CI all hooked into your agent loop.",
+  "Data": "Hand your agent a real query plan. Postgres, BigQuery, Snowflake, Parquet, dbt — all installable with one click.",
+  "AI/LLM": "Memory, embeddings, vector search, and model routing. The infrastructure layer your prompts actually need.",
+  "Productivity": "Calendars, docs, notes, email. The tools you live in, made readable and writable by the agent you live with.",
+  "Marketing": "Audience data, campaign telemetry, and content workflows. Stop pasting between dashboards.",
+  "Finance": "Markets, payments, ledgers. From price feeds to USDC settlement.",
+  "Other": "The long tail of MCP. Niche, specialized, sometimes weird, often the answer to the exact thing you're trying to do.",
+};
+
+function imgFor(c: string) { return CATEGORY_HERO_IMAGE[c] ?? CATEGORY_HERO_IMAGE.Other; }
+function accentFor(c: string) { return CATEGORY_ACCENT[c] ?? CATEGORY_ACCENT.Other; }
 
 // ─── Big "Today" spotlight hero ─────────────────────────────
 function SpotlightHero({ listing }: { listing: Listing }) {
   const slug = mcpSlugify(listing.name);
-  const grad = gradFor(listing.category);
-  const heroImg = CATEGORY_HERO_IMAGE[listing.category] ?? CATEGORY_HERO_IMAGE.Productivity;
+  const heroImg = imgFor(listing.category);
   return (
     <Link
       href={`/mcp-hub/server/${slug}`}
-      className="group relative block overflow-hidden rounded-3xl border border-white/10 bg-zinc-950 shadow-2xl shadow-black/40 hover:shadow-violet-500/20 transition-shadow duration-500"
+      className="group relative block overflow-hidden rounded-3xl border border-white/10 bg-zinc-950 shadow-2xl shadow-black/40 hover:shadow-black/60 transition-shadow duration-500"
     >
       <div className="absolute inset-0">
-        <img src={heroImg} alt="" aria-hidden="true" className="w-full h-full object-cover opacity-40 group-hover:opacity-50 group-hover:scale-[1.02] transition-all duration-700" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-black/30" />
-        <div className={"absolute inset-0 opacity-30 bg-gradient-to-br " + grad} />
+        <img src={heroImg} alt="" aria-hidden="true" className="w-full h-full object-cover opacity-70 group-hover:opacity-80 group-hover:scale-[1.03] transition-all duration-700" />
+        {/* Single dark overlay for text legibility — no color gradient */}
+        <div className="absolute inset-0 bg-black/40" />
+        <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black via-black/70 to-transparent" />
       </div>
-      <div className="relative p-6 md:p-10 min-h-[340px] md:min-h-[420px] flex flex-col justify-end">
+      <div className="relative p-6 md:p-10 min-h-[340px] md:min-h-[460px] flex flex-col justify-end">
         <div className="flex items-center gap-2 mb-3">
-          <span className="text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] text-violet-200 bg-violet-500/20 border border-violet-400/40 px-2.5 py-1 rounded-full inline-flex items-center gap-1">
+          <span className="text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] text-white bg-white/15 backdrop-blur border border-white/30 px-2.5 py-1 rounded-full inline-flex items-center gap-1">
             <Sparkles className="w-3 h-3" /> Spotlight
           </span>
-          <span className="text-[10px] md:text-xs font-medium uppercase tracking-wider text-white/60">{listing.category}</span>
+          <span className="text-[10px] md:text-xs font-medium uppercase tracking-wider text-white/70">{listing.category}</span>
         </div>
         <div className="flex items-end gap-4 md:gap-5">
-          <div className={"shrink-0 w-16 h-16 md:w-20 md:h-20 rounded-[22%] flex items-center justify-center text-2xl md:text-3xl font-bold bg-gradient-to-br " + grad + " text-white shadow-xl ring-1 ring-white/20"}>
+          <div className="shrink-0 w-16 h-16 md:w-20 md:h-20 rounded-[22%] flex items-center justify-center text-2xl md:text-3xl font-bold bg-zinc-950/80 backdrop-blur text-white shadow-xl ring-1 ring-white/20">
             {listing.logoUrl
               ? <img src={listing.logoUrl} alt={listing.name + " logo"} loading="eager" decoding="async" className="w-full h-full rounded-[22%] object-cover" />
               : <span className="drop-shadow">{listing.name.charAt(0)}</span>}
           </div>
           <div className="flex-1 min-w-0">
             <h2 className="text-2xl md:text-4xl font-bold text-white leading-tight tracking-tight mb-1 truncate">{listing.name}</h2>
-            <p className="text-sm md:text-base text-white/80 line-clamp-2 md:line-clamp-2 leading-snug">{listing.tagline}</p>
+            <p className="text-sm md:text-base text-white/85 line-clamp-2 leading-snug">{listing.tagline}</p>
           </div>
           <div className="hidden md:flex shrink-0 items-center gap-2 rounded-full bg-white text-zinc-950 px-5 py-2.5 text-sm font-semibold shadow-lg group-hover:scale-105 transition-transform">
             Get <ArrowRight className="w-4 h-4" />
@@ -109,25 +125,28 @@ function SpotlightHero({ listing }: { listing: Listing }) {
 // ─── App-Store style large card for rails ───────────────────
 function RailCard({ listing }: { listing: Listing }) {
   const slug = mcpSlugify(listing.name);
-  const grad = gradFor(listing.category);
+  const heroImg = imgFor(listing.category);
+  const accent = accentFor(listing.category);
   return (
     <Link
       href={`/mcp-hub/server/${slug}`}
       className="group snap-start shrink-0 w-[260px] md:w-[300px] block"
     >
-      <div className={"relative aspect-[4/3] rounded-2xl overflow-hidden bg-gradient-to-br " + grad + " shadow-lg ring-1 ring-white/10 group-hover:ring-white/30 group-hover:scale-[1.02] transition-all duration-300"}>
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.25),transparent_60%)]" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
-        {/* Big initial */}
-        <div className="absolute top-4 left-4">
-          <div className="w-14 h-14 rounded-[22%] bg-white/15 backdrop-blur-md flex items-center justify-center text-xl font-bold text-white ring-1 ring-white/30 shadow-xl">
+      <div className={"relative aspect-[4/3] rounded-2xl overflow-hidden bg-zinc-900 shadow-lg ring-1 ring-white/5 group-hover:ring-white/20 group-hover:scale-[1.02] transition-all duration-300 border-t-2 " + accent}>
+        <img src={heroImg} alt="" aria-hidden="true" loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover opacity-65 group-hover:opacity-80 transition-opacity duration-500" />
+        {/* Single dark overlay for text legibility — no color gradient */}
+        <div className="absolute inset-0 bg-black/30" />
+        <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/95 via-black/60 to-transparent" />
+        {/* Logo chip */}
+        <div className="absolute top-3 left-3">
+          <div className="w-12 h-12 rounded-[22%] bg-zinc-950/80 backdrop-blur flex items-center justify-center text-base font-bold text-white ring-1 ring-white/20 shadow-xl">
             {listing.logoUrl
               ? <img src={listing.logoUrl} alt={listing.name + " logo"} loading="lazy" decoding="async" className="w-full h-full rounded-[22%] object-cover" />
               : listing.name.charAt(0)}
           </div>
         </div>
         {listing.featured && (
-          <span className="absolute top-4 right-4 text-[10px] font-bold uppercase tracking-wider text-white bg-black/40 backdrop-blur px-2 py-0.5 rounded-full ring-1 ring-white/30 inline-flex items-center gap-1">
+          <span className="absolute top-3 right-3 text-[10px] font-bold uppercase tracking-wider text-white bg-black/60 backdrop-blur px-2 py-0.5 rounded-full ring-1 ring-white/30 inline-flex items-center gap-1">
             <Crown className="w-2.5 h-2.5" /> Featured
           </span>
         )}
@@ -144,13 +163,13 @@ function RailCard({ listing }: { listing: Listing }) {
 // ─── Compact list row (for filtered/grid view) ──────────────
 function ListRow({ listing }: { listing: Listing }) {
   const slug = mcpSlugify(listing.name);
-  const grad = gradFor(listing.category);
+  const accent = accentFor(listing.category);
   return (
     <Link
       href={`/mcp-hub/server/${slug}`}
-      className="group flex items-center gap-3 p-3 rounded-xl border border-zinc-800 bg-zinc-900/40 hover:bg-zinc-900/70 hover:border-zinc-700 transition active:scale-[0.99]"
+      className={"group flex items-center gap-3 p-3 rounded-xl border-l-2 " + accent + " bg-zinc-900/40 hover:bg-zinc-900/70 hover:border-zinc-700 transition active:scale-[0.99] border-y border-r border-y-zinc-800 border-r-zinc-800"}
     >
-      <div className={"shrink-0 w-12 h-12 rounded-[22%] flex items-center justify-center text-base font-bold bg-gradient-to-br " + grad + " text-white shadow ring-1 ring-white/10"}>
+      <div className="shrink-0 w-12 h-12 rounded-[22%] flex items-center justify-center text-base font-bold bg-zinc-800 text-white shadow ring-1 ring-white/10 overflow-hidden">
         {listing.logoUrl
           ? <img src={listing.logoUrl} alt={listing.name + " logo"} loading="lazy" decoding="async" className="w-full h-full rounded-[22%] object-cover" />
           : listing.name.charAt(0)}
@@ -287,11 +306,9 @@ export default function McpHub() {
 
   return (
     <main className="relative">
-      {/* Background aurora */}
-      <div aria-hidden className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
-        <div className="absolute top-[-20%] left-[10%] w-[600px] h-[600px] rounded-full bg-violet-600/15 blur-[120px] animate-[pulse_8s_ease-in-out_infinite]" />
-        <div className="absolute top-[30%] right-[-10%] w-[500px] h-[500px] rounded-full bg-fuchsia-600/10 blur-[100px] animate-[pulse_10s_ease-in-out_infinite_1s]" />
-        <div className="absolute bottom-[-10%] left-[30%] w-[700px] h-[700px] rounded-full bg-blue-600/10 blur-[140px] animate-[pulse_12s_ease-in-out_infinite_2s]" />
+      {/* Neutral dark background — fine grain noise via radial dots, no color */}
+      <div aria-hidden className="pointer-events-none fixed inset-0 -z-10 bg-zinc-950">
+        <div className="absolute inset-0 opacity-[0.025] bg-[radial-gradient(circle_at_center,#fff_1px,transparent_1px)] [background-size:32px_32px]" />
       </div>
 
       <div className="max-w-6xl mx-auto px-4 py-6 md:py-10">
@@ -299,7 +316,7 @@ export default function McpHub() {
         <header className="mb-10 md:mb-14 px-1 md:px-0">
           <div className="flex items-center gap-2 mb-4">
             <p className="text-[11px] font-mono text-violet-400 uppercase tracking-widest">MCP Hub</p>
-            <span className="h-px flex-1 bg-gradient-to-r from-violet-500/40 to-transparent max-w-[120px]" />
+            <span className="h-px flex-1 bg-zinc-700 max-w-[120px]" />
           </div>
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 md:gap-10">
             <div className="max-w-3xl">
@@ -439,42 +456,46 @@ export default function McpHub() {
           </section>
         )}
 
-        {/* ─── Editorial slab: Privacy & openness ───────── */}
-        <section className="mt-16 md:mt-24 rounded-3xl bg-gradient-to-br from-zinc-50 to-zinc-200 text-zinc-950 p-8 md:p-14 overflow-hidden relative">
-          <div className="absolute inset-0 opacity-[0.04] bg-[radial-gradient(circle_at_top_left,#000_1px,transparent_1px)] [background-size:24px_24px]" />
-          <div className="relative grid md:grid-cols-2 gap-10 md:gap-16 items-center">
-            <div>
-              <p className="text-[11px] font-mono uppercase tracking-widest text-violet-700 mb-4">Privacy &amp; openness</p>
+        {/* ─── Editorial slab: Privacy & openness — light section with photo ─── */}
+        <section className="mt-16 md:mt-24 rounded-3xl overflow-hidden relative bg-zinc-100 text-zinc-950">
+          <div className="grid md:grid-cols-5">
+            {/* Left: real photograph */}
+            <div className="md:col-span-2 relative min-h-[260px] md:min-h-0">
+              <img src={BASE + "images/mcp-privacy-light.png"} alt="Soft daylight through tall window blinds onto a clean concrete floor" className="absolute inset-0 w-full h-full object-cover" />
+            </div>
+            {/* Right: editorial copy */}
+            <div className="md:col-span-3 p-8 md:p-14">
+              <p className="text-[11px] font-mono uppercase tracking-widest text-zinc-500 mb-4">Privacy &amp; openness</p>
               <h2 className="text-3xl md:text-5xl font-bold tracking-tight leading-[1.05] mb-5">
                 Browse without being watched. Install without being locked in.
               </h2>
               <p className="text-base md:text-lg text-zinc-700 leading-relaxed mb-3">
                 The directory runs on a privacy-by-default analytics model — installs are counted, you aren't. No cookies set on browse. No third-party trackers. No newsletter wall before you can see a server's name.
               </p>
-              <p className="text-base md:text-lg text-zinc-700 leading-relaxed">
-                Every listing links to its real source — the GitHub repo, the npm package, the maker's homepage. We don't middleman the install.
+              <p className="text-base md:text-lg text-zinc-700 leading-relaxed mb-8">
+                Every listing links to its real source — the GitHub repo, the npm package, the maker's homepage. We don't middleman the install. We don't proxy the auth. The server in your client is the same server the maker shipped.
               </p>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="rounded-2xl bg-white p-5 border border-zinc-200 shadow-sm">
-                <div className="text-3xl md:text-4xl font-bold tracking-tight">0</div>
-                <div className="text-xs font-semibold mt-1">Trackers on /mcp-hub</div>
-                <div className="text-[11px] text-zinc-500 mt-0.5">No GA, no Hotjar, no FB pixel</div>
-              </div>
-              <div className="rounded-2xl bg-white p-5 border border-zinc-200 shadow-sm">
-                <div className="text-3xl md:text-4xl font-bold tracking-tight">100%</div>
-                <div className="text-xs font-semibold mt-1">Open source servers</div>
-                <div className="text-[11px] text-zinc-500 mt-0.5">Every link is the real source</div>
-              </div>
-              <div className="rounded-2xl bg-white p-5 border border-zinc-200 shadow-sm">
-                <div className="text-3xl md:text-4xl font-bold tracking-tight">CC‑BY</div>
-                <div className="text-xs font-semibold mt-1">Directory is free</div>
-                <div className="text-[11px] text-zinc-500 mt-0.5">agents.json is portable</div>
-              </div>
-              <div className="rounded-2xl bg-white p-5 border border-zinc-200 shadow-sm">
-                <div className="text-3xl md:text-4xl font-bold tracking-tight">USDC</div>
-                <div className="text-xs font-semibold mt-1">Crypto-first listing fee</div>
-                <div className="text-[11px] text-zinc-500 mt-0.5">No Stripe gate, works worldwide</div>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="rounded-2xl bg-white p-5 border border-zinc-200 shadow-sm">
+                  <div className="text-3xl md:text-4xl font-bold tracking-tight">0</div>
+                  <div className="text-xs font-semibold mt-1">Trackers on /mcp-hub</div>
+                  <div className="text-[11px] text-zinc-500 mt-0.5">No GA, no Hotjar, no FB pixel</div>
+                </div>
+                <div className="rounded-2xl bg-white p-5 border border-zinc-200 shadow-sm">
+                  <div className="text-3xl md:text-4xl font-bold tracking-tight">100%</div>
+                  <div className="text-xs font-semibold mt-1">Open source servers</div>
+                  <div className="text-[11px] text-zinc-500 mt-0.5">Every link is the real source</div>
+                </div>
+                <div className="rounded-2xl bg-white p-5 border border-zinc-200 shadow-sm">
+                  <div className="text-3xl md:text-4xl font-bold tracking-tight">CC‑BY</div>
+                  <div className="text-xs font-semibold mt-1">Directory is free</div>
+                  <div className="text-[11px] text-zinc-500 mt-0.5">agents.json is portable</div>
+                </div>
+                <div className="rounded-2xl bg-white p-5 border border-zinc-200 shadow-sm">
+                  <div className="text-3xl md:text-4xl font-bold tracking-tight">USDC</div>
+                  <div className="text-xs font-semibold mt-1">Crypto-first listing fee</div>
+                  <div className="text-[11px] text-zinc-500 mt-0.5">No Stripe gate, works worldwide</div>
+                </div>
               </div>
             </div>
           </div>
@@ -514,47 +535,101 @@ export default function McpHub() {
           </Link>
         </div>
 
-        {/* ─── Wedge promos ─────────────────────────────── */}
-        <div className="mt-10 grid md:grid-cols-2 gap-4">
-          <Link href="/host" className="group relative overflow-hidden rounded-2xl border border-emerald-500/30 bg-gradient-to-br from-emerald-950/40 to-zinc-900/60 p-6 hover:border-emerald-400/60 transition shadow-lg hover:shadow-emerald-500/20">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(16,185,129,0.15),transparent_60%)]" />
-            <div className="relative inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-0.5 mb-3">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-300">Coming Q2</span>
+        {/* ─── Wedge promos — photo-backed editorial cards ─────── */}
+        <div className="mt-12 grid md:grid-cols-2 gap-5">
+          <Link href="/host" className="group relative overflow-hidden rounded-2xl ring-1 ring-white/5 hover:ring-emerald-400/40 transition-all duration-500 shadow-lg min-h-[280px] flex flex-col justify-end">
+            <img src={BASE + "images/mcp-host-bg.png"} alt="" aria-hidden="true" className="absolute inset-0 w-full h-full object-cover opacity-70 group-hover:opacity-90 group-hover:scale-[1.03] transition-all duration-700" />
+            <div className="absolute inset-0 bg-black/40" />
+            <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black via-black/80 to-transparent" />
+            <div className="relative p-6 md:p-8">
+              <div className="inline-flex items-center gap-2 rounded-full border border-emerald-400/40 bg-emerald-500/15 backdrop-blur px-2.5 py-0.5 mb-3">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-200">Coming Q2 2026</span>
+              </div>
+              <h3 className="font-bold text-white mb-2 text-2xl md:text-3xl tracking-tight">Vercel for MCP servers</h3>
+              <p className="text-sm md:text-base text-white/80 mb-4 max-w-md leading-snug">
+                Skip the laptop. Host any open-source MCP server with a public URL, auth gate, and per-IP rate limits. Free for the first 1,000 calls a month — pay USDC after that.
+              </p>
+              <span className="text-xs font-semibold text-emerald-300 inline-flex items-center gap-1 group-hover:gap-2 transition-all">
+                Join the waitlist <ArrowRight className="w-3 h-3" />
+              </span>
             </div>
-            <h3 className="relative font-bold text-zinc-100 mb-1.5 text-lg">Vercel for MCP servers</h3>
-            <p className="relative text-sm text-zinc-400 mb-3">Skip the laptop — host any open-source server with a public URL, auth, and rate limits. Free 1k calls/mo.</p>
-            <span className="relative text-xs text-emerald-400 inline-flex items-center gap-1 group-hover:gap-2 transition-all">Join the waitlist <ArrowRight className="w-3 h-3" /></span>
           </Link>
-          <Link href="/x402" className="group relative overflow-hidden rounded-2xl border border-yellow-500/30 bg-gradient-to-br from-yellow-950/30 to-zinc-900/60 p-6 hover:border-yellow-400/60 transition shadow-lg hover:shadow-yellow-500/20">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(234,179,8,0.15),transparent_60%)]" />
-            <div className="relative inline-flex items-center gap-2 rounded-full border border-yellow-500/30 bg-yellow-500/10 px-2.5 py-0.5 mb-3">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-yellow-300">Building now</span>
+
+          <Link href="/x402" className="group relative overflow-hidden rounded-2xl ring-1 ring-white/5 hover:ring-yellow-400/40 transition-all duration-500 shadow-lg min-h-[280px] flex flex-col justify-end">
+            <img src={BASE + "images/mcp-x402-bg.png"} alt="" aria-hidden="true" className="absolute inset-0 w-full h-full object-cover opacity-70 group-hover:opacity-90 group-hover:scale-[1.03] transition-all duration-700" />
+            <div className="absolute inset-0 bg-black/40" />
+            <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black via-black/80 to-transparent" />
+            <div className="relative p-6 md:p-8">
+              <div className="inline-flex items-center gap-2 rounded-full border border-yellow-400/40 bg-yellow-500/15 backdrop-blur px-2.5 py-0.5 mb-3">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-yellow-200">Building now</span>
+              </div>
+              <h3 className="font-bold text-white mb-2 text-2xl md:text-3xl tracking-tight">x402 pay-per-call marketplace</h3>
+              <p className="text-sm md:text-base text-white/80 mb-4 max-w-md leading-snug">
+                Charge agents per API call. USDC settlement straight to your wallet. The toll booth for the agent economy — built on the open x402 standard, no Stripe, no chargebacks.
+              </p>
+              <span className="text-xs font-semibold text-yellow-300 inline-flex items-center gap-1 group-hover:gap-2 transition-all">
+                Get early access <ArrowRight className="w-3 h-3" />
+              </span>
             </div>
-            <h3 className="relative font-bold text-zinc-100 mb-1.5 text-lg">x402 pay-per-call marketplace</h3>
-            <p className="relative text-sm text-zinc-400 mb-3">Charge agents per API call. USDC settlement to your wallet. The toll booth for the agent economy.</p>
-            <span className="relative text-xs text-yellow-400 inline-flex items-center gap-1 group-hover:gap-2 transition-all">Get early access <ArrowRight className="w-3 h-3" /></span>
           </Link>
         </div>
 
         {/* ─── Newsletter ─────────────────────────────────── */}
-        <div className="mt-10">
+        <div className="mt-12">
           <NewsletterCapture source="mcp-weekly" />
         </div>
 
+        {/* ─── Closing editorial: who & why ───────────────── */}
+        <section className="mt-16 md:mt-20 px-1">
+          <p className="text-[11px] font-mono text-violet-400 uppercase tracking-widest mb-3">Why this exists</p>
+          <h2 className="text-2xl md:text-4xl font-bold text-zinc-50 tracking-tight leading-tight mb-4 max-w-3xl">
+            Built for the makers who actually ship — and the agents that actually have to use what gets shipped.
+          </h2>
+          <div className="grid md:grid-cols-3 gap-6 mt-8">
+            <div>
+              <h3 className="text-sm font-semibold text-zinc-100 mb-2 uppercase tracking-wider">For makers</h3>
+              <p className="text-sm text-zinc-400 leading-relaxed">
+                A 49 USDC listing fee. No revenue share, no exclusivity, no committee approval. Your README badge updates every five minutes. You own your audience — not us, not a platform.
+              </p>
+            </div>
+            <div>
+              <h3 className="text-sm font-semibold text-zinc-100 mb-2 uppercase tracking-wider">For agent builders</h3>
+              <p className="text-sm text-zinc-400 leading-relaxed">
+                Every server in this directory is in <Link href="/agents" className="text-violet-400 hover:text-violet-300 underline decoration-dotted underline-offset-4">agents.json</Link> — a single CORS-enabled JSON feed with quality signals and install metadata. Your agent can browse the catalog without a human in the loop.
+              </p>
+            </div>
+            <div>
+              <h3 className="text-sm font-semibold text-zinc-100 mb-2 uppercase tracking-wider">For everyone else</h3>
+              <p className="text-sm text-zinc-400 leading-relaxed">
+                A clean, honest browse. No login required. No tracking on the catalog. Find the server you came for, copy the install command, get back to whatever you were actually trying to do.
+              </p>
+            </div>
+          </div>
+        </section>
+
         {/* ─── Submit CTA ────────────────────────────────── */}
-        <div className="mt-10 grid md:grid-cols-2 gap-4">
-          <Link href="/submit-mcp" className="group relative overflow-hidden rounded-2xl border border-violet-500/30 bg-gradient-to-br from-violet-950/60 to-zinc-900/60 p-6 hover:border-violet-400/60 transition shadow-lg hover:shadow-violet-500/30">
-            <div className="absolute inset-0 bg-gradient-to-br from-violet-600/0 to-fuchsia-600/0 group-hover:from-violet-600/10 group-hover:to-fuchsia-600/10 transition-all" />
-            <Plus className="relative w-7 h-7 text-violet-400 mb-3 group-hover:rotate-90 transition-transform duration-300" />
-            <h3 className="relative font-semibold text-zinc-100 mb-1.5">List your MCP server</h3>
-            <p className="relative text-sm text-zinc-400 mb-3">Reach AI-agent developers worldwide. Auto-published the moment payment confirms. From 49 USDC.</p>
-            <span className="relative text-xs text-violet-400 inline-flex items-center gap-1 group-hover:gap-2 transition-all">Submit your server <ArrowRight className="w-3 h-3" /></span>
+        <div className="mt-12 grid md:grid-cols-2 gap-5">
+          <Link href="/submit-mcp" className="group relative overflow-hidden rounded-2xl ring-1 ring-violet-500/30 hover:ring-violet-400/60 transition shadow-lg min-h-[200px] flex flex-col justify-end">
+            <img src={BASE + "images/mcp-cat-ai-llm.png"} alt="" aria-hidden="true" className="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:opacity-65 transition-opacity duration-500" />
+            <div className="absolute inset-0 bg-black/50" />
+            <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black via-black/80 to-transparent" />
+            <div className="relative p-6 md:p-8">
+              <Plus className="w-7 h-7 text-violet-300 mb-3 group-hover:rotate-90 transition-transform duration-300" />
+              <h3 className="font-bold text-white mb-2 text-xl tracking-tight">List your MCP server</h3>
+              <p className="text-sm text-white/80 mb-3 max-w-sm leading-snug">Reach AI-agent developers worldwide. Auto-published the moment payment confirms. From 49 USDC. No revenue share, no exclusivity.</p>
+              <span className="text-xs font-semibold text-violet-300 inline-flex items-center gap-1 group-hover:gap-2 transition-all">Submit your server <ArrowRight className="w-3 h-3" /></span>
+            </div>
           </Link>
-          <a href="https://modelcontextprotocol.io/introduction" target="_blank" rel="noopener noreferrer" className="group rounded-2xl border border-zinc-800 bg-zinc-900/40 p-6 hover:border-zinc-700 hover:bg-zinc-900/60 transition">
-            <Shield className="w-7 h-7 text-violet-400 mb-3 group-hover:scale-110 transition-transform" />
-            <h3 className="font-semibold text-zinc-100 mb-1.5">New to MCP?</h3>
-            <p className="text-sm text-zinc-400 mb-3">Read the official spec and learn how to connect any server to your AI client.</p>
-            <span className="text-xs text-violet-400 inline-flex items-center gap-1 group-hover:gap-2 transition-all">Open spec <ArrowRight className="w-3 h-3" /></span>
+          <a href="https://modelcontextprotocol.io/introduction" target="_blank" rel="noopener noreferrer" className="group relative overflow-hidden rounded-2xl ring-1 ring-zinc-800 hover:ring-zinc-600 transition shadow-lg min-h-[200px] flex flex-col justify-end">
+            <img src={BASE + "images/mcp-cat-developer-tools.png"} alt="" aria-hidden="true" className="absolute inset-0 w-full h-full object-cover opacity-45 group-hover:opacity-60 transition-opacity duration-500" />
+            <div className="absolute inset-0 bg-black/55" />
+            <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black via-black/80 to-transparent" />
+            <div className="relative p-6 md:p-8">
+              <Shield className="w-7 h-7 text-cyan-300 mb-3 group-hover:scale-110 transition-transform" />
+              <h3 className="font-bold text-white mb-2 text-xl tracking-tight">New to MCP?</h3>
+              <p className="text-sm text-white/80 mb-3 max-w-sm leading-snug">Read the official Model Context Protocol spec and learn how to connect any server to your AI client. The protocol is open, the spec is short, the examples actually work.</p>
+              <span className="text-xs font-semibold text-cyan-300 inline-flex items-center gap-1 group-hover:gap-2 transition-all">Open spec <ArrowRight className="w-3 h-3" /></span>
+            </div>
           </a>
         </div>
       </div>
