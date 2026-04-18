@@ -22,37 +22,22 @@ const ThemeProviderContext = createContext<ThemeProviderState>(initialState)
 
 export function ThemeProvider({
   children,
-  defaultTheme = "system",
-  storageKey = "vite-ui-theme",
   ...props
 }: ThemeProviderProps) {
-  const [theme, setTheme] = useState<Theme>(
-    () => (localStorage.getItem(storageKey) as Theme) || defaultTheme
-  )
-
+  // Toolora is a dark-first brand. Light mode is intentionally disabled —
+  // every page is hand-tuned for dark editorial styling with photo backgrounds.
   useEffect(() => {
     const root = window.document.documentElement
+    root.classList.remove("light")
+    root.classList.add("dark")
+    // Clear any legacy stored preference so users never get stuck on light again.
+    try { localStorage.removeItem("vite-ui-theme"); localStorage.removeItem("toolora-theme") } catch {}
+  }, [])
 
-    root.classList.remove("light", "dark")
-
-    if (theme === "system") {
-      const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
-        .matches
-        ? "dark"
-        : "light"
-
-      root.classList.add(systemTheme)
-      return
-    }
-
-    root.classList.add(theme)
-  }, [theme])
-
-  const value = {
-    theme,
-    setTheme: (theme: Theme) => {
-      localStorage.setItem(storageKey, theme)
-      setTheme(theme)
+  const value: ThemeProviderState = {
+    theme: "dark",
+    setTheme: () => {
+      // no-op: theme switching is intentionally disabled
     },
   }
 

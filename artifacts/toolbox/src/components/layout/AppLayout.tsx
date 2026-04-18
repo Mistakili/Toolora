@@ -1,7 +1,6 @@
 import { ReactNode, useState, useRef, useEffect } from "react";
 import { Link, useLocation } from "wouter";
-import { Settings2, Sparkles, Moon, Sun, Search, Menu, X, ShieldCheck, History, LogOut, LogIn, Key, CreditCard, LayoutDashboard, Zap, Building2, Lock, FileText, Image as ImageIcon, Code2, Type, Wand2, BookOpen, Puzzle, Server, ChevronRight } from "lucide-react";
-import { useTheme } from "../ThemeProvider";
+import { Settings2, Sparkles, Search, Menu, X, ShieldCheck, History, LogOut, LogIn, Key, CreditCard, LayoutDashboard, Zap, Building2, Lock, FileText, Image as ImageIcon, Code2, Type, Wand2, BookOpen, Puzzle, Server, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { TOOLS } from "@/lib/tools-config";
@@ -226,7 +225,6 @@ function DesktopNav() {
 
 export function AppLayout({ children }: { children: ReactNode }) {
   useTracking();
-  const { theme, setTheme } = useTheme();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [userMenuOpen, setUserMenuOpen] = useState(false);
@@ -307,15 +305,6 @@ export function AppLayout({ children }: { children: ReactNode }) {
               <span>Local Processing</span>
             </div>
             
-            <Button
-              variant="ghost"
-              size="icon"
-              className="rounded-full"
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-            >
-              {theme === "dark" ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-            </Button>
-
             {/* Auth button */}
             {isAuthenticated && user ? (
               <div className="relative" ref={userMenuRef}>
