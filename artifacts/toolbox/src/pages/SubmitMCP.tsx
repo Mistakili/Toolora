@@ -4,6 +4,30 @@ import { CryptoCheckout } from "@/components/shared/CryptoCheckout";
 
 const CATEGORIES = ["Productivity", "Developer Tools", "Data", "AI/LLM", "Marketing", "Finance", "Other"];
 
+// Normalize a URL the user typed: trim whitespace; if it has a dot and no scheme, prepend https://
+function normalizeUrl(raw: string): string {
+  const trimmed = raw.trim();
+  if (!trimmed) return "";
+  if (/^https?:\/\//i.test(trimmed)) return trimmed;
+  // bare domain like "acme.dev" or "acme.dev/mcp" → assume https
+  if (/^[a-z0-9-]+(\.[a-z0-9-]+)+/i.test(trimmed)) return "https://" + trimmed;
+  return trimmed;
+}
+
+function isValidUrl(s: string): boolean {
+  if (!s) return false;
+  try {
+    const u = new URL(s);
+    return u.protocol === "http:" || u.protocol === "https:";
+  } catch {
+    return false;
+  }
+}
+
+function isValidEmail(s: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s.trim());
+}
+
 export default function SubmitMCP() {
   useSEO({
     title: "Submit your MCP server — Toolora MCP Hub directory",
@@ -17,8 +41,49 @@ export default function SubmitMCP() {
   });
   const [tier, setTier] = useState<"mcp_listing" | "mcp_featured">("mcp_listing");
   const [showCheckout, setShowCheckout] = useState(false);
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
+  const [submitAttempted, setSubmitAttempted] = useState(false);
 
-  const canSubmit = form.name && form.tagline && form.url.startsWith("http") && form.buyer_email.includes("@");
+  // Build a map of human errors per field. URL fields are normalized first so
+  // "acme.dev" works the same as "https://acme.dev".
+  const normalizedUrl = normalizeUrl(form.url);
+  const normalizedConfig = normalizeUrl(form.config_url);
+  const normalizedLogo = normalizeUrl(form.logo_url);
+  const errors: Record<string, string> = {};
+  if (!form.name.trim()) errors.name = "Required";
+  if (!form.tagline.trim()) errors.tagline = "Required";
+  if (!form.url.trim()) errors.url = "Required";
+  else if (!isValidUrl(normalizedUrl)) errors.url = "Enter a valid URL like https://acme.dev";
+  if (form.config_url.trim() && !isValidUrl(normalizedConfig)) errors.config_url = "Must be a valid URL or leave blank";
+  if (form.logo_url.trim() && !isValidUrl(normalizedLogo)) errors.logo_url = "Must be a valid URL or leave blank";
+  if (!form.buyer_email.trim()) errors.buyer_email = "Required";
+  else if (!isValidEmail(form.buyer_email)) errors.buyer_email = "Enter a valid email address";
+
+  const canSubmit = Object.keys(errors).length === 0;
+  const missingList = Object.entries(errors).map(([k]) => k.replace("_", " "));
+
+  function handleContinue() {
+    setSubmitAttempted(true);
+    if (!canSubmit) {
+      // Mark all fields touched so all errors become visible
+      setTouched({ name: true, tagline: true, url: true, config_url: true, logo_url: true, buyer_email: true });
+      // Scroll to first error
+      const firstKey = Object.keys(errors)[0];
+      if (firstKey) {
+        const el = document.getElementById("field-" + firstKey);
+        if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+      return;
+    }
+    // Auto-normalize URL fields into the form so checkout receives clean values
+    setForm({
+      ...form,
+      url: normalizedUrl,
+      config_url: normalizedConfig,
+      logo_url: normalizedLogo,
+    });
+    setShowCheckout(true);
+  }
 
   return (
     <main className="max-w-2xl mx-auto px-4 py-16">
@@ -46,24 +111,34 @@ export default function SubmitMCP() {
         <>
           <div className="space-y-4 mb-8">
             {[
-              { k: "name", label: "Server name", placeholder: "Acme MCP" },
-              { k: "tagline", label: "One-line tagline", placeholder: "The fastest way to query Postgres from Claude" },
-              { k: "url", label: "Homepage URL (https://)", placeholder: "https://acme.dev" },
-              { k: "config_url", label: "MCP config URL (optional)", placeholder: "https://acme.dev/mcp" },
-              { k: "logo_url", label: "Logo URL (optional)", placeholder: "https://acme.dev/logo.png" },
-              { k: "buyer_email", label: "Your email (for receipt)", placeholder: "you@acme.dev" },
-            ].map(({ k, label, placeholder }) => (
-              <label key={k} className="block">
-                <span className="text-sm text-zinc-400 mb-1 block">{label}</span>
-                <input
-                  type={k === "buyer_email" ? "email" : "text"}
-                  value={form[k as keyof typeof form]}
-                  onChange={(e) => setForm({ ...form, [k]: e.target.value })}
-                  placeholder={placeholder}
-                  className="w-full rounded-lg bg-zinc-900 border border-zinc-800 px-3 py-2 text-zinc-100 focus:border-violet-500 outline-none"
-                />
-              </label>
-            ))}
+              { k: "name", label: "Server name", placeholder: "Acme MCP", required: true },
+              { k: "tagline", label: "One-line tagline", placeholder: "The fastest way to query Postgres from Claude", required: true },
+              { k: "url", label: "Homepage URL", placeholder: "acme.dev (we'll add https:// for you)", required: true },
+              { k: "config_url", label: "MCP config URL (optional)", placeholder: "acme.dev/mcp", required: false },
+              { k: "logo_url", label: "Logo URL (optional)", placeholder: "acme.dev/logo.png", required: false },
+              { k: "buyer_email", label: "Your email (for receipt)", placeholder: "you@acme.dev", required: true },
+            ].map(({ k, label, placeholder, required }) => {
+              const showErr = (touched[k] || submitAttempted) && errors[k];
+              return (
+                <label key={k} className="block" htmlFor={"field-" + k}>
+                  <span className="text-sm text-zinc-400 mb-1 block">
+                    {label}{required && <span className="text-violet-400 ml-1">*</span>}
+                  </span>
+                  <input
+                    id={"field-" + k}
+                    type={k === "buyer_email" ? "email" : "text"}
+                    value={form[k as keyof typeof form]}
+                    onChange={(e) => setForm({ ...form, [k]: e.target.value })}
+                    onBlur={() => setTouched({ ...touched, [k]: true })}
+                    placeholder={placeholder}
+                    aria-invalid={!!showErr}
+                    aria-describedby={showErr ? "err-" + k : undefined}
+                    className={"w-full rounded-lg bg-zinc-900 border px-3 py-2 text-zinc-100 outline-none transition " + (showErr ? "border-red-500/70 focus:border-red-500" : "border-zinc-800 focus:border-violet-500")}
+                  />
+                  {showErr && <p id={"err-" + k} className="text-xs text-red-400 mt-1">{errors[k]}</p>}
+                </label>
+              );
+            })}
             <label className="block">
               <span className="text-sm text-zinc-400 mb-1 block">Category</span>
               <select
@@ -87,12 +162,21 @@ export default function SubmitMCP() {
           </div>
 
           <button
-            onClick={() => setShowCheckout(true)}
-            disabled={!canSubmit}
-            className={"block w-full text-center rounded-lg px-6 py-4 text-lg font-semibold transition " + (canSubmit ? "bg-violet-600 hover:bg-violet-500 text-white" : "bg-zinc-800 text-zinc-500 cursor-not-allowed")}
+            onClick={handleContinue}
+            className="block w-full text-center rounded-lg px-6 py-4 text-lg font-semibold transition bg-violet-600 hover:bg-violet-500 text-white shadow-lg shadow-violet-900/30"
           >
-            {canSubmit ? "Continue to USDC payment →" : "Fill required fields above"}
+            Continue to USDC payment →
           </button>
+
+          {submitAttempted && !canSubmit && (
+            <p className="mt-3 text-sm text-red-400 text-center">
+              Please fix: {missingList.join(", ")}
+            </p>
+          )}
+
+          <p className="mt-3 text-xs text-zinc-500 text-center">
+            Required: name, tagline, homepage URL, email. Other fields are optional.
+          </p>
         </>
       )}
 
