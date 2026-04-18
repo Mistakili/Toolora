@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "wouter";
-import { Search, Sparkles, ExternalLink, Zap, Shield, ArrowRight, Plus, TrendingUp, Crown, ChevronRight } from "lucide-react";
+import { Search, Sparkles, ExternalLink, Zap, Shield, ShieldCheck, ArrowRight, Plus, TrendingUp, Crown, ChevronRight } from "lucide-react";
 import { useSEO } from "@/hooks/useSEO";
 import { mcpSlugify } from "@/lib/mcpSlug";
 import { NewsletterCapture } from "@/components/NewsletterCapture";
@@ -47,7 +47,18 @@ const CATEGORY_ACCENT: Record<string, string> = {
   "Other": "border-zinc-400/60",
 };
 
-// Real AI-generated editorial photography — one per category
+// Real AI-generated editorial photography — 2 variants per category for per-card variety
+const CATEGORY_HERO_IMAGES: Record<string, string[]> = {
+  "Developer Tools": [BASE + "images/mcp-cat-developer-tools.png", BASE + "images/mcp-cat-developer-tools-2.png"],
+  "Data": [BASE + "images/mcp-cat-data.png", BASE + "images/mcp-cat-data-2.png"],
+  "AI/LLM": [BASE + "images/mcp-cat-ai-llm.png", BASE + "images/mcp-cat-ai-llm-2.png"],
+  "Productivity": [BASE + "images/mcp-cat-productivity.png", BASE + "images/mcp-cat-productivity-2.png"],
+  "Marketing": [BASE + "images/mcp-cat-marketing.png", BASE + "images/mcp-cat-marketing-2.png"],
+  "Finance": [BASE + "images/mcp-cat-finance.png", BASE + "images/mcp-cat-finance-2.png"],
+  "Other": [BASE + "images/mcp-cat-other.png", BASE + "images/mcp-cat-other-2.png"],
+};
+
+// Single-image fallback for hero (uses primary photo per category)
 const CATEGORY_HERO_IMAGE: Record<string, string> = {
   "Developer Tools": BASE + "images/mcp-cat-developer-tools.png",
   "Data": BASE + "images/mcp-cat-data.png",
@@ -57,6 +68,29 @@ const CATEGORY_HERO_IMAGE: Record<string, string> = {
   "Finance": BASE + "images/mcp-cat-finance.png",
   "Other": BASE + "images/mcp-cat-other.png",
 };
+
+// Stable per-listing hash for picking a photo variant + visual filter
+function nameHash(s: string): number {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) h = ((h << 5) - h + s.charCodeAt(i)) | 0;
+  return Math.abs(h);
+}
+
+function variantImgFor(category: string, listingName: string): string {
+  const variants = CATEGORY_HERO_IMAGES[category] ?? CATEGORY_HERO_IMAGES.Other;
+  return variants[nameHash(listingName) % variants.length];
+}
+
+// Subtle deterministic visual filter to give same-category cards individual character.
+// Returns a CSS filter string. Hue rotation is small (≤20deg) so the photograph still feels
+// authentic — we're nudging tone, not painting it neon.
+function variantFilterFor(listingName: string): string {
+  const h = nameHash(listingName);
+  const hueDeg = ((h % 41) - 20); // -20..+20deg
+  const satPct = 90 + (h % 25);   // 90..114%
+  const briPct = 92 + (h % 17);   // 92..108%
+  return `hue-rotate(${hueDeg}deg) saturate(${satPct}%) brightness(${briPct}%)`;
+}
 
 const CATEGORY_TAGLINE: Record<string, string> = {
   "Developer Tools": "Ship faster. Built for code.",
@@ -81,13 +115,26 @@ const CATEGORY_BLURB: Record<string, string> = {
 function imgFor(c: string) { return CATEGORY_HERO_IMAGE[c] ?? CATEGORY_HERO_IMAGE.Other; }
 function accentFor(c: string) { return CATEGORY_ACCENT[c] ?? CATEGORY_ACCENT.Other; }
 
+// Subtle accent dot color (matches CATEGORY_ACCENT family) for inline category chips
+const CATEGORY_DOT: Record<string, string> = {
+  "Developer Tools": "bg-cyan-400",
+  "Data": "bg-emerald-400",
+  "AI/LLM": "bg-violet-400",
+  "Productivity": "bg-amber-400",
+  "Marketing": "bg-pink-400",
+  "Finance": "bg-yellow-400",
+  "Other": "bg-zinc-400",
+};
+function dotFor(c: string) { return CATEGORY_DOT[c] ?? CATEGORY_DOT.Other; }
+
 // ─── Big "Today" spotlight hero ─────────────────────────────
-function SpotlightHero({ listing }: { listing: Listing }) {
+function SpotlightHero({ listing, overrideHref }: { listing: Listing; overrideHref?: string }) {
   const slug = mcpSlugify(listing.name);
   const heroImg = imgFor(listing.category);
+  const href = overrideHref ?? `/mcp-hub/server/${slug}`;
   return (
     <Link
-      href={`/mcp-hub/server/${slug}`}
+      href={href}
       className="group relative block overflow-hidden rounded-3xl border border-white/10 bg-zinc-950 shadow-2xl shadow-black/40 hover:shadow-black/60 transition-shadow duration-500"
     >
       <div className="absolute inset-0">
@@ -125,37 +172,63 @@ function SpotlightHero({ listing }: { listing: Listing }) {
 // ─── App-Store style large card for rails ───────────────────
 function RailCard({ listing }: { listing: Listing }) {
   const slug = mcpSlugify(listing.name);
-  const heroImg = imgFor(listing.category);
+  // Per-listing photo variant + subtle filter so same-category cards don't look identical
+  const heroImg = variantImgFor(listing.category, listing.name);
+  const filter = variantFilterFor(listing.name);
   const accent = accentFor(listing.category);
+  const dot = dotFor(listing.category);
   return (
     <Link
       href={`/mcp-hub/server/${slug}`}
-      className="group snap-start shrink-0 w-[260px] md:w-[300px] block"
+      className="group snap-start shrink-0 w-[300px] md:w-[340px] block"
     >
-      <div className={"relative aspect-[4/3] rounded-2xl overflow-hidden bg-zinc-900 shadow-lg ring-1 ring-white/5 group-hover:ring-white/20 group-hover:scale-[1.02] transition-all duration-300 border-t-2 " + accent}>
-        <img src={heroImg} alt="" aria-hidden="true" loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover opacity-65 group-hover:opacity-80 transition-opacity duration-500" />
+      {/* Photo block — taller so the imagery breathes */}
+      <div className={"relative aspect-[4/5] rounded-2xl overflow-hidden bg-zinc-900 shadow-lg ring-1 ring-white/5 group-hover:ring-white/20 group-hover:scale-[1.02] transition-all duration-300 border-t-2 " + accent}>
+        <img
+          src={heroImg}
+          alt=""
+          aria-hidden="true"
+          loading="lazy"
+          decoding="async"
+          className="absolute inset-0 w-full h-full object-cover opacity-70 group-hover:opacity-85 transition-opacity duration-500"
+          style={{ filter }}
+        />
         {/* Single dark overlay for text legibility — no color gradient */}
-        <div className="absolute inset-0 bg-black/30" />
-        <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/95 via-black/60 to-transparent" />
-        {/* Logo chip */}
-        <div className="absolute top-3 left-3">
-          <div className="w-12 h-12 rounded-[22%] bg-zinc-950/80 backdrop-blur flex items-center justify-center text-base font-bold text-white ring-1 ring-white/20 shadow-xl">
+        <div className="absolute inset-0 bg-black/35" />
+        <div className="absolute inset-x-0 bottom-0 h-3/5 bg-gradient-to-t from-black/95 via-black/65 to-transparent" />
+
+        {/* BIG logo, top-left — primary per-card identity signal */}
+        <div className="absolute top-4 left-4">
+          <div className="w-16 h-16 rounded-[22%] bg-zinc-950/85 backdrop-blur flex items-center justify-center text-2xl font-bold text-white ring-1 ring-white/25 shadow-2xl overflow-hidden">
             {listing.logoUrl
-              ? <img src={listing.logoUrl} alt={listing.name + " logo"} loading="lazy" decoding="async" className="w-full h-full rounded-[22%] object-cover" />
-              : listing.name.charAt(0)}
+              ? <img src={listing.logoUrl} alt={listing.name + " logo"} loading="lazy" decoding="async" className="w-full h-full object-cover" />
+              : listing.name.charAt(0).toUpperCase()}
           </div>
         </div>
+
         {listing.featured && (
-          <span className="absolute top-3 right-3 text-[10px] font-bold uppercase tracking-wider text-white bg-black/60 backdrop-blur px-2 py-0.5 rounded-full ring-1 ring-white/30 inline-flex items-center gap-1">
+          <span className="absolute top-4 right-4 text-[10px] font-bold uppercase tracking-wider text-white bg-black/60 backdrop-blur px-2 py-0.5 rounded-full ring-1 ring-white/30 inline-flex items-center gap-1">
             <Crown className="w-2.5 h-2.5" /> Featured
           </span>
         )}
-        <div className="absolute bottom-3 left-4 right-4">
-          <div className="text-[10px] font-medium uppercase tracking-wider text-white/70 mb-0.5">{listing.category}</div>
-          <div className="text-base font-semibold text-white leading-tight truncate">{listing.name}</div>
+
+        {/* Bottom content — name + full tagline (clamped at 3 lines) + meta row */}
+        <div className="absolute bottom-4 left-4 right-4 space-y-2">
+          <div className="flex items-center gap-1.5 text-[10px] font-medium uppercase tracking-wider text-white/75">
+            <span className={"inline-block w-1.5 h-1.5 rounded-full " + dot} />
+            <span>{listing.category}</span>
+          </div>
+          <div className="text-lg font-semibold text-white leading-tight line-clamp-2">{listing.name}</div>
+          <p className="text-[13px] text-white/85 leading-snug line-clamp-3">{listing.tagline}</p>
+          <div className="pt-1 flex items-center gap-2 text-[11px] text-white/60">
+            <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-white/10 ring-1 ring-white/15">
+              <ShieldCheck className="w-3 h-3" /> MCP
+            </span>
+            <span className="text-white/40">·</span>
+            <span>1‑click install</span>
+          </div>
         </div>
       </div>
-      <p className="mt-3 px-1 text-sm text-zinc-400 leading-snug line-clamp-2 group-hover:text-zinc-200 transition-colors">{listing.tagline}</p>
     </Link>
   );
 }
@@ -340,7 +413,10 @@ export default function McpHub() {
 
         {/* ─── Spotlight hero ─────────────────────────────── */}
         <div className="mb-10">
-          <SpotlightHero listing={spotlight} />
+          <SpotlightHero
+            listing={spotlight}
+            overrideHref={spotlight.id === FEATURED_TOOLORA.id ? "/mcp" : undefined}
+          />
         </div>
 
         {/* ─── Big-number social proof slab ─────────────── */}

@@ -1,12 +1,228 @@
 import { ReactNode, useState, useRef, useEffect } from "react";
 import { Link, useLocation } from "wouter";
-import { Settings2, Sparkles, Moon, Sun, Search, Menu, X, ShieldCheck, History, LogOut, LogIn, Key, CreditCard, LayoutDashboard, Zap, Building2, Lock } from "lucide-react";
+import { Settings2, Sparkles, Moon, Sun, Search, Menu, X, ShieldCheck, History, LogOut, LogIn, Key, CreditCard, LayoutDashboard, Zap, Building2, Lock, FileText, Image as ImageIcon, Code2, Type, Wand2, BookOpen, Puzzle, Server, ChevronRight } from "lucide-react";
 import { useTheme } from "../ThemeProvider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { TOOLS } from "@/lib/tools-config";
 import { useAuth } from "@workspace/replit-auth-web";
 import { useTracking } from "@/hooks/useTracking";
+
+// ─── Desktop nav: Apple-style hover-triggered mega-dropdowns ────────
+type NavItem = { label: string; href: string; description?: string; icon?: typeof Settings2 };
+type NavMenu = { key: string; label: string; href?: string; columns?: { heading: string; items: NavItem[] }[]; featured?: { title: string; subtitle: string; href: string; cta: string } };
+
+const NAV_MENUS: NavMenu[] = [
+  {
+    key: "tools",
+    label: "Tools",
+    href: "/",
+    columns: [
+      {
+        heading: "Popular categories",
+        items: [
+          { label: "PDF Tools", href: "/tools/pdf", icon: FileText, description: "Merge, split, OCR, compress" },
+          { label: "Image Tools", href: "/tools/image", icon: ImageIcon, description: "Convert, resize, remove background" },
+          { label: "Developer Tools", href: "/tools/developer", icon: Code2, description: "JSON, regex, encoders, hashing" },
+          { label: "Text Tools", href: "/tools/text", icon: Type, description: "Word count, case, diff, clean" },
+        ],
+      },
+      {
+        heading: "Workflows",
+        items: [
+          { label: "Productivity", href: "/tools/productivity", icon: Wand2, description: "QR codes, calculators, schedulers" },
+          { label: "Browser extension", href: "/extension", icon: Puzzle, description: "Run tools from any tab" },
+          { label: "Tool history", href: "/history", icon: History, description: "Recent files, locally stored" },
+          { label: "All tools index", href: "/", icon: Sparkles, description: "Browse the full catalog" },
+        ],
+      },
+    ],
+    featured: { title: "100% client-side", subtitle: "Files never leave your browser. Works offline.", href: "/privacy", cta: "Why we built it this way" },
+  },
+  {
+    key: "mcp",
+    label: "MCP Hub",
+    href: "/mcp-hub",
+    columns: [
+      {
+        heading: "Browse the directory",
+        items: [
+          { label: "Featured servers", href: "/mcp-hub#featured", icon: Sparkles, description: "Editor's picks this week" },
+          { label: "Developer Tools", href: "/mcp-hub?cat=Developer%20Tools", icon: Code2, description: "GitHub, Linear, terminals" },
+          { label: "Data & infra", href: "/mcp-hub?cat=Data", icon: Server, description: "Postgres, S3, warehouses" },
+          { label: "AI / LLM", href: "/mcp-hub?cat=AI%2FLLM", icon: Sparkles, description: "Memory, RAG, agents" },
+        ],
+      },
+      {
+        heading: "Build & list",
+        items: [
+          { label: "Toolora MCP server", href: "/mcp", icon: Zap, description: "Our 12-tool MCP, free forever" },
+          { label: "List your server", href: "/submit-mcp", icon: ChevronRight, description: "From 49 USDC, paid in seconds" },
+          { label: "Top authors", href: "/mcp-hub/authors", icon: Sparkles, description: "Most-listed independent makers" },
+          { label: "Browse by category", href: "/mcp-hub", icon: ShieldCheck, description: "All 7 directory categories" },
+        ],
+      },
+    ],
+    featured: { title: "300+ servers indexed", subtitle: "The open directory of Model Context Protocol servers.", href: "/mcp-hub", cta: "Browse the directory" },
+  },
+  {
+    key: "private",
+    label: "Private",
+    href: "/private/",
+  },
+  {
+    key: "api",
+    label: "API",
+    href: "/api-docs",
+    columns: [
+      {
+        heading: "Get started",
+        items: [
+          { label: "API documentation", href: "/api-docs", icon: BookOpen, description: "REST + MCP endpoints" },
+          { label: "Your API keys", href: "/api-keys", icon: Key, description: "Create, rotate, revoke" },
+          { label: "Pricing", href: "/pricing", icon: CreditCard, description: "Pay-as-you-go in USDC" },
+          { label: "Integrations", href: "/integrations", icon: Puzzle, description: "n8n, Zapier, Make" },
+        ],
+      },
+    ],
+    featured: { title: "Crypto-first billing", subtitle: "Top up with USDC on Solana. No card, no contract.", href: "/pricing", cta: "See pricing" },
+  },
+  {
+    key: "blog",
+    label: "Blog",
+    href: "/blog",
+  },
+  {
+    key: "enterprise",
+    label: "Enterprise",
+    href: "/enterprise",
+  },
+];
+
+function DesktopNav() {
+  const [openKey, setOpenKey] = useState<string | null>(null);
+  const closeTimer = useRef<number | null>(null);
+
+  const open = (key: string) => {
+    if (closeTimer.current) { window.clearTimeout(closeTimer.current); closeTimer.current = null; }
+    setOpenKey(key);
+  };
+  const scheduleClose = () => {
+    if (closeTimer.current) window.clearTimeout(closeTimer.current);
+    closeTimer.current = window.setTimeout(() => setOpenKey(null), 120);
+  };
+
+  // Keyboard a11y: Escape closes the open menu
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") setOpenKey(null);
+    }
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      if (closeTimer.current) window.clearTimeout(closeTimer.current);
+    };
+  }, []);
+
+  const active = NAV_MENUS.find(m => m.key === openKey && m.columns);
+
+  return (
+    <nav className="hidden lg:flex items-center" onMouseLeave={scheduleClose}>
+      <ul className="flex items-center">
+        {NAV_MENUS.map((menu) => {
+          const hasDropdown = !!menu.columns;
+          const isOpen = openKey === menu.key;
+          const cls = "px-3 py-2 text-sm font-medium rounded-md transition-colors " + (isOpen ? "text-foreground" : "text-muted-foreground hover:text-foreground");
+          return (
+            <li
+              key={menu.key}
+              className="relative"
+              onMouseEnter={() => hasDropdown ? open(menu.key) : setOpenKey(null)}
+            >
+              {menu.href ? (
+                <Link
+                  href={menu.href}
+                  className={cls}
+                  aria-haspopup={hasDropdown ? "true" : undefined}
+                  aria-expanded={hasDropdown ? isOpen : undefined}
+                  onFocus={() => hasDropdown ? open(menu.key) : setOpenKey(null)}
+                >
+                  {menu.label}
+                </Link>
+              ) : (
+                <button
+                  type="button"
+                  className={cls}
+                  aria-haspopup={hasDropdown ? "true" : undefined}
+                  aria-expanded={hasDropdown ? isOpen : undefined}
+                  onFocus={() => hasDropdown && open(menu.key)}
+                >
+                  {menu.label}
+                </button>
+              )}
+            </li>
+          );
+        })}
+      </ul>
+
+      {/* Mega dropdown panel — single shared surface that swaps content per active menu */}
+      {active && (
+        <div
+          className="fixed left-0 right-0 top-16 z-40"
+          onMouseEnter={() => open(active.key)}
+          onMouseLeave={scheduleClose}
+        >
+          <div className="absolute inset-x-0 top-0 border-b border-border/50 bg-background/95 backdrop-blur-xl shadow-2xl shadow-black/10">
+            <div className="container mx-auto px-6 py-8 grid grid-cols-12 gap-8">
+              {active.columns!.map((col) => (
+                <div key={col.heading} className="col-span-12 md:col-span-4">
+                  <div className="text-[11px] uppercase tracking-wider font-semibold text-muted-foreground mb-3">{col.heading}</div>
+                  <ul className="space-y-1">
+                    {col.items.map((it) => {
+                      const Icon = it.icon;
+                      const isExternal = it.href.startsWith("/private/") || it.href.startsWith("http");
+                      const Inner = (
+                        <div className="flex items-start gap-3 px-3 py-2.5 rounded-lg hover:bg-muted/60 transition-colors group/item">
+                          {Icon && <Icon className="w-4 h-4 mt-0.5 text-muted-foreground group-hover/item:text-primary transition-colors shrink-0" />}
+                          <div className="min-w-0">
+                            <div className="text-sm font-medium text-foreground">{it.label}</div>
+                            {it.description && <div className="text-xs text-muted-foreground line-clamp-1">{it.description}</div>}
+                          </div>
+                        </div>
+                      );
+                      return (
+                        <li key={it.href}>
+                          {isExternal
+                            ? <a href={it.href}>{Inner}</a>
+                            : <Link href={it.href}>{Inner}</Link>}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+              ))}
+
+              {active.featured && (
+                <div className="col-span-12 md:col-span-4">
+                  <div className="text-[11px] uppercase tracking-wider font-semibold text-muted-foreground mb-3">Why it matters</div>
+                  <Link href={active.featured.href}>
+                    <div className="rounded-2xl bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20 p-5 hover:border-primary/40 transition-colors h-full">
+                      <div className="text-base font-semibold text-foreground mb-1">{active.featured.title}</div>
+                      <div className="text-xs text-muted-foreground mb-4 leading-relaxed">{active.featured.subtitle}</div>
+                      <div className="text-xs font-medium text-primary inline-flex items-center gap-1">
+                        {active.featured.cta} <ChevronRight className="w-3 h-3" />
+                      </div>
+                    </div>
+                  </Link>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+    </nav>
+  );
+}
 
 export function AppLayout({ children }: { children: ReactNode }) {
   useTracking();
@@ -44,9 +260,10 @@ export function AppLayout({ children }: { children: ReactNode }) {
               </div>
               <span className="font-display font-bold text-xl tracking-tight hidden sm:inline-block">Toolora<span className="text-primary">.</span></span>
             </Link>
+            <DesktopNav />
           </div>
 
-          <div className="flex-1 max-w-md hidden md:block relative">
+          <div className="flex-1 max-w-sm hidden xl:block relative">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input 
@@ -85,14 +302,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
           </div>
 
           <div className="flex items-center gap-2">
-            <a
-              href="/private/"
-              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-violet-500/10 text-violet-400 hover:bg-violet-500/20 rounded-full text-xs font-medium border border-violet-500/30 mr-1 transition-colors"
-            >
-              <Lock className="w-3 h-3" />
-              <span>Private</span>
-            </a>
-            <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-green-500/10 text-green-600 dark:text-green-400 rounded-full text-xs font-medium border border-green-500/20 mr-2">
+            <div className="hidden xl:flex items-center gap-1.5 px-3 py-1.5 bg-green-500/10 text-green-600 dark:text-green-400 rounded-full text-xs font-medium border border-green-500/20 mr-2">
               <ShieldCheck className="w-3.5 h-3.5" />
               <span>Local Processing</span>
             </div>

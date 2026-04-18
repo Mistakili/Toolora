@@ -300,6 +300,48 @@ uri = "file://artifacts/toolbox/public/images/mcp-privacy-light.png"
 type = "image"
 title = "generated_image"
 
+[[generated]]
+id = "t9rsBtpYueZc5zYcZN-xG"
+uri = "file://artifacts/toolbox/public/images/mcp-cat-developer-tools-2.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "E_euAjQiU1VRrCxjjlVfi"
+uri = "file://artifacts/toolbox/public/images/mcp-cat-data-2.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "m0eU5rOvK_xWOoiyh_8Tl"
+uri = "file://artifacts/toolbox/public/images/mcp-cat-ai-llm-2.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "f4luSltwJRngzXG05absk"
+uri = "file://artifacts/toolbox/public/images/mcp-cat-productivity-2.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "176TmNhjPW5iHefobT-cF"
+uri = "file://artifacts/toolbox/public/images/mcp-cat-marketing-2.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "PG90mI-7PPfkBdlQ_MXrU"
+uri = "file://artifacts/toolbox/public/images/mcp-cat-finance-2.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "CcwXaFgLlJZ5MEoGYPhfC"
+uri = "file://artifacts/toolbox/public/images/mcp-cat-other-2.png"
+type = "image"
+title = "generated_image"
+
 [[outputs]]
 id = "W91hp3ihLhEvWTT51EilJ"
 uri = "file://artifacts/toolbox/public/og-image.png"
