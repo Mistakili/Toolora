@@ -40,9 +40,9 @@ export default function McpAuthors() {
   const [q, setQ] = useState("");
 
   useSEO({
-    title: "MCP Authors Hall of Fame — 340+ Model Context Protocol server creators",
+    title: "MCP server authors — 340+ Model Context Protocol creators | Toolora Hall of Fame",
     description:
-      "Every MCP server author listed on toolora.dev, ranked by reach. Claim your listing in 60 seconds via GitHub bio verification — get a free analytics dashboard, embeddable badge, and inclusion in the agent-readable feed.",
+      "Every Model Context Protocol (MCP) server creator listed on toolora.dev, grouped by GitHub author and ranked by reach. Built one of these? Claim your listing free in 60 seconds — get install analytics, an embeddable README badge, and inclusion in the agent-readable feed.",
     canonical: "https://toolora.dev/mcp-hub/authors",
   });
 

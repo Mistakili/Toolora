@@ -66,10 +66,10 @@ export default function McpServerDetail() {
 
   useSEO({
     title: listing
-      ? `${listing.name} — MCP server for Claude, Cursor & ChatGPT`
+      ? `${listing.name} MCP server — install for Claude, Cursor, Windsurf | Toolora`
       : "MCP server — Toolora MCP Hub",
     description: listing
-      ? `${listing.tagline} Free to install. Browse 30+ MCP servers in the Toolora directory.`
+      ? `${listing.name}: ${listing.tagline}. One-click install configs for Claude Desktop, Cursor, Windsurf, VS Code, Continue. Free analytics for owners. Browse 340+ MCP servers on Toolora.`
       : "Loading MCP server details from the Toolora MCP Hub directory.",
     canonical: listing ? `https://toolora.dev/mcp-hub/server/${slug}` : undefined,
     jsonLd: listing
