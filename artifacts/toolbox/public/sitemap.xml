@@ -56,7 +56,7 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://toolora.dev/blog</loc>
+    <loc>https://toolora.dev/blog/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -117,6 +117,18 @@
   </url>
   <url>
     <loc>https://toolora.dev/tools/pdf</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://toolora.dev/mcp-hub/server/soliris-sentinel</loc>
+    <lastmod>2026-04-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://toolora.dev/mcp-hub/server/soliris</loc>
+    <lastmod>2026-04-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -320,18 +332,6 @@
   </url>
   <url>
     <loc>https://toolora.dev/mcp-hub/server/time</loc>
-    <lastmod>2026-04-17</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://toolora.dev/mcp-hub/server/soliris</loc>
-    <lastmod>2026-04-17</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://toolora.dev/mcp-hub/server/soliris-sentinel</loc>
     <lastmod>2026-04-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>

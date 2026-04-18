@@ -43,7 +43,7 @@ const STATIC_URLS: UrlEntry[] = [
   { loc: "/submit-mcp", changefreq: "monthly", priority: 0.7 },
   { loc: "/pricing", changefreq: "monthly", priority: 0.8 },
   { loc: "/api-docs", changefreq: "monthly", priority: 0.7 },
-  { loc: "/blog", changefreq: "weekly", priority: 0.8 },
+  { loc: "/blog/", changefreq: "weekly", priority: 0.8 },
   { loc: "/extension", changefreq: "monthly", priority: 0.7 },
   { loc: "/integrations", changefreq: "monthly", priority: 0.7 },
   { loc: "/enterprise", changefreq: "monthly", priority: 0.7 },
