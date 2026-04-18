@@ -14,6 +14,8 @@ router.get("/listings", async (req: Request, res: Response): Promise<void> => {
   try {
     const q = String(req.query.q ?? "").slice(0, 80).trim();
     const category = String(req.query.category ?? "").slice(0, 40).trim();
+    const limitRaw = parseInt(String(req.query.limit ?? "200"), 10);
+    const limit = Number.isFinite(limitRaw) ? Math.min(Math.max(limitRaw, 1), 500) : 200;
 
     const conds = [eq(mcpListingsTable.approved, true)];
     if (category && category !== "All") conds.push(eq(mcpListingsTable.category, category));
@@ -43,7 +45,7 @@ router.get("/listings", async (req: Request, res: Response): Promise<void> => {
       .from(mcpListingsTable)
       .where(and(...conds))
       .orderBy(desc(mcpListingsTable.featured), desc(mcpListingsTable.createdAt))
-      .limit(200);
+      .limit(limit);
 
     // Aggregate counts per category for filter chips (always over the whole approved set).
     const cats = await db
