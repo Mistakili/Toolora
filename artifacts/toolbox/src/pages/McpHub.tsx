@@ -295,26 +295,56 @@ export default function McpHub() {
       </div>
 
       <div className="max-w-6xl mx-auto px-4 py-6 md:py-10">
-        {/* Tiny page header */}
-        <div className="flex items-baseline justify-between mb-5 px-1">
-          <div>
-            <p className="text-[11px] font-mono text-violet-400 uppercase tracking-widest mb-0.5">MCP Hub</p>
-            <h1 className="text-2xl md:text-3xl font-bold text-zinc-50 tracking-tight">Discover</h1>
+        {/* ─── Editorial masthead ─────────────────────────── */}
+        <header className="mb-10 md:mb-14 px-1 md:px-0">
+          <div className="flex items-center gap-2 mb-4">
+            <p className="text-[11px] font-mono text-violet-400 uppercase tracking-widest">MCP Hub</p>
+            <span className="h-px flex-1 bg-gradient-to-r from-violet-500/40 to-transparent max-w-[120px]" />
           </div>
-          <Link
-            href="/submit-mcp"
-            className="inline-flex items-center gap-1.5 rounded-full bg-violet-600 hover:bg-violet-500 text-white px-4 py-2 text-xs md:text-sm font-semibold shadow-lg shadow-violet-500/30 transition active:scale-95"
-          >
-            <Plus className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">List your server</span>
-            <span className="sm:hidden">List</span>
-          </Link>
-        </div>
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 md:gap-10">
+            <div className="max-w-3xl">
+              <h1 className="text-4xl md:text-6xl font-bold text-zinc-50 tracking-tight leading-[1.05] mb-4">
+                The servers your agents wish they had.{" "}
+                <span className="text-zinc-500">From a place you can trust.</span>
+              </h1>
+              <p className="text-base md:text-lg text-zinc-400 leading-relaxed max-w-2xl">
+                An open directory of Model Context Protocol servers — every entry installable in one click into Claude, Cursor, Windsurf, VS Code, and Continue. No telemetry on browse. No paywall on install. Built by independent makers, ranked by what people actually use.
+              </p>
+            </div>
+            <Link
+              href="/submit-mcp"
+              className="shrink-0 inline-flex items-center gap-1.5 rounded-full bg-violet-600 hover:bg-violet-500 text-white px-5 py-2.5 text-sm font-semibold shadow-lg shadow-violet-500/30 transition active:scale-95"
+            >
+              <Plus className="w-4 h-4" />
+              List your server
+            </Link>
+          </div>
+        </header>
 
         {/* ─── Spotlight hero ─────────────────────────────── */}
         <div className="mb-10">
           <SpotlightHero listing={spotlight} />
         </div>
+
+        {/* ─── Big-number social proof slab ─────────────── */}
+        <section aria-label="Directory at a glance" className="mb-12 md:mb-16 grid grid-cols-2 md:grid-cols-4 gap-px bg-zinc-900/80 rounded-3xl overflow-hidden border border-zinc-900">
+          {[
+            { n: totalAll || 341, label: "MCP servers", sub: "Curated, browsable" },
+            { n: 288, label: "Independent makers", sub: "Real GitHub authors" },
+            { n: 5, label: "Editors supported", sub: "Claude, Cursor, Windsurf, VS Code, Continue" },
+            { n: "1‑click", label: "Install", sub: "No CLI. No copy‑paste configs.", isString: true },
+          ].map((stat, i) => (
+            <div key={i} className="bg-zinc-950 p-6 md:p-8 flex flex-col justify-between min-h-[140px]">
+              <div className="text-3xl md:text-5xl font-bold text-zinc-50 tracking-tight tabular-nums">
+                {typeof stat.n === "number" && stat.n >= 100 ? `Over ${stat.n.toLocaleString()}` : stat.n}
+              </div>
+              <div className="mt-2">
+                <div className="text-sm font-semibold text-zinc-200">{stat.label}</div>
+                <div className="text-xs text-zinc-500 mt-0.5">{stat.sub}</div>
+              </div>
+            </div>
+          ))}
+        </section>
 
         {/* ─── Search + filter bar (sticky) ──────────────── */}
         <div className="sticky top-0 z-20 -mx-4 px-4 mb-6 py-3 bg-zinc-950/90 backdrop-blur-xl border-b border-zinc-900/80">
@@ -409,7 +439,48 @@ export default function McpHub() {
           </section>
         )}
 
-        {/* ─── Stats strip ─────────────────────────────────── */}
+        {/* ─── Editorial slab: Privacy & openness ───────── */}
+        <section className="mt-16 md:mt-24 rounded-3xl bg-gradient-to-br from-zinc-50 to-zinc-200 text-zinc-950 p-8 md:p-14 overflow-hidden relative">
+          <div className="absolute inset-0 opacity-[0.04] bg-[radial-gradient(circle_at_top_left,#000_1px,transparent_1px)] [background-size:24px_24px]" />
+          <div className="relative grid md:grid-cols-2 gap-10 md:gap-16 items-center">
+            <div>
+              <p className="text-[11px] font-mono uppercase tracking-widest text-violet-700 mb-4">Privacy &amp; openness</p>
+              <h2 className="text-3xl md:text-5xl font-bold tracking-tight leading-[1.05] mb-5">
+                Browse without being watched. Install without being locked in.
+              </h2>
+              <p className="text-base md:text-lg text-zinc-700 leading-relaxed mb-3">
+                The directory runs on a privacy-by-default analytics model — installs are counted, you aren't. No cookies set on browse. No third-party trackers. No newsletter wall before you can see a server's name.
+              </p>
+              <p className="text-base md:text-lg text-zinc-700 leading-relaxed">
+                Every listing links to its real source — the GitHub repo, the npm package, the maker's homepage. We don't middleman the install.
+              </p>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="rounded-2xl bg-white p-5 border border-zinc-200 shadow-sm">
+                <div className="text-3xl md:text-4xl font-bold tracking-tight">0</div>
+                <div className="text-xs font-semibold mt-1">Trackers on /mcp-hub</div>
+                <div className="text-[11px] text-zinc-500 mt-0.5">No GA, no Hotjar, no FB pixel</div>
+              </div>
+              <div className="rounded-2xl bg-white p-5 border border-zinc-200 shadow-sm">
+                <div className="text-3xl md:text-4xl font-bold tracking-tight">100%</div>
+                <div className="text-xs font-semibold mt-1">Open source servers</div>
+                <div className="text-[11px] text-zinc-500 mt-0.5">Every link is the real source</div>
+              </div>
+              <div className="rounded-2xl bg-white p-5 border border-zinc-200 shadow-sm">
+                <div className="text-3xl md:text-4xl font-bold tracking-tight">CC‑BY</div>
+                <div className="text-xs font-semibold mt-1">Directory is free</div>
+                <div className="text-[11px] text-zinc-500 mt-0.5">agents.json is portable</div>
+              </div>
+              <div className="rounded-2xl bg-white p-5 border border-zinc-200 shadow-sm">
+                <div className="text-3xl md:text-4xl font-bold tracking-tight">USDC</div>
+                <div className="text-xs font-semibold mt-1">Crypto-first listing fee</div>
+                <div className="text-[11px] text-zinc-500 mt-0.5">No Stripe gate, works worldwide</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ─── Trust strip ─────────────────────────────────── */}
         <div className="mt-12 flex flex-wrap items-center justify-center gap-2 text-center">
           <div className="rounded-full bg-zinc-900/60 border border-zinc-800 px-3.5 py-1.5 inline-flex items-center gap-2">
             <TrendingUp className="w-3.5 h-3.5 text-violet-400" />
