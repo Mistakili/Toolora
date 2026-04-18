@@ -1808,7 +1808,7 @@ Notable browser tools:
             },
           });
           db.insert(mcpCallsTable).values({
-            tool: name, durationMs: 0, success: false, errorMessage: "rate_limited",
+            tool: name, durationMs: 0, success: false, errorMsg: "rate_limited",
           }).catch(() => {});
           return;
         }
@@ -2031,14 +2031,19 @@ Notable browser tools:
           }
           res.json(rpcOk(id, { content: [{ type: "text", text }] }));
         } catch (err: unknown) {
-          _mcpSuccess = false;
           if (err instanceof McpToolError) {
-            _mcpErrorMsg = err.message;
+            // User-input coaching (missing args, bad URL, bad input) is not a server failure.
+            // The agent already gets the corrective message in the response and will retry.
+            // We don't want to flood the error dashboard with these — they're the LLM's bugs, not ours.
+            const isUserInput = /^Missing required argument|^Invalid URL|^Invalid input|^Invalid argument/i.test(err.message);
+            _mcpSuccess = isUserInput;
+            _mcpErrorMsg = isUserInput ? null : err.message;
             res.json(rpcOk(id, {
               content: [{ type: "text", text: err.message }],
               isError: true,
             }));
           } else {
+            _mcpSuccess = false;
             const msg = err instanceof Error ? err.message : "Internal error";
             _mcpErrorMsg = msg;
             res.json(rpcOk(id, {
