@@ -354,6 +354,168 @@ uri = "file://artifacts/toolbox/public/images/logo-soliris.png"
 type = "image"
 title = "generated_image"
 
+[[generated]]
+id = "qqsLbL5lxlVRjjgea0TZF"
+uri = "file://artifacts/toolbox/public/images/mcp-icon-email.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "eZGOrFzxoOcYmLFo78O1A"
+uri = "file://artifacts/toolbox/public/images/mcp-icon-calendar.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "H5SWa42pX8CUF9tAhohIn"
+uri = "file://artifacts/toolbox/public/images/mcp-icon-image-gen.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "WevW4HkOviwugfSovcRd-"
+uri = "file://artifacts/toolbox/public/images/mcp-icon-video.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "kMZ3ViiGN6qBZzXul_zsF"
+uri = "file://artifacts/toolbox/public/images/mcp-icon-weather.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "nmPV68mnN8-HK3RmQpQpv"
+uri = "file://artifacts/toolbox/public/images/mcp-icon-maps.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "YLyozUTDCWhFhSJamaqxm"
+uri = "file://artifacts/toolbox/public/images/mcp-icon-postgres.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "xh5Cx0C2OKI-o4NzGeRLo"
+uri = "file://artifacts/toolbox/public/images/mcp-icon-translate.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "4zUjRz-q2y1f-z3fYfujo"
+uri = "file://artifacts/toolbox/public/images/mcp-icon-github.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "9CwUWECJaNgiysXWMSYfU"
+uri = "file://artifacts/toolbox/public/images/mcp-icon-search.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "cSnbZgkEM7wfrnynJ5B4j"
+uri = "file://artifacts/toolbox/public/images/mcp-icon-scraper.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "s5zLTpSYCVyb0yVpcoOX7"
+uri = "file://artifacts/toolbox/public/images/mcp-icon-terminal.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "nKnZYhQzWCaG94eB8ajsf"
+uri = "file://artifacts/toolbox/public/images/mcp-icon-stripe.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "qAy3DpOLLp9zEtur4UfPv"
+uri = "file://artifacts/toolbox/public/images/mcp-icon-slack.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "LA31eZaq3v_pjtaP45xFK"
+uri = "file://artifacts/toolbox/public/images/mcp-icon-notion.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "zE84q9jFMKUeBgX4UgG7C"
+uri = "file://artifacts/toolbox/public/images/mcp-icon-figma.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "UoCaaKnZf92X5mbVxAQnN"
+uri = "file://artifacts/toolbox/public/images/mcp-icon-browser.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "Vjm5sUOtE1JWzKmXn_rtX"
+uri = "file://artifacts/toolbox/public/images/mcp-icon-filesystem.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "-JhebXRUmxM-fNn80K2A8"
+uri = "file://artifacts/toolbox/public/images/mcp-icon-vector-db.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "aCefaKNk6Z3e_TDFT6aAr"
+uri = "file://artifacts/toolbox/public/images/mcp-icon-crypto.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "DRkFRc0I9JHKzwap4LlKn"
+uri = "file://artifacts/toolbox/public/images/mcp-icon-analytics.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "7kgEiPy9qOWnbH74WK-K8"
+uri = "file://artifacts/toolbox/public/images/mcp-icon-audio.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "MhzoEtunCoSdKrigpdzQL"
+uri = "file://artifacts/toolbox/public/images/mcp-icon-brain-ai.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "HJ47bj-InGmEuPEERkC7P"
+uri = "file://artifacts/toolbox/public/images/mcp-icon-memory.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "L7DGWaKwosdUqJygOZf7u"
+uri = "file://artifacts/toolbox/public/images/mcp-icon-security.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "e86KZxYgGs8gbXyMKFCdk"
+uri = "file://artifacts/toolbox/public/images/mcp-icon-docs.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "5Ii8pxLERwNN2Bmlk_kz0"
+uri = "file://artifacts/toolbox/public/images/mcp-icon-toolora-hero.png"
+type = "image"
+title = "generated_image"
+
 [[outputs]]
 id = "W91hp3ihLhEvWTT51EilJ"
 uri = "file://artifacts/toolbox/public/og-image.png"

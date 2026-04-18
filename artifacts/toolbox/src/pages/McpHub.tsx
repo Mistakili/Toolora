@@ -4,6 +4,7 @@ import { Search, Sparkles, ExternalLink, Zap, Shield, ShieldCheck, ArrowRight, P
 import { useSEO } from "@/hooks/useSEO";
 import { mcpSlugify } from "@/lib/mcpSlug";
 import { NewsletterCapture } from "@/components/NewsletterCapture";
+import { IconCloud } from "@/components/mcp/IconCloud";
 
 const API = (import.meta.env.VITE_API_URL as string | undefined) ?? "";
 const BASE = import.meta.env.BASE_URL;
@@ -385,25 +386,30 @@ export default function McpHub() {
       </div>
 
       <div className="max-w-6xl mx-auto px-4 py-6 md:py-10">
-        {/* ─── Editorial masthead ─────────────────────────── */}
-        <header className="mb-10 md:mb-14 px-1 md:px-0">
+        {/* ─── Editorial masthead with floating icon cloud ─── */}
+        <header className="mb-12 md:mb-16 px-1 md:px-0">
           <div className="flex items-center gap-2 mb-4">
             <p className="text-[11px] font-mono text-violet-400 uppercase tracking-widest">MCP Hub</p>
             <span className="h-px flex-1 bg-zinc-700 max-w-[120px]" />
           </div>
-          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 md:gap-10">
-            <div className="max-w-3xl">
-              <h1 className="text-4xl md:text-6xl font-bold text-zinc-50 tracking-tight leading-[1.05] mb-4">
-                The servers your agents wish they had.{" "}
-                <span className="text-zinc-500">From a place you can trust.</span>
-              </h1>
-              <p className="text-base md:text-lg text-zinc-400 leading-relaxed max-w-2xl">
-                An open directory of Model Context Protocol servers — every entry installable in one click into Claude, Cursor, Windsurf, VS Code, and Continue. No telemetry on browse. No paywall on install. Built by independent makers, ranked by what people actually use.
-              </p>
-            </div>
+
+          {/* Floating cloud of MCP server icons (Apple App Store style) */}
+          <div className="-mx-4 md:-mx-6 mb-6 md:mb-10">
+            <IconCloud />
+          </div>
+
+          {/* Centered headline + CTA below the cloud */}
+          <div className="max-w-3xl mx-auto text-center">
+            <h1 className="text-4xl md:text-6xl font-bold text-zinc-50 tracking-tight leading-[1.05] mb-5">
+              The servers your agents wish they had.{" "}
+              <span className="text-zinc-500">From a place you can trust.</span>
+            </h1>
+            <p className="text-base md:text-lg text-zinc-400 leading-relaxed mb-7 max-w-2xl mx-auto">
+              An open directory of Model Context Protocol servers — every entry installable in one click into Claude, Cursor, Windsurf, VS Code, and Continue. No telemetry on browse. No paywall on install.
+            </p>
             <Link
               href="/submit-mcp"
-              className="shrink-0 inline-flex items-center gap-1.5 rounded-full bg-violet-600 hover:bg-violet-500 text-white px-5 py-2.5 text-sm font-semibold shadow-lg shadow-violet-500/30 transition active:scale-95"
+              className="inline-flex items-center gap-1.5 rounded-full bg-violet-600 hover:bg-violet-500 text-white px-6 py-3 text-sm font-semibold shadow-lg shadow-violet-500/30 transition active:scale-95"
             >
               <Plus className="w-4 h-4" />
               List your server
