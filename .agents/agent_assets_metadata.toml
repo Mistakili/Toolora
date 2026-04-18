@@ -342,6 +342,18 @@ uri = "file://artifacts/toolbox/public/images/mcp-cat-other-2.png"
 type = "image"
 title = "generated_image"
 
+[[generated]]
+id = "kuVnZFSJrTx42gnL-n6ld"
+uri = "file://artifacts/toolbox/public/images/logo-soliris-sentinel.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "RLY1o9nYGWkMZiguA_muI"
+uri = "file://artifacts/toolbox/public/images/logo-soliris.png"
+type = "image"
+title = "generated_image"
+
 [[outputs]]
 id = "W91hp3ihLhEvWTT51EilJ"
 uri = "file://artifacts/toolbox/public/og-image.png"
