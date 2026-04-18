@@ -8,6 +8,30 @@ interface Props {
   serverUrl: string;
   configUrl?: string | null;
   packageHint?: string | null;
+  slug?: string;
+}
+
+const API = (import.meta.env.VITE_API_URL as string | undefined) ?? "";
+
+function trackInstall(slug: string | undefined, client: Client) {
+  if (!slug) return;
+  const map: Record<Client, string> = {
+    claude: "install_claude",
+    cursor: "install_cursor",
+    windsurf: "install_other",
+    vscode: "install_other",
+    continue: "install_continue",
+  };
+  try {
+    fetch(API + "/api/directory/listings/" + encodeURIComponent(slug) + "/events", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ kind: map[client] }),
+      keepalive: true,
+    }).catch(() => {});
+  } catch {
+    /* noop */
+  }
 }
 
 const CLIENTS: { id: Client; label: string; configFile: string }[] = [
@@ -43,7 +67,7 @@ function buildConfig(client: Client, name: string, url: string, configUrl?: stri
   }
 }
 
-export function AddToClient({ serverName, serverUrl, configUrl }: Props) {
+export function AddToClient({ serverName, serverUrl, configUrl, slug }: Props) {
   const [client, setClient] = useState<Client>("claude");
   const [copied, setCopied] = useState(false);
   const [downloaded, setDownloaded] = useState(false);
@@ -53,11 +77,13 @@ export function AddToClient({ serverName, serverUrl, configUrl }: Props) {
 
   const copy = async () => {
     await navigator.clipboard.writeText(cfg);
+    trackInstall(slug, client);
     setCopied(true);
     setTimeout(() => setCopied(false), 1500);
   };
 
   const download = () => {
+    trackInstall(slug, client);
     const blob = new Blob([cfg], { type: "application/json" });
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
@@ -71,7 +97,7 @@ export function AddToClient({ serverName, serverUrl, configUrl }: Props) {
   };
 
   return (
-    <section className="rounded-2xl border border-violet-500/30 bg-gradient-to-br from-zinc-900/60 to-zinc-950/60 p-6">
+    <section id="install" className="rounded-2xl border border-violet-500/30 bg-gradient-to-br from-zinc-900/60 to-zinc-950/60 p-6">
       <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
         <h2 className="text-base font-semibold text-zinc-100 flex items-center gap-2">
           <Terminal className="w-4 h-4 text-violet-400" /> One-click install

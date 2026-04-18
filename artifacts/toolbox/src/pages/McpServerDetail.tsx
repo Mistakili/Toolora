@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useRoute } from "wouter";
-import { ArrowLeft, ExternalLink, Sparkles, Plus } from "lucide-react";
+import { ArrowLeft, ExternalLink, Sparkles, Plus, BarChart3, Code2, Check, Copy } from "lucide-react";
 import { useSEO } from "@/hooks/useSEO";
 import { mcpSlugify } from "@/lib/mcpSlug";
 import { AddToClient } from "@/components/AddToClient";
@@ -42,10 +42,27 @@ export default function McpServerDetail() {
         if (!data) return;
         setListing(data.listing);
         setRelated(data.related ?? []);
+        // Fire-and-forget view event for owner analytics.
+        fetch(API + "/api/directory/listings/" + encodeURIComponent(slug) + "/events", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ kind: "view" }),
+          keepalive: true,
+        }).catch(() => {});
       })
       .catch(() => setNotFound(true))
       .finally(() => setLoading(false));
   }, [slug]);
+
+  const trackVisit = () => {
+    if (!slug) return;
+    fetch(API + "/api/directory/listings/" + encodeURIComponent(slug) + "/events", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ kind: "visit" }),
+      keepalive: true,
+    }).catch(() => {});
+  };
 
   useSEO({
     title: listing
@@ -108,11 +125,11 @@ export default function McpServerDetail() {
       )}
 
       <div className="flex flex-wrap gap-3 mb-10">
-        <a href={listing.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-lg bg-violet-600 hover:bg-violet-500 text-white px-4 py-2 text-sm font-semibold">
+        <a onClick={trackVisit} href={listing.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-lg bg-violet-600 hover:bg-violet-500 text-white px-4 py-2 text-sm font-semibold">
           Visit project <ExternalLink className="w-3.5 h-3.5" />
         </a>
         {listing.configUrl && (
-          <a href={listing.configUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-lg bg-zinc-900 border border-zinc-800 hover:border-zinc-700 text-zinc-200 px-4 py-2 text-sm font-medium">
+          <a onClick={trackVisit} href={listing.configUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-lg bg-zinc-900 border border-zinc-800 hover:border-zinc-700 text-zinc-200 px-4 py-2 text-sm font-medium">
             Config / endpoint <ExternalLink className="w-3.5 h-3.5" />
           </a>
         )}
@@ -120,11 +137,14 @@ export default function McpServerDetail() {
 
       <div className="mb-10">
         <AddToClient
+          slug={slug}
           serverName={listing.name}
           serverUrl={listing.url}
           configUrl={listing.configUrl}
         />
       </div>
+
+      <BadgeAndOwnerSection slug={slug} name={listing.name} />
 
       <div className="mb-10">
         <NewsletterCapture source="mcp-weekly" category={listing.category} />
@@ -147,11 +167,58 @@ export default function McpServerDetail() {
       <section className="rounded-2xl border border-violet-500/30 bg-gradient-to-br from-violet-950/40 to-zinc-900/40 p-6 text-center">
         <Plus className="w-6 h-6 text-violet-400 mx-auto mb-2" />
         <h3 className="font-semibold text-zinc-100 mb-1">Run an MCP server?</h3>
-        <p className="text-sm text-zinc-400 mb-4">List it in this directory from 49 USDC. Featured tier from 99 USDC/30 days.</p>
+        <p className="text-sm text-zinc-400 mb-4">List it in this directory from 49 USDC. Featured tier from 99 USDC/30 days. Get install analytics, an embed badge, and a feature slot in MCP Weekly.</p>
         <Link href="/submit-mcp" className="inline-flex rounded-lg bg-violet-600 hover:bg-violet-500 text-white px-4 py-2 text-sm font-semibold">
           Submit your server →
         </Link>
       </section>
     </main>
+  );
+}
+
+function BadgeAndOwnerSection({ slug, name }: { slug: string; name: string }) {
+  const [copied, setCopied] = useState<"md" | "html" | "url" | null>(null);
+  const badgeUrl = `https://toolora.dev/api/directory/badge/${slug}.svg`;
+  const detailUrl = `https://toolora.dev/mcp-hub/server/${slug}`;
+  const md = `[![Listed on toolora.dev](${badgeUrl})](${detailUrl})`;
+  const html = `<a href="${detailUrl}"><img src="${badgeUrl}" alt="Listed on toolora.dev"></a>`;
+
+  const copy = async (kind: "md" | "html" | "url", text: string) => {
+    await navigator.clipboard.writeText(text);
+    setCopied(kind);
+    setTimeout(() => setCopied(null), 1500);
+  };
+
+  return (
+    <section className="mb-10 rounded-2xl border border-zinc-800 bg-zinc-900/40 p-6">
+      <div className="flex items-start justify-between mb-4 flex-wrap gap-3">
+        <div>
+          <h2 className="text-base font-semibold text-zinc-100 flex items-center gap-2 mb-1">
+            <Code2 className="w-4 h-4 text-emerald-400" /> README badge
+          </h2>
+          <p className="text-xs text-zinc-400">Add this to your repo for backlink + social proof. Counts toward your install analytics.</p>
+        </div>
+        <Link href={`/mcp-hub/owner/${slug}`} className="inline-flex items-center gap-1.5 text-xs text-violet-300 hover:text-violet-200 border border-violet-500/30 bg-violet-500/10 rounded-md px-2.5 py-1.5">
+          <BarChart3 className="w-3.5 h-3.5" /> Owner of {name}? See analytics
+        </Link>
+      </div>
+      <div className="flex items-center gap-3 mb-4 p-3 rounded-lg bg-zinc-950 border border-zinc-800">
+        <img src={badgeUrl} alt="Listed on toolora.dev badge preview" className="h-5" />
+        <span className="text-xs text-zinc-500">live preview</span>
+      </div>
+      <div className="space-y-2">
+        {([
+          { kind: "md" as const, label: "Markdown", value: md },
+          { kind: "html" as const, label: "HTML", value: html },
+        ]).map((row) => (
+          <div key={row.kind} className="flex items-stretch gap-2">
+            <div className="flex-1 min-w-0 rounded-md bg-zinc-950 border border-zinc-800 px-3 py-2 font-mono text-[11px] text-zinc-300 overflow-x-auto whitespace-nowrap">{row.value}</div>
+            <button onClick={() => copy(row.kind, row.value)} className="shrink-0 inline-flex items-center gap-1.5 rounded-md bg-zinc-900 border border-zinc-800 hover:border-zinc-700 text-zinc-200 px-3 py-2 text-xs font-medium">
+              {copied === row.kind ? <><Check className="w-3 h-3 text-emerald-400" /> Copied</> : <><Copy className="w-3 h-3" /> {row.label}</>}
+            </button>
+          </div>
+        ))}
+      </div>
+    </section>
   );
 }
