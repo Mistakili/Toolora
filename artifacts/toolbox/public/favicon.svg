@@ -1,4 +1,13 @@
-<svg width="180" height="180" viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="180" height="180" rx="36" fill="#FF3C00"/>
-  <text x="90" y="132" font-family="'Helvetica Neue', Arial, sans-serif" font-size="110" font-weight="800" fill="white" text-anchor="middle" letter-spacing="-4">T</text>
+<svg width="180" height="180" viewBox="0 0 180 180" xmlns="http://www.w3.org/2000/svg">
+  <rect width="180" height="180" rx="40" fill="#7c3aed"/>
+  <g stroke="#ffffff" stroke-width="9" stroke-linecap="round" fill="none">
+    <line x1="60" y1="62" x2="120" y2="62"/>
+    <line x1="60" y1="62" x2="90" y2="118"/>
+    <line x1="120" y1="62" x2="90" y2="118"/>
+  </g>
+  <g fill="#ffffff">
+    <circle cx="60" cy="62" r="15"/>
+    <circle cx="120" cy="62" r="15"/>
+    <circle cx="90" cy="118" r="15"/>
+  </g>
 </svg>
