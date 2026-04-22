@@ -76,13 +76,63 @@ Wholesale prices and Toolora retail at 25% markup:
 ## Roadmap
 
 ### Phase 0 — Customer discovery (next 1–2 weeks, BEFORE building)
-**Distribution-first.** Do not build the gateway until at least 4 of 10 builders say yes.
+**Distribution-first.** Do not build the gateway until at least 3–4 design partners commit.
 
-- [ ] Identify 10 indie MCP builders in Research / Lead-Enrichment / Scrape verticals
-- [ ] Reach out 1:1 (Twitter, GitHub issues, MCP Discord). Pitch:
-  > *"You've got an MCP that calls Tavily/Firecrawl/OpenAI. I'm building a single USDC-billed gateway for those primitives — one wallet, one bill, works globally. Would you switch if it cost the same and saved you 4 signups?"*
-- [ ] Goal: 4+ enthusiastic yeses → green-light Phase 1
-- [ ] If <4 yeses: thesis is wrong or pitch needs sharpening; iterate before any code
+**The 15 specific MCP maintainers to email** (researched April 2026):
+
+| # | Maintainer | Project | Bucket |
+|---|---|---|---|
+| 1 | spences10 (Scott Spence) | mcp-omnisearch (wraps 5+ paid providers) | Indie builder — TOP fit |
+| 2 | carsonlabs | leadenrich-mcp | Indie builder — high-margin vertical |
+| 3 | DaInfernalCoder | perplexity-mcp (Cline Hackathon winner) | Indie builder |
+| 4 | tanigami | mcp-server-perplexity | Indie builder |
+| 5 | mikechao | brave-search-mcp | Indie builder |
+| 6 | gomcpgo | perplexity-mcp-server | Indie builder |
+| 7 | vrknetha | Firecrawl MCP contributor | Indie builder |
+| 8 | knacklabs | Firecrawl MCP contributor | Indie builder |
+| 9 | wong2 | awesome-mcp-servers (most-starred) | Distribution ally |
+| 10 | punkpeye (Frank Fiegel) | awesome-mcp-servers | Distribution ally |
+| 11 | appcypher | awesome-mcp-servers | Distribution ally |
+| 12 | krisying | DEV.to "MCP Servers Are the New SaaS" | Warm lead |
+| 13 | namel | DEV.to "MCP Server Monetization 2026" | Warm lead |
+| 14 | Apify dev relations | Apify MCP platform | Partner candidate |
+| 15 | mcpize team | mcpize.com | Competitor / partner |
+
+**Send cadence (10/day via mail tool):**
+- Day 1: #1–#5, #12, #13 (indie + warm leads)
+- Day 2: #6–#8 (indie) + #9–#11 (distribution allies, different template)
+- Day 3: #14, #15 (partner conversations)
+
+**Tracking:** simple sheet `name | sent | replied | meeting | yes/no/maybe`.
+
+**Success threshold:** 3+ design partners committed within 7 days → green-light Phase 1.
+**Failure threshold:** <3 yeses → don't build; sharpen the pitch and try 10 more.
+
+#### Email A — for indie builders (#1–8, 12, 13)
+
+> Subject: USDC-billed gateway for [their MCP] — would you switch?
+>
+> Hey [Name] — I run toolora.dev (privacy-first MCP, recently top-5 on Grok's MCP list, ~1.7K MCP connections/week, featured on HackerNoon).
+>
+> I'm building Toolora Gateway — one HTTP endpoint, one wallet, USDC billing for the primitives every MCP needs (search via Brave, scrape via Firecrawl, LLM via OpenAI/Anthropic). Same wholesale price as direct, no Stripe, no KYC, works in 100+ countries, settles weekly to your Solana address.
+>
+> Saw your [project name] uses [Tavily / Firecrawl / Perplexity]. Quick question: would you swap if integration took 10 minutes and let downstream agents pay you in USDC for every call?
+>
+> Looking for 5 design-partner MCPs for the first month — free gateway access + 0% fees + featured launch placement in exchange for honest feedback. Reply "in" and I'll send setup.
+
+#### Email B — for ecosystem maintainers (#9–11, 14, 15)
+
+> Subject: Heads up — USDC-billed MCP gateway launching, want a preview?
+>
+> Hey [Name] — your [awesome-mcp-servers / Apify MCP / mcpize] is one of the few places I check daily. Wanted to give you an early heads-up before it goes public.
+>
+> Shipping Toolora Gateway in [N] weeks — single USDC-billed endpoint for search/scrape/LLM/sandbox, lets MCP builders monetize without Stripe. Brave + Firecrawl at launch, Tavily + E2B once partner deals close.
+>
+> Would love your honest take before launch:
+> 1. Does this fill a real gap or am I imagining it?
+> 2. Anything you'd want me to do differently for you to [list it / integrate it / cover it]?
+>
+> Happy to send a 5-min Loom or jump on a 15-min call.
 
 ### Phase 1 — Gateway MVP (3–4 weeks after Phase 0 validation)
 - [ ] Single endpoint: `gateway.toolora.dev/v1/{search,scrape,llm}`
