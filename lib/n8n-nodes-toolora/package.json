@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-toolora",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "n8n community node for Toolora — PDF extraction, OCR, QR codes, data conversion, and web scraping via the Toolora API",
   "keywords": [
     "n8n-community-node-package",
@@ -24,6 +24,10 @@
     "url": "git+https://github.com/toolora/n8n-nodes-toolora.git"
   },
   "main": "index.js",
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "scripts": {
     "build": "tsc && node -e \"require('fs').cpSync('nodes/Toolora/toolora.svg','dist/nodes/Toolora/toolora.svg')\"",
     "dev": "tsc --watch",
