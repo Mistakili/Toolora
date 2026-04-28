@@ -51,6 +51,21 @@ Every package extends `tsconfig.base.json` which sets `composite: true`. The roo
 
 ## Artifacts
 
+### MCP Sprint — May 2 Replit Agent Surge
+
+**4-day sprint Apr 28–May 1, 2026** to harden Toolora MCP for the May 2 Replit Agent free-day spike.
+
+**Day 1 (Apr 28) — DONE**:
+- Added 5 nullable telemetry columns to `mcp_calls` (`user_agent`, `client_id`, `client_name`, `client_version`, `referrer`) + 2 indexes (`created_at`, `client_name`). Wired into all 4 insert sites in `mcp.ts`.
+- New `getMcpTelemetry(req, params)` helper segments callers by MCP `clientInfo.name` (spec) with UA-string fallback (Replit Agent, Claude, Cursor, Cline, Smithery, MCP Inspector, Python, Node, curl, Postman).
+- **Privacy hardening**: client IDs are SHA-256 hashed with a per-process random salt (raw IP/session never stored). Referrers stripped to origin+path (drops query/fragment that may carry tokens). UA truncated to 200 chars.
+- **Surge resilience**: in-memory rate-limit map bounded to 50K entries with LRU eviction.
+- **Discoverability**: `initialize` response now carries directory metadata (description, homepage, docs, categories, pricing, privacy) under spec-compliant `_meta` field. `serverInfo` kept spec-clean for strict clients. `instructions` rewritten to lead with "privacy-first, free, no API key, files never stored". Brand-pitch suffixes added to descriptions of 5 strategic tools (`extract_pdf_text`, `ocr_image`, `transcribe_audio`, `read_url`, `scrape_url_js`, `extract_structured_data`) to win agent ranking against paid alternatives.
+
+Day 2: `.well-known/mcp.json` + 12 directory submissions (Smithery, mcpservers.org, Glama, wong2/punkpeye/appcypher lists).
+Day 3: `/replit` landing + Replit Template.
+Day 4: Twitter thread + DM 5 builders + live KPI dashboard surfacing the new `client_name` segmentation.
+
 ### MCP Server
 
 Exposed at `GET|POST /api/mcp` on the API server. Implements MCP Streamable HTTP transport (2025-03-26). 12 tools: `extract_pdf_text`, `merge_pdfs`, `generate_qr_code`, `csv_to_json`, `json_to_csv`, `ocr_image`, `extract_docx_text`, `excel_to_json`, `transcribe_audio`, `scrape_url_js`, `count_words`, `read_url`. No auth required.
