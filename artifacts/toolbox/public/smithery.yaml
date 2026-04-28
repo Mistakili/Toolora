@@ -1,51 +1,191 @@
 name: toolora
 displayName: Toolora
 description: |
-  Document processing, data conversion, and web content APIs for AI agents.
-  All tools are free via MCP. Also available as a paid x402 Agent API (Stellar XLM
-  or Solana USDC, no API key required).
+  Privacy-first MCP with 25 free tools for AI agents — PDF/DOCX/Excel reading,
+  OCR, audio transcription, JS-rendered web scraping, structured data extraction,
+  and developer utilities.
 
-  Tools: extract text from PDFs, merge PDFs, generate QR codes, convert CSV to/from
-  JSON, count words/stats, and fetch + clean any public URL with Mozilla Readability.
+  Free with no API key, no signup; 200 calls/day per client. Files are processed
+  in memory and never stored. Pro tier ($19/mo) lifts the daily limit.
+
+  Replaces a stack of paid tools (Firecrawl, Mistral OCR, Whisper API, Adobe PDF
+  Services) with a single free MCP. Built for agent builders who want zero-config
+  document, scraping, and extraction primitives.
+
+longDescription: |
+  Toolora is a single MCP server that gives any AI agent privacy-first access to
+  document processing, OCR, transcription, web scraping (including JS-heavy SPAs),
+  structured data extraction, and 20+ developer utilities — without an API key,
+  without a signup, and without storing user files.
+
+  Why agent builders pick Toolora:
+    - Free 200 calls/day per client; Pro $19/mo unlimited.
+    - No OpenAI / Whisper / Firecrawl key required — Toolora absorbs the model cost.
+    - Files processed in-memory; nothing logged or retained.
+    - Single Streamable HTTP endpoint; works with Claude Desktop, Cursor, Cline,
+      Replit Agent, n8n, and the official MCP TypeScript / Python SDKs.
+    - Salted-hash anonymous client IDs; GDPR-friendly telemetry only.
+
 homepage: https://toolora.dev
+documentation: https://toolora.dev/mcp
 license: MIT
+
 categories:
   - document-processing
-  - productivity
-  - data-conversion
+  - file-conversion
   - web-scraping
+  - data-extraction
+  - ocr
+  - transcription
+  - developer-tools
+  - productivity
+  - ai-tools
+
+keywords:
+  - pdf
+  - docx
+  - excel
+  - ocr
+  - whisper
+  - qr-code
+  - csv
+  - json
+  - markdown
+  - html
+  - readability
+  - headless-browser
+  - rag
+  - chunking
+  - regex
+  - hash
+  - tokens
+  - structured-extraction
+  - memory
+  - paste
+  - diff
+  - privacy-first
 
 server:
+  # Smithery's parser uses 'http' as the canonical short name for the
+  # MCP Streamable HTTP transport (spec name: streamable-http).
   transport: http
-  url: https://toolora.replit.app/api/mcp
+  url: https://toolora.dev/api/mcp
+  protocolVersion: "2025-03-26"
+
+pricing:
+  freeTier:
+    callsPerDay: 200
+    requiresAuth: false
+  pro:
+    price: $19/mo
+    calls: unlimited
+    url: https://toolora.dev/pricing
 
 tools:
+  # ── Document processing ───────────────────────────────────────────────
   - name: extract_pdf_text
-    description: Extract all plain text from a PDF file (base64). Returns text, page count, word count, and character count.
+    description: Extract all plain text from a PDF (base64). Returns text, page count, word count, and char count. Free, no API key, processed in memory.
     tags: [pdf, document, text-extraction]
 
   - name: merge_pdfs
-    description: Merge 2–20 PDF files into a single PDF. Each file provided as base64. Returns merged PDF as base64.
+    description: Merge 2–20 PDF files into one. Each provided as base64. Returns the merged PDF as base64.
     tags: [pdf, document, merge]
 
-  - name: generate_qr_code
-    description: Generate a QR code PNG from any text or URL. Returns base64 PNG. Supports custom size and error correction.
-    tags: [qr-code, image, productivity]
+  - name: generate_pdf_from_text
+    description: Render text/markdown into a styled PDF. Supports headings, bullets, paragraphs. Returns base64 PDF.
+    tags: [pdf, document, generation]
+
+  - name: extract_docx_text
+    description: Read .docx (Word, Google Docs, LibreOffice exports). Returns full text + paragraph/word/char counts.
+    tags: [docx, word, document]
+
+  - name: excel_to_json
+    description: Read .xlsx, .xls, .ods, or .csv. Returns all sheets as JSON arrays with column headers as keys.
+    tags: [excel, xlsx, spreadsheet, csv]
+
+  # ── OCR / transcription ───────────────────────────────────────────────
+  - name: ocr_image
+    description: Extract text from PNG/JPEG/WEBP/BMP/TIFF images. Returns text + confidence score. Free, no API key.
+    tags: [ocr, image, text-extraction]
+
+  - name: transcribe_audio
+    description: Transcribe mp3/wav/m4a/ogg/flac/webm/mp4 audio (≤25MB) to text. Free 200 calls/day; no OpenAI key required.
+    tags: [whisper, audio, transcription]
+
+  # ── Web scraping ──────────────────────────────────────────────────────
+  - name: read_url
+    description: Fetch a URL and return clean Readability-extracted text + title/author/excerpt. Free alternative to Firecrawl.
+    tags: [web, scraping, readability]
+
+  - name: scrape_url_js
+    description: Render a URL in a headless browser (handles SPAs, JS-heavy pages, dashboards) then extract clean text or markdown.
+    tags: [web, scraping, headless-browser, spa]
+
+  # ── Data extraction / conversion ──────────────────────────────────────
+  - name: extract_structured_data
+    description: Extract structured JSON from any unstructured text (emails, reports, web pages). Describe fields in plain English. Free 200/day; no LLM key required.
+    tags: [extraction, ai, structured-data]
 
   - name: csv_to_json
-    description: Convert a CSV string to a JSON array of objects. Handles quoted fields, embedded commas, and headers.
-    tags: [csv, json, data-conversion]
+    description: Parse CSV (with header detection, quoted fields, embedded commas) into JSON.
+    tags: [csv, json, conversion]
 
   - name: json_to_csv
-    description: Convert a JSON array of objects to a CSV string with proper quoting and CRLF line endings.
-    tags: [json, csv, data-conversion]
+    description: Serialize an array of JSON objects to CSV with proper quoting and headers.
+    tags: [json, csv, conversion]
+
+  - name: markdown_to_html
+    description: Convert markdown to a full styled HTML document (headings, lists, code blocks, links).
+    tags: [markdown, html, conversion]
+
+  - name: html_to_markdown
+    description: Convert raw HTML into clean readable markdown. Handles headings, lists, links, code, tables.
+    tags: [html, markdown, conversion]
+
+  # ── Productivity ──────────────────────────────────────────────────────
+  - name: generate_qr_code
+    description: Generate a QR code PNG for any text or URL. Custom size + error-correction level.
+    tags: [qr-code, image, productivity]
 
   - name: count_words
-    description: Count words, characters, sentences, paragraphs, and reading time for any text.
+    description: Word/char/sentence/paragraph count + reading time + Flesch readability + top keywords.
     tags: [text, analysis, productivity]
 
-  - name: read_url
-    description: Fetch a public URL and return clean readable text (Mozilla Readability). Returns title, byline, excerpt, and content.
-    tags: [web, scraping, readability]
+  - name: create_shareable_paste
+    description: Store long content and return a public toolora.dev/p/{id} link. Default 7-day expiry.
+    tags: [paste, share, productivity]
+
+  - name: save_memory
+    description: Persist context across sessions under a named key. 30-day default expiry.
+    tags: [memory, persistence]
+
+  - name: recall_memory
+    description: Retrieve content saved earlier under a key.
+    tags: [memory, retrieval]
+
+  - name: list_memories
+    description: List all saved memory keys (with optional prefix filter).
+    tags: [memory, listing]
+
+  # ── Developer tools ───────────────────────────────────────────────────
+  - name: chunk_text
+    description: Split long text into overlapping chunks for embeddings/RAG. Paragraph, sentence, or fixed-size strategies.
+    tags: [rag, chunking, embeddings]
+
+  - name: estimate_tokens
+    description: Estimate token count + context-window % + cost for any LLM (gpt-4o, claude-3.5, llama-3, etc.).
+    tags: [tokens, llm, cost-estimation]
+
+  - name: diff_texts
+    description: Compare two texts and return added/removed/unchanged lines + summary stats.
+    tags: [diff, comparison, developer-tools]
+
+  - name: run_regex
+    description: Match, capture, test, or replace text with a regex. All standard flags supported.
+    tags: [regex, text, developer-tools]
+
+  - name: hash_text
+    description: Generate MD5/SHA-1/SHA-256/SHA-512 hex hash of any text.
+    tags: [hash, cryptography, developer-tools]
 
 config: {}

@@ -62,7 +62,13 @@ Every package extends `tsconfig.base.json` which sets `composite: true`. The roo
 - **Surge resilience**: in-memory rate-limit map bounded to 50K entries with LRU eviction.
 - **Discoverability**: `initialize` response now carries directory metadata (description, homepage, docs, categories, pricing, privacy) under spec-compliant `_meta` field. `serverInfo` kept spec-clean for strict clients. `instructions` rewritten to lead with "privacy-first, free, no API key, files never stored". Brand-pitch suffixes added to descriptions of 5 strategic tools (`extract_pdf_text`, `ocr_image`, `transcribe_audio`, `read_url`, `scrape_url_js`, `extract_structured_data`) to win agent ranking against paid alternatives.
 
-Day 2: `.well-known/mcp.json` + 12 directory submissions (Smithery, mcpservers.org, Glama, wong2/punkpeye/appcypher lists).
+**Day 2 (Apr 29) — DONE (code/docs)**:
+- Upgraded `/.well-known/mcp.json` from a stale 12-tool listing to a comprehensive manifest: 25 tools with categories, 9 server-level categories, freemium pricing block, privacy attestation, install configs for Claude Desktop / Cursor / Cline / Replit Agent, repository URL, and longDescription positioning Toolora as a free replacement for Firecrawl / Mistral OCR / Whisper API / Adobe PDF Services. CORS open, 5-min cache.
+- Rewrote `artifacts/toolbox/public/smithery.yaml` from 7 stale tools to all 25 with grouped categories, brand-pitch tagline, pricing, full keyword set.
+- Created `docs/toolora-day2-submissions.md` (12 ready-to-paste directory submission packets: Smithery, mcpservers.org, Glama, wong2/punkpeye/appcypher, official, mcp.so, mcphub, cline marketplace, n8n, Apify, Replit Template) and `docs/toolora-yc-strategy.md` (W26 application timeline, narrative, Q&A prep).
+- Architect-flagged corrections: removed unresolvable `$schema` URL, removed invented `replit-agent.autoDiscover` flag (replaced with explicit UI instructions), aligned tool counts everywhere to "25 free + 2 optional paid", softened privacy claims to match the 30-day anonymous telemetry retention, and softened YC narrative superlatives ("most-installed", "0 downtime", "entirely organic") to verifiable phrasing.
+- **User-side action remaining**: execute the 12 PRs/emails in `docs/toolora-day2-submissions.md` (cannot be done from this environment).
+
 Day 3: `/replit` landing + Replit Template.
 Day 4: Twitter thread + DM 5 builders + live KPI dashboard surfacing the new `client_name` segmentation.
 

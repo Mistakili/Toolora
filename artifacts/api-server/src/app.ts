@@ -156,22 +156,110 @@ app.get("/.well-known/agent.json", (_req: Request, res: Response) => {
 
 app.get("/.well-known/mcp.json", (_req: Request, res: Response) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Cache-Control", "public, max-age=300");
   res.json({
-    name: "Toolora MCP Server",
-    description: "12 tools for AI agents — PDF extraction, OCR, QR codes, audio transcription, URL scraping, spreadsheet parsing, and more. 100% free. Privacy-first: browser tools never upload your files.",
+    name: "toolora",
+    displayName: "Toolora",
+    description:
+      "Privacy-first MCP server with 25 free tools — PDF/DOCX/Excel reading, OCR, audio transcription, JS-rendered web scraping, structured data extraction, and developer utilities. Free with no API key and no signup; 200 calls/day per client. Files are processed in memory and never stored on disk; only anonymous, salted-hash request metadata is retained for 30 days.",
+    longDescription:
+      "Toolora replaces a stack of paid agent tools (Firecrawl, Mistral OCR, Whisper API, Adobe PDF Services) with a single free MCP. Built for AI agents that need to read documents, scrape modern web apps, transcribe audio, or extract structured data without an API key. Pro tier ($19/mo) lifts the 200/day limit. Two additional on-chain-paid tools are available for agents that want untraceable execution (private_execute_tool via MagicBlock PER) or paid Solana DEX signals (get_arc_trading_signal via x402).",
     version: "1.0.0",
     protocolVersion: "2025-03-26",
+    transport: "streamable-http",
     endpoint: "https://toolora.dev/api/mcp",
-    transport: "Streamable HTTP",
-    license: "free",
-    homepage: "https://toolora.dev/mcp",
-    tools: [
-      "extract_pdf_text", "merge_pdfs", "generate_qr_code", "csv_to_json", "json_to_csv",
-      "ocr_image", "extract_docx_text", "excel_to_json", "transcribe_audio",
-      "scrape_url_js", "count_words", "read_url",
+    homepage: "https://toolora.dev",
+    documentation: "https://toolora.dev/mcp",
+    repository: "https://github.com/wesleyolis/toolora",
+    license: "MIT",
+    author: { name: "Toolora", url: "https://toolora.dev", email: "support@toolora.dev" },
+    pricing: {
+      model: "freemium",
+      freeTier: { callsPerDay: 200, requiresAuth: false },
+      pro: { price: "$19/mo", calls: "unlimited", url: "https://toolora.dev/pricing" },
+      team: { price: "custom", url: "https://toolora.dev/pricing" },
+    },
+    privacy: {
+      dataRetention: "none",
+      filesStored: false,
+      logsRetained: "30 days (anonymous, salted-hash client IDs only)",
+      gdprCompliant: true,
+    },
+    categories: [
+      "document-processing", "file-conversion", "web-scraping", "data-extraction",
+      "ocr", "transcription", "developer-tools", "productivity", "ai-tools",
     ],
-    categories: ["document-processing", "file-conversion", "web-scraping", "productivity"],
-    keywords: ["pdf", "ocr", "qr-code", "audio-transcription", "csv", "excel", "docx", "web-scraping", "privacy"],
+    keywords: [
+      "pdf", "docx", "excel", "ocr", "qr-code", "audio-transcription", "whisper",
+      "csv", "json", "web-scraping", "headless-browser", "readability", "markdown",
+      "html", "regex", "hash", "tokens", "chunking", "rag", "structured-extraction",
+      "memory", "paste", "diff", "privacy-first",
+    ],
+    tools: [
+      { name: "extract_pdf_text", category: "document-processing" },
+      { name: "merge_pdfs", category: "document-processing" },
+      { name: "generate_pdf_from_text", category: "document-processing" },
+      { name: "extract_docx_text", category: "document-processing" },
+      { name: "excel_to_json", category: "document-processing" },
+      { name: "ocr_image", category: "ocr" },
+      { name: "transcribe_audio", category: "transcription" },
+      { name: "read_url", category: "web-scraping" },
+      { name: "scrape_url_js", category: "web-scraping" },
+      { name: "extract_structured_data", category: "data-extraction" },
+      { name: "csv_to_json", category: "file-conversion" },
+      { name: "json_to_csv", category: "file-conversion" },
+      { name: "markdown_to_html", category: "file-conversion" },
+      { name: "html_to_markdown", category: "file-conversion" },
+      { name: "generate_qr_code", category: "productivity" },
+      { name: "count_words", category: "productivity" },
+      { name: "create_shareable_paste", category: "productivity" },
+      { name: "save_memory", category: "productivity" },
+      { name: "recall_memory", category: "productivity" },
+      { name: "list_memories", category: "productivity" },
+      { name: "chunk_text", category: "developer-tools" },
+      { name: "estimate_tokens", category: "developer-tools" },
+      { name: "diff_texts", category: "developer-tools" },
+      { name: "run_regex", category: "developer-tools" },
+      { name: "hash_text", category: "developer-tools" },
+    ],
+    install: {
+      "claude-desktop": {
+        config: {
+          mcpServers: {
+            toolora: {
+              command: "npx",
+              args: ["-y", "mcp-remote", "https://toolora.dev/api/mcp"],
+            },
+          },
+        },
+      },
+      cursor: {
+        config: {
+          mcpServers: {
+            toolora: {
+              url: "https://toolora.dev/api/mcp",
+              transport: "http",
+            },
+          },
+        },
+      },
+      cline: {
+        config: {
+          mcpServers: {
+            toolora: {
+              url: "https://toolora.dev/api/mcp",
+              transport: "http",
+            },
+          },
+        },
+      },
+      "replit-agent": {
+        // In Replit Agent, add the URL via the MCP integration UI
+        // (Tools → MCP Servers → Add Server). No CLI install required.
+        url: "https://toolora.dev/api/mcp",
+        instructions: "Add this URL via Replit Agent's MCP server settings panel.",
+      },
+    },
   });
 });
 
