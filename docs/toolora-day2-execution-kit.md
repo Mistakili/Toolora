@@ -10,6 +10,17 @@ Each item below is a self-contained packet: open the URL, paste the block, hit s
 
 ---
 
+## External coverage (use as social proof in every submission)
+
+- **HackerNoon** — *"I Added an MCP Server to My Browser-Based Tool Suite. Agents Found It Immediately."* (April 2026)
+  → https://hackernoon.com/i-added-an-mcp-server-to-my-browser-based-tool-suite-agents-found-it-immediately
+  → 4M+ homepage readership, 350K+ newsletter subscribers, distributed via the Tech Brief Machine + 77-language translation pipeline + permanent on Arweave.
+  → **Where to drop it:** every directory submission body that allows a "press" or "as featured in" line. Cline marketplace, Smithery descriptions, all three awesome-mcp-servers PR descriptions, and the Apify email all benefit. mcp.so / mcphub.io / glama don't have a press field — skip there.
+  → **Tags to push HackerNoon for** (if editable): `model-context-protocol`, `mcp`, `ai-agents`, `llm-tools`, `claude`, `stablecoin-payments`, `agent-economy`, `usdc`. The stablecoin tag is non-obvious but ties the article to the YC W26 stablecoin-financial-services RFS frame.
+  → **YC application use:** opener line — "Featured in HackerNoon (4M readers) the week before launch + processed our first stablecoin payment live during launch day."
+
+---
+
 ## Suggested order (open all 11 tabs first, then walk down the list)
 
 1. https://smithery.ai/server/new

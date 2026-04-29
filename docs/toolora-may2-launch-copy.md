@@ -17,6 +17,11 @@ All copy below is final. Don't rewrite on May 2 — paste verbatim.
 [![Live MCP](https://img.shields.io/badge/MCP-live-brightgreen)](https://toolora.dev/api/mcp)
 [![Tools](https://img.shields.io/badge/tools-25%20free-blue)](https://toolora.dev/.well-known/mcp.json)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![HackerNoon](https://img.shields.io/badge/featured-HackerNoon-00FF7F)](https://hackernoon.com/i-added-an-mcp-server-to-my-browser-based-tool-suite-agents-found-it-immediately)
+
+## Press
+
+- **HackerNoon** — *[I Added an MCP Server to My Browser-Based Tool Suite. Agents Found It Immediately.](https://hackernoon.com/i-added-an-mcp-server-to-my-browser-based-tool-suite-agents-found-it-immediately)* (April 2026, 4M+ readership)
 
 ## What is Toolora?
 
@@ -129,6 +134,8 @@ Built with ❤️ for the agent economy. Star this repo if you want sub-cent USD
 **Hero (h1):** *One-click MCP for any Replit Agent project*
 **Subhero:** 25 free agent tools, no API key, no signup. Plus: list your own MCP and bill your users in USDC.
 
+**Press strip (small, just under subhero):** *As featured in [HackerNoon](https://hackernoon.com/i-added-an-mcp-server-to-my-browser-based-tool-suite-agents-found-it-immediately) — "Agents Found It Immediately."*
+
 **Three-feature row:**
 
 | 🛠️ 25 free tools | 🛒 List your own MCP | 💸 Bill in USDC |
@@ -154,6 +161,8 @@ url = "https://toolora.dev/api/mcp"
 
 **Hero (h1):** *Stripe for MCP servers. Bill your users in USDC.*
 **Subhero:** List on Toolora's marketplace. Enable Gateway billing. Charge per call. Get paid in USDC, instantly. We take 5%, you keep 95%.
+
+**Press strip (small, just under subhero):** *As featured in [HackerNoon](https://hackernoon.com/i-added-an-mcp-server-to-my-browser-based-tool-suite-agents-found-it-immediately) — "Agents Found It Immediately."*
 
 **Three-feature row:**
 
@@ -233,12 +242,14 @@ Add to your Replit Agent project in one line:
 
 Or fork our template: [link]
 
-**9/15** What we're seeing in the first hour:
+**9/15** Momentum check, first hour:
 - [X] unique MCP connections
 - [Y] tool calls served
 - Top clients: Replit Agent, Claude Desktop, Cursor
 
-Live KPI dashboard updates here: [link]
+(HackerNoon featured the build last week — 4M+ readers — so a chunk of you already know the free tools side. Today's news is the marketplace + USDC half going live.)
+
+Live KPI dashboard: [link]
 
 [update with real numbers as they come in]
 
@@ -290,7 +301,7 @@ Let's make MCP a real economy.
 
 **Text:**
 ```
-Hi HN — I built Toolora as a free, privacy-first MCP server (PDF reading, OCR, Whisper transcription, JS scraping, structured data extraction). 25 tools, no API key, 200 calls/day free per agent.
+Hi HN — I built Toolora as a free, privacy-first MCP server (PDF reading, OCR, Whisper transcription, JS scraping, structured data extraction). 25 tools, no API key, 200 calls/day free per agent. HackerNoon ran a piece on the build last week [1] which was a good gut-check that the free side resonates.
 
 Over the past 30 days it picked up 3,000+ unique MCP connections from Claude, Cursor, Cline, and Replit Agent — purely from directory listings. Builders kept asking the same question: "How do I bill my own MCP users for tool calls?"
 
@@ -303,6 +314,8 @@ The whole server is open-source: github.com/toolora/toolora — including the Ga
 Today is Replit Agent's free-use day, so this is also a stress test. Live KPI dashboard at toolora.dev (with the new client_name segmentation by agent).
 
 Happy to answer anything about MCP economics, x402 payments, why USDC, or how a one-person team ships a marketplace + billing rail in a single day.
+
+[1] https://hackernoon.com/i-added-an-mcp-server-to-my-browser-based-tool-suite-agents-found-it-immediately
 ```
 
 ---
@@ -419,9 +432,12 @@ These need a real Twitter/X handle. The opening line is what matters — keep it
 ```
 Hey [NAME] — saw your [THEIR MCP] last week, sharp work. We're shipping
 Toolora's MCP marketplace + Gateway billing today (Replit free day for
-amplification). 5% take rate, instant USDC payouts on Solana. Want a free
-slot in the launch tweet thread for [THEIR MCP]? Even a quote would help.
-[link to gateway docs]
+amplification, HackerNoon ran a piece on us last week). 5% take rate,
+instant USDC payouts on Solana. Want a free slot in the launch tweet
+thread for [THEIR MCP]? Even a quote would help.
+
+HN piece: hackernoon.com/i-added-an-mcp-server-to-my-browser-based-tool-suite-agents-found-it-immediately
+Gateway docs: [link]
 ```
 
 If they reply, the 30-second pitch:
@@ -439,7 +455,9 @@ If they reply, the 30-second pitch:
 Hi Apify team,
 
 Quick one — Toolora (toolora.dev) launched today as the privacy-first
-marketplace + USDC billing layer for the MCP economy.
+marketplace + USDC billing layer for the MCP economy. HackerNoon ran a
+piece on the build last week that's already driving solid agent traffic:
+hackernoon.com/i-added-an-mcp-server-to-my-browser-based-tool-suite-agents-found-it-immediately
 
 Two halves are live:
 • 25 free agent tools (PDF/OCR/Whisper/JS scraping/structured extraction)
