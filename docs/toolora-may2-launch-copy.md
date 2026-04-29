@@ -3,16 +3,16 @@
 All copy below is final. Don't rewrite on May 2 — paste verbatim.
 
 > **Master positioning (one paragraph — paste this anywhere short):**
-> *Toolora is the privacy-first marketplace and billing layer for the MCP economy. 25 free agent tools (PDF/OCR/Whisper/scraping/structured extraction — no API key, no signup, 200 free calls/day) bootstrap demand. A public hub of third-party MCP servers makes us the discovery surface. The Gateway lets any MCP builder bill in USDC and keep 95%. We're the App Store + Stripe for MCP, and both halves are live.*
+> *Toolora is the stablecoin payments rail for the agent economy. Any MCP server can list on our hub, enable per-call USDC billing, and earn instantly — 5% take rate, sub-cent unit economics, settled on-chain the same block. The 25 free agent tools (PDF/OCR/Whisper/scraping/structured extraction — no API key, no signup, 200 free calls/day) bootstrap the agent-side demand that funnels into the rail. Colloquially: App Store + Stripe for MCP, both halves live.*
 
 ---
 
 ## GitHub README (paste into root of new public repo)
 
 ```markdown
-# Toolora — Marketplace & Billing for the MCP Economy
+# Toolora — Stablecoin Payments Rail for the Agent Economy
 
-> **Privacy-first MCP server with 25 free tools, plus a public hub of third-party MCPs, plus USDC billing for any listed server. App Store + Stripe for MCP — both halves are live.**
+> **The first sub-cent USDC billing rail for AI agents. Any MCP server lists on our hub, enables per-call USDC billing, and earns the same block — 5% take rate, settled on-chain. Plus 25 free privacy-first agent tools that bootstrap demand. App Store + Stripe for MCP, both halves live.**
 
 [![Live MCP](https://img.shields.io/badge/MCP-live-brightgreen)](https://toolora.dev/api/mcp)
 [![Tools](https://img.shields.io/badge/tools-25%20free-blue)](https://toolora.dev/.well-known/mcp.json)
@@ -27,9 +27,9 @@ All copy below is final. Don't rewrite on May 2 — paste verbatim.
 
 Toolora is two things in one platform:
 
-1. **A free, privacy-first MCP server** with 25 production tools (PDF/DOCX/Excel reading, OCR, audio transcription via Whisper, JS-rendered web scraping, structured data extraction, plus 15 dev utilities). No API key. No signup. 200 free calls per day per agent. Files are processed in memory and never written to disk.
+1. **A stablecoin payments rail for any MCP server.** List your MCP on `toolora.dev/mcp/hub`. Enable Gateway billing. Charge per-call in USDC — as little as $0.0001 per call works because USDC fees are fractions of a cent. We take 5%, you keep 95%. Settlement is on-chain the same block — no escrow, no chargebacks, no waiting 30 days for a payout. This is the half AI agents pay for; this is the half that monetizes.
 
-2. **A marketplace + billing layer** for *other* MCP servers. List your MCP on `toolora.dev/mcp/hub`. Enable Gateway billing. Charge per-call in USDC. We take 5%, you keep 95%. Settlement is on-chain — no escrow, no chargebacks, no waiting 30 days for a payout.
+2. **A free, privacy-first MCP server** with 25 production tools (PDF/DOCX/Excel reading, OCR, audio transcription via Whisper, JS-rendered web scraping, structured data extraction, plus 15 dev utilities). No API key. No signup. 200 free calls per day per agent. Files are processed in memory and never written to disk. This is the half that bootstraps demand and pulls agents onto the rail.
 
 ## One-line install
 
@@ -159,8 +159,8 @@ url = "https://toolora.dev/api/mcp"
 
 ## `/gateway` landing page (web copy)
 
-**Hero (h1):** *Stripe for MCP servers. Bill your users in USDC.*
-**Subhero:** List on Toolora's marketplace. Enable Gateway billing. Charge per call. Get paid in USDC, instantly. We take 5%, you keep 95%.
+**Hero (h1):** *The stablecoin payments rail for MCP servers.*
+**Subhero:** Bill your AI-agent users in USDC. List on Toolora's marketplace, enable Gateway billing, charge per call, get paid the same block. 5% take rate, sub-cent unit economics, no Stripe accounts to manage. (Think: Stripe for MCP, on a USDC rail.)
 
 **Press strip (small, just under subhero):** *As featured in [HackerNoon](https://hackernoon.com/i-added-an-mcp-server-to-my-browser-based-tool-suite-agents-found-it-immediately) — "Agents Found It Immediately."*
 
@@ -205,11 +205,11 @@ That's it.
 
 **1/15** Today is Replit Agent free day. So we shipped something we've been building for 5 months in a single 24-hour push.
 
-Toolora is now the privacy-first marketplace + billing layer for the MCP economy. App Store + Stripe for MCP. Both halves are live. 🧵
+Toolora is the stablecoin payments rail for the agent economy. Any MCP server can list, enable per-call USDC billing, and earn the same block. 5% take rate. Sub-cent unit economics. App Store + Stripe for MCP, both halves live. 🧵
 
-**2/15** What's an MCP? It's how Claude, Cursor, Cline, Replit Agent, and Continue talk to external tools. Anthropic shipped it Nov 2024. 18 months in, the protocol has tools but no marketplace and no billing rail.
+**2/15** What's an MCP? It's how Claude, Cursor, Cline, Replit Agent, and Continue talk to external tools. Anthropic shipped it Nov 2024. 18 months in, the protocol has tools but no payments rail — no way for an MCP builder to charge an agent for a single tool call.
 
-We just shipped both.
+We just built the rail. Settlement is USDC on Solana, instant, sub-cent.
 
 **3/15** Half one — 25 free agent tools, no API key, no signup, 200 calls/day per agent.
 
@@ -295,7 +295,7 @@ Let's make MCP a real economy.
 
 ## Show HN post
 
-**Title:** `Show HN: Toolora – Marketplace and USDC billing layer for MCP servers`
+**Title:** `Show HN: Toolora – Stablecoin payments rail for AI agents (MCP, USDC, sub-cent)`
 
 **URL:** `https://toolora.dev`
 
@@ -400,13 +400,13 @@ Repo: github.com/toolora/toolora
 
 ## Reddit r/SideProject
 
-**Title:** `Day-in-the-life of building a 2-sided marketplace solo in 24 hours`
+**Title:** `Day-in-the-life of shipping a stablecoin payments rail solo in 24 hours`
 
 **Body:**
 ```
 Today I shipped Toolora Gateway in a single 24-hour solo sprint, on top of the existing Toolora MCP that's been running for 5 months. Going to live-tweet the day if anyone wants to follow along.
 
-What it is: a marketplace + billing layer for MCP servers (the protocol Claude, Cursor, Cline, and Replit Agent use to call tools). 25 free tools to bootstrap demand, plus a public hub where third-party MCP builders can list and bill in USDC.
+What it is: a stablecoin payments rail for MCP servers (the protocol Claude, Cursor, Cline, and Replit Agent use to call tools). Any MCP can list, enable per-call USDC billing, earn the same block. 25 free in-house tools to bootstrap agent demand. 5% take rate.
 
 Tech stack:
 - pnpm monorepo (Express + React + Postgres + Drizzle + Solana)
@@ -448,15 +448,17 @@ If they reply, the 30-second pitch:
 ## Apify email (refresh of the Day-2 kit version)
 
 **To:** `partners@apify.com`
-**Subject:** `Toolora launched MCP marketplace + USDC billing today — co-feature opportunity`
+**Subject:** `Toolora launched the stablecoin billing rail for MCP today — co-feature opportunity`
 
 **Body:**
 ```
 Hi Apify team,
 
-Quick one — Toolora (toolora.dev) launched today as the privacy-first
-marketplace + USDC billing layer for the MCP economy. HackerNoon ran a
-piece on the build last week that's already driving solid agent traffic:
+Quick one — Toolora (toolora.dev) launched today as the stablecoin
+payments rail for the agent economy: any MCP server lists on our hub,
+enables per-call USDC billing, earns the same block. 5% take rate,
+sub-cent unit economics, no Stripe accounts. HackerNoon ran a piece on
+the build last week that's already driving solid agent traffic:
 hackernoon.com/i-added-an-mcp-server-to-my-browser-based-tool-suite-agents-found-it-immediately
 
 Two halves are live:
