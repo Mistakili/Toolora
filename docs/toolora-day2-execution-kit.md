@@ -48,7 +48,7 @@ Manual fallback fields:
 
 **Description (paste verbatim):**
 ```
-Privacy-first MCP with 25 free tools — PDF/DOCX/Excel reading, OCR, audio transcription (Whisper), JS-rendered web scraping, structured data extraction, and developer utilities. No API key, no signup. 200 free calls/day per client; Pro $19/mo unlimited. Files processed in memory and never stored on disk; only anonymous, salted-hash request metadata is retained for 30 days. Replaces a stack of paid tools (Firecrawl, Mistral OCR, Whisper API, Adobe PDF Services) with one MCP.
+The privacy-first marketplace and billing layer for the MCP economy. Two halves in one platform: (1) 25 free agent tools — PDF/DOCX/Excel reading, OCR, Whisper audio transcription, JS-rendered web scraping, structured data extraction, and developer utilities. No API key, no signup. 200 free calls/day per client; Pro $19/mo unlimited. (2) A public hub of third-party MCP servers, with optional USDC billing for any listed MCP via Toolora Gateway (launching May 2, 2026 — 5% take rate, instant on-chain settlement). Files processed in memory and never stored on disk; only anonymous, salted-hash request metadata is retained for 30 days. Replaces a stack of paid tools (Firecrawl, Mistral OCR, Whisper API, Adobe PDF Services) with one MCP and gives builders a way to bill agents in fractions of a cent.
 ```
 
 ---
@@ -98,7 +98,7 @@ https://github.com/wong2/awesome-mcp-servers/edit/main/README.md
 **Where to paste:** scroll to `## Community Servers` (alphabetical). Insert this line **between "Token Metrics" and "Trade Agent"** (search for `Token Metrics` to land in the right spot):
 
 ```markdown
-- **[Toolora](https://toolora.dev)** - Privacy-first MCP with 25 free tools (PDF/DOCX/Excel, OCR, Whisper transcription, JS-rendered scraping, structured extraction). No API key, 200 calls/day free. Endpoint: `https://toolora.dev/api/mcp`
+- **[Toolora](https://toolora.dev)** - Privacy-first MCP marketplace + 25 free tools (PDF/OCR/Whisper/scraping/structured extraction). Public hub of 3rd-party MCPs with optional USDC billing via Toolora Gateway (May 2026). No API key, 200 calls/day free. Endpoint: `https://toolora.dev/api/mcp`
 ```
 
 **Commit message:**
@@ -132,7 +132,7 @@ This list is split by category. Toolora is multi-purpose, so file the **primary*
 Search for `### 📂 <a name="browser-automation"></a>Browser Automation` and insert this line alphabetically (look for the `T` slot — likely between any existing T entries; if none, just at end of T-block):
 
 ```markdown
-- [Toolora](https://toolora.dev) 📇 ☁️ - Privacy-first MCP with 25 free tools: PDF/DOCX/Excel reading, OCR (Tesseract), Whisper audio transcription, JS-rendered web scraping (Playwright), and structured data extraction. No API key, 200 calls/day free, files never stored on disk. Replaces Firecrawl + Mistral OCR + Whisper API + Adobe PDF in one server.
+- [Toolora](https://toolora.dev) 📇 ☁️ - Privacy-first MCP marketplace + 25 free tools: PDF/DOCX/Excel reading, OCR, Whisper transcription, JS-rendered web scraping, structured data extraction. Public hub of 3rd-party MCPs with optional USDC billing via Toolora Gateway (May 2026, 5% take rate). No API key, 200 calls/day free, files never persisted to disk. Replaces Firecrawl + Mistral OCR + Whisper API + Adobe PDF in one server.
 ```
 
 **Legend used:** `📇` = TypeScript, `☁️` = cloud-hosted. (See punkpeye's `## Legend` section.)
@@ -148,7 +148,7 @@ Search for `### 📂 <a name="browser-automation"></a>Browser Automation` and in
 This list is also category-based and alphabetised. File under **Browser Automation** (or `Productivity` if Browser Automation isn't present) with the same line as #6 (drop the legend emojis if appcypher's section doesn't use them):
 
 ```markdown
-- [Toolora](https://toolora.dev) - Privacy-first MCP with 25 free tools: PDF/DOCX/Excel, OCR, Whisper transcription, JS-rendered scraping, structured extraction. No API key, 200 calls/day free.
+- [Toolora](https://toolora.dev) - Privacy-first MCP marketplace + 25 free tools (PDF/OCR/Whisper/scraping/structured extraction). Public hub of 3rd-party MCPs with optional USDC billing via Toolora Gateway (May 2026). No API key, 200 calls/day free.
 ```
 
 **Commit + PR body:** same as #5.
@@ -162,7 +162,7 @@ This list is also category-based and alphabetised. File under **Browser Automati
 Scroll to `## 🌎 Community Servers` (or whatever it's called in the latest version) and insert alphabetically:
 
 ```markdown
-- **[Toolora](https://toolora.dev)** - Privacy-first MCP with 25 free tools: PDF/DOCX/Excel reading, OCR, Whisper transcription, JS-rendered scraping, structured data extraction. No API key, 200 calls/day free. Endpoint: `https://toolora.dev/api/mcp`
+- **[Toolora](https://toolora.dev)** - Privacy-first MCP marketplace + 25 free tools (PDF/OCR/Whisper/scraping/structured extraction). Public hub of 3rd-party MCPs with optional USDC billing via Toolora Gateway (May 2026). No API key, 200 calls/day free. Endpoint: `https://toolora.dev/api/mcp`
 ```
 
 **Commit + PR body:** same as #5.
@@ -179,7 +179,7 @@ The contribution flow varies — typically you fork, add a JSON entry under `mar
 {
   "id": "toolora",
   "name": "Toolora",
-  "description": "Privacy-first MCP — 25 free tools for PDF/OCR/scraping/Whisper/structured extraction. No API key, 200 calls/day free.",
+  "description": "Privacy-first MCP marketplace + 25 free tools for PDF/OCR/scraping/Whisper/structured extraction, plus a public hub of 3rd-party MCPs with USDC billing via Toolora Gateway (May 2026). No API key, 200 calls/day free.",
   "url": "https://toolora.dev/api/mcp",
   "transport": "http",
   "homepage": "https://toolora.dev",
