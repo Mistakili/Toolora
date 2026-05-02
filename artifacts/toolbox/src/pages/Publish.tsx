@@ -20,9 +20,31 @@ export default function Publish() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [copied, setCopied] = useState<string | null>(null);
 
+  // Client-side pre-validation — fail fast on obvious garbage so users see a
+  // useful message in <50ms instead of waiting for the server round-trip.
+  const validateUrl = (raw: string): string | null => {
+    const trimmed = raw.trim();
+    if (!trimmed) return "Paste a URL to get started.";
+    if (trimmed.length > 2048) return "URL is too long (max 2048 chars).";
+    let parsed: URL;
+    try {
+      parsed = new URL(trimmed);
+    } catch {
+      return "That doesn't look like a valid URL. Try something like https://petstore3.swagger.io/api/v3/openapi.json";
+    }
+    if (parsed.protocol !== "https:" && parsed.protocol !== "http:") {
+      return "URL must start with https:// (or http:// for local testing).";
+    }
+    return null;
+  };
+
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!specUrl.trim()) return;
+    const validationError = validateUrl(specUrl);
+    if (validationError) {
+      setErrorMsg(validationError);
+      return;
+    }
     setBusy(true);
     setResult(null);
     setErrorMsg(null);
@@ -32,9 +54,17 @@ export default function Publish() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ specUrl: specUrl.trim() }),
       });
-      const data = (await r.json()) as InitResponse;
+      const data = (await r.json()) as InitResponse & { reason?: string };
       if (!r.ok || !data.ok) {
-        setErrorMsg(data.error ?? `Failed (HTTP ${r.status}) — make sure the URL points at a public OpenAPI 3 JSON spec.`);
+        if (r.status === 429) {
+          setErrorMsg(data.reason ?? "Too many submissions from your IP. Try again in an hour.");
+        } else if (data.error === "invalid_url") {
+          setErrorMsg(data.reason ?? "Invalid URL.");
+        } else if (data.error === "spec_invalid") {
+          setErrorMsg(`That URL didn't parse as an OpenAPI 3 spec. ${data.reason ?? ""}`.trim());
+        } else {
+          setErrorMsg(data.error ?? `Failed (HTTP ${r.status}) — make sure the URL points at a public OpenAPI 3 JSON spec.`);
+        }
         return;
       }
       setResult(data);
@@ -43,6 +73,11 @@ export default function Publish() {
     } finally {
       setBusy(false);
     }
+  };
+
+  const tryExample = () => {
+    setSpecUrl("https://petstore3.swagger.io/api/v3/openapi.json");
+    setErrorMsg(null);
   };
 
   const copy = async (text: string, key: string) => {
@@ -113,6 +148,19 @@ export default function Publish() {
               {errorMsg}
             </div>
           ) : null}
+
+          <div className="text-xs text-muted-foreground">
+            Don't have one handy?{" "}
+            <button
+              type="button"
+              onClick={tryExample}
+              className="text-emerald-400 hover:text-emerald-300 underline underline-offset-2"
+              data-testid="button-try-example"
+            >
+              Try the Swagger Petstore example
+            </button>
+            .
+          </div>
 
           {/* Trust bullets */}
           <div className="grid sm:grid-cols-3 gap-3 mt-6">

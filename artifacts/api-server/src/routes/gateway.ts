@@ -846,6 +846,10 @@ router.get("/public-proof/:listingId", async (req: Request, res: Response): Prom
 // linked HN post can't hammer the DB.
 router.get("/global-stats", async (req: Request, res: Response): Promise<void> => {
   res.setHeader("Cache-Control", "public, max-age=20, stale-while-revalidate=60");
+  // Public read-only endpoint — allow cross-origin so embedded ticker widgets
+  // and third-party dashboards (mcp.so, Smithery) can poll it directly.
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
   const windowParam = String(req.query.window ?? "1h").toLowerCase();
   const validWindows: Record<string, { ms: number | null; label: string }> = {
     "1h":  { ms:        60 * 60 * 1000, label: "Last hour"  },
@@ -1023,8 +1027,18 @@ async function fetchAndParseSpec(specUrl: string): Promise<ParsedSpec> {
     }>>;
   };
   if (!spec.openapi || !spec.openapi.startsWith("3.")) throw new Error("unsupported_openapi_version");
-  const baseUrl = spec.servers?.[0]?.url;
-  if (!baseUrl) throw new Error("spec_missing_server_url");
+  const rawServerUrl = spec.servers?.[0]?.url;
+  // Resolve relative server URLs (e.g. Petstore uses "/api/v3") against the
+  // spec URL's origin. Fall back to the spec URL's origin itself when no
+  // servers[] is provided (some specs omit it entirely).
+  let baseUrl: string;
+  try {
+    baseUrl = rawServerUrl
+      ? new URL(rawServerUrl, specUrl).toString()
+      : new URL("/", specUrl).toString();
+  } catch {
+    throw new Error("spec_invalid_server_url");
+  }
   // SSRF-validate the resolved upstream base too
   const baseSsrf = await validateUpstreamUrl(baseUrl);
   if (!baseSsrf.ok) throw new Error(`base_url_blocked: ${baseSsrf.reason}`);
@@ -1060,11 +1074,75 @@ async function fetchAndParseSpec(specUrl: string): Promise<ParsedSpec> {
   };
 }
 
+// In-memory IP rate limiter for unauthenticated /openapi-to-mcp/init.
+// 10 submissions per IP per hour — enough for legit "try, fix, retry" loops,
+// tight enough that a single bored actor can't flood the DB with orphan
+// listings. Bounded map (≤5k IPs) so this can never OOM the server.
+const initRateLimitWindow = 60 * 60 * 1000; // 1h
+const initRateLimitMax = 10;
+const initRateLimitMap = new Map<string, { count: number; resetAt: number }>();
+function checkInitRateLimit(ip: string): { allowed: boolean; remaining: number; retryAfter: number } {
+  if (initRateLimitMap.size > 5000) {
+    // Evict oldest 1k entries to bound memory.
+    const entries = [...initRateLimitMap.entries()].sort((a, b) => a[1].resetAt - b[1].resetAt);
+    for (let i = 0; i < 1000 && i < entries.length; i++) initRateLimitMap.delete(entries[i][0]);
+  }
+  const now = Date.now();
+  const entry = initRateLimitMap.get(ip);
+  if (!entry || entry.resetAt < now) {
+    initRateLimitMap.set(ip, { count: 1, resetAt: now + initRateLimitWindow });
+    return { allowed: true, remaining: initRateLimitMax - 1, retryAfter: 0 };
+  }
+  entry.count += 1;
+  if (entry.count > initRateLimitMax) {
+    return { allowed: false, remaining: 0, retryAfter: Math.ceil((entry.resetAt - now) / 1000) };
+  }
+  return { allowed: true, remaining: initRateLimitMax - entry.count, retryAfter: 0 };
+}
+
+// URL pre-validation — reject obvious garbage before we hit fetchAndParseSpec
+// so bots can't waste CPU on us. fetchAndParseSpec also validates SSRF,
+// so this is purely a fast-path filter on the public surface.
+function preValidateSpecUrl(raw: string): { ok: true; url: URL } | { ok: false; reason: string } {
+  let url: URL;
+  try {
+    url = new URL(raw);
+  } catch {
+    return { ok: false, reason: "Invalid URL format. Must be a full URL like https://example.com/openapi.json" };
+  }
+  if (url.protocol !== "https:" && url.protocol !== "http:") {
+    return { ok: false, reason: "URL must use http:// or https://" };
+  }
+  if (raw.length > 2048) {
+    return { ok: false, reason: "URL too long (max 2048 chars)" };
+  }
+  return { ok: true, url };
+}
+
 router.post("/openapi-to-mcp/init", async (req: Request, res: Response): Promise<void> => {
+  const ip = String(req.ip ?? req.socket.remoteAddress ?? "unknown");
+  const rl = checkInitRateLimit(ip);
+  res.setHeader("X-RateLimit-Limit", String(initRateLimitMax));
+  res.setHeader("X-RateLimit-Remaining", String(rl.remaining));
+  if (!rl.allowed) {
+    res.setHeader("Retry-After", String(rl.retryAfter));
+    res.status(429).json({
+      ok: false,
+      error: "rate_limited",
+      reason: `Too many submissions from your IP. Try again in ${Math.ceil(rl.retryAfter / 60)} minutes.`,
+    });
+    return;
+  }
+
   const body = (req.body ?? {}) as { specUrl?: string };
   const specUrl = String(body.specUrl ?? "").trim();
   if (!specUrl) {
     res.status(400).json({ ok: false, error: "missing_spec_url" });
+    return;
+  }
+  const pre = preValidateSpecUrl(specUrl);
+  if (!pre.ok) {
+    res.status(400).json({ ok: false, error: "invalid_url", reason: pre.reason });
     return;
   }
   try {
