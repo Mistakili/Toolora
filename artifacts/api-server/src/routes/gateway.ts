@@ -839,6 +839,68 @@ router.get("/public-proof/:listingId", async (req: Request, res: Response): Prom
   }
 });
 
+// ─── 6d2. Global stats — GET /global-stats ──────────────────────────────────
+// Powers the homepage live agent-call ticker. Aggregates across ALL
+// leaderboard-opt-in listings within the requested window (1h | 24h | all).
+// Cached 20s (matches the homepage ticker poll interval) so a spike on a
+// linked HN post can't hammer the DB.
+router.get("/global-stats", async (req: Request, res: Response): Promise<void> => {
+  res.setHeader("Cache-Control", "public, max-age=20, stale-while-revalidate=60");
+  const windowParam = String(req.query.window ?? "1h").toLowerCase();
+  const validWindows: Record<string, { ms: number | null; label: string }> = {
+    "1h":  { ms:        60 * 60 * 1000, label: "Last hour"  },
+    "24h": { ms:   24 * 60 * 60 * 1000, label: "Last 24h"   },
+    "7d":  { ms: 7 * 24 * 60 * 60 * 1000, label: "Last 7 days" },
+    "all": { ms: null,                    label: "All-time"  },
+  };
+  const w = validWindows[windowParam] ?? validWindows["1h"];
+  // Use parameterized binding (defense in depth — w.ms already comes from a
+  // hardcoded validWindows map, but never use sql.raw with anything reachable
+  // from req). `make_interval` accepts a numeric `secs` arg that's safely bound.
+  const sinceClause = w.ms !== null
+    ? sql`${gatewayBillingEventsTable.createdAt} >= now() - make_interval(secs => ${w.ms / 1000})`
+    : sql`true`;
+
+  try {
+    const [agg] = await db
+      .select({
+        calls: sql<number>`count(*)::int`,
+        settledCalls: sql<number>`count(*) filter (where ${gatewayBillingEventsTable.status} = 'settled')::int`,
+        callerPaidMicros: sql<number>`coalesce(sum(${gatewayBillingEventsTable.amountUsdcMicros}) filter (where ${gatewayBillingEventsTable.status} = 'settled'), 0)::bigint`,
+        ownerEarnedMicros: sql<number>`coalesce(sum(${gatewayBillingEventsTable.amountUsdcMicros} - ${gatewayBillingEventsTable.tooloraFeeUsdcMicros}) filter (where ${gatewayBillingEventsTable.status} = 'settled'), 0)::bigint`,
+        tooloraFeeMicros: sql<number>`coalesce(sum(${gatewayBillingEventsTable.tooloraFeeUsdcMicros}) filter (where ${gatewayBillingEventsTable.status} = 'settled'), 0)::bigint`,
+        distinctOwners: sql<number>`count(distinct ${gatewayBillingEventsTable.listingId})::int`,
+      })
+      .from(gatewayBillingEventsTable)
+      .innerJoin(gatewayConfigsTable, eq(gatewayConfigsTable.listingId, gatewayBillingEventsTable.listingId))
+      .where(and(eq(gatewayConfigsTable.leaderboardOptIn, true), sinceClause));
+
+    res.json({
+      ok: true,
+      window: windowParam,
+      windowLabel: w.label,
+      generatedAt: new Date().toISOString(),
+      totals: {
+        calls: Number(agg?.calls) || 0,
+        settledCalls: Number(agg?.settledCalls) || 0,
+        callerPaidUsd: (Number(agg?.callerPaidMicros) || 0) / 1_000_000,
+        ownerEarnedUsd: (Number(agg?.ownerEarnedMicros) || 0) / 1_000_000,
+        tooloraFeeUsd: (Number(agg?.tooloraFeeMicros) || 0) / 1_000_000,
+        distinctOwners: Number(agg?.distinctOwners) || 0,
+      },
+    });
+  } catch (err) {
+    logger.warn({ err, window: windowParam }, "[gateway] global-stats query failed");
+    res.json({
+      ok: true,
+      window: windowParam,
+      windowLabel: w.label,
+      generatedAt: new Date().toISOString(),
+      totals: { calls: 0, settledCalls: 0, callerPaidUsd: 0, ownerEarnedUsd: 0, tooloraFeeUsd: 0, distinctOwners: 0 },
+    });
+  }
+});
+
 // ─── 6e. Leaderboard — GET /leaderboard ─────────────────────────────────────
 // Top 10 listings by settled USDC volume across all opt-in listings. 60 s
 // cache so a Hacker News spike can't melt the DB.

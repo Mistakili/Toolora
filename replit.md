@@ -51,7 +51,18 @@ Key Gateway Features:
 
 ## MCP Server
 
-Accessible at `GET|POST /api/mcp`, this service implements the MCP Streamable HTTP transport, offering 25 tools with free and optional paid tiers. It supports tool discoverability with detailed metadata, features in-memory rate-limiting, and ensures privacy by hashing client IDs and stripping referrers.
+Accessible at `GET|POST /api/mcp`, this service implements the MCP Streamable HTTP transport, offering **34 tools** (32 free + 2 on-chain-paid: `private_execute_tool`, `get_arc_trading_signal`). It supports tool discoverability with detailed metadata, features in-memory rate-limiting (200 calls/day free, unlimited Pro), and ensures privacy by hashing client IDs and stripping referrers.
+
+-   **Public manifest**: `GET /.well-known/mcp.json` — registry-ready manifest with categories, keywords, install snippets, and the full tool list. Source of truth for Anthropic registry / Smithery / mcp.so / Glama / mcphub submissions (see `artifacts/api-server/SUBMISSIONS.md`).
+-   **Writing-quality bundle** (added May 2026): 7 stateless tools designed for the writing-agent loop — `analyze_text` (Flesch + Gunning-Fog + SMOG + Coleman-Liau + ARI in one call), `count_tokens_multi` (11-model token + cost estimate in one call), `find_repetition` (top words / bigrams / trigrams), `detect_jargon` (Plain Language scorer + suggested swaps), `detect_pii` (email, phone, SSN, Luhn-validated cards, OpenAI/Anthropic/GitHub/AWS/Stripe keys, JWTs), `tone_score` (formal/casual/technical/urgent dimensions), `compare_versions` (readability + tone delta diff). Pure functions live in `artifacts/api-server/src/lib/writingQuality.ts`. No new npm deps.
+
+## Inbound Funnel — `/publish`
+
+Toolbox page that lets API owners self-serve onto the Gateway in 60s. They paste a public OpenAPI 3 JSON URL → Toolora calls `POST /api/gateway/openapi-to-mcp/init` (existing endpoint, SSRF-validated) → page renders the resulting MCP URL with copy-to-clipboard + Claude Desktop config snippet + curl test snippet. Linked from the API mega-menu in `AppLayout.tsx`. Page lives at `artifacts/toolbox/src/pages/Publish.tsx`.
+
+## Live Global Ticker
+
+`GET /api/gateway/global-stats?window=1h|24h|7d|all` aggregates settled USDC volume across ALL leaderboard-opt-in listings. Cached 20s. Powers `HomepageGlobalTicker` (mounted in `Home.tsx` hero) which polls every 20s and shows: agent calls, USDC settled, owner earned, distinct owners. Click-through goes to `/gateway`.
 
 ## Monetization System
 

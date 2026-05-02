@@ -162,7 +162,7 @@ app.get("/.well-known/mcp.json", (_req: Request, res: Response) => {
     name: "toolora",
     displayName: "Toolora",
     description:
-      "Privacy-first MCP server with 25 free tools — PDF/DOCX/Excel reading, OCR, audio transcription, JS-rendered web scraping, structured data extraction, and developer utilities. Free with no API key and no signup; 200 calls/day per client. Files are processed in memory and never stored on disk; only anonymous, salted-hash request metadata is retained for 30 days.",
+      "Privacy-first MCP server with 32 free tools — PDF/DOCX/Excel reading, OCR, audio transcription, JS-rendered web scraping, structured data extraction, developer utilities, and a writing-quality bundle (readability, jargon, PII, tone, version compare). Free with no API key and no signup; 200 calls/day per client. Files are processed in memory and never stored on disk; only anonymous, salted-hash request metadata is retained for 30 days.",
     longDescription:
       "Toolora replaces a stack of paid agent tools (Firecrawl, Mistral OCR, Whisper API, Adobe PDF Services) with a single free MCP. Built for AI agents that need to read documents, scrape modern web apps, transcribe audio, or extract structured data without an API key. Pro tier ($19/mo) lifts the 200/day limit. Two additional on-chain-paid tools are available for agents that want untraceable execution (private_execute_tool via MagicBlock PER) or paid Solana DEX signals (get_arc_trading_signal via x402).",
     version: "1.0.0",
@@ -189,12 +189,15 @@ app.get("/.well-known/mcp.json", (_req: Request, res: Response) => {
     categories: [
       "document-processing", "file-conversion", "web-scraping", "data-extraction",
       "ocr", "transcription", "developer-tools", "productivity", "ai-tools",
+      "writing-quality",
     ],
     keywords: [
       "pdf", "docx", "excel", "ocr", "qr-code", "audio-transcription", "whisper",
       "csv", "json", "web-scraping", "headless-browser", "readability", "markdown",
       "html", "regex", "hash", "tokens", "chunking", "rag", "structured-extraction",
       "memory", "paste", "diff", "privacy-first",
+      "writing-quality", "flesch", "jargon", "pii-detection", "secret-detection",
+      "tone-analysis", "token-counting", "writing-copilot",
     ],
     tools: [
       { name: "extract_pdf_text", category: "document-processing" },
@@ -222,6 +225,13 @@ app.get("/.well-known/mcp.json", (_req: Request, res: Response) => {
       { name: "diff_texts", category: "developer-tools" },
       { name: "run_regex", category: "developer-tools" },
       { name: "hash_text", category: "developer-tools" },
+      { name: "analyze_text", category: "writing-quality" },
+      { name: "count_tokens_multi", category: "writing-quality" },
+      { name: "find_repetition", category: "writing-quality" },
+      { name: "detect_jargon", category: "writing-quality" },
+      { name: "detect_pii", category: "writing-quality" },
+      { name: "tone_score", category: "writing-quality" },
+      { name: "compare_versions", category: "writing-quality" },
     ],
     install: {
       "claude-desktop": {

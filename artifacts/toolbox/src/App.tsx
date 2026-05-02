@@ -55,6 +55,7 @@ const Agents = lazy(() => import("@/pages/Agents"));
 const GatewayBadgeEmbed = lazy(() => import("@/pages/GatewayBadgeEmbed"));
 const GatewayProof = lazy(() => import("@/pages/GatewayProof"));
 const Leaderboard = lazy(() => import("@/pages/Leaderboard"));
+const Publish = lazy(() => import("@/pages/Publish"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -119,6 +120,7 @@ function Router() {
               <Route path="/gateway" component={Gateway} />
               <Route path="/gateway/proof/:listingId" component={GatewayProof} />
               <Route path="/leaderboard" component={Leaderboard} />
+              <Route path="/publish" component={Publish} />
               <Route path="/about" component={About} />
               <Route path="/integrations" component={Integrations} />
               <Route path="/gdpr" component={GdprCompliance} />

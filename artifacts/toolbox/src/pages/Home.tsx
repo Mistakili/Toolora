@@ -4,6 +4,7 @@ import { ArrowRight, Sparkles, Shield, Zap, Bot, FileText, Globe, BarChart2, Bel
 import { motion } from "framer-motion";
 import { CATEGORIES, TOOLS } from "@/lib/tools-config";
 import { ToolCard } from "@/components/shared/ToolCard";
+import HomepageGlobalTicker from "@/components/HomepageGlobalTicker";
 import { useGetPopularTools } from "@workspace/api-client-react";
 import { BLOG_POSTS_COUNT, GLOSSARY_COUNT, HOME_BLOG_POSTS } from "@/lib/home-data";
 
@@ -134,6 +135,9 @@ export default function Home() {
                   <span className="text-blue-400 font-medium group-hover:underline">Add to Chrome →</span>
                 </a>
               </div>
+
+              {/* Live global agent-call ticker — last hour, polled every 20s */}
+              <HomepageGlobalTicker />
 
             </motion.div>
           </div>

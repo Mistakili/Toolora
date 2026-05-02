@@ -12,6 +12,15 @@ import { mcpCallsTable, pastesTable, memoriesTable } from "@workspace/db/schema"
 import { eq } from "drizzle-orm";
 import { logger } from "../lib/logger";
 import { getRotatingSponsorLine } from "../lib/sponsors";
+import {
+  analyzeText,
+  countTokensMulti,
+  findRepetition,
+  detectJargon,
+  detectPii,
+  toneScore,
+  compareVersions,
+} from "../lib/writingQuality";
 
 const router: IRouter = Router();
 
@@ -596,6 +605,93 @@ const TOOLS = [
     },
   },
   {
+    name: "analyze_text",
+    description:
+      "Run a complete readability + structure analysis on a piece of writing in one call. Returns Flesch Reading Ease, Flesch–Kincaid Grade, Gunning Fog Index, SMOG, Coleman–Liau, and ARI in a single result, plus word/sentence/paragraph counts, average sentence length, complex-word percentage, reading time, target audience label, and human-readable warnings. Use this whenever an agent has just generated or edited prose and needs to check whether it lands at the right reading level. One call replaces 4–6 separate readability lookups.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        text: { type: "string", description: "The text to analyze. Plain prose works best; markdown is tolerated." },
+      },
+      required: ["text"],
+    },
+  },
+  {
+    name: "count_tokens_multi",
+    description:
+      "Estimate token count + USD cost for a text across every major LLM (GPT-4o, GPT-4o-mini, o1, o1-mini, Claude 3.5 Sonnet/Haiku, Claude 3 Opus, Gemini 1.5 Pro/Flash, Llama 3 70B/8B) in one call. Returns per-model: estimated tokens, context-window fit %, input cost, and roundtrip cost (input+output). Also returns the cheapest and costliest model that fits. Use this before sending a long context to decide which model to route to. One call replaces 11 separate tokenizer lookups.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        text: { type: "string", description: "The text to estimate tokens for." },
+      },
+      required: ["text"],
+    },
+  },
+  {
+    name: "find_repetition",
+    description:
+      "Find the most repeated words, bigrams (2-word phrases), and trigrams (3-word phrases) in a text — what writers call the 'vocabulary tic' check. Returns top-N for each, plus total tokens, unique words, and lexical diversity (unique/total). Stopwords (the, of, and, etc.) are filtered by default. Use this when an agent has written a long draft and wants to spot accidentally-repeated phrasing before publishing.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        text: { type: "string", description: "The text to scan for repetition." },
+        topN: { type: "number", description: "How many entries to return per category. Default 10, max 50." },
+        ignoreStopwords: { type: "boolean", description: "Whether to filter common stopwords. Default true." },
+      },
+      required: ["text"],
+    },
+  },
+  {
+    name: "detect_jargon",
+    description:
+      "Score a text against a Plain Language baseline and flag corporate/legal jargon (leverage, utilize, synergy, paradigm, stakeholder, actionable, robust, scalable, holistic, deep dive, low-hanging fruit, etc.). Returns a 0–100 jargon score, a list of flagged terms with frequency + plain-English suggestions, density percentage, and a verdict. Use this before publishing marketing copy, exec summaries, or anything that needs to sound human.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        text: { type: "string", description: "The text to scan for jargon." },
+      },
+      required: ["text"],
+    },
+  },
+  {
+    name: "detect_pii",
+    description:
+      "Sweep a text for personally-identifying information and leaked secrets: email addresses, US/international phone numbers, SSNs, Luhn-validated credit-card numbers, OpenAI keys (sk-...), Anthropic keys (sk-ant-...), GitHub PATs (ghp_/gho_/...), AWS access keys (AKIA...), Stripe keys, JWTs, and IPv4 addresses. Returns hit count + redacted samples per category, plus a high-severity blocker verdict. Use this on anything an agent is about to send, post, or commit. Critical for autonomous agents that may have ingested secrets from their context.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        text: { type: "string", description: "The text to scan for PII and secrets." },
+      },
+      required: ["text"],
+    },
+  },
+  {
+    name: "tone_score",
+    description:
+      "Score a text on four tone dimensions in one call: formal, casual, technical, urgent (each 0–1). Returns the dominant tone label plus the underlying signal counts (contractions, passive verbs, first/second-person pronouns, code blocks, brackets, exclamations, ALL-CAPS words, urgency keywords). Use this to check whether agent-generated copy matches the intended voice before sending — e.g. a customer-support reply should not score high on 'formal' or 'urgent'.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        text: { type: "string", description: "The text to score for tone." },
+      },
+      required: ["text"],
+    },
+  },
+  {
+    name: "compare_versions",
+    description:
+      "Compare two versions of a text (before/after) and return readability + tone deltas. Returns full readability profile and tone scores for each version, plus signed deltas for Flesch Reading Ease, average grade level, word count, and each tone dimension. Includes a one-line verdict like 'Easier to read (+8.2 Flesch) · Lower grade level (-1.4) · Shorter (-42 words)'. Use this in a draft → revise loop so the agent can prove the edit actually improved things.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        v1: { type: "string", description: "The original ('before') text." },
+        v2: { type: "string", description: "The revised ('after') text." },
+      },
+      required: ["v1", "v2"],
+    },
+  },
+  {
     name: "get_arc_trading_signal",
     description:
       "Fetch a live Solana DEX divergence trading signal from Soliris Arc — the agent-to-agent data market built on Arc (Circle's L1 blockchain). Each signal costs $0.001 USDC paid automatically on-chain via the x402 protocol. Signals identify real-time arbitrage spreads across Raydium, Orca, Jupiter, and Meteora. This is the agentic economy in action: your AI pays another AI for data, settled in under 1 second, no humans in the loop. Use demo=true to get a sample signal without payment. For live signals the API returns a 402 with payment details. Powered by Soliris (soliris.pro).",
@@ -617,6 +713,13 @@ const TOOLS = [
 
 const TOOL_FOOTER: Record<string, string> = {
   count_words: "\n\n— Toolora MCP · Interactive word counter + readability at toolora.dev/tools/productivity/word-counter · Pro plan ($19/mo): toolora.dev/pricing",
+  analyze_text: "\n\n— Toolora MCP · Writing-quality bundle (analyze, repetition, jargon, PII, tone, compare) · Free 200/day · Pro: toolora.dev/pricing",
+  count_tokens_multi: "\n\n— Toolora MCP · One call, every model. Pair with chunk_text for RAG pipelines · Pro: toolora.dev/pricing",
+  find_repetition: "\n\n— Toolora MCP · Writing-quality bundle · Pair with analyze_text + tone_score before publishing · Pro: toolora.dev/pricing",
+  detect_jargon: "\n\n— Toolora MCP · Run before sending exec/marketing copy · Pro plan: toolora.dev/pricing",
+  detect_pii: "\n\n— Toolora MCP · Run on anything an agent is about to commit, post, or send · Pro: toolora.dev/pricing",
+  tone_score: "\n\n— Toolora MCP · Pair with compare_versions for draft → revise loops · Pro: toolora.dev/pricing",
+  compare_versions: "\n\n— Toolora MCP · Prove your edit improved things — readability + tone deltas · Pro: toolora.dev/pricing",
   extract_pdf_text: "\n\n— Toolora MCP · Edit, annotate, and merge PDFs in your browser at toolora.dev · Pro plan: toolora.dev/pricing",
   extract_docx_text: "\n\n— Toolora MCP · Edit and export .docx files in your browser at toolora.dev/tools/productivity/docx-editor (no Office needed) · Pro: toolora.dev/pricing",
   csv_to_json: "\n\n— Toolora MCP · Visualise and convert CSV/JSON interactively at toolora.dev · Pro plan: toolora.dev/pricing",
@@ -1708,6 +1811,50 @@ function handleRunRegex(args: Record<string, unknown>): string {
   return JSON.stringify({ count: matches.length, pattern, flags: safeFlags, matches }, null, 2);
 }
 
+// ─── Writing-quality bundle handlers (thin wrappers around lib/writingQuality)
+
+function handleAnalyzeText(args: Record<string, unknown>): string {
+  const { text } = args as { text?: string };
+  if (typeof text !== "string" || !text.trim()) throw new McpToolError("Missing required argument: text");
+  return JSON.stringify(analyzeText(text), null, 2);
+}
+
+function handleCountTokensMulti(args: Record<string, unknown>): string {
+  const { text } = args as { text?: string };
+  if (typeof text !== "string") throw new McpToolError("Missing required argument: text");
+  return JSON.stringify(countTokensMulti(text), null, 2);
+}
+
+function handleFindRepetition(args: Record<string, unknown>): string {
+  const { text, topN, ignoreStopwords } = args as { text?: string; topN?: number; ignoreStopwords?: boolean };
+  if (typeof text !== "string") throw new McpToolError("Missing required argument: text");
+  return JSON.stringify(findRepetition(text, { topN, ignoreStopwords }), null, 2);
+}
+
+function handleDetectJargon(args: Record<string, unknown>): string {
+  const { text } = args as { text?: string };
+  if (typeof text !== "string") throw new McpToolError("Missing required argument: text");
+  return JSON.stringify(detectJargon(text), null, 2);
+}
+
+function handleDetectPii(args: Record<string, unknown>): string {
+  const { text } = args as { text?: string };
+  if (typeof text !== "string") throw new McpToolError("Missing required argument: text");
+  return JSON.stringify(detectPii(text), null, 2);
+}
+
+function handleToneScore(args: Record<string, unknown>): string {
+  const { text } = args as { text?: string };
+  if (typeof text !== "string") throw new McpToolError("Missing required argument: text");
+  return JSON.stringify(toneScore(text), null, 2);
+}
+
+function handleCompareVersions(args: Record<string, unknown>): string {
+  const { v1, v2 } = args as { v1?: string; v2?: string };
+  if (typeof v1 !== "string" || typeof v2 !== "string") throw new McpToolError("Missing required arguments: v1 and v2 (both strings)");
+  return JSON.stringify(compareVersions(v1, v2), null, 2);
+}
+
 function handleHashText(args: Record<string, unknown>): string {
   const { text, algorithm = "sha256", encoding = "hex" } = args as {
     text?: string; algorithm?: string; encoding?: string;
@@ -2037,6 +2184,27 @@ Notable browser tools:
               break;
             case "hash_text":
               text = handleHashText(args);
+              break;
+            case "analyze_text":
+              text = handleAnalyzeText(args);
+              break;
+            case "count_tokens_multi":
+              text = handleCountTokensMulti(args);
+              break;
+            case "find_repetition":
+              text = handleFindRepetition(args);
+              break;
+            case "detect_jargon":
+              text = handleDetectJargon(args);
+              break;
+            case "detect_pii":
+              text = handleDetectPii(args);
+              break;
+            case "tone_score":
+              text = handleToneScore(args);
+              break;
+            case "compare_versions":
+              text = handleCompareVersions(args);
               break;
             case "private_execute_tool": {
               const ptool = typeof args.tool === "string" ? args.tool : "";

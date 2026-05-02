@@ -80,6 +80,7 @@ const NAV_MENUS: NavMenu[] = [
           { label: "API documentation", href: "/api-docs", icon: BookOpen, description: "REST + MCP endpoints" },
           { label: "Your API keys", href: "/api-keys", icon: Key, description: "Create, rotate, revoke" },
           { label: "Toolora Gateway", href: "/gateway", icon: CreditCard, description: "Get paid in USDC per call" },
+          { label: "Publish your API", href: "/publish", icon: Sparkles, description: "Paste OpenAPI URL → MCP in 60s" },
           { label: "Integrations", href: "/integrations", icon: Puzzle, description: "n8n, Zapier, Make" },
         ],
       },
