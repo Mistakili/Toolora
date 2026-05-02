@@ -1,0 +1,14 @@
+{
+  "name": "hello-world-mcp",
+  "version": "0.1.0",
+  "description": "Smallest possible MCP server, ready to be billed through Toolora Gateway.",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "MIT"
+}

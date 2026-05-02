@@ -15,6 +15,8 @@ import { buildX402Challenge, verifyX402Payment } from "../lib/x402";
 import { splitUsdc, payoutMode } from "../lib/usdcSplitter";
 import { verifyOwnerToken, extractBearerToken } from "../lib/ownerToken";
 import { logger } from "../lib/logger";
+import { getPublicProofRows } from "../lib/gatewayRefunds";
+import { openapiMcpSpecsTable } from "@workspace/db/schema";
 
 const router: IRouter = Router();
 
@@ -404,6 +406,9 @@ router.post("/configs/:listingId", requireOwner, async (req: Request, res: Respo
       payoutWalletAddress?: string;
       payoutNetwork?: string;
       upstreamMcpUrl?: string;
+      embedEnabled?: boolean;
+      proofPublic?: boolean;
+      leaderboardOptIn?: boolean;
     };
 
     // Convert dollars → micros if dollars were supplied
@@ -433,6 +438,13 @@ router.post("/configs/:listingId", requireOwner, async (req: Request, res: Respo
 
     const network = body.payoutNetwork === "stellar" ? "stellar" : "solana";
     const enabled = body.enabled === true;
+    // The 3 distribution opt-ins are independent of `enabled` (an owner may
+    // want their listing live but not show their numbers publicly, or vice
+    // versa). Treat omitted as false so the upsert is deterministic — POST
+    // is the dashboard's full save, not a partial.
+    const embedEnabled = body.embedEnabled === true;
+    const proofPublic = body.proofPublic === true;
+    const leaderboardOptIn = body.leaderboardOptIn === true;
 
     const existing = await getAnyConfig(listingId);
     if (existing) {
@@ -444,6 +456,9 @@ router.post("/configs/:listingId", requireOwner, async (req: Request, res: Respo
           payoutWalletAddress: body.payoutWalletAddress,
           payoutNetwork: network,
           upstreamMcpUrl: body.upstreamMcpUrl,
+          embedEnabled,
+          proofPublic,
+          leaderboardOptIn,
           updatedAt: new Date(),
         })
         .where(eq(gatewayConfigsTable.id, existing.id));
@@ -455,6 +470,9 @@ router.post("/configs/:listingId", requireOwner, async (req: Request, res: Respo
         payoutWalletAddress: body.payoutWalletAddress,
         payoutNetwork: network,
         upstreamMcpUrl: body.upstreamMcpUrl,
+        embedEnabled,
+        proofPublic,
+        leaderboardOptIn,
       });
     }
     const fresh = await getAnyConfig(listingId);
@@ -481,6 +499,9 @@ router.patch("/configs/:listingId", requireOwner, async (req: Request, res: Resp
       payoutWalletAddress: string;
       payoutNetwork: string;
       upstreamMcpUrl: string;
+      embedEnabled: boolean;
+      proofPublic: boolean;
+      leaderboardOptIn: boolean;
     }>;
     const patch: Record<string, unknown> = { updatedAt: new Date() };
 
@@ -504,6 +525,12 @@ router.patch("/configs/:listingId", requireOwner, async (req: Request, res: Resp
       }
       patch.upstreamMcpUrl = body.upstreamMcpUrl;
     }
+    // Three independent owner opt-ins. Each gates a different public surface
+    // (embed badge / on-chain proof page / leaderboard). All default false at
+    // schema level, so the only way they get exposed is via this PATCH.
+    if (typeof body.embedEnabled === "boolean") patch.embedEnabled = body.embedEnabled;
+    if (typeof body.proofPublic === "boolean") patch.proofPublic = body.proofPublic;
+    if (typeof body.leaderboardOptIn === "boolean") patch.leaderboardOptIn = body.leaderboardOptIn;
 
     await db.update(gatewayConfigsTable).set(patch).where(eq(gatewayConfigsTable.id, existing.id));
     const fresh = await getAnyConfig(listingId);
@@ -694,6 +721,435 @@ router.get("/public-demo-stats", async (_req: Request, res: Response): Promise<v
       lastSettledAt: null,
     });
   }
+});
+
+// ─── 6c. Public stats — GET /public-stats/:listingId (gated) ───────────────
+// Per-listing aggregate stats for the embeddable badge. Owner must have
+// turned on `embed_enabled` in their gateway config. Same response shape as
+// /public-demo-stats so the GatewayLiveTicker can reuse it. Aggregate-only
+// — no caller addresses, no per-event detail.
+router.get("/public-stats/:listingId", async (req: Request, res: Response): Promise<void> => {
+  res.setHeader("Cache-Control", "public, max-age=15, stale-while-revalidate=60");
+  const listingId = String(req.params.listingId ?? "");
+  if (!listingId) {
+    res.status(400).json({ ok: false, error: "missing_listing_id" });
+    return;
+  }
+  const cfg = await getAnyConfig(listingId);
+  if (!cfg || !(cfg as GatewayConfig & { embedEnabled?: boolean }).embedEnabled) {
+    res.status(404).json({ ok: false, error: "embed_not_enabled" });
+    return;
+  }
+
+  try {
+    const rows = await db
+      .select({
+        status: gatewayBillingEventsTable.status,
+        calls: sql<number>`count(*)::int`,
+        callerPaidMicros: sql<number>`coalesce(sum(${gatewayBillingEventsTable.amountUsdcMicros}), 0)::bigint`,
+        ownerEarnedMicros: sql<number>`coalesce(sum(${gatewayBillingEventsTable.amountUsdcMicros} - ${gatewayBillingEventsTable.tooloraFeeUsdcMicros}), 0)::bigint`,
+        feeMicros: sql<number>`coalesce(sum(${gatewayBillingEventsTable.tooloraFeeUsdcMicros}), 0)::bigint`,
+        lastAt: sql<string | null>`max(${gatewayBillingEventsTable.createdAt})`,
+      })
+      .from(gatewayBillingEventsTable)
+      .where(eq(gatewayBillingEventsTable.listingId, listingId))
+      .groupBy(gatewayBillingEventsTable.status);
+
+    let totalCalls = 0;
+    let settledCalls = 0;
+    let failedCalls = 0;
+    let ownerEarnedMicros = 0;
+    let feeMicros = 0;
+    let callerPaidMicros = 0;
+    let lastSettledEpochMs = 0;
+    for (const r of rows) {
+      const calls = Number(r.calls) || 0;
+      totalCalls += calls;
+      if (r.status === "settled") {
+        settledCalls += calls;
+        ownerEarnedMicros += Number(r.ownerEarnedMicros) || 0;
+        feeMicros += Number(r.feeMicros) || 0;
+        callerPaidMicros += Number(r.callerPaidMicros) || 0;
+        if (r.lastAt) {
+          // r.lastAt comes back as `string | null` per the column types but
+          // some pg drivers materialize it as a Date — coerce defensively.
+          const raw = r.lastAt as unknown;
+          const t = raw instanceof Date ? raw.getTime() : Date.parse(String(raw));
+          if (Number.isFinite(t) && t > lastSettledEpochMs) lastSettledEpochMs = t;
+        }
+      } else if (r.status === "failed") {
+        failedCalls += calls;
+      }
+    }
+
+    res.json({
+      listingId,
+      mode: payoutMode(),
+      totals: { calls: totalCalls, settled: settledCalls, failed: failedCalls },
+      usdc: {
+        callerPaidMicros,
+        ownerEarnedMicros,
+        tooloraFeeMicros: feeMicros,
+        callerPaidUsd: callerPaidMicros / 1_000_000,
+        ownerEarnedUsd: ownerEarnedMicros / 1_000_000,
+        tooloraFeeUsd: feeMicros / 1_000_000,
+      },
+      lastSettledAt: lastSettledEpochMs > 0 ? new Date(lastSettledEpochMs).toISOString() : null,
+    });
+  } catch (err) {
+    logger.warn({ err, listingId }, "[gateway] public-stats query failed");
+    res.status(500).json({ ok: false, error: "server_error" });
+  }
+});
+
+// ─── 6d. Public proof — GET /public-proof/:listingId (gated) ────────────────
+// Last 50 billing events for a listing, projecting only on-chain artifacts
+// (tx hashes, amounts, status). Gated by `proof_public` opt-in. Designed to
+// power the public proof page where YC partners / customers can audit any
+// listing in <30 seconds by clicking the explorer links.
+router.get("/public-proof/:listingId", async (req: Request, res: Response): Promise<void> => {
+  res.setHeader("Cache-Control", "public, max-age=15, stale-while-revalidate=60");
+  const listingId = String(req.params.listingId ?? "");
+  const limit = Math.min(100, Math.max(1, parseInt(String(req.query.limit ?? "50"), 10) || 50));
+  if (!listingId) {
+    res.status(400).json({ ok: false, error: "missing_listing_id" });
+    return;
+  }
+  const cfg = await getAnyConfig(listingId);
+  if (!cfg || !(cfg as GatewayConfig & { proofPublic?: boolean }).proofPublic) {
+    res.status(404).json({ ok: false, error: "proof_not_public" });
+    return;
+  }
+  const listing = await getListing(listingId);
+  if (!listing) {
+    res.status(404).json({ ok: false, error: "listing_not_found" });
+    return;
+  }
+  try {
+    const rows = await getPublicProofRows(listingId, limit);
+    res.json({
+      ok: true,
+      listing: { id: listing.id, name: listing.name },
+      mode: payoutMode(),
+      rows,
+    });
+  } catch (err) {
+    logger.warn({ err, listingId }, "[gateway] public-proof query failed");
+    res.status(500).json({ ok: false, error: "server_error" });
+  }
+});
+
+// ─── 6e. Leaderboard — GET /leaderboard ─────────────────────────────────────
+// Top 10 listings by settled USDC volume across all opt-in listings. 60 s
+// cache so a Hacker News spike can't melt the DB.
+router.get("/leaderboard", async (_req: Request, res: Response): Promise<void> => {
+  res.setHeader("Cache-Control", "public, max-age=60, stale-while-revalidate=300");
+  try {
+    const rows = await db
+      .select({
+        listingId: gatewayBillingEventsTable.listingId,
+        name: mcpListingsTable.name,
+        calls: sql<number>`count(*)::int`,
+        callerPaidMicros: sql<number>`coalesce(sum(${gatewayBillingEventsTable.amountUsdcMicros}), 0)::bigint`,
+        ownerEarnedMicros: sql<number>`coalesce(sum(${gatewayBillingEventsTable.amountUsdcMicros} - ${gatewayBillingEventsTable.tooloraFeeUsdcMicros}), 0)::bigint`,
+      })
+      .from(gatewayBillingEventsTable)
+      .innerJoin(gatewayConfigsTable, eq(gatewayConfigsTable.listingId, gatewayBillingEventsTable.listingId))
+      .innerJoin(mcpListingsTable, eq(mcpListingsTable.id, gatewayBillingEventsTable.listingId))
+      .where(
+        and(
+          eq(gatewayBillingEventsTable.status, "settled"),
+          eq(gatewayConfigsTable.leaderboardOptIn, true),
+        ),
+      )
+      .groupBy(gatewayBillingEventsTable.listingId, mcpListingsTable.name)
+      .orderBy(desc(sql`sum(${gatewayBillingEventsTable.amountUsdcMicros} - ${gatewayBillingEventsTable.tooloraFeeUsdcMicros})`))
+      .limit(10);
+
+    // mcp_listings has no `slug` column — listing detail pages route by id.
+    // Leaderboard.tsx tolerates `slug: null` and just hides the deep-link icon.
+    const entries = rows.map((r, idx) => ({
+      rank: idx + 1,
+      listingId: r.listingId,
+      name: r.name,
+      slug: null as string | null,
+      calls: Number(r.calls) || 0,
+      callerPaidUsd: (Number(r.callerPaidMicros) || 0) / 1_000_000,
+      ownerEarnedUsd: (Number(r.ownerEarnedMicros) || 0) / 1_000_000,
+    }));
+
+    res.json({ ok: true, generatedAt: new Date().toISOString(), entries });
+  } catch (err) {
+    logger.warn({ err }, "[gateway] leaderboard query failed");
+    res.json({ ok: true, generatedAt: new Date().toISOString(), entries: [] });
+  }
+});
+
+// ─── 6f. OpenAPI → MCP shim ─────────────────────────────────────────────────
+// Anyone with a public OpenAPI 3 JSON spec can register it and get back a
+// gateway-billable MCP URL. This is the "long-tail capture" lever — any
+// service with a REST API gets MCP-shaped + monetizable in one POST.
+//
+// Security model: the spec URL itself is SSRF-validated, the parsed
+// servers[].url (the upstream the shim forwards to) is SSRF-validated, and
+// every per-call invocation re-validates because operation paths can include
+// path params that change the resolved host. We never expose secrets — auth
+// for the upstream API is the spec author's problem (use a proxy that adds
+// the API key, then publish that proxy's spec).
+
+interface OpenApiOperation {
+  toolName: string; // sanitized op name
+  method: string;
+  path: string;
+  summary?: string;
+  description?: string;
+  parameters?: Array<{ name: string; in: string; required?: boolean; schema?: unknown }>;
+  requestBody?: { required?: boolean; content?: Record<string, { schema?: unknown }> };
+}
+
+interface ParsedSpec {
+  baseUrl: string;
+  title: string;
+  description?: string;
+  operations: OpenApiOperation[];
+}
+
+const MAX_SPEC_BYTES = 2 * 1024 * 1024; // 2 MB cap on spec payloads
+
+async function fetchAndParseSpec(specUrl: string): Promise<ParsedSpec> {
+  const ssrf = await validateUpstreamUrl(specUrl);
+  if (!ssrf.ok) throw new Error(`spec_url_blocked: ${ssrf.reason}`);
+
+  const dispatcher = pinnedDispatcher(ssrf.resolvedIps ?? []);
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), 15_000);
+  // The local `Response` type is Express's res shape (this file is also a
+  // route handler); the WHATWG `Response` we actually get from undiciFetch
+  // collides with it. Use a structural type for the fields we need.
+  let resp: { ok: boolean; status: number; text(): Promise<string> };
+  try {
+    resp = (await undiciFetch(specUrl, {
+      method: "GET",
+      headers: { accept: "application/json" },
+      signal: ctrl.signal,
+      dispatcher,
+    })) as unknown as { ok: boolean; status: number; text(): Promise<string> };
+  } finally {
+    clearTimeout(timer);
+  }
+  if (!resp.ok) throw new Error(`spec_fetch_failed: http_${resp.status}`);
+
+  const text = await resp.text();
+  if (text.length > MAX_SPEC_BYTES) throw new Error("spec_too_large");
+  let json: unknown;
+  try {
+    json = JSON.parse(text);
+  } catch {
+    throw new Error("spec_not_json");
+  }
+
+  const spec = json as {
+    openapi?: string;
+    info?: { title?: string; description?: string };
+    servers?: Array<{ url?: string }>;
+    paths?: Record<string, Record<string, {
+      operationId?: string;
+      summary?: string;
+      description?: string;
+      parameters?: OpenApiOperation["parameters"];
+      requestBody?: OpenApiOperation["requestBody"];
+    }>>;
+  };
+  if (!spec.openapi || !spec.openapi.startsWith("3.")) throw new Error("unsupported_openapi_version");
+  const baseUrl = spec.servers?.[0]?.url;
+  if (!baseUrl) throw new Error("spec_missing_server_url");
+  // SSRF-validate the resolved upstream base too
+  const baseSsrf = await validateUpstreamUrl(baseUrl);
+  if (!baseSsrf.ok) throw new Error(`base_url_blocked: ${baseSsrf.reason}`);
+
+  const operations: OpenApiOperation[] = [];
+  const HTTP_METHODS = ["get", "post", "put", "patch", "delete"] as const;
+  for (const [pathKey, pathItem] of Object.entries(spec.paths ?? {})) {
+    for (const method of HTTP_METHODS) {
+      const op = pathItem[method];
+      if (!op) continue;
+      const rawName = op.operationId ?? `${method}_${pathKey.replace(/[^a-z0-9]+/gi, "_")}`;
+      const toolName = rawName.replace(/[^a-zA-Z0-9_-]/g, "_").slice(0, 80);
+      operations.push({
+        toolName,
+        method: method.toUpperCase(),
+        path: pathKey,
+        summary: op.summary,
+        description: op.description,
+        parameters: op.parameters,
+        requestBody: op.requestBody,
+      });
+      if (operations.length >= 200) break;
+    }
+    if (operations.length >= 200) break;
+  }
+  if (operations.length === 0) throw new Error("spec_no_operations");
+
+  return {
+    baseUrl,
+    title: spec.info?.title ?? "Untitled API",
+    description: spec.info?.description,
+    operations,
+  };
+}
+
+router.post("/openapi-to-mcp/init", async (req: Request, res: Response): Promise<void> => {
+  const body = (req.body ?? {}) as { specUrl?: string };
+  const specUrl = String(body.specUrl ?? "").trim();
+  if (!specUrl) {
+    res.status(400).json({ ok: false, error: "missing_spec_url" });
+    return;
+  }
+  try {
+    const parsed = await fetchAndParseSpec(specUrl);
+
+    const inserted = await db
+      .insert(openapiMcpSpecsTable)
+      .values({
+        specUrl,
+        baseUrl: parsed.baseUrl,
+        name: parsed.title,
+        description: parsed.description,
+        parsedSpecJson: parsed,
+      })
+      .returning({ id: openapiMcpSpecsTable.id });
+
+    const specId = inserted[0]?.id;
+    if (!specId) {
+      res.status(500).json({ ok: false, error: "insert_failed" });
+      return;
+    }
+    res.json({
+      ok: true,
+      specId,
+      title: parsed.title,
+      operationCount: parsed.operations.length,
+      mcpUrl: `/api/gateway/openapi-mcp/${specId}`,
+      hint: "Use mcpUrl as your Toolora gateway upstreamMcpUrl. Each operation becomes a tool callable via JSON-RPC tools/call.",
+    });
+  } catch (err) {
+    const reason = err instanceof Error ? err.message : "unknown";
+    res.status(400).json({ ok: false, error: "spec_invalid", reason });
+  }
+});
+
+router.all("/openapi-mcp/:specId", async (req: Request, res: Response): Promise<void> => {
+  const specId = String(req.params.specId ?? "");
+  if (!specId) {
+    res.status(400).json({ jsonrpc: "2.0", id: null, error: { code: -32600, message: "missing_spec_id" } });
+    return;
+  }
+  if (req.method === "GET") {
+    res.json({ ok: true, hint: "POST a JSON-RPC body. tools/list returns operations; tools/call invokes." });
+    return;
+  }
+
+  let row: { id: string; baseUrl: string; parsedSpecJson: unknown } | undefined;
+  try {
+    const rows = await db
+      .select({
+        id: openapiMcpSpecsTable.id,
+        baseUrl: openapiMcpSpecsTable.baseUrl,
+        parsedSpecJson: openapiMcpSpecsTable.parsedSpecJson,
+      })
+      .from(openapiMcpSpecsTable)
+      .where(eq(openapiMcpSpecsTable.id, specId))
+      .limit(1);
+    row = rows[0];
+  } catch {
+    /* fall through */
+  }
+  if (!row) {
+    res.status(404).json({ jsonrpc: "2.0", id: null, error: { code: -32601, message: "spec_not_found" } });
+    return;
+  }
+  const parsed = row.parsedSpecJson as ParsedSpec;
+  const body = (req.body ?? {}) as { jsonrpc?: string; id?: number | string; method?: string; params?: { name?: string; arguments?: Record<string, unknown> } };
+  const id = body?.id ?? null;
+  const method = body?.method ?? "";
+
+  if (method === "tools/list" || method === "initialize") {
+    const tools = parsed.operations.map((op) => ({
+      name: op.toolName,
+      description: op.summary ?? op.description ?? `${op.method} ${op.path}`,
+      inputSchema: { type: "object", properties: {}, additionalProperties: true },
+    }));
+    res.json({ jsonrpc: "2.0", id, result: { tools } });
+    return;
+  }
+
+  if (method === "tools/call") {
+    const toolName = body.params?.name ?? "";
+    const args = (body.params?.arguments ?? {}) as Record<string, unknown>;
+    const op = parsed.operations.find((o) => o.toolName === toolName);
+    if (!op) {
+      res.status(404).json({ jsonrpc: "2.0", id, error: { code: -32601, message: `unknown_tool: ${toolName}` } });
+      return;
+    }
+
+    // Substitute path params from arguments. Anything left over is sent as a
+    // query string (GET/DELETE) or JSON body (POST/PUT/PATCH).
+    let path = op.path;
+    const consumed = new Set<string>();
+    path = path.replace(/\{([^}]+)\}/g, (_, name: string) => {
+      consumed.add(name);
+      const v = args[name];
+      return encodeURIComponent(String(v ?? ""));
+    });
+    const remainingArgs: Record<string, unknown> = {};
+    for (const [k, v] of Object.entries(args)) if (!consumed.has(k)) remainingArgs[k] = v;
+
+    const url = new URL(path, parsed.baseUrl).toString();
+    // Final SSRF check on the constructed URL — path params could have shifted
+    // the host/port if the spec is malicious.
+    const ssrf = await validateUpstreamUrl(url);
+    if (!ssrf.ok) {
+      res.status(400).json({ jsonrpc: "2.0", id, error: { code: -32602, message: `url_blocked: ${ssrf.reason}` } });
+      return;
+    }
+
+    const usesQuery = op.method === "GET" || op.method === "DELETE";
+    const finalUrl = usesQuery && Object.keys(remainingArgs).length > 0
+      ? `${url}?${new URLSearchParams(Object.fromEntries(Object.entries(remainingArgs).map(([k, v]) => [k, String(v)])))}`
+      : url;
+
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), UPSTREAM_TIMEOUT_MS);
+    try {
+      const upstream = (await undiciFetch(finalUrl, {
+        method: op.method,
+        headers: usesQuery ? { accept: "application/json" } : { accept: "application/json", "content-type": "application/json" },
+        body: usesQuery ? undefined : JSON.stringify(remainingArgs),
+        signal: ctrl.signal,
+        dispatcher: pinnedDispatcher(ssrf.resolvedIps ?? []),
+      })) as unknown as { ok: boolean; status: number; text(): Promise<string> };
+      const text = await upstream.text();
+      const truncated = text.length > MAX_UPSTREAM_BYTES;
+      res.json({
+        jsonrpc: "2.0",
+        id,
+        result: {
+          content: [
+            { type: "text", text: truncated ? text.slice(0, MAX_UPSTREAM_BYTES) + "\n…(truncated)" : text },
+          ],
+          meta: { upstreamStatus: upstream.status, openapiTool: op.toolName, method: op.method, path: op.path },
+        },
+      });
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "upstream_failed";
+      res.status(502).json({ jsonrpc: "2.0", id, error: { code: -32603, message: `upstream_failed: ${msg}` } });
+    } finally {
+      clearTimeout(timer);
+    }
+    return;
+  }
+
+  res.json({ jsonrpc: "2.0", id, error: { code: -32601, message: `unknown_method: ${method}` } });
 });
 
 // ─── 7. Echo MCP (smoke-test upstream) ─────────────────────────────────────

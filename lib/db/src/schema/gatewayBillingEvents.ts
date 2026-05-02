@@ -18,6 +18,13 @@ export const gatewayBillingEventsTable = pgTable(
     payoutTxHash: text("payout_tx_hash"),
     status: text("status").notNull().default("pending"),
     errorReason: text("error_reason"),
+    // Auto-refund tracking. When the upstream returns non-2xx, times out, or
+    // is unreachable, the agent has already paid via x402 but didn't get a
+    // working response. The refund worker scans status='failed' rows where
+    // refund_tx_hash IS NULL and issues a refund (synthetic in stub mode,
+    // real Solana tx in broadcast mode), then records the tx + refunded_at.
+    refundTxHash: text("refund_tx_hash"),
+    refundedAt: timestamp("refunded_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
     settledAt: timestamp("settled_at", { withTimezone: true }),
   },
@@ -26,6 +33,11 @@ export const gatewayBillingEventsTable = pgTable(
     listingIdx: index("gw_events_listing_idx").on(t.listingId),
     statusIdx: index("gw_events_status_idx").on(t.status),
     createdAtIdx: index("gw_events_created_idx").on(t.createdAt),
+    // Partial-ish index for the refund worker scan. We don't have partial-
+    // index syntax in drizzle's pgTable builder, so this is a regular
+    // composite that the planner can still use for the (status='failed' AND
+    // refund_tx_hash IS NULL) lookup.
+    refundScanIdx: index("gw_events_refund_scan_idx").on(t.status, t.refundTxHash),
   }),
 );
 

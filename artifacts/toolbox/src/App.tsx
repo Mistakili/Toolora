@@ -52,6 +52,9 @@ const SubmitMCP = lazy(() => import("@/pages/SubmitMCP"));
 const McpOwnerDashboard = lazy(() => import("@/pages/McpOwnerDashboard"));
 const McpAuthors = lazy(() => import("@/pages/McpAuthors"));
 const Agents = lazy(() => import("@/pages/Agents"));
+const GatewayBadgeEmbed = lazy(() => import("@/pages/GatewayBadgeEmbed"));
+const GatewayProof = lazy(() => import("@/pages/GatewayProof"));
+const Leaderboard = lazy(() => import("@/pages/Leaderboard"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -84,6 +87,8 @@ function Router() {
         {/* Standalone pages — no header/footer */}
         <Route path="/showcase" component={Showcase} />
         <Route path="/p/:id" component={Paste} />
+        {/* Iframe-only embed; intentionally has no app shell so it tile-fits in third-party READMEs */}
+        <Route path="/embed/gateway-badge/:listingId" component={GatewayBadgeEmbed} />
 
         {/* All other pages — wrapped in AppLayout */}
         <Route>
@@ -112,6 +117,8 @@ function Router() {
               <Route path="/host" component={Host} />
               <Route path="/x402" component={X402} />
               <Route path="/gateway" component={Gateway} />
+              <Route path="/gateway/proof/:listingId" component={GatewayProof} />
+              <Route path="/leaderboard" component={Leaderboard} />
               <Route path="/about" component={About} />
               <Route path="/integrations" component={Integrations} />
               <Route path="/gdpr" component={GdprCompliance} />

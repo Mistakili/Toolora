@@ -34,3 +34,4 @@ export * from "./checkoutIntents";
 export * from "./mcpListingEvents";
 export * from "./gatewayConfigs";
 export * from "./gatewayBillingEvents";
+export * from "./openapiMcpSpecs";

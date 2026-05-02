@@ -298,6 +298,9 @@ function GatewayBillingTab({ listingId, listingName, token }: { listingId: strin
     payoutWalletAddress: "",
     payoutNetwork: "solana",
     upstreamMcpUrl: "",
+    embedEnabled: false,
+    proofPublic: false,
+    leaderboardOptIn: false,
   });
   // Track whether the operator has touched the form since the last successful
   // load/save. While dirty=true we MUST NOT overwrite their typed values from
@@ -322,6 +325,9 @@ function GatewayBillingTab({ listingId, listingName, token }: { listingId: strin
             payoutWalletAddress: cfg.config.payoutWalletAddress,
             payoutNetwork: cfg.config.payoutNetwork,
             upstreamMcpUrl: cfg.config.upstreamMcpUrl,
+            embedEnabled: cfg.config.embedEnabled ?? false,
+            proofPublic: cfg.config.proofPublic ?? false,
+            leaderboardOptIn: cfg.config.leaderboardOptIn ?? false,
           });
           setDirty(false);
         }
@@ -382,6 +388,9 @@ function GatewayBillingTab({ listingId, listingName, token }: { listingId: strin
           payoutWalletAddress: form.payoutWalletAddress.trim(),
           payoutNetwork: form.payoutNetwork,
           upstreamMcpUrl: form.upstreamMcpUrl.trim(),
+          embedEnabled: form.embedEnabled,
+          proofPublic: form.proofPublic,
+          leaderboardOptIn: form.leaderboardOptIn,
         }),
       });
       const d = await r.json();
@@ -521,6 +530,71 @@ function GatewayBillingTab({ listingId, listingName, token }: { listingId: strin
             Gateway forwards paid requests here. Private addresses (loopback, RFC1918, link-local) are blocked.
             For testing, you can point at <code>{window.location.origin}/api/gateway/echo</code>.
           </p>
+        </div>
+
+        {/* Public surfaces — three independent opt-ins. All default OFF; */}
+        {/* anything aggregated about your listing is private until you tick a box. */}
+        <div className="rounded-xl border border-zinc-800 bg-zinc-950/40 p-4 space-y-3">
+          <div className="flex items-center justify-between gap-3">
+            <h4 className="text-xs font-semibold text-zinc-200 uppercase tracking-wider">Public surfaces (opt-in)</h4>
+            <span className="text-[10px] text-zinc-600">all default off</span>
+          </div>
+          <label className="flex items-start gap-3 cursor-pointer group">
+            <input
+              type="checkbox"
+              checked={form.embedEnabled}
+              onChange={(e) => { setForm({ ...form, embedEnabled: e.target.checked }); setDirty(true); }}
+              className="mt-1 w-4 h-4 accent-emerald-500 shrink-0"
+            />
+            <div className="flex-1">
+              <div className="text-xs font-medium text-zinc-200 group-hover:text-zinc-100">Embeddable live badge</div>
+              <p className="text-[11px] text-zinc-500 mt-0.5">
+                Allow anyone to embed an iframe showing your call count + USDC paid (aggregate only).
+                {form.embedEnabled && (
+                  <>
+                    {" "}Snippet:{" "}
+                    <code className="text-emerald-300 break-all">
+                      &lt;iframe src="{window.location.origin}/embed/gateway-badge/{listingId}" width="320" height="120" frameborder="0"&gt;&lt;/iframe&gt;
+                    </code>
+                  </>
+                )}
+              </p>
+            </div>
+          </label>
+          <label className="flex items-start gap-3 cursor-pointer group">
+            <input
+              type="checkbox"
+              checked={form.proofPublic}
+              onChange={(e) => { setForm({ ...form, proofPublic: e.target.checked }); setDirty(true); }}
+              className="mt-1 w-4 h-4 accent-emerald-500 shrink-0"
+            />
+            <div className="flex-1">
+              <div className="text-xs font-medium text-zinc-200 group-hover:text-zinc-100">Public on-chain proof page</div>
+              <p className="text-[11px] text-zinc-500 mt-0.5">
+                Publishes the last 50 billing events with deep-links to the Solana explorer.
+                {form.proofPublic && (
+                  <>
+                    {" "}Live at <Link href={`/gateway/proof/${listingId}`} className="text-emerald-300 hover:underline">/gateway/proof/{listingId.slice(0, 8)}…</Link>
+                  </>
+                )}
+              </p>
+            </div>
+          </label>
+          <label className="flex items-start gap-3 cursor-pointer group">
+            <input
+              type="checkbox"
+              checked={form.leaderboardOptIn}
+              onChange={(e) => { setForm({ ...form, leaderboardOptIn: e.target.checked }); setDirty(true); }}
+              className="mt-1 w-4 h-4 accent-emerald-500 shrink-0"
+            />
+            <div className="flex-1">
+              <div className="text-xs font-medium text-zinc-200 group-hover:text-zinc-100">Show on Toolora Index leaderboard</div>
+              <p className="text-[11px] text-zinc-500 mt-0.5">
+                Ranks your listing on <Link href="/leaderboard" className="text-emerald-300 hover:underline">/leaderboard</Link> by USDC paid.
+                Aggregate-only; no caller addresses leaked.
+              </p>
+            </div>
+          </label>
         </div>
 
         {error && <p className="text-xs text-amber-400">{error}</p>}

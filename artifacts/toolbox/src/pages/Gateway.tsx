@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Link } from "wouter";
-import { ArrowLeft, Coins, Zap, Bot, ArrowRight, Check, Github, ExternalLink, Copy } from "lucide-react";
+import { ArrowLeft, Coins, Zap, Bot, ArrowRight, Check, Github, ExternalLink, Copy, Trophy, Rocket, Code2 } from "lucide-react";
 import { useSEO } from "@/hooks/useSEO";
 import GatewayLiveTicker from "@/components/GatewayLiveTicker";
 
@@ -173,24 +173,26 @@ export default function Gateway() {
           </pre>
         </div>
 
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/40 p-6 mb-10">
-          <h3 className="font-semibold text-zinc-100 mb-3">Pricing (you set it)</h3>
-          <div className="grid sm:grid-cols-3 gap-3 text-sm">
-            <div className="rounded-lg bg-zinc-950 p-4">
-              <div className="text-xs text-zinc-500 mb-1">Caller pays</div>
-              <div className="text-2xl font-bold text-zinc-100 tabular-nums">$0.001</div>
-              <div className="text-xs text-zinc-500 mt-1">per call (you choose)</div>
-            </div>
-            <div className="rounded-lg bg-zinc-950 p-4">
-              <div className="text-xs text-zinc-500 mb-1">You earn</div>
-              <div className="text-2xl font-bold text-emerald-400 tabular-nums">$0.00095</div>
-              <div className="text-xs text-zinc-500 mt-1">95% — settled instantly</div>
-            </div>
-            <div className="rounded-lg bg-zinc-950 p-4">
-              <div className="text-xs text-zinc-500 mb-1">Toolora keeps</div>
-              <div className="text-2xl font-bold text-violet-400 tabular-nums">$0.00005</div>
-              <div className="text-xs text-zinc-500 mt-1">5% — infra + directory</div>
-            </div>
+        <EarningsCalculator />
+
+        <HelloWorldSection />
+
+        <EmbedBadgeSection />
+
+        <div className="rounded-2xl border border-amber-500/30 bg-gradient-to-br from-amber-950/20 to-zinc-900/40 p-6 mb-6 flex items-start gap-4">
+          <Trophy className="w-6 h-6 text-amber-400 mt-0.5 shrink-0" />
+          <div className="flex-1">
+            <h3 className="font-semibold text-zinc-100 mb-1">Compete on the Toolora Index</h3>
+            <p className="text-sm text-zinc-400 mb-3">
+              Top-earning gateway listings ranked publicly by USDC paid (opt-in only — your numbers stay private until
+              you flip the switch). Free distribution + social proof.
+            </p>
+            <Link
+              href="/leaderboard"
+              className="inline-flex items-center gap-1.5 text-xs font-medium text-amber-300 hover:text-amber-200"
+            >
+              See the index <ArrowRight className="w-3 h-3" />
+            </Link>
           </div>
         </div>
 
@@ -232,5 +234,201 @@ export default function Gateway() {
         </div>
       </div>
     </main>
+  );
+}
+
+/**
+ * "What you'd earn" calculator.
+ *
+ * The single highest-leverage piece of copy on this page — turns the abstract
+ * "5% take rate, sub-cent unit economics" pitch into a concrete monthly USDC
+ * number the visitor's CFO brain can latch onto. Pure JSX, no backend.
+ */
+function EarningsCalculator() {
+  const [callsPerDay, setCallsPerDay] = useState(1000);
+  const [pricePerCallUsd, setPricePerCallUsd] = useState(0.001);
+
+  const numbers = useMemo(() => {
+    const dailyGross = callsPerDay * pricePerCallUsd;
+    const dailyOwner = dailyGross * 0.95;
+    const dailyToolora = dailyGross * 0.05;
+    return {
+      dailyGross,
+      dailyOwner,
+      monthlyOwner: dailyOwner * 30,
+      yearlyOwner: dailyOwner * 365,
+      dailyToolora,
+    };
+  }, [callsPerDay, pricePerCallUsd]);
+
+  const fmt = (n: number) => {
+    if (n >= 1000) return `$${n.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+    if (n >= 1) return `$${n.toFixed(2)}`;
+    if (n >= 0.01) return `$${n.toFixed(4)}`;
+    return `$${n.toFixed(6)}`;
+  };
+
+  return (
+    <div className="rounded-2xl border border-emerald-500/20 bg-gradient-to-br from-emerald-950/20 to-zinc-900/40 p-6 mb-6">
+      <div className="flex items-center justify-between gap-3 flex-wrap mb-4">
+        <h3 className="font-semibold text-zinc-100">What you'd earn</h3>
+        <span className="text-[10px] uppercase tracking-wider text-emerald-300/80">95% to you · settled per-call</span>
+      </div>
+
+      <div className="grid sm:grid-cols-2 gap-5 mb-6">
+        <div>
+          <label className="flex items-center justify-between text-xs text-zinc-300 mb-2">
+            <span>Calls per day</span>
+            <span className="font-mono text-zinc-100 tabular-nums">{callsPerDay.toLocaleString()}</span>
+          </label>
+          <input
+            type="range"
+            min={10}
+            max={100000}
+            step={10}
+            value={callsPerDay}
+            onChange={(e) => setCallsPerDay(parseInt(e.target.value, 10))}
+            className="w-full accent-emerald-500"
+            aria-label="Calls per day"
+          />
+          <div className="flex justify-between text-[10px] text-zinc-600 mt-1">
+            <span>10</span>
+            <span>100k</span>
+          </div>
+        </div>
+        <div>
+          <label className="flex items-center justify-between text-xs text-zinc-300 mb-2">
+            <span>Price per call (USD)</span>
+            <span className="font-mono text-zinc-100 tabular-nums">${pricePerCallUsd.toFixed(4)}</span>
+          </label>
+          <input
+            type="range"
+            min={0.0001}
+            max={0.5}
+            step={0.0001}
+            value={pricePerCallUsd}
+            onChange={(e) => setPricePerCallUsd(parseFloat(e.target.value))}
+            className="w-full accent-emerald-500"
+            aria-label="Price per call"
+          />
+          <div className="flex justify-between text-[10px] text-zinc-600 mt-1">
+            <span>$0.0001</span>
+            <span>$0.50</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid sm:grid-cols-3 gap-3 text-sm">
+        <div className="rounded-lg bg-zinc-950 p-4">
+          <div className="text-xs text-zinc-500 mb-1">Daily</div>
+          <div className="text-2xl font-bold text-emerald-400 tabular-nums">{fmt(numbers.dailyOwner)}</div>
+          <div className="text-[10px] text-zinc-500 mt-1">{callsPerDay.toLocaleString()} calls × {fmt(pricePerCallUsd)} × 95%</div>
+        </div>
+        <div className="rounded-lg bg-zinc-950 p-4 border border-emerald-500/30">
+          <div className="text-xs text-zinc-500 mb-1">Monthly</div>
+          <div className="text-2xl font-bold text-emerald-400 tabular-nums">{fmt(numbers.monthlyOwner)}</div>
+          <div className="text-[10px] text-zinc-500 mt-1">USDC, settled to your wallet</div>
+        </div>
+        <div className="rounded-lg bg-zinc-950 p-4">
+          <div className="text-xs text-zinc-500 mb-1">Yearly</div>
+          <div className="text-2xl font-bold text-emerald-400 tabular-nums">{fmt(numbers.yearlyOwner)}</div>
+          <div className="text-[10px] text-zinc-500 mt-1">no Stripe, no chargebacks</div>
+        </div>
+      </div>
+
+      <p className="text-[11px] text-zinc-600 mt-3">
+        Toolora keeps 5% (~{fmt(numbers.dailyToolora)}/day at this volume). Sub-cent calls are economically
+        impossible on Stripe — the flat $0.30 fee alone would be a 30,000% markup on a $0.001 call.
+      </p>
+    </div>
+  );
+}
+
+/**
+ * Hello World MCP — the activation-friction killer.
+ *
+ * Most "build an MCP" tutorials assume you already have one. This section
+ * gives the visitor the smallest possible working example pre-wired for
+ * gateway billing: clone, run, list, get paid.
+ */
+function HelloWorldSection() {
+  return (
+    <div className="rounded-2xl border border-cyan-500/20 bg-gradient-to-br from-cyan-950/20 to-zinc-900/40 p-6 mb-6">
+      <div className="flex items-start gap-3 mb-4">
+        <Rocket className="w-6 h-6 text-cyan-400 mt-0.5 shrink-0" />
+        <div className="flex-1">
+          <h3 className="font-semibold text-zinc-100 mb-1">Don't have an MCP yet? Ship one in 5 minutes.</h3>
+          <p className="text-sm text-zinc-400">
+            We maintain a self-contained <code className="text-cyan-300 text-xs">hello-world-mcp</code> example —
+            ~100 lines of Node.js, zero dependencies, one tool. Fork it, point Toolora at it, and you're billing
+            agents in USDC.
+          </p>
+        </div>
+      </div>
+
+      <pre className="rounded-lg bg-zinc-950 border border-zinc-800 p-4 text-[11px] md:text-xs text-cyan-300 font-mono overflow-x-auto leading-relaxed mb-3">
+{`# 1. Clone & run locally
+git clone https://github.com/wesleyolis/toolora.git
+cd toolora/examples/hello-world-mcp
+node server.js
+# → hello-world-mcp listening on http://localhost:8787/mcp
+
+# 2. Deploy anywhere with a public HTTPS URL (Replit, Render, Fly, your VPS)
+
+# 3. List on Toolora and point Gateway billing at it`}
+      </pre>
+
+      <div className="flex items-center gap-3 flex-wrap">
+        <a
+          href="https://github.com/wesleyolis/toolora/tree/main/examples/hello-world-mcp"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1.5 text-xs font-medium text-cyan-300 hover:text-cyan-200"
+        >
+          <Github className="w-3.5 h-3.5" /> View source
+        </a>
+        <Link
+          href="/submit-mcp"
+          className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-300 hover:text-emerald-200"
+        >
+          List your deployed copy <ArrowRight className="w-3 h-3" />
+        </Link>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Embed-badge marketing — shows owners they get a free distribution surface
+ * in their MCP's GitHub README. The actual snippet (with their listing id)
+ * appears in the dashboard once they enable embed_enabled.
+ */
+function EmbedBadgeSection() {
+  return (
+    <div className="rounded-2xl border border-violet-500/20 bg-gradient-to-br from-violet-950/20 to-zinc-900/40 p-6 mb-6">
+      <div className="flex items-start gap-3 mb-3">
+        <Code2 className="w-6 h-6 text-violet-400 mt-0.5 shrink-0" />
+        <div className="flex-1">
+          <h3 className="font-semibold text-zinc-100 mb-1">Free distribution: drop a live badge in your README</h3>
+          <p className="text-sm text-zinc-400">
+            Every owner gets an iframe snippet that ticks up live as agents pay them. Pin it on your GitHub
+            README, your docs site, your Stripe-replacement comparison post — wherever your potential customers
+            already are.
+          </p>
+        </div>
+      </div>
+
+      <pre className="rounded-lg bg-zinc-950 border border-zinc-800 p-4 text-[11px] md:text-xs text-violet-300 font-mono overflow-x-auto leading-relaxed">
+{`<iframe src="https://toolora.dev/embed/gateway-badge/<your-listing-id>"
+        width="320" height="120" frameborder="0"
+        style="border:0; border-radius:12px;">
+</iframe>`}
+      </pre>
+
+      <p className="text-[11px] text-zinc-600 mt-3">
+        Aggregate-only (call count + USDC paid). No caller addresses, no per-tool detail. Your real listing id
+        + working snippet appears in your dashboard as soon as you enable "Embeddable live badge" in Gateway billing.
+      </p>
+    </div>
   );
 }

@@ -29,15 +29,21 @@ function fmtRelativeTime(iso: string | null): string {
   return `${Math.floor(sec / 86400)}d ago`;
 }
 
-export default function GatewayLiveTicker() {
+export default function GatewayLiveTicker({ listingId }: { listingId?: string } = {}) {
   const [stats, setStats] = useState<PublicStats | null>(null);
   const [error, setError] = useState(false);
 
   useEffect(() => {
     let alive = true;
+    // When a listingId is passed, fetch the per-listing public-stats endpoint
+    // (gated by the owner's embed_enabled opt-in). Otherwise fall back to the
+    // public demo ticker that powers the /gateway landing.
+    const url = listingId
+      ? `/api/gateway/public-stats/${encodeURIComponent(listingId)}`
+      : "/api/gateway/public-demo-stats";
     const load = async () => {
       try {
-        const r = await fetch("/api/gateway/public-demo-stats", { headers: { accept: "application/json" } });
+        const r = await fetch(url, { headers: { accept: "application/json" } });
         if (!r.ok) throw new Error(`http ${r.status}`);
         const data = (await r.json()) as PublicStats;
         if (alive) {
@@ -54,7 +60,7 @@ export default function GatewayLiveTicker() {
       alive = false;
       clearInterval(id);
     };
-  }, []);
+  }, [listingId]);
 
   if (error || !stats) {
     return (

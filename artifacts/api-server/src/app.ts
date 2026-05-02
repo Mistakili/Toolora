@@ -9,6 +9,7 @@ import router from "./routes";
 import { logger } from "./lib/logger";
 import { RECEIVER_ADDRESS, NETWORK, PRICE_XLM } from "./middlewares/x402";
 import { WebhookHandlers } from "./webhookHandlers";
+import { startRefundWorker } from "./lib/gatewayRefunds";
 import { db, tooloraUsersTable } from "@workspace/db";
 import { eq, sql } from "drizzle-orm";
 import { getUncachableStripeClient } from "./stripeClient";
@@ -280,5 +281,11 @@ app.get("/robots.txt", (_req: Request, res: Response) => {
     "# Discovery: /.well-known/mcp.json",
   ].join("\n"));
 });
+
+// ── Background workers ───────────────────────────────────────────────────────
+// Auto-refund worker — scans for failed gateway calls every 60s and refunds
+// the caller (synthetic in stub mode, real Solana tx in broadcast mode).
+// Idempotent and self-disabling in NODE_ENV=test.
+startRefundWorker();
 
 export default app;
