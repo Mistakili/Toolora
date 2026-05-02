@@ -1,4 +1,4 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import { Switch, Route, Router as WouterRouter } from "wouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -6,7 +6,11 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { AppLayout } from "@/components/layout/AppLayout";
 
-const Home = lazy(() => import("@/pages/Home"));
+// Home is the most common back-navigation destination; we keep it lazy for
+// initial bundle splitting but prefetch the chunk after first paint so back
+// nav doesn't sit on a blank Suspense fallback while the chunk loads.
+const importHome = () => import("@/pages/Home");
+const Home = lazy(importHome);
 const CategoryView = lazy(() => import("@/pages/CategoryView"));
 const ToolView = lazy(() => import("@/pages/ToolView"));
 const Privacy = lazy(() => import("@/pages/Privacy"));
@@ -58,8 +62,19 @@ const queryClient = new QueryClient({
   }
 });
 
+// Theme-aware fallback shown while a lazy route chunk is loading (incl. back
+// navigation when bfcache misses). Solid black caused a "screen is black, long
+// wait" perception bug — now we render a centered spinner on the theme bg so
+// the user sees something is happening.
 const PageFallback = () => (
-  <div style={{ minHeight: "100vh", backgroundColor: "#09090b" }} />
+  <div
+    role="status"
+    aria-label="Loading page"
+    className="flex min-h-screen items-center justify-center bg-background"
+  >
+    <div className="h-10 w-10 animate-spin rounded-full border-2 border-muted border-t-primary" />
+    <span className="sr-only">Loading…</span>
+  </div>
 );
 
 function Router() {
@@ -123,6 +138,29 @@ function Router() {
 }
 
 function App() {
+  // Warm the Home chunk after first paint. The user's most common back-nav
+  // destination is "/" — when they hit Back from a deep link, this avoids a
+  // visible Suspense fallback by ensuring the Home chunk is already cached.
+  // Use requestIdleCallback so we don't compete with critical work.
+  useEffect(() => {
+    const prefetch = () => {
+      void importHome().catch(() => {
+        /* ignore — user will just see the fallback if the network is offline */
+      });
+    };
+    type IdleHandle = number;
+    const w = window as unknown as {
+      requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => IdleHandle;
+      cancelIdleCallback?: (h: IdleHandle) => void;
+    };
+    if (w.requestIdleCallback) {
+      const handle = w.requestIdleCallback(prefetch, { timeout: 2000 });
+      return () => w.cancelIdleCallback?.(handle);
+    }
+    const t = window.setTimeout(prefetch, 1500);
+    return () => window.clearTimeout(t);
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider defaultTheme="dark" storageKey="toolora-theme">
