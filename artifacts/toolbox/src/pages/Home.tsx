@@ -278,9 +278,9 @@ export default function Home() {
                 dot: "bg-amber-500",
                 title: "Agent API",
                 sub: "For autonomous workflows",
-                desc: "Pay-per-call REST API for agents. x402 micropayments or monthly subscription.",
+                desc: "Pay-per-call REST API for agents. Settles in USDC on Solana or Stellar via x402 — no card, no contract, no invoice.",
                 img: "mcp-memory-visual.png",
-                bullets: ["x402 USDC micropayments", "Pro $19 · Team $79", "OpenAPI spec included"],
+                bullets: ["x402 USDC per call", "Owner keeps 95%", "OpenAPI spec included"],
               },
             ].map((layer, i) => (
               <div key={layer.num} className={"relative flex flex-col overflow-hidden rounded-xl " + (i === 1 ? "border " + layer.border + " " + layer.bg : "")}>

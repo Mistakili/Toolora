@@ -55,11 +55,11 @@ Accessible at `GET|POST /api/mcp`, this service implements the MCP Streamable HT
 
 ## Monetization System
 
-Manages API keys, subscription tiers (Free, Pro, Team), and one-time API credit packs.
--   **Database**: Uses `toolora_users`, `api_keys`, `api_usage` tables.
--   **Stripe Integration**: Utilizes Replit connector v2 for checkout, customer portal, subscription management, and webhook processing.
--   **API Key Middleware**: Enforces SHA-256 hashed API keys, tier-based rate limiting, monthly usage tracking, and credit deduction.
--   **x402 Payments**: Supports per-call payments via Stellar XLM and Solana USDC.
+Two parallel rails. The **primary** rail (and the YC W26 RFS pitch surface) is the **Toolora Gateway** — agents pay per-call in Solana USDC / Stellar XLM via x402, owners keep 95%, settlement is on-chain. The **secondary/legacy** rail is a Stripe-backed Free/Pro/Team SaaS subscription for human users; it remains fully wired in the backend but is **intentionally hidden from the primary navigation** (header menu, user dropdown, mobile menu, footer Resources column, Home page CTA) so the demo path stays focused on the agent-economy story.
+-   **Database**: `toolora_users` (incl. `stripe_customer_id` / `stripe_subscription_id`, harmless when null), `api_keys`, `api_usage`.
+-   **Stripe Integration** (dormant on demo path, fully functional): Replit connector v2 for checkout, customer portal, subscriptions, and webhook processing. Lives in `artifacts/api-server/src/{stripeClient,webhookHandlers}.ts` + `routes/stripeRoutes.ts`. The `/pricing` route is still mounted (so inbound links from blog posts / how-to pages don't 404), but no in-app navigation surfaces it. **To restore Stripe-as-primary-rail**: (a) re-add the "Pricing" entry in `artifacts/toolbox/src/components/layout/AppLayout.tsx` in 4 spots (API mega-menu items array near line 82 + featured card near line 90 + user-dropdown menu near line 342 + mobile menu near line 415 + footer Resources `<li>` near line 539); (b) revert the Home.tsx hero copy in two blocks — the agent-economy CTA section near line 444 (currently lists `x402 / Solana / Stellar` pill badges) AND the three-layer "Agent API" card near line 281 (currently says "no card, no contract, no invoice"); (c) revert `ApiUpgradeBanner.tsx` hrefs from `/api-docs` back to `/pricing#api`. Backend code is untouched, so re-enabling is purely a copy/link revert.
+-   **API Key Middleware**: SHA-256 hashed keys, tier-based rate limiting, monthly usage tracking, credit deduction.
+-   **x402 Payments**: Per-call billing in Solana USDC and Stellar XLM. **This is the primary monetization story** and powers the Toolora Gateway.
 
 ## AI Brochure Generation
 
