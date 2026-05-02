@@ -37,19 +37,34 @@ export default function HomepageGlobalTicker() {
 
   useEffect(() => {
     let alive = true;
+    // Adaptive window: try 1h → 24h → 7d → all. The first window with any
+    // calls wins, so the ticker is never empty on a quiet hour but always
+    // shows the freshest data when traffic is live.
     const load = async () => {
-      try {
-        const r = await fetch("/api/gateway/global-stats?window=1h", {
-          headers: { accept: "application/json" },
-        });
-        if (!r.ok) throw new Error(`http ${r.status}`);
-        const data = (await r.json()) as GlobalStats;
-        if (alive) {
-          setStats(data);
-          setError(false);
+      const windows = ["1h", "24h", "7d", "all"] as const;
+      let chosen: GlobalStats | null = null;
+      for (const w of windows) {
+        try {
+          const r = await fetch(`/api/gateway/global-stats?window=${w}`, {
+            headers: { accept: "application/json" },
+          });
+          if (!r.ok) continue;
+          const data = (await r.json()) as GlobalStats;
+          if (!chosen) chosen = data;
+          if (data.totals.calls > 0) {
+            chosen = data;
+            break;
+          }
+        } catch {
+          /* try next window */
         }
-      } catch {
-        if (alive) setError(true);
+      }
+      if (!alive) return;
+      if (chosen) {
+        setStats(chosen);
+        setError(false);
+      } else {
+        setError(true);
       }
     };
     load();

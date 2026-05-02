@@ -58,11 +58,17 @@ Accessible at `GET|POST /api/mcp`, this service implements the MCP Streamable HT
 
 ## Inbound Funnel — `/publish`
 
-Toolbox page that lets API owners self-serve onto the Gateway in 60s. They paste a public OpenAPI 3 JSON URL → Toolora calls `POST /api/gateway/openapi-to-mcp/init` (existing endpoint, SSRF-validated) → page renders the resulting MCP URL with copy-to-clipboard + Claude Desktop config snippet + curl test snippet. Linked from the API mega-menu in `AppLayout.tsx`. Page lives at `artifacts/toolbox/src/pages/Publish.tsx`.
+Toolbox page that lets API owners self-serve onto the Gateway in 60s. They paste a public OpenAPI 3 JSON URL → Toolora calls `POST /api/gateway/openapi-to-mcp/init` (SSRF-validated, IP rate-limited to 10/hour) → page renders the resulting MCP URL with copy-to-clipboard + Claude Desktop config snippet + curl test snippet. Linked from the API mega-menu and footer Resources column in `AppLayout.tsx`. Page lives at `artifacts/toolbox/src/pages/Publish.tsx`. Tested end-to-end with the Swagger Petstore spec (parses 19 operations into MCP tools).
+
+**Hardening (May 2026):**
+-   **Client + server URL pre-validation**: rejects non-`http(s)://` schemes, malformed URLs, and >2048-char payloads at both layers.
+-   **In-memory IP rate limit**: 10 init requests / hour / IP, bounded map (≤5k IPs, evicts oldest 1k on overflow). Returns `429` with `Retry-After`.
+-   **Relative `servers[].url` resolution** (bug fix): `fetchAndParseSpec` now resolves relative server URLs against the spec URL's origin via `new URL(rawServerUrl, specUrl)`. Without this, real-world specs like Petstore (which use `/api/v3` rather than absolute URLs) failed SSRF validation. After SSRF validation passes on the resolved URL, the spec is parsed.
+-   **Known limitation**: every submission creates a "claim-less" spec row — there's no way for the original submitter to come back and edit price / payout wallet. Acceptable for the YC W26 demo (the value prop is "test it instantly without signup"); a follow-up sprint should add an opaque ownership token on submission and a `/publish/claim/:token` route.
 
 ## Live Global Ticker
 
-`GET /api/gateway/global-stats?window=1h|24h|7d|all` aggregates settled USDC volume across ALL leaderboard-opt-in listings. Cached 20s. Powers `HomepageGlobalTicker` (mounted in `Home.tsx` hero) which polls every 20s and shows: agent calls, USDC settled, owner earned, distinct owners. Click-through goes to `/gateway`.
+`GET /api/gateway/global-stats?window=1h|24h|7d|all` aggregates settled USDC volume across ALL leaderboard-opt-in listings. Cached 20s. Public CORS (`Access-Control-Allow-Origin: *`) so embedded ticker widgets and third-party dashboards can poll directly. Uses parameterized `make_interval(secs => $1)` binding (no `sql.raw`) for defense-in-depth. Powers `HomepageGlobalTicker` (mounted in `Home.tsx` hero) which polls every 20s with **adaptive window fallback** (1h → 24h → 7d → all-time): the first window with any calls wins, so the ticker is never empty on a quiet hour but always shows the freshest live data. Click-through goes to `/gateway`.
 
 ## Monetization System
 

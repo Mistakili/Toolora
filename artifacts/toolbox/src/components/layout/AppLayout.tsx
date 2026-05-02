@@ -535,6 +535,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
               <li><a href="/private/" className="hover:text-foreground transition-colors text-violet-400">Toolora Private</a></li>
               <li><Link href="/blog" className="hover:text-foreground transition-colors">Blog</Link></li>
               <li><Link href="/gateway" className="hover:text-foreground transition-colors">Toolora Gateway</Link></li>
+              <li><Link href="/publish" className="hover:text-foreground transition-colors text-emerald-400">Publish your API</Link></li>
               <li><Link href="/leaderboard" className="hover:text-foreground transition-colors">Leaderboard</Link></li>
               <li><Link href="/api-keys" className="hover:text-foreground transition-colors">API Keys</Link></li>
               <li><Link href="/api-docs" className="hover:text-foreground transition-colors">API Docs</Link></li>
