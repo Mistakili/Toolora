@@ -253,16 +253,38 @@ const categoryUrls = CATEGORIES.map(c => `
     <priority>0.7</priority>
   </url>`).join("");
 
-const BLOG_POSTS = [
-  { slug: "merge-pdfs-without-uploading",        title: "How to Merge PDFs Without Uploading Files",                               description: "Most PDF tools send your files to remote servers. Here's how to merge PDFs entirely in your browser — no uploads, no accounts, no risk." },
-  { slug: "best-free-image-compressor-privacy",  title: "The Best Free Image Compressor That Doesn't See Your Files",             description: "TinyPNG, Squoosh, Canva — they all upload your images. Here's a faster alternative that compresses images entirely in your browser." },
-  { slug: "why-i-built-client-side-toolbox",     title: "Why I Built a 100% Client-Side Toolbox",                                  description: "The story behind Toolora — why I decided every tool should run in the browser, what that means technically, and what the tradeoffs are." },
-  { slug: "base64-encode-decode-online",          title: "Free Base64 Encoder & Decoder — No Sign-Up, No Server Required",         description: "Base64 encoding explained in plain English, plus a free browser-based tool that encodes and decodes instantly — no account, no data sent anywhere." },
-  { slug: "free-password-generator-no-signup",   title: "How to Generate Strong Passwords Without a Password Manager",             description: "What makes a password strong, why most people get it wrong, and how to generate truly random passwords instantly — without installing anything." },
-  { slug: "free-qr-code-generator-no-watermark", title: "The Best Free QR Code Generator — No Watermarks, No Sign-Up, No Ads",    description: "Most free QR code generators add watermarks or expire your codes. Here's how to generate clean QR codes instantly, for free, with no strings attached." },
-  { slug: "json-formatter-validate-debug",        title: "JSON Formatter: How to Read, Validate and Debug JSON Online",            description: "JSON errors are cryptic. A missing comma or brace can break everything. Here's how to format, validate, and debug JSON fast — no server required." },
-  { slug: "hashing-vs-encryption-whats-the-difference", title: "Hashing vs Encryption: What's the Difference and When to Use Each", description: "Hashing and encryption are both used to protect data, but they work very differently. Learn the key distinctions, common algorithms, and when to use each — with code examples." },
-];
+// Read all blog posts from the canonical source (src/lib/blog-posts.ts) so the
+// sitemap and pre-rendered HTML never drift out of sync with the actual posts.
+// We can't `import` the .ts file directly from an .mjs script without spinning
+// up tsx, so we extract the four metadata fields with regex. Each post in
+// blog-posts.ts is an object literal where slug/title/description/date are on
+// their own single line — making this safe and stable.
+const blogPostsSrc = fs.readFileSync(path.join(ROOT, "src/lib/blog-posts.ts"), "utf8");
+const BLOG_POSTS = (() => {
+  const posts = [];
+  // Split on each post object's opening "  {" — the first chunk is preamble.
+  const chunks = blogPostsSrc.split(/\n {2}\{\n/);
+  for (let i = 1; i < chunks.length; i++) {
+    const block = chunks[i];
+    const slug = block.match(/^\s*slug:\s*"([^"]+)"/m)?.[1];
+    const title = block.match(/^\s*title:\s*"((?:[^"\\]|\\.)*)"/m)?.[1];
+    const description = block.match(/^\s*description:\s*"((?:[^"\\]|\\.)*)"/m)?.[1];
+    const date = block.match(/^\s*date:\s*"([^"]+)"/m)?.[1];
+    if (slug && title) {
+      posts.push({
+        slug,
+        title: title.replace(/\\"/g, '"'),
+        description: (description ?? "").replace(/\\"/g, '"'),
+        date: date ?? TODAY,
+      });
+    }
+  }
+  return posts;
+})();
+if (BLOG_POSTS.length === 0) {
+  throw new Error("prerender-seo: failed to extract any blog posts from src/lib/blog-posts.ts");
+}
+console.log(`✅ Discovered ${BLOG_POSTS.length} blog posts for sitemap + prerender.`);
 
 const blogListUrl = `  <url>
     <loc>${BASE_URL}/blog</loc>
@@ -273,7 +295,7 @@ const blogListUrl = `  <url>
 
 const blogPostUrls = BLOG_POSTS.map(p => `  <url>
     <loc>${BASE_URL}/blog/${p.slug}</loc>
-    <lastmod>${TODAY}</lastmod>
+    <lastmod>${p.date || TODAY}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>`).join("\n");
@@ -302,8 +324,8 @@ for (const post of BLOG_POSTS) {
     headline: post.title,
     description: post.description,
     url: `${BASE_URL}/blog/${post.slug}`,
-    datePublished: TODAY,
-    dateModified: TODAY,
+    datePublished: post.date || TODAY,
+    dateModified: post.date || TODAY,
     publisher: { "@type": "Organization", name: "Toolora", url: BASE_URL },
     author: { "@type": "Organization", name: "Toolora" },
   });

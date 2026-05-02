@@ -1,13 +1,36 @@
 import { useParams, Link } from "wouter";
-import { useEffect } from "react";
-import { ChevronRight, CheckCircle2, ArrowRight, ShieldCheck, Zap, Globe, BookOpen, BarChart2 } from "lucide-react";
+import { useEffect, useMemo } from "react";
+import { ChevronRight, CheckCircle2, ArrowRight, ShieldCheck, Zap, Globe, BookOpen, BarChart2, FileText } from "lucide-react";
 import { useSEO } from "@/hooks/useSEO";
 import { getHowToGuide } from "@/lib/tool-how-to";
 import { getToolBySlug } from "@/lib/tools-config";
 import { getToolGlossary, getToolComparisons } from "@/lib/cross-links";
 import { getGlossaryEntry } from "@/lib/glossary";
 import { getComparison } from "@/lib/comparisons";
+import { BLOG_POSTS } from "@/lib/blog-posts";
 import NotFound from "./not-found";
+
+// Match up to 3 blog posts whose title or slug contains any of the tool's
+// signal keywords (the tool's slug parts + name words). Pure heuristic — keeps
+// the cross-link surface high without wiring a manual mapping for every tool.
+function findRelatedBlogPosts(toolSlug: string, toolName: string, limit = 3) {
+  const stop = new Set(["the","a","an","and","or","of","to","for","in","on","tool","online","free"]);
+  const tokens = new Set(
+    [...toolSlug.toLowerCase().split(/[-_]/), ...toolName.toLowerCase().split(/\s+/)]
+      .map((t) => t.replace(/[^a-z0-9]/g, ""))
+      .filter((t) => t.length >= 3 && !stop.has(t)),
+  );
+  if (tokens.size === 0) return [];
+  const scored: Array<{ post: typeof BLOG_POSTS[number]; score: number }> = [];
+  for (const post of BLOG_POSTS) {
+    const haystack = `${post.slug} ${post.title} ${post.description}`.toLowerCase();
+    let score = 0;
+    for (const t of tokens) if (haystack.includes(t)) score++;
+    if (score > 0) scored.push({ post, score });
+  }
+  scored.sort((a, b) => b.score - a.score || (b.post.date.localeCompare(a.post.date)));
+  return scored.slice(0, limit).map((s) => s.post);
+}
 
 export default function ToolHowToPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -236,6 +259,13 @@ export default function ToolHowToPage() {
         </section>
       )}
 
+      {/* Related reading — pulls 3 blog posts that match the tool by keyword.
+          This is the one cross-link that points OUT to the blog, deliberately.
+          The blog has 108 posts and very little inbound traffic; tool pages
+          have orders of magnitude more views, so every how-to page that links
+          a related post is a free traffic flywheel. */}
+      <RelatedBlogPosts toolSlug={tool.slug} toolName={tool.name} />
+
       {/* Footer note */}
       <div className="pt-8 border-t border-border text-center text-xs text-muted-foreground">
         <p>
@@ -245,5 +275,37 @@ export default function ToolHowToPage() {
         </p>
       </div>
     </div>
+  );
+}
+
+function RelatedBlogPosts({ toolSlug, toolName }: { toolSlug: string; toolName: string }) {
+  const posts = useMemo(() => findRelatedBlogPosts(toolSlug, toolName, 3), [toolSlug, toolName]);
+  if (posts.length === 0) return null;
+  return (
+    <section className="mb-8">
+      <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+        <FileText className="w-4 h-4 text-muted-foreground" /> Related Reading
+      </h2>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+        {posts.map((p) => (
+          <Link
+            key={p.slug}
+            href={`/blog/${p.slug}`}
+            className="group rounded-xl border border-border bg-card p-4 hover:border-primary/50 hover:bg-muted/30 transition-colors flex flex-col"
+          >
+            <span className="inline-block text-[10px] font-bold uppercase tracking-wider text-primary mb-2">
+              {p.category}
+            </span>
+            <h3 className="font-semibold text-sm leading-snug group-hover:text-primary transition-colors line-clamp-2">
+              {p.title}
+            </h3>
+            <p className="text-xs text-muted-foreground mt-2 line-clamp-2 flex-1">{p.description}</p>
+            <span className="mt-3 inline-flex items-center gap-1 text-xs font-medium text-primary">
+              Read article <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+            </span>
+          </Link>
+        ))}
+      </div>
+    </section>
   );
 }

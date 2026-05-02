@@ -6,9 +6,12 @@ import {
 import {
   ChevronRight, Home, BarChart2, Zap, Copy, Check, ExternalLink,
   RefreshCw, Lock, ChevronDown, Monitor, Globe2, Clock, FileText,
-  Smartphone, Tablet, Laptop, TrendingUp, Wrench, Bot, CreditCard,
+  Smartphone, Tablet, Laptop, TrendingUp, Wrench, Bot, CreditCard, BookOpen,
 } from "lucide-react";
 import { useAuth } from "@workspace/replit-auth-web";
+import { BLOG_POSTS_COUNT } from "@/lib/home-data";
+
+const BLOG_POSTS_TOTAL = BLOG_POSTS_COUNT;
 
 // ─── URL helper ───────────────────────────────────────────────────────────────
 
@@ -54,6 +57,14 @@ interface McpStats {
   byTool: { tool: string; calls: number; errors: number; avgMs: number | null }[];
   daily: { day: string; connections: number; toolCalls: number }[];
   recentErrors: { tool: string; errorMsg: string | null; createdAt: string }[];
+}
+
+interface BlogStats {
+  totals: { humanViews: number; botViews: number; postsWithAnyHumanView: number };
+  posts: {
+    slug: string; path: string; humanViews: number; uniqueSessions: number;
+    countries: number; botViews: number; lastView: string;
+  }[];
 }
 
 interface StripeStats {
@@ -179,6 +190,7 @@ export default function Admin() {
   const [toolUsage, setToolUsage] = useState<ToolUsageData | null>(null);
   const [mcpStats, setMcpStats] = useState<McpStats | null>(null);
   const [stripeStats, setStripeStats] = useState<StripeStats | null>(null);
+  const [blogStats, setBlogStats] = useState<BlogStats | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [lastRefresh, setLastRefresh] = useState<Date | null>(null);
@@ -190,30 +202,33 @@ export default function Admin() {
     setError(null);
     try {
       const base = getApiBase();
-      const [statsRes, analyticsRes, toolsRes, mcpRes, stripeRes] = await Promise.all([
+      const [statsRes, analyticsRes, toolsRes, mcpRes, stripeRes, blogRes] = await Promise.all([
         fetch(`${base}/api/admin/stats`, { credentials: "include" }),
         fetch(`${base}/api/admin/analytics`, { credentials: "include" }),
         fetch(`${base}/api/admin/tools`, { credentials: "include" }),
         fetch(`${base}/api/admin/mcp`, { credentials: "include" }),
         fetch(`${base}/api/admin/stripe`, { credentials: "include" }),
+        fetch(`${base}/api/admin/blog-stats`, { credentials: "include" }),
       ]);
       if (statsRes.status === 401 || analyticsRes.status === 401) {
         setError("Not signed in.");
         return;
       }
       if (!statsRes.ok || !analyticsRes.ok) throw new Error("Server error");
-      const [s, a, t, m, sr] = await Promise.all([
+      const [s, a, t, m, sr, b] = await Promise.all([
         statsRes.json(),
         analyticsRes.json(),
         toolsRes.ok ? toolsRes.json() : Promise.resolve(null),
         mcpRes.ok ? mcpRes.json() : Promise.resolve(null),
         stripeRes.ok ? stripeRes.json() : Promise.resolve(null),
+        blogRes.ok ? blogRes.json() : Promise.resolve(null),
       ]);
       setAgentStats(s as AgentStats);
       setAnalytics(a as Analytics);
       if (t) setToolUsage(t as ToolUsageData);
       if (m) setMcpStats(m as McpStats);
       if (sr) setStripeStats(sr as StripeStats);
+      if (b) setBlogStats(b as BlogStats);
       setLastRefresh(new Date());
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : "Failed to load");
@@ -478,6 +493,75 @@ export default function Admin() {
                 ))}
             </div>
           </Section>
+
+          {/* ── Section 5b: Blog performance ─────────────────────────────── */}
+          {blogStats && (
+            <Section
+              icon={BookOpen}
+              title="Blog Performance"
+              badge={`${blogStats.posts.length}/${BLOG_POSTS_TOTAL} posts read · ${blogStats.totals.humanViews} human views`}
+            >
+              <div className="pt-4 space-y-4">
+                <div className="grid grid-cols-3 gap-3">
+                  <StatCard label="Posts with reads" value={blogStats.posts.length} sub={`of ${BLOG_POSTS_TOTAL} published`} />
+                  <StatCard label="Human views" value={blogStats.totals.humanViews.toLocaleString()} sub="all time" />
+                  <StatCard label="Bot views" value={blogStats.totals.botViews.toLocaleString()} sub="indexers + scrapers" />
+                </div>
+                {(() => {
+                  const unread = Math.max(0, BLOG_POSTS_TOTAL - blogStats.posts.length);
+                  if (unread === 0) return null;
+                  return (
+                    <div className="rounded-xl border border-yellow-500/30 bg-yellow-500/5 p-4 text-sm">
+                      <p className="font-semibold text-yellow-300 mb-1">
+                        {unread} of {BLOG_POSTS_TOTAL} posts have zero human reads.
+                      </p>
+                      <p className="text-yellow-200/80 text-xs leading-relaxed">
+                        Sitemap was hardcoded to 8 posts before this sprint — now contains all{" "}
+                        {BLOG_POSTS_TOTAL}. Resubmit the sitemap in Google Search Console and request
+                        indexing for the unread URLs to start the long-tail crawl.
+                      </p>
+                    </div>
+                  );
+                })()}
+                {blogStats.posts.length === 0 ? (
+                  <p className="text-xs text-muted-foreground">No human blog views recorded yet.</p>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-xs">
+                      <thead className="text-muted-foreground border-b border-border">
+                        <tr>
+                          <th className="text-left py-2 pr-3">Post</th>
+                          <th className="text-right py-2 pr-3">Humans</th>
+                          <th className="text-right py-2 pr-3">Sessions</th>
+                          <th className="text-right py-2 pr-3">Countries</th>
+                          <th className="text-right py-2 pr-3">Bots</th>
+                          <th className="text-right py-2">Last view</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {blogStats.posts.slice(0, 25).map((p) => (
+                          <tr key={p.slug} className="hover:bg-muted/30 border-b border-border/30">
+                            <td className="py-2 pr-3">
+                              <Link href={`/blog/${p.slug}`} className="font-mono text-xs text-foreground hover:text-primary">
+                                /blog/{p.slug}
+                              </Link>
+                            </td>
+                            <td className="py-2 pr-3 text-right font-semibold">{p.humanViews}</td>
+                            <td className="py-2 pr-3 text-right text-muted-foreground">{p.uniqueSessions}</td>
+                            <td className="py-2 pr-3 text-right text-muted-foreground">{p.countries}</td>
+                            <td className="py-2 pr-3 text-right text-muted-foreground">{p.botViews}</td>
+                            <td className="py-2 text-right text-muted-foreground">
+                              {p.lastView ? new Date(p.lastView).toLocaleDateString() : "—"}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            </Section>
+          )}
 
           {/* ── Section 6: Top Tools ─────────────────────────────────────── */}
           {toolUsage && (

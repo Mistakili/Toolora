@@ -469,4 +469,76 @@ router.get("/stripe", async (req: Request, res: Response) => {
   }
 });
 
+// ─── GET /api/admin/blog-stats — per-post blog performance ───────────────────
+//
+// Surfaces what nothing else does: which of our 108 blog posts are actually
+// getting read, which are dead, and which countries (if any) are reading.
+// Drives the BlogStats section on /admin. Bots and Replit-internal "Local"
+// pageviews are excluded — only real human traffic counts.
+router.get("/blog-stats", async (req: Request, res: Response) => {
+  if (!requireAdmin(req, res)) return;
+
+  try {
+    const realFilter = sql`${pageViewsTable.deviceType} != 'bot' AND (${pageViewsTable.country} IS NULL OR ${pageViewsTable.country} != 'Local')`;
+    const blogFilter = sql`${pageViewsTable.path} LIKE '/blog/%' AND ${pageViewsTable.path} != '/blog/'`;
+
+    // Per-post stats — one row per /blog/{slug} path that has at least one view.
+    const perPost = await db
+      .select({
+        path: pageViewsTable.path,
+        views: count().as("views"),
+        uniqueSessions: sql<number>`COUNT(DISTINCT ${pageViewsTable.sessionId})`.as("unique_sessions"),
+        countries: sql<number>`COUNT(DISTINCT ${pageViewsTable.country}) FILTER (WHERE ${pageViewsTable.country} IS NOT NULL AND ${pageViewsTable.country} != 'Local')`.as("countries"),
+        lastView: sql<string>`MAX(${pageViewsTable.createdAt})`.as("last_view"),
+      })
+      .from(pageViewsTable)
+      .where(sql`${realFilter} AND ${blogFilter}`)
+      .groupBy(pageViewsTable.path)
+      .orderBy(desc(sql`COUNT(*)`));
+
+    // Bot views (separate column) — useful to see crawler discovery vs human reach.
+    const perPostBots = await db
+      .select({
+        path: pageViewsTable.path,
+        botViews: count().as("bot_views"),
+      })
+      .from(pageViewsTable)
+      .where(sql`${pageViewsTable.deviceType} = 'bot' AND ${blogFilter}`)
+      .groupBy(pageViewsTable.path);
+    const botMap = new Map(perPostBots.map((r) => [r.path, Number(r.botViews) || 0]));
+
+    // Aggregate totals — distinctPosts MUST use the exact same human filter
+    // as the per-post query above, otherwise the badge "X of N posts read"
+    // can disagree with the table beneath it (architect-reported filter drift).
+    const [totalsRow] = await db
+      .select({
+        humanViews: sql<number>`COUNT(*) FILTER (WHERE ${pageViewsTable.deviceType} != 'bot' AND (${pageViewsTable.country} IS NULL OR ${pageViewsTable.country} != 'Local'))`.as("human_views"),
+        botViews: sql<number>`COUNT(*) FILTER (WHERE ${pageViewsTable.deviceType} = 'bot')`.as("bot_views"),
+        distinctPosts: sql<number>`COUNT(DISTINCT ${pageViewsTable.path}) FILTER (WHERE ${pageViewsTable.deviceType} != 'bot' AND (${pageViewsTable.country} IS NULL OR ${pageViewsTable.country} != 'Local'))`.as("distinct_posts"),
+      })
+      .from(pageViewsTable)
+      .where(blogFilter);
+
+    res.json({
+      totals: {
+        humanViews: Number(totalsRow?.humanViews) || 0,
+        botViews: Number(totalsRow?.botViews) || 0,
+        postsWithAnyHumanView: Number(totalsRow?.distinctPosts) || 0,
+      },
+      posts: perPost.map((r) => ({
+        slug: r.path.replace(/^\/blog\//, ""),
+        path: r.path,
+        humanViews: Number(r.views) || 0,
+        uniqueSessions: Number(r.uniqueSessions) || 0,
+        countries: Number(r.countries) || 0,
+        botViews: botMap.get(r.path) || 0,
+        lastView: r.lastView,
+      })),
+    });
+  } catch (err: unknown) {
+    req.log.error({ err }, "Admin blog-stats query failed");
+    res.status(500).json({ error: "Could not fetch blog stats" });
+  }
+});
+
 export default router;
