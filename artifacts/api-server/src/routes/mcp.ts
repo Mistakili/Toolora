@@ -819,7 +819,9 @@ async function handleReadUrl(args: Record<string, unknown>): Promise<string> {
     throw new McpToolError("Invalid URL. Must be a full http:// or https:// URL.");
   }
 
-  let response: Response;
+  // Use globalThis.Response — the file-level `import { Response } from "express"`
+  // shadows the DOM/fetch Response type otherwise.
+  let response: globalThis.Response;
   try {
     response = await fetch(url, {
       headers: {
@@ -1067,7 +1069,9 @@ async function handleExcelToJson(args: Record<string, unknown>): Promise<string>
     const readable = Readable.from(buffer.toString("utf-8"));
     await workbook.csv.read(readable);
   } else {
-    await workbook.xlsx.load(Buffer.from(buffer));
+    // ExcelJS's typings pin `Buffer` narrower than newer @types/node — cast
+    // away the structural mismatch (runtime is unchanged).
+    await workbook.xlsx.load(Buffer.from(buffer) as any);
   }
 
   const sheets: Record<string, unknown[]> = {};
@@ -1864,7 +1868,10 @@ function handleHashText(args: Record<string, unknown>): string {
   const algo = validAlgorithms.includes(String(algorithm)) ? String(algorithm) : "sha256";
   const enc = String(encoding) === "base64" ? "base64" : "hex";
 
-  const hash = crypto.createHash(algo).update(String(text), "utf8").digest(enc as BufferEncoding);
+  const hash = crypto
+    .createHash(algo)
+    .update(String(text), "utf8")
+    .digest(enc as crypto.BinaryToTextEncoding);
   return JSON.stringify({ algorithm: algo, encoding: enc, hash, inputLength: String(text).length });
 }
 
@@ -2341,7 +2348,7 @@ Notable browser tools:
             // We don't want to flood the error dashboard with these — they're the LLM's bugs, not ours.
             const isUserInput = /^Missing required argument|^Invalid URL|^Invalid input|^Invalid argument/i.test(err.message);
             _mcpSuccess = isUserInput;
-            _mcpErrorMsg = isUserInput ? null : err.message;
+            _mcpErrorMsg = isUserInput ? undefined : err.message;
             res.json(rpcOk(id, {
               content: [{ type: "text", text: err.message }],
               isError: true,

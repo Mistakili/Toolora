@@ -58,7 +58,8 @@ router.post("/checkout", async (req: Request, res: Response) => {
   const safePath = returnPath && /^\/[a-zA-Z0-9\-_/?=&]*$/.test(returnPath) ? returnPath : "/pricing";
 
   try {
-    const email = req.user!.email;
+    const email = req.user?.email;
+    if (!email) { res.status(401).json({ error: "Authenticated session is missing email." }); return; }
     const user = await upsertUser(email);
     const stripe = await getUncachableStripeClient();
 
@@ -91,7 +92,8 @@ router.post("/portal", async (req: Request, res: Response) => {
   if (!requireAuth(req, res)) return;
 
   try {
-    const email = req.user!.email;
+    const email = req.user?.email;
+    if (!email) { res.status(401).json({ error: "Authenticated session is missing email." }); return; }
     const user = await upsertUser(email);
     if (!user.stripeCustomerId) { res.status(400).json({ error: "No subscription found." }); return; }
 
@@ -122,7 +124,8 @@ router.post("/credits/checkout", async (req: Request, res: Response) => {
   if (!pack) { res.status(400).json({ error: "Invalid pack ID. Valid: starter, growth, scale." }); return; }
 
   try {
-    const email = req.user!.email;
+    const email = req.user?.email;
+    if (!email) { res.status(401).json({ error: "Authenticated session is missing email." }); return; }
     const user = await upsertUser(email);
     const stripe = await getUncachableStripeClient();
 
@@ -165,7 +168,8 @@ router.post("/credits/checkout", async (req: Request, res: Response) => {
 router.get("/credits/balance", async (req: Request, res: Response) => {
   if (!requireAuth(req, res)) return;
   try {
-    const email = req.user!.email;
+    const email = req.user?.email;
+    if (!email) { res.status(401).json({ error: "Authenticated session is missing email." }); return; }
     const [user] = await db
       .select({ creditsBalance: tooloraUsersTable.creditsBalance })
       .from(tooloraUsersTable)
@@ -181,7 +185,8 @@ router.get("/subscription", async (req: Request, res: Response) => {
   if (!requireAuth(req, res)) return;
 
   try {
-    const email = req.user!.email;
+    const email = req.user?.email;
+    if (!email) { res.status(401).json({ error: "Authenticated session is missing email." }); return; }
     const [user] = await db
       .select({ tier: tooloraUsersTable.tier, stripeSubscriptionId: tooloraUsersTable.stripeSubscriptionId })
       .from(tooloraUsersTable)

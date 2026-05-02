@@ -25,13 +25,18 @@ async function upsertUser(email: string): Promise<string> {
     .insert(tooloraUsersTable)
     .values({ email, tier: "free" })
     .returning({ id: tooloraUsersTable.id });
+  // id is the table's primary key with a `gen_random_uuid()` default — it can
+  // never actually be null at runtime, but the inferred type from drizzle is
+  // `string | null`, so assert.
+  if (!row.id) throw new Error("upsertUser: returning() yielded no id");
   return row.id;
 }
 
 // GET /api/keys — list API keys for the signed-in user
 router.get("/", async (req: Request, res: Response) => {
   if (!requireAuth(req, res)) return;
-  const email = req.user!.email;
+  const email = req.user?.email;
+  if (!email) { res.status(401).json({ error: "Authenticated session is missing email." }); return; }
 
   try {
     const userId = await upsertUser(email);
@@ -59,7 +64,9 @@ router.get("/", async (req: Request, res: Response) => {
       .where(eq(apiUsageTable.monthYear, monthYear))
       .groupBy(apiUsageTable.apiKeyId);
 
-    const usageMap = Object.fromEntries(usage.map((u) => [u.apiKeyId, Number(u.total)]));
+    const usageMap: Record<string, number> = Object.fromEntries(
+      usage.map((u) => [u.apiKeyId, Number(u.total)]),
+    );
 
     const [userRow] = await db
       .select({ tier: tooloraUsersTable.tier })
@@ -84,7 +91,8 @@ router.get("/", async (req: Request, res: Response) => {
 // POST /api/keys — generate a new API key
 router.post("/", async (req: Request, res: Response) => {
   if (!requireAuth(req, res)) return;
-  const email = req.user!.email;
+  const email = req.user?.email;
+  if (!email) { res.status(401).json({ error: "Authenticated session is missing email." }); return; }
   const { label } = req.body as { label?: string };
 
   try {
@@ -118,8 +126,18 @@ router.post("/", async (req: Request, res: Response) => {
 // DELETE /api/keys/:id — revoke a key
 router.delete("/:id", async (req: Request, res: Response) => {
   if (!requireAuth(req, res)) return;
-  const email = req.user!.email;
-  const { id } = req.params;
+  const email = req.user?.email;
+  if (!email) { res.status(401).json({ error: "Authenticated session is missing email." }); return; }
+  // Express 5 widens req.params[name] to `string | string[]` in its type
+  // signature even though querystring values never bleed into req.params at
+  // runtime. We still normalize defensively so drizzle's eq() always receives
+  // a single string and so the ownership check below has a stable shape.
+  const rawId = req.params.id;
+  const id = typeof rawId === "string" ? rawId : Array.isArray(rawId) ? rawId[0] : "";
+  if (!id) {
+    res.status(400).json({ error: "Missing or invalid key id." });
+    return;
+  }
 
   try {
     const userId = await upsertUser(email);

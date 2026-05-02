@@ -839,7 +839,10 @@ router.post("/excel/to-json", requirePaymentOrApiKey, upload.single("file"), asy
       const readable = Readable.from(req.file.buffer.toString("utf-8"));
       await workbook.csv.read(readable);
     } else {
-      await workbook.xlsx.load(Buffer.from(req.file.buffer));
+      // ExcelJS's typings pin `Buffer` to a narrower variant than newer
+      // @types/node exposes — runtime is identical but TS structural compare
+      // refuses the assignment. Cast to `any` is the lossy-but-honest escape.
+      await workbook.xlsx.load(req.file.buffer as any);
     }
 
     const sheets: Record<string, unknown[]> = {};
@@ -908,7 +911,7 @@ router.post(
 
       // OpenAI SDK needs a File-like object with name and type
       const audioFile = new File(
-        [req.file.buffer],
+        [new Uint8Array(req.file.buffer)],
         req.file.originalname || "audio.mp3",
         { type: req.file.mimetype || "audio/mpeg" },
       );

@@ -677,10 +677,11 @@ router.get("/public-demo-stats", async (_req: Request, res: Response): Promise<v
         if (r.lastAt) {
           // Normalize via epoch ms before comparing — avoids string-vs-Date
           // ordering surprises across Postgres drivers / runtimes.
+          const lastAt: unknown = r.lastAt;
           const t =
-            r.lastAt instanceof Date
-              ? r.lastAt.getTime()
-              : Date.parse(String(r.lastAt));
+            lastAt instanceof Date
+              ? lastAt.getTime()
+              : Date.parse(String(lastAt));
           if (Number.isFinite(t) && t > lastSettledEpochMs) {
             lastSettledEpochMs = t;
           }

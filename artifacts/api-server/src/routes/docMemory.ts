@@ -36,7 +36,13 @@ async function extractText(file: Express.Multer.File): Promise<string> {
   }
 
   if (ext === "pdf") {
-    const pdfParse = (await import("pdf-parse")).default;
+    // pdf-parse v2 changed its export shape across releases; the current
+    // installed build exposes a callable module record without `.default`.
+    // Resolve defensively so a future version bump doesn't crash the route.
+    const mod = (await import("pdf-parse")) as unknown as
+      | { default: (b: Buffer) => Promise<{ text: string }> }
+      | ((b: Buffer) => Promise<{ text: string }>);
+    const pdfParse = typeof mod === "function" ? mod : mod.default;
     const data = await pdfParse(file.buffer);
     return data.text;
   }

@@ -46,7 +46,12 @@ router.post("/", async (req: Request, res: Response) => {
 });
 
 router.get("/:id", async (req: Request, res: Response) => {
-  const { id } = req.params;
+  // Express 5 widens req.params[name] to `string | string[]` at the type
+  // level. Runtime never produces an array here (req.query is separate from
+  // req.params), but we coerce defensively so the regex check and drizzle's
+  // eq() always receive a single string.
+  const rawId = req.params.id;
+  const id = typeof rawId === "string" ? rawId : Array.isArray(rawId) ? rawId[0] : "";
 
   if (!id || !/^[A-Za-z0-9]{6,12}$/.test(id)) {
     res.status(400).json({ error: "invalid paste id" });

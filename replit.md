@@ -55,6 +55,15 @@ Accessible at `GET|POST /api/mcp`, this service implements the MCP Streamable HT
 
 -   **Public manifest**: `GET /.well-known/mcp.json` — registry-ready manifest with categories, keywords, install snippets, and the full tool list. Source of truth for Anthropic registry / Smithery / mcp.so / Glama / mcphub submissions (see `artifacts/api-server/SUBMISSIONS.md`).
 -   **Writing-quality bundle** (added May 2026): 7 stateless tools designed for the writing-agent loop — `analyze_text` (Flesch + Gunning-Fog + SMOG + Coleman-Liau + ARI in one call), `count_tokens_multi` (11-model token + cost estimate in one call), `find_repetition` (top words / bigrams / trigrams), `detect_jargon` (Plain Language scorer + suggested swaps), `detect_pii` (email, phone, SSN, Luhn-validated cards, OpenAI/Anthropic/GitHub/AWS/Stripe keys, JWTs), `tone_score` (formal/casual/technical/urgent dimensions), `compare_versions` (readability + tone delta diff). Pure functions live in `artifacts/api-server/src/lib/writingQuality.ts`. No new npm deps.
+    -   **Test coverage**: `src/lib/writingQuality.test.ts` (Node 24 built-in `node:test` runner via `tsx`, zero new deps). 10 assertions pin the seven function shapes + the ReDoS input cap + jargon/PII detection baselines. Run with `pnpm --filter @workspace/api-server run test`. Test files are excluded from the production `typecheck` script via `tsconfig.json#exclude` so the `.ts`-extension import in tests doesn't break tsc.
+
+## TypeScript Baseline (May 2026)
+
+The `@workspace/api-server` package now passes `tsc --noEmit` with **zero errors** (was 16). Notable fixes worth preserving:
+-   **Email guards** (`routes/keys.ts`, `routes/stripeRoutes.ts`): every place that previously did `req.user!.email` now narrows via `const email = req.user?.email; if (!email) return res.status(400)…` before use. Replit Auth allows email-less accounts in principle and the unsafe non-null assertion was a real crash vector.
+-   **Array-smuggle guards** (`routes/keys.ts`, `routes/paste.ts`): Express 5 types `req.params.id` as `string | string[]`. URLs like `/api/paste/abc123?id=evil` would silently set `params.id` to an array. Now coerced and rejected with 404 — verified by curl smoke (`/api/paste/abc123?id=evil` → 404).
+-   **Type narrowing of `unknown`** (`routes/gateway.ts:683`): the `lastAt` value from `Map.get()` is now bound to a `const lastAt: unknown` and narrowed before subtraction — fixes a `Date | undefined` arithmetic error that previously type-checked only because of a soft cast.
+-   **Defensive imports**: `pdf-parse` (in `lib/docMemory.ts`) and `globalThis.Response` (in `routes/mcp.ts`) now have explicit type annotations so esbuild/tsc agree on the runtime shape.
 
 ## Inbound Funnel — `/publish`
 
