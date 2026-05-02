@@ -1,14 +1,36 @@
+import { useState } from "react";
 import { Link } from "wouter";
-import { ArrowLeft, Coins, Zap, Bot, ArrowRight, Check, Github, ExternalLink } from "lucide-react";
+import { ArrowLeft, Coins, Zap, Bot, ArrowRight, Check, Github, ExternalLink, Copy } from "lucide-react";
 import { useSEO } from "@/hooks/useSEO";
+import GatewayLiveTicker from "@/components/GatewayLiveTicker";
+
+const TRY_IT_CURL = `# Try the live demo MCP — stub-mode, no wallet required
+curl -X POST https://toolora.dev/api/gateway/proxy/9f733346-228b-483e-a704-669be72c398d \\
+  -H "Content-Type: application/json" \\
+  -H "X-PAYMENT: stub-tryit-$(date +%s)" \\
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"echo"}}'
+
+# Response includes X-Toolora-Gateway-Status: settled (or failed)
+# and a real ledger row in the public stats above.`;
 
 export default function Gateway() {
   useSEO({
-    title: "Toolora Gateway — Stablecoin payments rail for MCP servers",
+    title: "Toolora Gateway — Stablecoin payments rail for the agent economy",
     description:
-      "Bill your AI-agent users in USDC. List on Toolora's marketplace, enable Gateway billing, charge per call, get paid the same block. 5% take rate, sub-cent unit economics, no Stripe accounts to manage.",
+      "Bill AI agents in USDC. List on Toolora's marketplace, enable Gateway billing, charge per call, settle on-chain the same block. 5% take rate, sub-cent unit economics, agent-native checkout via x402.",
     canonical: "https://toolora.dev/gateway",
   });
+
+  const [copied, setCopied] = useState(false);
+  const onCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(TRY_IT_CURL);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      /* noop */
+    }
+  };
 
   return (
     <main className="relative">
@@ -27,17 +49,18 @@ export default function Gateway() {
         </div>
 
         <h1 className="text-5xl md:text-6xl font-bold tracking-tight mb-5 bg-gradient-to-br from-zinc-50 to-zinc-400 bg-clip-text text-transparent leading-[1.05]">
-          The stablecoin payments<br />
-          <span className="bg-gradient-to-r from-emerald-400 via-cyan-400 to-violet-400 bg-clip-text text-transparent">rail for MCP servers</span>
+          The stablecoin payments rail<br />
+          <span className="bg-gradient-to-r from-emerald-400 via-cyan-400 to-violet-400 bg-clip-text text-transparent">for the agent economy</span>
         </h1>
 
         <p className="text-lg md:text-xl text-zinc-400 max-w-2xl mb-4 leading-relaxed">
-          Bill your AI-agent users in USDC. List on Toolora's marketplace, enable Gateway billing, charge per call, get paid the same block.
-          5% take rate, sub-cent unit economics, no Stripe accounts to manage. <span className="text-zinc-300">(Think: Stripe for MCP, on a USDC rail.)</span>
+          Bill AI agents in USDC for every MCP call. Same-block settlement, sub-cent unit
+          economics, agent-native checkout via HTTP 402 + x402 — no Stripe account, no
+          chargebacks, no merchant onboarding. <span className="text-zinc-300">Stripe for the agent economy, on a USDC rail.</span>
         </p>
 
-        <p className="text-xs text-zinc-500 mb-10">
-          As featured in{" "}
+        <p className="text-xs text-zinc-500 mb-8">
+          Built for YC W26 RFS: <span className="text-zinc-400">Stablecoin payments rail for the agent economy</span>. Featured in{" "}
           <a
             href="https://hackernoon.com/i-added-an-mcp-server-to-my-browser-based-tool-suite-agents-found-it-immediately"
             target="_blank"
@@ -48,6 +71,30 @@ export default function Gateway() {
           </a>{" "}
           — "Agents Found It Immediately."
         </p>
+
+        <GatewayLiveTicker />
+
+        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/40 p-6 mb-10">
+          <div className="flex items-center justify-between mb-3 gap-3">
+            <h3 className="font-semibold text-zinc-100">Try it now (no wallet required)</h3>
+            <button
+              type="button"
+              onClick={onCopy}
+              className="inline-flex items-center gap-1.5 rounded-md border border-zinc-700 bg-zinc-900 hover:bg-zinc-800 px-2.5 py-1 text-xs text-zinc-300 transition"
+              aria-label="Copy curl command"
+            >
+              <Copy className="w-3 h-3" />
+              {copied ? "Copied" : "Copy"}
+            </button>
+          </div>
+          <pre className="rounded-lg bg-zinc-950 border border-zinc-800 p-4 text-[11px] md:text-xs text-emerald-300 font-mono overflow-x-auto leading-relaxed">
+{TRY_IT_CURL}
+          </pre>
+          <p className="text-xs text-zinc-500 mt-3">
+            Hits the seeded demo MCP through the live gateway. Watch the ticker
+            above tick up on a successful call.
+          </p>
+        </div>
 
         <div className="grid md:grid-cols-3 gap-4 mb-12">
           {[

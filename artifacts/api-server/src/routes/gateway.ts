@@ -1,6 +1,7 @@
 import { Router, type IRouter, type Request, type Response } from "express";
 import { Agent as UndiciAgent, fetch as undiciFetch } from "undici";
 import dns from "node:dns";
+import { recordGatewayCriticalEvent } from "../lib/gatewayHealth.js";
 import { db } from "@workspace/db";
 import {
   gatewayConfigsTable,
@@ -17,7 +18,14 @@ import { logger } from "../lib/logger";
 
 const router: IRouter = Router();
 
-const UPSTREAM_TIMEOUT_MS = 30_000;
+// Configurable per-deployment via GATEWAY_UPSTREAM_TIMEOUT_MS. Defaults to
+// 30s — long enough for slow LLM-backed MCP servers, short enough that a
+// stuck upstream doesn't tie up our connections indefinitely. Lowered in
+// integration tests to keep timeout coverage runnable in seconds.
+const UPSTREAM_TIMEOUT_MS = (() => {
+  const raw = Number(process.env.GATEWAY_UPSTREAM_TIMEOUT_MS);
+  return Number.isFinite(raw) && raw >= 1_000 && raw <= 120_000 ? raw : 30_000;
+})();
 const MAX_UPSTREAM_BYTES = 10 * 1024 * 1024; // 10 MB cap
 const MIN_PRICE_MICROS = 1; // $0.000001
 const MAX_PRICE_MICROS = 100_000_000; // $100/call hard ceiling
@@ -229,8 +237,13 @@ router.all("/proxy/:listingId", async (req: Request, res: Response): Promise<voi
       if (!unreachableReason) upstreamBody = Buffer.concat(chunks.map((c) => Buffer.from(c)));
     }
   } catch (err) {
-    if ((err as Error & { name?: string })?.name === "AbortError") timedOut = true;
-    else {
+    // controller.signal.aborted is the source of truth here. undici translates
+    // a mid-flight abort into TypeError("fetch failed") with cause UND_ERR_SOCKET
+    // (NOT an AbortError), so checking err.name alone misses every real timeout
+    // and routes them through the unreachable branch with the wrong HTTP code.
+    if (controller.signal.aborted || (err as Error & { name?: string })?.name === "AbortError") {
+      timedOut = true;
+    } else {
       const e = err as Error & { cause?: { code?: string; message?: string } };
       const causeMsg = e.cause?.code ?? e.cause?.message;
       unreachableReason = causeMsg ? `${e.message}: ${causeMsg}` : (e.message ?? "fetch_failed");
@@ -264,6 +277,7 @@ router.all("/proxy/:listingId", async (req: Request, res: Response): Promise<voi
         settledAt: null,
       });
     } catch (err) {
+      recordGatewayCriticalEvent("failed_upstream_insert");
       logger.error(
         {
           err,
@@ -352,6 +366,7 @@ router.all("/proxy/:listingId", async (req: Request, res: Response): Promise<voi
     // upstream succeeded, and we owe the owner. Operator must reconcile from
     // logs. Logging both the payment ref and the upstream success ensures
     // forensic recovery is possible.
+    recordGatewayCriticalEvent("success_billing_insert");
     logger.error(
       {
         err,
@@ -586,6 +601,101 @@ router.get("/summary/:listingId", requireOwner, async (req: Request, res: Respon
   });
 });
 
+// ─── 6b. Public demo stats — GET /public-demo-stats ────────────────────────
+// Powers the live "Settled on-chain" ticker on the public /gateway landing
+// page. Unauthenticated and aggregate-only — no PII, no per-event detail,
+// no caller addresses. Only returns data for the demo listing configured via
+// GATEWAY_DEMO_LISTING_ID (defaults to the seeded toolora-gateway-demo-mcp
+// so we can ship the landing without per-deploy config). This intentionally
+// will NOT serve stats for arbitrary owner listings — owners' revenue is
+// private until they opt in.
+const DEMO_LISTING_ID =
+  process.env.GATEWAY_DEMO_LISTING_ID ?? "9f733346-228b-483e-a704-669be72c398d";
+
+router.get("/public-demo-stats", async (_req: Request, res: Response): Promise<void> => {
+  res.setHeader("Cache-Control", "public, max-age=15, stale-while-revalidate=60");
+  try {
+    const rows = await db
+      .select({
+        status: gatewayBillingEventsTable.status,
+        calls: sql<number>`count(*)::int`,
+        callerPaidMicros: sql<number>`coalesce(sum(${gatewayBillingEventsTable.amountUsdcMicros}), 0)::bigint`,
+        ownerEarnedMicros: sql<number>`coalesce(sum(${gatewayBillingEventsTable.amountUsdcMicros} - ${gatewayBillingEventsTable.tooloraFeeUsdcMicros}), 0)::bigint`,
+        feeMicros: sql<number>`coalesce(sum(${gatewayBillingEventsTable.tooloraFeeUsdcMicros}), 0)::bigint`,
+        lastAt: sql<string | null>`max(${gatewayBillingEventsTable.createdAt})`,
+      })
+      .from(gatewayBillingEventsTable)
+      .where(eq(gatewayBillingEventsTable.listingId, DEMO_LISTING_ID))
+      .groupBy(gatewayBillingEventsTable.status);
+
+    let totalCalls = 0;
+    let settledCalls = 0;
+    let failedCalls = 0;
+    let ownerEarnedMicros = 0;
+    let feeMicros = 0;
+    let callerPaidMicros = 0;
+    // Source-of-truth: only the settled bucket. Failed-call timestamps must
+    // never advance lastSettledAt — the public landing renders this field as
+    // "last call Xm ago" under a green pulsing dot, so showing a failure
+    // there would be misleading.
+    let lastSettledEpochMs = 0;
+    for (const r of rows) {
+      const calls = Number(r.calls) || 0;
+      totalCalls += calls;
+      if (r.status === "settled") {
+        settledCalls += calls;
+        ownerEarnedMicros += Number(r.ownerEarnedMicros) || 0;
+        feeMicros += Number(r.feeMicros) || 0;
+        callerPaidMicros += Number(r.callerPaidMicros) || 0;
+        if (r.lastAt) {
+          // Normalize via epoch ms before comparing — avoids string-vs-Date
+          // ordering surprises across Postgres drivers / runtimes.
+          const t =
+            r.lastAt instanceof Date
+              ? r.lastAt.getTime()
+              : Date.parse(String(r.lastAt));
+          if (Number.isFinite(t) && t > lastSettledEpochMs) {
+            lastSettledEpochMs = t;
+          }
+        }
+      } else if (r.status === "failed") {
+        failedCalls += calls;
+      }
+    }
+
+    res.json({
+      listingId: DEMO_LISTING_ID,
+      mode: payoutMode(),
+      totals: {
+        calls: totalCalls,
+        settled: settledCalls,
+        failed: failedCalls,
+      },
+      usdc: {
+        callerPaidMicros,
+        ownerEarnedMicros,
+        tooloraFeeMicros: feeMicros,
+        callerPaidUsd: callerPaidMicros / 1_000_000,
+        ownerEarnedUsd: ownerEarnedMicros / 1_000_000,
+        tooloraFeeUsd: feeMicros / 1_000_000,
+      },
+      lastSettledAt:
+        lastSettledEpochMs > 0
+          ? new Date(lastSettledEpochMs).toISOString()
+          : null,
+    });
+  } catch (err) {
+    logger.warn({ err }, "[gateway] public-demo-stats query failed");
+    res.json({
+      listingId: DEMO_LISTING_ID,
+      mode: payoutMode(),
+      totals: { calls: 0, settled: 0, failed: 0 },
+      usdc: { callerPaidMicros: 0, ownerEarnedMicros: 0, tooloraFeeMicros: 0, callerPaidUsd: 0, ownerEarnedUsd: 0, tooloraFeeUsd: 0 },
+      lastSettledAt: null,
+    });
+  }
+});
+
 // ─── 7. Echo MCP (smoke-test upstream) ─────────────────────────────────────
 // A minimal JSON-RPC echo so the smoke test has a real upstream to forward
 // to without spinning up a separate Repl. The "third party MCP" for May 2's
@@ -594,8 +704,21 @@ router.get("/echo/health", (_req, res) => {
   res.json({ ok: true, service: "toolora-gateway-echo-mcp" });
 });
 
-router.all("/echo", (req: Request, res: Response): void => {
+router.all("/echo", async (req: Request, res: Response): Promise<void> => {
   const body = req.body as { jsonrpc?: string; id?: number | string; method?: string; params?: unknown };
+  // Optional ?delayMs=N (capped at 60s) to support self-contained integration
+  // tests of the gateway's UPSTREAM_TIMEOUT_MS path without depending on
+  // flaky third-party slow services like httpbin (caps at 10s) or httpstat.us
+  // (closes connection early). Only enabled outside production.
+  const rawDelay = Number(req.query.delayMs);
+  if (
+    process.env.NODE_ENV !== "production" &&
+    Number.isFinite(rawDelay) &&
+    rawDelay > 0
+  ) {
+    const delayMs = Math.min(rawDelay, 60_000);
+    await new Promise((resolve) => setTimeout(resolve, delayMs));
+  }
   if (req.method === "GET") {
     res.json({ ok: true, service: "toolora-gateway-echo-mcp", hint: "POST a JSON-RPC body to invoke." });
     return;

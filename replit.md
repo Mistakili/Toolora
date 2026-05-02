@@ -53,29 +53,36 @@ The Toolora Gateway (`/api/gateway`) is the stablecoin payments rail for agent i
 **Routes** (`artifacts/api-server/src/routes/gateway.ts`):
 - `ALL /proxy/:listingId` — public proxy. Verifies x402 payment header, validates upstream URL (SSRF), forwards request, splits USDC, records billing event.
 - `POST|PATCH|GET /configs/:listingId` — owner-token-authenticated CRUD for gateway config (price, payout wallet, upstream URL, enabled).
-- `GET /billing-events/:listingId` — paginated event log.
-- `GET /summary/:listingId` — 24h / 7d / all-time call counts and owner earnings.
-- `POST /echo` — stub upstream for smoke testing.
+- `GET /billing-events/:listingId` — paginated event log (owner-token).
+- `GET /summary/:listingId` — 24h / 7d / all-time call counts and owner earnings (owner-token).
+- `GET /public-demo-stats` — unauthenticated, aggregate-only stats for the seeded demo listing (configurable via `GATEWAY_DEMO_LISTING_ID`). Powers the live ticker on `/gateway`. Intentionally never serves arbitrary owner data — owners' revenue is private.
+- `ALL /echo` — stub upstream for smoke testing. Optional `?delayMs=N` (capped 60s, dev-only) to exercise the upstream-timeout code path without depending on flaky third-party slow services.
 
 **Operating modes** (env-controlled, default to `stub` for pre-flight):
 - `GATEWAY_PAYMENT_MODE` — `stub` (accept any X-PAYMENT) | `verify` (validate x402 challenge against on-chain settlement).
 - `GATEWAY_PAYOUT_MODE` — `stub` (no on-chain work) | `broadcast` (real Solana USDC transfers).
 - `GATEWAY_SSRF_ALLOWLIST` — comma-separated host suffixes that bypass the IP-blocklist + DNS-pinning (defaults to `replit.dev,replit.app` in dev so the gateway can call its own echo).
+- `GATEWAY_UPSTREAM_TIMEOUT_MS` — per-request upstream timeout. Defaults to `30000`. Constrained to 1s–120s. Lower it for faster smoke runs, raise it only if you're proxying genuinely slow LLM-backed MCPs.
+- `GATEWAY_DEMO_LISTING_ID` — listing id whose aggregate stats are exposed publicly via `/public-demo-stats` for the landing-page ticker. Defaults to the seeded demo.
 
 **Accounting integrity** — the agent has ALREADY paid via x402 by the time we forward the request, so we MUST always write a ledger row, regardless of what happens upstream. Three post-payment paths all funnel into a billing event:
 - **2xx upstream** → `splitUsdc()` runs (in try/catch). Status reflects actual split result (`settled` | `pending` | `failed`). Caller receives upstream response. Ledger row records `tooloraFeeUsdcMicros=50` (5%).
 - **non-2xx / unreachable** → 502 to caller. Ledger row with `status='failed'`, `errorReason='upstream_status:NNN'` or `'upstream_unreachable:...'`, `tooloraFeeUsdcMicros=0` (no fee retained — caller didn't get a response). Reconciliation job can refund the agent's prepayment.
 - **timeout** (>30s) → 504 to caller. Same ledger semantics with `errorReason='upstream_timeout:30000ms'`.
-All three paths are factored through a single `recordFailedCallAndRespond()` helper. DB-insert failures log `CRITICAL` but don't block the response.
+All three paths are factored through a single `recordFailedCallAndRespond()` helper. DB-insert failures log `CRITICAL` and bump an in-memory counter (`lib/gatewayHealth.ts`) surfaced via `/api/healthz` so ops can detect lost ledger rows without external monitoring infra. When `criticalEventsTotal > 0` the healthz `status` flips from `ok` → `degraded`.
+
+**Timeout vs unreachable detection** — undici translates a mid-flight `controller.abort()` into `TypeError("fetch failed")` with cause `UND_ERR_SOCKET`, NOT an `AbortError`. The catch block must check `controller.signal.aborted` (source of truth), not just `err.name === "AbortError"` — the latter alone misclassifies every real timeout as `upstream_unreachable` and returns 502 instead of 504.
+
+**Integration smoke** — `pnpm --filter @workspace/scripts run gateway-smoke` exercises all four post-payment outcomes (success / non-2xx / timeout / network-error) against the running api-server and asserts a billing-event row is written for each. Self-contained (uses our own `/echo?delayMs=N` for the timeout, RFC-2606 example.com:9999 for the connection-refused case). Reads owner credentials from `.local/may2-smoke-creds.json` (gitignored).
 
 **SSRF defense** — two layers:
-1. Pre-fetch validation (`lib/ssrf.ts`) blocks loopback, link-local (incl. cloud metadata 169.254.169.254), private RFC1918, multicast, ULA. Resolves DNS for both A and AAAA records.
+1. Pre-fetch validation (`lib/ssrf.ts`) blocks loopback, link-local (incl. cloud metadata 169.254.169.254), private RFC1918, multicast, ULA. Resolves DNS for both A and AAAA records. **The IP-block loop dispatches by family** (`ip.includes(":")` → v6 checker, else v4 checker) — a previous bug ran every resolved IP through `isBlockedV4` first, returning `"invalid-ipv4"` on any AAAA address and falsely rejecting every dual-stack host (most modern web).
 2. DNS pinning at connect-time (`pinnedDispatcher()`) — uses `undici.fetch` (NOT global fetch, since global fetch's internal undici won't accept dispatchers from a separately-installed undici instance) with a custom `connect.lookup` that returns the pre-validated IP. Closes the validation-vs-connect TOCTOU window so a malicious owner can't use DNS rebinding to exfiltrate cloud metadata. Lookup callback honors both `options.all=true` (array form) and `options.all=false` (single form). Allowlisted hosts intentionally bypass pinning so Replit's loopback works.
 
 **Owner token** — bearer token gating per-listing config CRUD. HMAC-SHA256 over `${listingId}:${ownerEmail}` keyed by `OWNER_SECRET`. Verifier anchors on the LAST 2 dot-segments of the email so addresses like `a.b.c@toolora.dev` work (a previous bug split-by-dot which mangled emails with dots in the local part).
 
 **Frontend**:
-- `/gateway` — landing page explaining the rail (toolbox).
+- `/gateway` — landing page (toolbox). Headline: "The stablecoin payments rail for the agent economy" (YC W26 RFS positioning). Includes a live ticker (`GatewayLiveTicker.tsx`) that polls `/api/gateway/public-demo-stats` every 20s showing real call counts + USDC volume from the seeded demo, plus a one-click "Try it now" curl snippet (stub-mode, no wallet needed).
 - `/x402` — backwards-compat redirect → `/gateway`.
 - McpOwnerDashboard "Gateway billing" tab — config form + 24h/7d/all-time earnings cards + paginated events table. The `dirty` flag on the config form prevents the 10s polling refresh from clobbering in-progress edits (poll only refreshes events+summary, never form state).
 

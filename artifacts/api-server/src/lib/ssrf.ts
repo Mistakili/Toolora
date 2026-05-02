@@ -158,11 +158,18 @@ export async function validateUpstreamUrl(rawUrl: string): Promise<SsrfResult> {
     if (v6Block) return { ok: false, reason: `blocked-ipv6:${v6Block}`, resolvedIps: [host] };
     return { ok: false, reason: "no-dns-resolution" };
   }
+  // Dispatch by family — IPv6 contains ":", IPv4 doesn't. Without this
+  // dispatch, isBlockedV4 returns "invalid-ipv4" for any v6 address and we
+  // wrongly reject all dual-stack hosts (most of the modern web). Both
+  // families are still validated; we just route each IP to the right checker.
   for (const ip of resolved) {
-    const v4 = isBlockedV4(ip);
-    if (v4) return { ok: false, reason: `blocked-ipv4:${v4}`, resolvedIps: resolved };
-    const v6 = isBlockedV6(ip);
-    if (v6) return { ok: false, reason: `blocked-ipv6:${v6}`, resolvedIps: resolved };
+    if (ip.includes(":")) {
+      const v6 = isBlockedV6(ip);
+      if (v6) return { ok: false, reason: `blocked-ipv6:${v6}`, resolvedIps: resolved };
+    } else {
+      const v4 = isBlockedV4(ip);
+      if (v4) return { ok: false, reason: `blocked-ipv4:${v4}`, resolvedIps: resolved };
+    }
   }
   return { ok: true, resolvedIps: resolved };
 }
