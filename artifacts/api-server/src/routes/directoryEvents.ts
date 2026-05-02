@@ -4,16 +4,10 @@ import { db } from "@workspace/db";
 import { mcpListingsTable, mcpListingEventsTable } from "@workspace/db/schema";
 import { and, eq, gte, sql, desc } from "drizzle-orm";
 import { logger } from "../lib/logger";
+import { signOwnerToken, verifyOwnerToken, OWNER_SECRET } from "../lib/ownerToken";
 
 const router: IRouter = Router();
 
-const IS_PROD = process.env.NODE_ENV === "production";
-const OWNER_SECRET =
-  process.env.OWNER_DASHBOARD_SECRET ?? process.env.SESSION_SECRET ?? (IS_PROD ? "" : "toolora-owner-dev-secret-DO-NOT-USE-IN-PROD");
-if (IS_PROD && !OWNER_SECRET) {
-  // Fail fast on startup so a forgeable-token deploy never ships.
-  throw new Error("OWNER_DASHBOARD_SECRET (or SESSION_SECRET) must be set in production — owner dashboard tokens would otherwise be forgeable.");
-}
 const IP_SALT = process.env.IP_HASH_SALT ?? OWNER_SECRET;
 const ALLOWED_KINDS = new Set([
   "view",
@@ -285,33 +279,8 @@ router.get("/weekly-preview", async (_req: Request, res: Response): Promise<void
 });
 
 // ─── 5. Owner auth + analytics ──────────────────────────────────────────────
-function signOwnerToken(listingId: string, email: string): string {
-  const exp = Date.now() + 30 * 24 * 60 * 60 * 1000; // 30 days
-  const payload = `${listingId}.${email}.${exp}`;
-  const sig = crypto.createHmac("sha256", OWNER_SECRET).update(payload).digest("hex").slice(0, 32);
-  return Buffer.from(`${payload}.${sig}`).toString("base64url");
-}
-
-function verifyOwnerToken(token: string, listingId: string): string | null {
-  try {
-    const decoded = Buffer.from(token, "base64url").toString("utf-8");
-    const parts = decoded.split(".");
-    if (parts.length !== 4) return null;
-    const [tListingId, email, expStr, sig] = parts;
-    if (tListingId !== listingId) return null;
-    const exp = parseInt(expStr, 10);
-    if (!Number.isFinite(exp) || exp < Date.now()) return null;
-    const expected = crypto
-      .createHmac("sha256", OWNER_SECRET)
-      .update(`${tListingId}.${email}.${expStr}`)
-      .digest("hex")
-      .slice(0, 32);
-    if (sig !== expected) return null;
-    return email;
-  } catch {
-    return null;
-  }
-}
+// signOwnerToken / verifyOwnerToken now live in ../lib/ownerToken so the
+// Gateway billing routes can share the same HMAC scheme. Re-exported above.
 
 // ── GitHub-based ownership verification ────────────────────────────────────
 // Listings without a buyer_email (the 340 imported ones) can be claimed by

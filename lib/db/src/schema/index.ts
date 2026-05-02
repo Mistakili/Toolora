@@ -32,3 +32,5 @@ export * from "./memories";
 export * from "./sponsors";
 export * from "./checkoutIntents";
 export * from "./mcpListingEvents";
+export * from "./gatewayConfigs";
+export * from "./gatewayBillingEvents";

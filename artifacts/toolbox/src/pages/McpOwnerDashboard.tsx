@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link, useRoute } from "wouter";
-import { ArrowLeft, BarChart3, Download, ExternalLink, RefreshCw, TrendingUp, TrendingDown, Eye, Bot, Github, Copy, Check } from "lucide-react";
+import { ArrowLeft, BarChart3, Download, ExternalLink, RefreshCw, TrendingUp, TrendingDown, Eye, Bot, Github, Copy, Check, Coins, Zap, AlertTriangle } from "lucide-react";
 import { useSEO } from "@/hooks/useSEO";
 
 const API = (import.meta.env.VITE_API_URL as string | undefined) ?? "";
@@ -38,6 +38,7 @@ export default function McpOwnerDashboard() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [stats, setStats] = useState<Stats | null>(null);
+  const [activeTab, setActiveTab] = useState<"analytics" | "billing">("analytics");
 
   useSEO({
     title: "Owner dashboard — MCP install analytics on Toolora",
@@ -154,6 +155,38 @@ export default function McpOwnerDashboard() {
 
       {token && stats && (
         <>
+          <div className="flex items-center gap-1 mb-6 border-b border-zinc-800">
+            <button
+              onClick={() => setActiveTab("analytics")}
+              className={
+                "px-4 py-2.5 text-sm font-medium border-b-2 -mb-px transition " +
+                (activeTab === "analytics"
+                  ? "text-zinc-100 border-violet-500"
+                  : "text-zinc-500 border-transparent hover:text-zinc-300")
+              }
+            >
+              <span className="inline-flex items-center gap-2"><BarChart3 className="w-4 h-4" /> Analytics</span>
+            </button>
+            <button
+              onClick={() => setActiveTab("billing")}
+              className={
+                "px-4 py-2.5 text-sm font-medium border-b-2 -mb-px transition " +
+                (activeTab === "billing"
+                  ? "text-zinc-100 border-emerald-500"
+                  : "text-zinc-500 border-transparent hover:text-zinc-300")
+              }
+            >
+              <span className="inline-flex items-center gap-2"><Coins className="w-4 h-4" /> Gateway billing</span>
+              <span className="ml-2 text-[9px] uppercase tracking-widest text-emerald-400 align-middle">new</span>
+            </button>
+          </div>
+
+          {activeTab === "billing" && (
+            <GatewayBillingTab listingId={stats.listing.id} listingName={stats.listing.name} token={token} />
+          )}
+
+          {activeTab === "analytics" && (
+          <>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
             <StatCard
               icon={<Download className="w-4 h-4 text-emerald-400" />}
@@ -205,10 +238,372 @@ export default function McpOwnerDashboard() {
             <p className="text-xs text-zinc-400 mb-3">We pick 3 new servers + 1 hidden gem every Friday. If your install rate is rising, you're already a candidate. Reply to <a href="mailto:hello@toolora.dev" className="text-emerald-400 hover:underline">hello@toolora.dev</a> with what's new.</p>
           </section>
 
-          <button onClick={signOut} className="text-xs text-zinc-500 hover:text-zinc-300">Sign out of dashboard</button>
+          </>
+          )}
+
+          <button onClick={signOut} className="text-xs text-zinc-500 hover:text-zinc-300 mt-6">Sign out of dashboard</button>
         </>
       )}
     </main>
+  );
+}
+
+// ─── Gateway billing tab ────────────────────────────────────────────────────
+interface GatewayConfig {
+  id: string;
+  listingId: string;
+  enabled: boolean;
+  pricePerCallUsdcMicros: number;
+  payoutWalletAddress: string;
+  payoutNetwork: string;
+  upstreamMcpUrl: string;
+  createdAt: string | null;
+  updatedAt: string | null;
+}
+
+interface BillingEvent {
+  id: string;
+  toolName: string | null;
+  amountUsdcMicros: number;
+  tooloraFeeUsdcMicros: number;
+  paymentTxHash: string | null;
+  payoutTxHash: string | null;
+  status: string;
+  errorReason: string | null;
+  createdAt: string | null;
+  settledAt: string | null;
+}
+
+interface BillingSummary {
+  ok: true;
+  payoutMode: "stub" | "broadcast";
+  last24h: { calls: number; grossUsd: number; feeUsd: number; ownerEarningsUsd: number };
+  last7d: { calls: number; grossUsd: number; feeUsd: number; ownerEarningsUsd: number };
+  allTime: { calls: number; grossUsd: number; feeUsd: number; ownerEarningsUsd: number };
+}
+
+function GatewayBillingTab({ listingId, listingName, token }: { listingId: string; listingName: string; token: string }) {
+  const [config, setConfig] = useState<GatewayConfig | null>(null);
+  const [events, setEvents] = useState<BillingEvent[]>([]);
+  const [summary, setSummary] = useState<BillingSummary | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [payoutMode, setPayoutMode] = useState<"stub" | "broadcast" | null>(null);
+  const [copiedUrl, setCopiedUrl] = useState(false);
+
+  const [form, setForm] = useState({
+    enabled: false,
+    pricePerCallUsd: 0.001,
+    payoutWalletAddress: "",
+    payoutNetwork: "solana",
+    upstreamMcpUrl: "",
+  });
+  // Track whether the operator has touched the form since the last successful
+  // load/save. While dirty=true we MUST NOT overwrite their typed values from
+  // the polling refresh — otherwise a 10s tick clobbers their edits.
+  const [dirty, setDirty] = useState(false);
+
+  const headers = useMemo(() => ({ Authorization: `Bearer ${token}`, "Content-Type": "application/json" }), [token]);
+  const proxyUrl = `${window.location.origin.replace(/\/$/, "")}/api/gateway/proxy/${listingId}`;
+
+  // Load the static config exactly once (and on explicit reload after save).
+  const loadConfig = useCallback(async () => {
+    try {
+      const r = await fetch(API + `/api/gateway/configs/${listingId}`, { headers });
+      const cfg = await r.json();
+      if (cfg.ok) {
+        setConfig(cfg.config);
+        setPayoutMode(cfg.payoutMode);
+        if (cfg.config) {
+          setForm({
+            enabled: cfg.config.enabled,
+            pricePerCallUsd: cfg.config.pricePerCallUsdcMicros / 1_000_000,
+            payoutWalletAddress: cfg.config.payoutWalletAddress,
+            payoutNetwork: cfg.config.payoutNetwork,
+            upstreamMcpUrl: cfg.config.upstreamMcpUrl,
+          });
+          setDirty(false);
+        }
+      }
+    } catch {
+      setError("Could not load Gateway config. Try again.");
+    }
+  }, [headers, listingId]);
+
+  // Refresh just the live data (events + summary). Safe to poll without
+  // disturbing the form.
+  const refreshLiveData = useCallback(async () => {
+    try {
+      const [evR, sumR] = await Promise.all([
+        fetch(API + `/api/gateway/billing-events/${listingId}?limit=50`, { headers }),
+        fetch(API + `/api/gateway/summary/${listingId}`, { headers }),
+      ]);
+      const [ev, sum] = await Promise.all([evR.json(), sumR.json()]);
+      if (ev.ok) setEvents(ev.events);
+      if (sum.ok) setSummary(sum);
+    } catch {
+      /* swallow polling errors */
+    }
+  }, [headers, listingId]);
+
+  // Combined refresh used by the manual "Refresh" button and by save().
+  // Re-loads config too, but only when the form isn't dirty (to be safe).
+  const loadAll = useCallback(async () => {
+    await Promise.all([dirty ? Promise.resolve() : loadConfig(), refreshLiveData()]);
+  }, [dirty, loadConfig, refreshLiveData]);
+
+  useEffect(() => {
+    void loadConfig();
+    void refreshLiveData();
+  }, [loadConfig, refreshLiveData]);
+
+  // Poll only events + summary every 10s so a fresh smoke-test call shows up
+  // live without overwriting the operator's in-progress form edits.
+  useEffect(() => {
+    const id = setInterval(() => {
+      void refreshLiveData();
+    }, 10_000);
+    return () => clearInterval(id);
+  }, [refreshLiveData]);
+
+  const save = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setBusy(true);
+    setError(null);
+    setSaved(false);
+    try {
+      const r = await fetch(API + `/api/gateway/configs/${listingId}`, {
+        method: "POST",
+        headers,
+        body: JSON.stringify({
+          enabled: form.enabled,
+          pricePerCallUsd: form.pricePerCallUsd,
+          payoutWalletAddress: form.payoutWalletAddress.trim(),
+          payoutNetwork: form.payoutNetwork,
+          upstreamMcpUrl: form.upstreamMcpUrl.trim(),
+        }),
+      });
+      const d = await r.json();
+      if (!d.ok) {
+        setError(d.reason ? `${d.error}: ${d.reason}` : (d.error || "Save failed"));
+        return;
+      }
+      setConfig(d.config);
+      setDirty(false);
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2500);
+      void loadAll();
+    } catch {
+      setError("Network error. Try again.");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const copyProxy = async () => {
+    await navigator.clipboard.writeText(proxyUrl);
+    setCopiedUrl(true);
+    setTimeout(() => setCopiedUrl(false), 1500);
+  };
+
+  return (
+    <div>
+      <div className="rounded-2xl border border-emerald-500/30 bg-gradient-to-br from-emerald-950/30 to-zinc-900/40 p-5 mb-6 flex items-start gap-4">
+        <Coins className="w-6 h-6 text-emerald-400 mt-0.5 shrink-0" />
+        <div className="flex-1">
+          <h2 className="text-sm font-semibold text-zinc-100 mb-1">Bill agents in USDC for every call to {listingName}</h2>
+          <p className="text-xs text-zinc-400">
+            You set the price. Agents auto-pay via x402 (HTTP 402). 95% lands in your Solana wallet the same block;
+            Toolora keeps 5%. Sub-cent unit economics — no Stripe required.{" "}
+            <Link href="/gateway" className="text-emerald-300 hover:underline">Read the docs →</Link>
+          </p>
+        </div>
+      </div>
+
+      {payoutMode === "stub" && (
+        <div className="rounded-xl border border-amber-500/30 bg-amber-500/5 p-3 mb-6 flex items-start gap-2">
+          <AlertTriangle className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" />
+          <p className="text-xs text-amber-200/90">
+            <strong>Stub payout mode</strong> is currently active. Calls will be billed and recorded, but no on-chain transfer
+            is broadcast. Toolora flips this to live broadcast as soon as the platform wallet is funded — your settled balance
+            carries over.
+          </p>
+        </div>
+      )}
+
+      {summary && (
+        <div className="grid sm:grid-cols-3 gap-4 mb-6">
+          <BillingStatCard label="Last 24h" value={summary.last24h} />
+          <BillingStatCard label="Last 7 days" value={summary.last7d} />
+          <BillingStatCard label="All time" value={summary.allTime} />
+        </div>
+      )}
+
+      <form onSubmit={save} className="rounded-2xl border border-zinc-800 bg-zinc-900/40 p-6 mb-6 space-y-4">
+        <div className="flex items-center justify-between">
+          <h3 className="text-sm font-semibold text-zinc-100">Gateway configuration</h3>
+          <label className="inline-flex items-center gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={form.enabled}
+              onChange={(e) => { setForm({ ...form, enabled: e.target.checked }); setDirty(true); }}
+              className="w-4 h-4 accent-emerald-500"
+            />
+            <span className="text-xs text-zinc-300">{form.enabled ? "Billing enabled" : "Billing disabled"}</span>
+          </label>
+        </div>
+
+        <div>
+          <label className="block text-xs font-medium text-zinc-300 mb-1.5">Your gateway URL (give this to agents)</label>
+          <div className="flex items-center gap-2">
+            <code className="flex-1 rounded-lg bg-zinc-950 border border-zinc-800 px-3 py-2 text-xs text-emerald-300 font-mono select-all truncate">
+              {proxyUrl}
+            </code>
+            <button type="button" onClick={copyProxy} className="p-2 rounded-md border border-zinc-700 hover:border-zinc-500 text-zinc-300">
+              {copiedUrl ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
+            </button>
+          </div>
+          <p className="text-[11px] text-zinc-500 mt-1.5">In production this will be served at <code>gateway.toolora.dev/mcp/{listingId.slice(0, 8)}…</code></p>
+        </div>
+
+        <div className="grid sm:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-xs font-medium text-zinc-300 mb-1.5">Price per call (USD)</label>
+            <input
+              type="number"
+              step="0.0001"
+              min="0.000001"
+              max="100"
+              required
+              value={form.pricePerCallUsd}
+              onChange={(e) => { setForm({ ...form, pricePerCallUsd: parseFloat(e.target.value) || 0 }); setDirty(true); }}
+              className="w-full rounded-lg bg-zinc-950 border border-zinc-800 px-3 py-2 text-sm text-zinc-100 focus:border-emerald-500 focus:outline-none"
+            />
+            <p className="text-[11px] text-zinc-500 mt-1">You'll receive ${(form.pricePerCallUsd * 0.95).toFixed(6)} per call (95%)</p>
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-zinc-300 mb-1.5">Payout network</label>
+            <select
+              value={form.payoutNetwork}
+              onChange={(e) => { setForm({ ...form, payoutNetwork: e.target.value }); setDirty(true); }}
+              className="w-full rounded-lg bg-zinc-950 border border-zinc-800 px-3 py-2 text-sm text-zinc-100 focus:border-emerald-500 focus:outline-none"
+            >
+              <option value="solana">Solana (USDC SPL)</option>
+              <option value="stellar" disabled>Stellar (USDC) — coming soon</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-xs font-medium text-zinc-300 mb-1.5">Payout wallet address</label>
+          <input
+            type="text"
+            required
+            placeholder="Solana wallet that receives 95% of every paid call"
+            value={form.payoutWalletAddress}
+            onChange={(e) => { setForm({ ...form, payoutWalletAddress: e.target.value }); setDirty(true); }}
+            className="w-full rounded-lg bg-zinc-950 border border-zinc-800 px-3 py-2 text-sm text-zinc-100 font-mono focus:border-emerald-500 focus:outline-none"
+          />
+        </div>
+
+        <div>
+          <label className="block text-xs font-medium text-zinc-300 mb-1.5">Upstream MCP URL (your real server)</label>
+          <input
+            type="url"
+            required
+            placeholder="https://your-mcp.example.com/mcp"
+            value={form.upstreamMcpUrl}
+            onChange={(e) => { setForm({ ...form, upstreamMcpUrl: e.target.value }); setDirty(true); }}
+            className="w-full rounded-lg bg-zinc-950 border border-zinc-800 px-3 py-2 text-sm text-zinc-100 font-mono focus:border-emerald-500 focus:outline-none"
+          />
+          <p className="text-[11px] text-zinc-500 mt-1">
+            Gateway forwards paid requests here. Private addresses (loopback, RFC1918, link-local) are blocked.
+            For testing, you can point at <code>{window.location.origin}/api/gateway/echo</code>.
+          </p>
+        </div>
+
+        {error && <p className="text-xs text-amber-400">{error}</p>}
+
+        <div className="flex items-center gap-3 pt-2">
+          <button
+            disabled={busy}
+            type="submit"
+            className="inline-flex items-center justify-center gap-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white px-5 py-2 text-sm font-semibold"
+          >
+            {busy ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Zap className="w-4 h-4" />}
+            {config ? "Save config" : "Enable Gateway"}
+          </button>
+          {saved && <span className="text-xs text-emerald-400 inline-flex items-center gap-1"><Check className="w-3.5 h-3.5" /> Saved</span>}
+        </div>
+      </form>
+
+      <section className="rounded-2xl border border-zinc-800 bg-zinc-900/40 p-6">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-sm font-semibold text-zinc-100">Recent billing events</h3>
+          <button onClick={() => void loadAll()} className="text-xs text-zinc-500 hover:text-zinc-300 inline-flex items-center gap-1">
+            <RefreshCw className="w-3 h-3" /> Refresh
+          </button>
+        </div>
+        {events.length === 0 ? (
+          <p className="text-xs text-zinc-500">
+            No paid calls yet. Once an agent calls your gateway URL with a valid x402 payment, you'll see settled events here.
+          </p>
+        ) : (
+          <div className="overflow-x-auto -mx-2">
+            <table className="min-w-full text-xs">
+              <thead className="text-zinc-500 text-left">
+                <tr>
+                  <th className="px-2 py-1.5 font-medium">Time</th>
+                  <th className="px-2 py-1.5 font-medium">Tool</th>
+                  <th className="px-2 py-1.5 font-medium text-right">Caller paid</th>
+                  <th className="px-2 py-1.5 font-medium text-right">You earned</th>
+                  <th className="px-2 py-1.5 font-medium">Status</th>
+                  <th className="px-2 py-1.5 font-medium">Payout tx</th>
+                </tr>
+              </thead>
+              <tbody className="text-zinc-300">
+                {events.map((e) => {
+                  const owner = (e.amountUsdcMicros - e.tooloraFeeUsdcMicros) / 1_000_000;
+                  return (
+                    <tr key={e.id} className="border-t border-zinc-800/60">
+                      <td className="px-2 py-1.5 text-zinc-400 tabular-nums">{e.createdAt ? new Date(e.createdAt).toLocaleString() : "-"}</td>
+                      <td className="px-2 py-1.5 font-mono text-zinc-300">{e.toolName ?? "-"}</td>
+                      <td className="px-2 py-1.5 text-right tabular-nums">${(e.amountUsdcMicros / 1_000_000).toFixed(6)}</td>
+                      <td className="px-2 py-1.5 text-right tabular-nums text-emerald-400">${owner.toFixed(6)}</td>
+                      <td className="px-2 py-1.5">
+                        <span className={
+                          "inline-block px-1.5 py-0.5 rounded text-[10px] uppercase tracking-wide font-semibold " +
+                          (e.status === "settled"
+                            ? "bg-emerald-500/15 text-emerald-300"
+                            : e.status === "pending"
+                            ? "bg-amber-500/15 text-amber-300"
+                            : "bg-red-500/15 text-red-300")
+                        }>{e.status}</span>
+                      </td>
+                      <td className="px-2 py-1.5 font-mono text-zinc-500 truncate max-w-[160px]">{e.payoutTxHash ?? "-"}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </section>
+    </div>
+  );
+}
+
+function BillingStatCard({ label, value }: { label: string; value: { calls: number; grossUsd: number; feeUsd: number; ownerEarningsUsd: number } }) {
+  return (
+    <div className="rounded-2xl border border-zinc-800 bg-zinc-900/40 p-5">
+      <div className="text-xs text-zinc-400 mb-2">{label}</div>
+      <div className="text-3xl font-bold text-zinc-100 tabular-nums">${value.ownerEarningsUsd.toFixed(value.ownerEarningsUsd < 1 ? 6 : 2)}</div>
+      <div className="flex items-center justify-between mt-2 text-[11px] text-zinc-500">
+        <span>{value.calls.toLocaleString()} calls</span>
+        <span>gross ${value.grossUsd.toFixed(value.grossUsd < 1 ? 6 : 2)}</span>
+      </div>
+    </div>
   );
 }
 

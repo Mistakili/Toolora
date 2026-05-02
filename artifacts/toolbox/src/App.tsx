@@ -30,6 +30,7 @@ const McpCategory = lazy(() => import("@/pages/McpCategory"));
 const McpBestOf = lazy(() => import("@/pages/McpBestOf"));
 const Host = lazy(() => import("@/pages/Host"));
 const X402 = lazy(() => import("@/pages/X402"));
+const Gateway = lazy(() => import("@/pages/Gateway"));
 const Enterprise = lazy(() => import("@/pages/Enterprise"));
 const HipaaChecklist = lazy(() => import("@/pages/HipaaChecklist"));
 const NotFound = lazy(() => import("@/pages/not-found"));
@@ -95,6 +96,7 @@ function Router() {
               <Route path="/agents" component={Agents} />
               <Route path="/host" component={Host} />
               <Route path="/x402" component={X402} />
+              <Route path="/gateway" component={Gateway} />
               <Route path="/about" component={About} />
               <Route path="/integrations" component={Integrations} />
               <Route path="/gdpr" component={GdprCompliance} />

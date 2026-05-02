@@ -20,6 +20,7 @@ import webhooksRouter from "./webhooks";
 import directoryRouter from "./directory";
 import directoryEventsRouter from "./directoryEvents";
 import checkoutRouter from "./checkout";
+import gatewayRouter from "./gateway";
 
 const router: IRouter = Router();
 
@@ -44,5 +45,6 @@ router.use("/webhooks", webhooksRouter);
 router.use("/directory", directoryRouter);
 router.use("/directory", directoryEventsRouter);
 router.use("/checkout", checkoutRouter);
+router.use("/gateway", gatewayRouter);
 
 export default router;
