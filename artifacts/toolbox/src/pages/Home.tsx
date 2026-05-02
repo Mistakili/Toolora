@@ -438,10 +438,10 @@ export default function Home() {
                 A paid API built for autonomous agents.
               </h2>
               <p className="text-muted-foreground text-lg mb-4 leading-relaxed max-w-xl">
-                Three server-side endpoints that agents can discover, pay for, and use. Pay per-call with Solana USDC or Stellar XLM via x402 — or subscribe monthly via Stripe for higher volume.
+                Server-side endpoints that agents discover, pay for, and use. Per-call billing in Solana USDC or Stellar XLM via x402 — owners keep 95%, settlement is on-chain, no invoices.
               </p>
               <div className="flex flex-wrap gap-2 mb-6">
-                {[["Free", "200 calls/mo"], ["Pro", "$19/mo · 5k calls"], ["Team", "$79/mo · 50k calls"]].map(([plan, desc]) => (
+                {[["x402", "USDC per call"], ["Solana", "~$0.0001 fee"], ["Stellar", "sub-second finality"]].map(([plan, desc]) => (
                   <span key={plan} className="text-xs px-3 py-1.5 rounded-full border border-yellow-500/20 bg-yellow-500/5 text-yellow-600 dark:text-yellow-400 font-semibold">
                     {plan} <span className="font-normal text-muted-foreground">— {desc}</span>
                   </span>

@@ -79,12 +79,12 @@ const NAV_MENUS: NavMenu[] = [
         items: [
           { label: "API documentation", href: "/api-docs", icon: BookOpen, description: "REST + MCP endpoints" },
           { label: "Your API keys", href: "/api-keys", icon: Key, description: "Create, rotate, revoke" },
-          { label: "Pricing", href: "/pricing", icon: CreditCard, description: "Pay-as-you-go in USDC" },
+          { label: "Toolora Gateway", href: "/gateway", icon: CreditCard, description: "Get paid in USDC per call" },
           { label: "Integrations", href: "/integrations", icon: Puzzle, description: "n8n, Zapier, Make" },
         ],
       },
     ],
-    featured: { title: "Crypto-first billing", subtitle: "Top up with USDC on Solana. No card, no contract.", href: "/pricing", cta: "See pricing" },
+    featured: { title: "Stablecoin billing rail", subtitle: "Agents pay your MCP per-call in USDC via x402. 95% to you.", href: "/gateway", cta: "See the Gateway" },
   },
   {
     key: "blog",
@@ -336,9 +336,9 @@ export function AppLayout({ children }: { children: ReactNode }) {
                         <Key className="w-4 h-4" /> API Keys
                       </div>
                     </Link>
-                    <Link href="/pricing" onClick={() => setUserMenuOpen(false)}>
+                    <Link href="/gateway" onClick={() => setUserMenuOpen(false)}>
                       <div className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-muted transition-colors cursor-pointer">
-                        <CreditCard className="w-4 h-4" /> Pricing
+                        <CreditCard className="w-4 h-4" /> Toolora Gateway
                       </div>
                     </Link>
                     {user.email === "akinslaboratory@gmail.com" && (
@@ -409,9 +409,9 @@ export function AppLayout({ children }: { children: ReactNode }) {
               className="flex items-center gap-2 px-3 py-2.5 text-sm rounded-lg bg-violet-500/10 text-violet-400 border border-violet-500/20 hover:bg-violet-500/20 transition-colors">
               <Lock className="w-4 h-4" /> Toolora Private
             </a>
-            <Link href="/pricing" onClick={() => setIsMenuOpen(false)}
+            <Link href="/gateway" onClick={() => setIsMenuOpen(false)}
               className="flex items-center gap-2 px-3 py-2.5 text-sm rounded-lg hover:bg-muted transition-colors">
-              <CreditCard className="w-4 h-4 text-muted-foreground" /> Pricing
+              <CreditCard className="w-4 h-4 text-muted-foreground" /> Toolora Gateway
             </Link>
             <Link href="/api-docs" onClick={() => setIsMenuOpen(false)}
               className="flex items-center gap-2 px-3 py-2.5 text-sm rounded-lg hover:bg-muted transition-colors">
@@ -533,7 +533,8 @@ export function AppLayout({ children }: { children: ReactNode }) {
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li><a href="/private/" className="hover:text-foreground transition-colors text-violet-400">Toolora Private</a></li>
               <li><Link href="/blog" className="hover:text-foreground transition-colors">Blog</Link></li>
-              <li><Link href="/pricing" className="hover:text-foreground transition-colors">Pricing</Link></li>
+              <li><Link href="/gateway" className="hover:text-foreground transition-colors">Toolora Gateway</Link></li>
+              <li><Link href="/leaderboard" className="hover:text-foreground transition-colors">Leaderboard</Link></li>
               <li><Link href="/api-keys" className="hover:text-foreground transition-colors">API Keys</Link></li>
               <li><Link href="/api-docs" className="hover:text-foreground transition-colors">API Docs</Link></li>
               <li><Link href="/mcp" className="hover:text-foreground transition-colors">MCP Server</Link></li>

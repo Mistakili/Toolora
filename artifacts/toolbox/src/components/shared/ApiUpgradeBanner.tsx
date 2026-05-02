@@ -9,20 +9,20 @@ const VARIANTS = {
   "image-resize": {
     icon: Zap,
     text: "Processing images in bulk? The Agent API handles resize, compress, and convert in a single API call — no browser required.",
-    linkText: "See API plans",
-    href: "/pricing#api",
+    linkText: "See the API",
+    href: "/api-docs",
   },
   "image-compress": {
     icon: Zap,
     text: "Need to compress hundreds of images programmatically? The Agent API processes files at scale from any script or pipeline.",
-    linkText: "See API plans",
-    href: "/pricing#api",
+    linkText: "See the API",
+    href: "/api-docs",
   },
   "pdf-merge": {
     icon: Zap,
     text: "Automating document workflows? The Agent API merges, splits, and extracts text from PDFs — call it from any language.",
-    linkText: "See API plans",
-    href: "/pricing#api",
+    linkText: "See the API",
+    href: "/api-docs",
   },
   "markdown-embed": {
     icon: Code2,
