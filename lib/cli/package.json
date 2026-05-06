@@ -1,0 +1,44 @@
+{
+  "name": "@toolora/mcp",
+  "version": "0.1.0",
+  "description": "One-line installer for the Toolora hosted MCP server. Auto-configures Claude Desktop and Cursor in seconds. No accounts, no API keys.",
+  "type": "module",
+  "bin": {
+    "toolora-mcp": "./cli.mjs"
+  },
+  "main": "./cli.mjs",
+  "files": [
+    "cli.mjs",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "claude",
+    "cursor",
+    "codex",
+    "anthropic",
+    "agent",
+    "toolora",
+    "installer",
+    "x402"
+  ],
+  "homepage": "https://toolora.dev",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/toolora/toolora.git",
+    "directory": "lib/cli"
+  },
+  "bugs": {
+    "url": "https://toolora.dev"
+  },
+  "author": "Toolora",
+  "license": "MIT",
+  "scripts": {
+    "typecheck": "node --check cli.mjs",
+    "test": "node cli.mjs doctor"
+  }
+}

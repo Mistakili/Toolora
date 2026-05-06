@@ -108,14 +108,54 @@ export default function Home() {
                 </div>
               </div>
 
+              {/* npx one-liner — agent-economy hero CTA. Inspired by pay.sh's
+                  npm install one-liner; same idea but for the entire 32-tool
+                  Toolora MCP surface, auto-configured into Claude/Cursor in
+                  a single command. This is the highest-leverage distribution
+                  surface on the page — keep it above the fold. */}
+              <div className="mt-8 max-w-xl mx-auto lg:mx-0">
+                <div className="flex items-center justify-between gap-2 px-4 py-3 rounded-xl border border-primary/30 bg-primary/5 font-mono text-sm">
+                  <span className="flex items-center gap-2 text-foreground">
+                    <span className="text-muted-foreground select-none">$</span>
+                    <span className="text-primary font-semibold">npx @toolora/mcp</span>
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => navigator.clipboard?.writeText("npx @toolora/mcp")}
+                    className="text-xs px-2 py-1 rounded-md bg-primary/10 hover:bg-primary/20 text-primary font-sans font-medium transition-colors"
+                    aria-label="Copy install command"
+                  >
+                    Copy
+                  </button>
+                </div>
+                <p className="text-xs text-muted-foreground mt-2 text-center lg:text-left">
+                  Auto-configures Claude Desktop and Cursor. Prints a paste-ready snippet for Codex CLI.
+                  No account. No API key. <span className="text-foreground font-medium">32+ free MCP tools.</span>
+                </p>
+                <div className="mt-3 flex flex-wrap items-center justify-center lg:justify-start gap-x-4 gap-y-2 text-xs text-muted-foreground">
+                  <span className="flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-green-500" /> Claude
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-blue-500" /> Cursor
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-purple-500" /> Codex
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-orange-500" /> any MCP client
+                  </span>
+                </div>
+              </div>
+
               {/* MCP + Chrome callouts */}
               <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
                 <Link href="/mcp-hub" className="group inline-flex items-center gap-2.5 px-4 py-2.5 rounded-xl border border-border bg-muted/30 hover:border-primary/40 hover:bg-primary/5 transition-all duration-200 text-sm">
                   <span className="flex items-center gap-1.5 text-muted-foreground">
                     <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                    Free MCP server — 17 tools
+                    Free MCP server — 32 tools
                   </span>
-                  <span className="text-primary font-medium group-hover:underline">No API key needed →</span>
+                  <span className="text-primary font-medium group-hover:underline">Browse tools →</span>
                 </Link>
                 <a
                   href="https://chromewebstore.google.com/detail/lpbbnmhnmbccfiipolepbahphffdoine"
