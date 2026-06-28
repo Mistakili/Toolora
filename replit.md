@@ -86,7 +86,7 @@ Toolbox page that lets API owners self-serve onto the Gateway in 60s. They paste
 
 ## Live Global Ticker
 
-`GET /api/gateway/global-stats?window=1h|24h|7d|all` aggregates settled USDC volume across ALL leaderboard-opt-in listings. Cached 20s. Public CORS (`Access-Control-Allow-Origin: *`) so embedded ticker widgets and third-party dashboards can poll directly. Uses parameterized `make_interval(secs => $1)` binding (no `sql.raw`) for defense-in-depth. Powers `HomepageGlobalTicker` (mounted in `Home.tsx` hero) which polls every 20s with **adaptive window fallback** (1h → 24h → 7d → all-time): the first window with any calls wins, so the ticker is never empty on a quiet hour but always shows the freshest live data. Click-through goes to `/gateway`.
+`GET /api/gateway/global-stats?window=1h|24h|7d|all` aggregates settled USDC volume across ALL leaderboard-opt-in listings. Cached 20s. Public CORS (`Access-Control-Allow-Origin: *`) so embedded ticker widgets and third-party dashboards can poll directly. Uses parameterized `make_interval(secs => $1)` binding (no `sql.raw`) for defense-in-depth. Powers `HomepageGlobalTicker` (mounted in `Home.tsx` hero, component at `artifacts/toolbox/src/components/HomepageGlobalTicker.tsx`) which polls `/api/gateway/global-stats?window=1h` every 20s. **Gracefully hides itself when all stats are zero** (no "0 calls · $0.00" embarrassment while the gateway is warming up). Appears as a subtle pill with a pulsing Activity icon once real settlement activity exists.
 
 ## Monetization System
 

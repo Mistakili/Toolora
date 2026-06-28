@@ -6,6 +6,7 @@ import { CATEGORIES, TOOLS } from "@/lib/tools-config";
 import { ToolCard } from "@/components/shared/ToolCard";
 import { useGetPopularTools } from "@workspace/api-client-react";
 import { BLOG_POSTS_COUNT, GLOSSARY_COUNT, HOME_BLOG_POSTS } from "@/lib/home-data";
+import { HomepageGlobalTicker } from "@/components/HomepageGlobalTicker";
 
 export default function Home() {
   const [email, setEmail] = useState("");
@@ -173,6 +174,11 @@ export default function Home() {
                   </span>
                   <span className="text-blue-400 font-medium group-hover:underline">Add to Chrome →</span>
                 </a>
+              </div>
+
+              {/* Live gateway ticker — appears only when there is real settlement activity */}
+              <div className="flex justify-center lg:justify-start">
+                <HomepageGlobalTicker />
               </div>
 
             </motion.div>
